@@ -734,9 +734,19 @@
           }
         }
         
-        // Method 2: Check document referrer or previous page context
+        // Method 2: Extract tweet author from current URL or page context
+        // For URLs like https://x.com/shax_btc/status/123, extract 'shax_btc'
+        const currentUrl = window.location.href;
+        const tweetAuthorMatch = currentUrl.match(/x\.com\/([a-zA-Z0-9_]+)\/status\/\d+/);
+        if (tweetAuthorMatch && tweetAuthorMatch[1]) {
+          const username = '@' + tweetAuthorMatch[1];
+          console.log('NYLA Debug: Found tweet author from current URL:', username);
+          return username;
+        }
+        
+        // Check document referrer as fallback
         if (document.referrer) {
-          const referrerMatch = document.referrer.match(/x\.com\/([a-zA-Z0-9_]+)/);
+          const referrerMatch = document.referrer.match(/x\.com\/([a-zA-Z0-9_]+)(?:\/status\/\d+)?/);
           if (referrerMatch && referrerMatch[1] && 
               !referrerMatch[1].includes('home') && 
               !referrerMatch[1].includes('explore') &&
@@ -793,6 +803,25 @@
       return composeContextRecipient;
     }
     
+    // Special case: If we're on a tweet page, extract the author from URL
+    function getTweetAuthorFromUrl() {
+      const currentUrl = window.location.href;
+      const tweetMatch = currentUrl.match(/x\.com\/([a-zA-Z0-9_]+)\/status\/\d+/);
+      if (tweetMatch && tweetMatch[1]) {
+        const username = '@' + tweetMatch[1];
+        console.log('NYLA Debug: Found tweet author from URL:', username);
+        return username;
+      }
+      return null;
+    }
+    
+    // Check for tweet author from URL (for reply scenarios on tweet pages)
+    const tweetAuthor = getTweetAuthorFromUrl();
+    if (tweetAuthor && window.location.pathname.includes('/status/')) {
+      console.log('NYLA Debug: Using tweet author as recipient:', tweetAuthor);
+      return tweetAuthor;
+    }
+    
     // Look for specific X.com reply indicators first
     const replyIndicators = document.querySelectorAll('[data-testid="reply"], [data-testid*="replyingTo"]');
     replyIndicators.forEach(element => {
@@ -842,8 +871,23 @@
     const uniqueRecipients = [...new Set(recipients)];
     console.log('NYLA Debug: All found recipients:', uniqueRecipients);
     
+    // Filter out common false positives (like current user's own username)
+    const filteredRecipients = uniqueRecipients.filter(recipient => {
+      if (!recipient || recipient.length <= 1 || recipient === '@') {
+        return false;
+      }
+      
+      // Filter out known current user indicators (this will help avoid self-mentions)
+      const username = recipient.replace('@', '').toLowerCase();
+      const suspiciousPatterns = ['h2crypto_eth', 'home', 'explore', 'notifications', 'messages', 'bookmarks'];
+      
+      return !suspiciousPatterns.includes(username);
+    });
+    
+    console.log('NYLA Debug: Filtered recipients (removed self/system):', filteredRecipients);
+    
     // Return the first valid recipient
-    for (const recipient of uniqueRecipients) {
+    for (const recipient of filteredRecipients) {
       if (recipient && recipient.length > 1 && recipient !== '@') {
         console.log('NYLA Debug: Returning recipient:', recipient);
         return recipient;
