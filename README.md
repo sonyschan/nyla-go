@@ -5,11 +5,17 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ![NYLA Transfer Assistant Hero](screenshots/1.Easy-to-use%20interface%20for%20NYLA%20transfers.png)
 
 ![NYLA Transfer Assistant](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
-![Version](https://img.shields.io/badge/Version-0.1.10-orange)
+![Version](https://img.shields.io/badge/Version-0.2.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 🚀 Features
 
+### 🔍 **Smart Profile Detection** (NEW in v0.2.0!)
+- **Auto-Discovery** - NYLAgo icons appear automatically on NYLA-related profiles
+- **One-Click Transfers** - Click profile icon → Opens compose → Start transfer
+- **Context-Aware** - Only shows on profiles mentioning NYLA, AgentNyla, etc.
+
+### 💫 **Core Transfer Features**
 - **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
 - **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
 - **Form Memory** - Remembers your previous inputs for convenience and speed
@@ -58,7 +64,7 @@ NYLA's command-line interface, while powerful, can be intimidating for everyday 
 ### Method 2: Install from ZIP File (Current)
 1. **Download the Extension**
    - Go to [Releases](https://github.com/sonyschan/nyla-transfer-assistant/releases)
-   - Download `nyla-transfer-assistant-v0.1.10.zip`
+   - Download `nyla-transfer-assistant-v0.2.0.zip`
 
 2. **Extract the ZIP File**
    - Unzip the downloaded file to a folder on your computer
