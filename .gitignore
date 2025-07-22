@@ -1,0 +1,14 @@
+# Build outputs (excluding existing releases)
+# releases/*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
