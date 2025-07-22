@@ -4,7 +4,14 @@
       "Bash(python3:*)",
       "Bash(zip:*)",
       "Bash(rm:*)",
-      "WebFetch(domain:sonyschan.github.io)"
+      "WebFetch(domain:sonyschan.github.io)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cp:*)",
+      "Bash(git rm:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }
