@@ -995,8 +995,8 @@
       width: 34px;
       height: 34px;
       border-radius: 17px;
-      background: rgba(29, 161, 242, 0.1);
-      border: 1px solid rgba(29, 161, 242, 0.2);
+      background: rgba(15, 20, 25, 0.1);
+      border: 1px solid rgba(207, 217, 222, 0.75);
       cursor: pointer;
       transition: all 0.2s ease;
       margin-left: 8px;
@@ -1006,13 +1006,13 @@
     // Add hover effects
     iconContainer.addEventListener('mouseenter', () => {
       iconContainer.style.background = 'rgba(255, 107, 53, 0.1)';
-      iconContainer.style.borderColor = 'rgba(255, 107, 53, 0.3)';
+      iconContainer.style.borderColor = 'rgba(255, 255, 255, 0.9)';
       iconContainer.style.transform = 'scale(1.05)';
     });
     
     iconContainer.addEventListener('mouseleave', () => {
-      iconContainer.style.background = 'rgba(29, 161, 242, 0.1)';
-      iconContainer.style.borderColor = 'rgba(29, 161, 242, 0.2)';
+      iconContainer.style.background = 'rgba(15, 20, 25, 0.1)';
+      iconContainer.style.borderColor = 'rgba(207, 217, 222, 0.75)';
       iconContainer.style.transform = 'scale(1)';
     });
     
@@ -1043,14 +1043,37 @@
   
   // Find optimal placement for the icon
   function findIconPlacement() {
-    // Try to find the follow button or action buttons area
-    const selectors = [
-      '[data-testid*="follow"]', // Follow button area
+    // First, specifically look for Follow button to position after it
+    const followSelectors = [
+      '[data-testid*="follow"]:not([data-testid*="unfollow"])', // Follow button (not unfollow)
+      '[aria-label*="Follow"]:not([aria-label*="Following"])', // Follow by aria-label
+      'div[role="button"]:has-text("Follow")', // Follow button by text content
+    ];
+    
+    // Try to find Follow button first for optimal placement
+    for (const selector of followSelectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const element of elements) {
+        const profileHeader = element.closest('[data-testid="UserCell"]') || 
+                             element.closest('[data-testid="primaryColumn"]');
+        if (profileHeader && isElementVisible(element)) {
+          // Found Follow button - place NYLAgo button after it
+          const parent = element.parentElement;
+          if (parent && parent.style.display !== 'none') {
+            console.log('NYLA Profile: Found Follow button for optimal placement:', element);
+            return { container: parent, insertAfter: element };
+          }
+        }
+      }
+    }
+    
+    // Fallback: try to find other action buttons area
+    const generalSelectors = [
       '[data-testid="userActions"]', // User actions container
       '[role="button"]', // Any button in profile header
     ];
     
-    for (const selector of selectors) {
+    for (const selector of generalSelectors) {
       const elements = document.querySelectorAll(selector);
       for (const element of elements) {
         // Check if this element is in the profile header area
@@ -1060,8 +1083,8 @@
           // Find parent container to place icon next to
           const parent = element.parentElement;
           if (parent && parent.style.display !== 'none') {
-            console.log('NYLA Profile: Found placement target:', element);
-            return parent;
+            console.log('NYLA Profile: Found fallback placement target:', element);
+            return { container: parent, insertAfter: null };
           }
         }
       }
@@ -1070,7 +1093,7 @@
     // Fallback: try to find any visible button container in profile area
     const profileButtons = document.querySelector('[data-testid="primaryColumn"] [role="button"]');
     if (profileButtons) {
-      return profileButtons.parentElement;
+      return { container: profileButtons.parentElement, insertAfter: null };
     }
     
     console.log('NYLA Profile: No suitable placement found');
@@ -1096,9 +1119,20 @@
     // Add click handler
     nylaIcon.addEventListener('click', handleNylaIconClick);
     
-    // Insert icon
-    placement.appendChild(nylaIcon);
-    console.log('NYLA Profile: NYLAgo icon injected successfully');
+    // Insert icon with optimal positioning
+    if (placement.container && placement.insertAfter) {
+      // Insert after the Follow button for rightmost positioning
+      placement.insertAfter.insertAdjacentElement('afterend', nylaIcon);
+      console.log('NYLA Profile: NYLAgo icon injected after Follow button');
+    } else if (placement.container) {
+      // Fallback: append to container
+      placement.container.appendChild(nylaIcon);
+      console.log('NYLA Profile: NYLAgo icon injected to container');
+    } else {
+      // Legacy placement structure
+      placement.appendChild(nylaIcon);
+      console.log('NYLA Profile: NYLAgo icon injected with legacy placement');
+    }
   }
   
   // Handle NYLAgo icon click
