@@ -945,4 +945,352 @@
   // Debug on demand (uncomment for debugging)
   // setTimeout(debugComposeBoxes, 3000);
   
+  // ===== NYLA PROFILE DETECTION & ICON INJECTION =====
+  
+  // NYLA Profile Detection Engine
+  function detectNylaProfile() {
+    console.log('NYLA Profile: Starting detection...');
+    
+    // Only run on profile pages (not status pages)
+    const urlPath = window.location.pathname;
+    if (urlPath.includes('/status/') || urlPath.includes('/compose') || 
+        urlPath === '/' || urlPath === '/home' || urlPath === '/explore') {
+      console.log('NYLA Profile: Not a profile page, skipping');
+      return false;
+    }
+    
+    try {
+      // Extract profile information
+      const profileName = document.querySelector('[data-testid="UserName"]')?.textContent?.trim() || '';
+      const profileBio = document.querySelector('[data-testid="UserDescription"]')?.textContent?.trim() || '';
+      const profileHandle = document.querySelector('[data-testid="UserScreenName"]')?.textContent?.trim() || '';
+      const username = urlPath.slice(1); // Remove leading slash
+      
+      // Combine all text for search
+      const searchText = `${profileName} ${profileBio} ${profileHandle} ${username}`.toLowerCase();
+      
+      console.log('NYLA Profile: Scanning text:', searchText);
+      
+      // Check for NYLA keywords (case-insensitive)
+      const nylaKeywords = ['nyla', 'agentnyla', 'agent nyla'];
+      const hasNyla = nylaKeywords.some(keyword => searchText.includes(keyword));
+      
+      console.log('NYLA Profile: Detection result:', hasNyla);
+      return hasNyla;
+      
+    } catch (error) {
+      console.log('NYLA Profile: Detection error:', error);
+      return false;
+    }
+  }
+  
+  // Create NYLAgo icon element
+  function createNylaIcon() {
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'nyla-icon-container';
+    iconContainer.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 17px;
+      background: rgba(29, 161, 242, 0.1);
+      border: 1px solid rgba(29, 161, 242, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: 8px;
+      position: relative;
+    `;
+    
+    // Add hover effects
+    iconContainer.addEventListener('mouseenter', () => {
+      iconContainer.style.background = 'rgba(255, 107, 53, 0.1)';
+      iconContainer.style.borderColor = 'rgba(255, 107, 53, 0.3)';
+      iconContainer.style.transform = 'scale(1.05)';
+    });
+    
+    iconContainer.addEventListener('mouseleave', () => {
+      iconContainer.style.background = 'rgba(29, 161, 242, 0.1)';
+      iconContainer.style.borderColor = 'rgba(29, 161, 242, 0.2)';
+      iconContainer.style.transform = 'scale(1)';
+    });
+    
+    // Create SVG icon
+    const svgIcon = document.createElement('div');
+    svgIcon.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="nylaGradientProfile" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF8C42;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FF6B35;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="11" fill="url(#nylaGradientProfile)"/>
+        <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <text x="12" y="16" font-family="Arial, sans-serif" font-size="14" font-weight="900" 
+              fill="white" text-anchor="middle" dominant-baseline="middle">N</text>
+      </svg>
+    `;
+    
+    // Add tooltip
+    iconContainer.title = 'Open NYLAgo Transfer - Click to send NYLA tokens to this user';
+    iconContainer.setAttribute('aria-label', 'NYLAgo Transfer Assistant');
+    
+    iconContainer.appendChild(svgIcon);
+    return iconContainer;
+  }
+  
+  // Find optimal placement for the icon
+  function findIconPlacement() {
+    // Try to find the follow button or action buttons area
+    const selectors = [
+      '[data-testid*="follow"]', // Follow button area
+      '[data-testid="userActions"]', // User actions container
+      '[role="button"]', // Any button in profile header
+    ];
+    
+    for (const selector of selectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const element of elements) {
+        // Check if this element is in the profile header area
+        const profileHeader = element.closest('[data-testid="UserCell"]') || 
+                             element.closest('[data-testid="primaryColumn"]');
+        if (profileHeader && isElementVisible(element)) {
+          // Find parent container to place icon next to
+          const parent = element.parentElement;
+          if (parent && parent.style.display !== 'none') {
+            console.log('NYLA Profile: Found placement target:', element);
+            return parent;
+          }
+        }
+      }
+    }
+    
+    // Fallback: try to find any visible button container in profile area
+    const profileButtons = document.querySelector('[data-testid="primaryColumn"] [role="button"]');
+    if (profileButtons) {
+      return profileButtons.parentElement;
+    }
+    
+    console.log('NYLA Profile: No suitable placement found');
+    return null;
+  }
+  
+  // Inject NYLAgo icon into profile
+  function injectNylagoIcon() {
+    // Check if icon already exists
+    if (document.querySelector('.nyla-icon-container')) {
+      console.log('NYLA Profile: Icon already exists');
+      return;
+    }
+    
+    const placement = findIconPlacement();
+    if (!placement) {
+      console.log('NYLA Profile: Could not find suitable placement');
+      return;
+    }
+    
+    const nylaIcon = createNylaIcon();
+    
+    // Add click handler
+    nylaIcon.addEventListener('click', handleNylaIconClick);
+    
+    // Insert icon
+    placement.appendChild(nylaIcon);
+    console.log('NYLA Profile: NYLAgo icon injected successfully');
+  }
+  
+  // Handle NYLAgo icon click
+  function handleNylaIconClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('NYLA Profile: NYLAgo icon clicked');
+    
+    // Add visual feedback
+    const icon = event.currentTarget;
+    icon.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      icon.style.transform = 'scale(1)';
+    }, 150);
+    
+    // Try to find and click the "Post" button
+    const postButtonSelectors = [
+      '[data-testid="SideNav_NewTweet_Button"]', // Main post button
+      '[aria-label*="Post" i]', // Post button by aria-label
+      '[role="button"]:contains("Post")', // Generic post button
+    ];
+    
+    for (const selector of postButtonSelectors) {
+      const postButton = document.querySelector(selector);
+      if (postButton && isElementVisible(postButton)) {
+        console.log('NYLA Profile: Triggering post button click');
+        postButton.click();
+        
+        // Wait for compose dialog to open and show feedback
+        setTimeout(() => {
+          showNylagoFeedback();
+        }, 500);
+        
+        return;
+      }
+    }
+    
+    // Fallback: show instruction message
+    console.log('NYLA Profile: Could not find post button, showing fallback message');
+    alert('Click the "Post" button to open the compose dialog, then use the NYLAgo extension!');
+  }
+  
+  // Show visual feedback in compose dialog
+  function showNylagoFeedback() {
+    // Check if we're now in a compose dialog
+    const composeDialog = document.querySelector('[role="dialog"]');
+    if (composeDialog && window.location.pathname === '/compose/post') {
+      // Create a subtle notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #FF8C42, #FF6B35);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+      `;
+      
+      notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 16px; height: 16px;">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="11" fill="white"/>
+              <text x="12" y="16" font-family="Arial" font-size="14" font-weight="900" 
+                    fill="#FF6B35" text-anchor="middle" dominant-baseline="middle">N</text>
+            </svg>
+          </div>
+          <span>Now click the NYLAgo extension to start your transfer!</span>
+        </div>
+      `;
+      
+      // Add animation keyframes
+      if (!document.querySelector('#nyla-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'nyla-keyframes';
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      document.body.appendChild(notification);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'slideIn 0.3s ease-out reverse';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, 5000);
+      
+      console.log('NYLA Profile: Feedback notification shown');
+    }
+  }
+  
+  // Monitor profile changes
+  function startProfileMonitoring() {
+    let currentPath = window.location.pathname;
+    let profileCheckTimeout;
+    
+    // Check for profile changes
+    function checkProfile() {
+      if (window.location.pathname !== currentPath) {
+        currentPath = window.location.pathname;
+        console.log('NYLA Profile: Path changed to:', currentPath);
+        
+        // Clear any existing timeout
+        clearTimeout(profileCheckTimeout);
+        
+        // Remove existing icon
+        const existingIcon = document.querySelector('.nyla-icon-container');
+        if (existingIcon) {
+          existingIcon.remove();
+        }
+        
+        // Wait for page to load, then check for NYLA
+        profileCheckTimeout = setTimeout(() => {
+          if (detectNylaProfile()) {
+            console.log('NYLA Profile: NYLA profile detected, injecting icon');
+            injectNylagoIcon();
+          }
+        }, 1000);
+      }
+    }
+    
+    // Initial check
+    setTimeout(() => {
+      if (detectNylaProfile()) {
+        console.log('NYLA Profile: Initial NYLA profile detected, injecting icon');
+        injectNylagoIcon();
+      }
+    }, 1500);
+    
+    // Monitor URL changes
+    setInterval(checkProfile, 1000);
+    
+    // Monitor DOM changes for dynamic content
+    const observer = new MutationObserver((mutations) => {
+      let shouldRecheck = false;
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          // Check if profile information was added/updated
+          const hasProfileChange = Array.from(mutation.addedNodes).some(node => {
+            return node.nodeType === 1 && (
+              node.querySelector && (
+                node.querySelector('[data-testid="UserName"]') ||
+                node.querySelector('[data-testid="UserDescription"]')
+              )
+            );
+          });
+          if (hasProfileChange) {
+            shouldRecheck = true;
+          }
+        }
+      });
+      
+      if (shouldRecheck) {
+        clearTimeout(profileCheckTimeout);
+        profileCheckTimeout = setTimeout(() => {
+          const existingIcon = document.querySelector('.nyla-icon-container');
+          if (!existingIcon && detectNylaProfile()) {
+            console.log('NYLA Profile: Profile content updated, NYLA detected');
+            injectNylagoIcon();
+          }
+        }, 500);
+      }
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    console.log('NYLA Profile: Monitoring started');
+  }
+  
+  // Initialize profile monitoring
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startProfileMonitoring);
+  } else {
+    startProfileMonitoring();
+  }
+  
 })();
