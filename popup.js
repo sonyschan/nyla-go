@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update command preview
     if (isValid && recipient && amount) {
-      const command = `Hey @agentnyla send ${amount} ${token} to ${recipient}`;
+      const command = `Hey @AgentNyla transfer ${amount} $${token} ${recipient}`;
       commandPreview.textContent = command;
       commandPreview.classList.remove('empty');
       sendButton.disabled = false;

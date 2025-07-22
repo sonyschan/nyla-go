@@ -29,10 +29,10 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 
 The extension generates clean, properly formatted commands that work with the official NYLA bot:
 ```
-Hey @agentnyla send [amount] [TOKEN] to @[recipient]
+Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME]
 ```
 
-**Example:** `Hey @agentnyla send 50 NYLA to @alice`
+**Example:** `Hey @AgentNyla transfer 50 $NYLA @alice`
 
 ## 🧡 About NYLA
 
