@@ -671,15 +671,39 @@
   function getReplyRecipients() {
     const recipients = [];
     
-    // Look for "Replying to" text patterns
-    const replyingToSelectors = [
-      '[data-testid*="reply"]',
-      '[aria-label*="replying" i]',
-      'span:contains("Replying to")',
-      'div:contains("Replying to")'
-    ];
+    // Helper function to clean and extract usernames more precisely
+    function extractCleanUsernames(text) {
+      console.log('NYLA Debug: Extracting from text:', text);
+      
+      // More precise regex that stops at word boundaries or common separators
+      // This will match @username but stop before words like "Post", "Reply", etc.
+      const usernameMatches = text.match(/@[a-zA-Z0-9_]+(?=\s|$|[^a-zA-Z0-9_]|Post|Reply|·|,|\.|!|\?)/g);
+      
+      if (usernameMatches) {
+        // Additional cleanup: remove common suffixes that might be captured
+        const cleanedMatches = usernameMatches.map(username => {
+          // Remove common suffixes that shouldn't be part of username
+          const cleaned = username.replace(/(Post|Reply|Likes|Reposts|Views|Follow|Following)$/i, '');
+          console.log('NYLA Debug: Cleaned username:', username, '->', cleaned);
+          return cleaned;
+        }).filter(username => username.length > 1); // Filter out just '@'
+        
+        return cleanedMatches;
+      }
+      
+      return [];
+    }
     
-    // Search for text containing "Replying to"
+    // Look for specific X.com reply indicators first
+    const replyIndicators = document.querySelectorAll('[data-testid="reply"], [data-testid*="replyingTo"]');
+    replyIndicators.forEach(element => {
+      const text = element.textContent || element.innerText || '';
+      console.log('NYLA Debug: Reply indicator text:', text);
+      const usernames = extractCleanUsernames(text);
+      recipients.push(...usernames);
+    });
+    
+    // Search for text containing "Replying to" using XPath
     const textNodes = document.evaluate(
       "//text()[contains(., 'Replying to')]",
       document,
@@ -691,29 +715,43 @@
     for (let i = 0; i < textNodes.snapshotLength; i++) {
       const node = textNodes.snapshotItem(i);
       const text = node.textContent;
-      
-      // Extract usernames from "Replying to @user1 @user2" pattern
-      const usernameMatches = text.match(/@[a-zA-Z0-9_]+/g);
-      if (usernameMatches) {
-        recipients.push(...usernameMatches);
-      }
+      console.log('NYLA Debug: XPath found text:', text);
+      const usernames = extractCleanUsernames(text);
+      recipients.push(...usernames);
     }
     
-    // Also look in nearby elements
-    const replyElements = document.querySelectorAll('[data-testid*="reply"], [aria-label*="reply" i]');
-    replyElements.forEach(element => {
-      const text = element.textContent || element.innerText || '';
-      if (text.toLowerCase().includes('replying')) {
-        const usernameMatches = text.match(/@[a-zA-Z0-9_]+/g);
-        if (usernameMatches) {
-          recipients.push(...usernameMatches);
+    // Look for username links in the reply context
+    const usernameLinks = document.querySelectorAll('a[href*="/"]:not([href*="status"]):not([href*="photo"])');
+    usernameLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      // Extract username from href like "/username" 
+      const match = href.match(/^\/([a-zA-Z0-9_]+)$/);
+      if (match && match[1]) {
+        const username = '@' + match[1];
+        // Check if this link is in a reply context
+        const parentText = link.closest('[data-testid*="reply"]')?.textContent || 
+                          link.parentElement?.textContent || '';
+        if (parentText.toLowerCase().includes('replying') || 
+            link.closest('[data-testid*="reply"]')) {
+          console.log('NYLA Debug: Found username link:', username);
+          recipients.push(username);
         }
       }
     });
     
-    // Remove duplicates and return first one
+    // Remove duplicates and return first valid one
     const uniqueRecipients = [...new Set(recipients)];
-    return uniqueRecipients.length > 0 ? uniqueRecipients[0] : null;
+    console.log('NYLA Debug: All found recipients:', uniqueRecipients);
+    
+    // Return the first valid recipient
+    for (const recipient of uniqueRecipients) {
+      if (recipient && recipient.length > 1 && recipient !== '@') {
+        console.log('NYLA Debug: Returning recipient:', recipient);
+        return recipient;
+      }
+    }
+    
+    return null;
   }
   
   // Listen for messages from popup
