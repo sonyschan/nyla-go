@@ -50,13 +50,36 @@ NYLA's command-line interface, while powerful, can be intimidating for everyday 
 
 ## 🔧 Installation
 
-### From Chrome Web Store
+### Method 1: From Chrome Web Store (Coming Soon)
 [Install NYLA Transfer Assistant](https://chrome.google.com/webstore/detail/your-extension-id)
 
-### For Developers
-1. Clone this repository
-2. Open Chrome → Extensions → Enable Developer mode
-3. Click "Load unpacked" and select the `extension/` folder
+### Method 2: Install from ZIP File (Current)
+1. **Download the Extension**
+   - Go to [Releases](https://github.com/sonyschan/nyla-transfer-assistant/releases)
+   - Download `nyla-transfer-assistant-v0.1.3.zip`
+
+2. **Extract the ZIP File**
+   - Unzip the downloaded file to a folder on your computer
+   - Remember the folder location (e.g., `Downloads/nyla-transfer-assistant/`)
+
+3. **Install in Chrome**
+   - Open Chrome browser
+   - Go to `chrome://extensions/` or click **⋮ → More Tools → Extensions**
+   - Enable **Developer mode** (toggle in top-right corner)
+   - Click **Load unpacked**
+   - Select the extracted folder from step 2
+   - The NYLA Transfer Assistant icon should appear in your browser toolbar
+
+4. **Verify Installation**
+   - Navigate to [X.com](https://x.com)
+   - Click the NYLA Transfer Assistant icon in your toolbar
+   - The popup should open with the transfer form
+
+### Method 3: For Developers
+1. Clone this repository: `git clone https://github.com/sonyschan/nyla-transfer-assistant.git`
+2. Open Chrome → Extensions (`chrome://extensions/`)
+3. Enable **Developer mode**
+4. Click **Load unpacked** and select the cloned folder
 
 ## 🔒 Privacy & Security
 
