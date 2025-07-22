@@ -28,4 +28,4 @@ We do not share, sell, or transmit any user data to third parties.
 We may update this privacy policy from time to time. Users will be notified of any material changes.
 
 ## Contact
-For questions about this privacy policy, please contact: [your-email@example.com]
+For questions about this privacy policy, please contact: [sonys.chan@gmail.com]
