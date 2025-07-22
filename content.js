@@ -989,7 +989,7 @@
     const iconContainer = document.createElement('div');
     iconContainer.className = 'nyla-icon-container';
     iconContainer.style.cssText = `
-      display: inline-flex;
+      display: inline-flex !important;
       align-items: center;
       justify-content: center;
       width: 34px;
@@ -999,8 +999,14 @@
       border: 1px solid rgba(207, 217, 222, 0.75);
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-left: 8px;
+      margin: 0 0 0 8px;
       position: relative;
+      z-index: 1000;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      vertical-align: middle;
     `;
     
     // Add hover effects
@@ -1043,25 +1049,45 @@
   
   // Find optimal placement for the icon
   function findIconPlacement() {
-    // First, specifically look for Follow button to position after it
+    console.log('NYLA Profile: Starting placement search...');
+    
+    // Look specifically for Follow button to place NYLAgo button right after it
     const followSelectors = [
-      '[data-testid*="follow"]:not([data-testid*="unfollow"])', // Follow button (not unfollow)
-      '[aria-label*="Follow"]:not([aria-label*="Following"])', // Follow by aria-label
-      'div[role="button"]:has-text("Follow")', // Follow button by text content
+      '[data-testid*="follow"]',
+      '[aria-label*="Follow" i]',
+      '[role="button"]'
     ];
     
     // Try to find Follow button first for optimal placement
     for (const selector of followSelectors) {
       const elements = document.querySelectorAll(selector);
+      console.log(`NYLA Profile: Found ${elements.length} elements for selector: ${selector}`);
+      
       for (const element of elements) {
-        const profileHeader = element.closest('[data-testid="UserCell"]') || 
-                             element.closest('[data-testid="primaryColumn"]');
-        if (profileHeader && isElementVisible(element)) {
-          // Found Follow button - place NYLAgo button after it
-          const parent = element.parentElement;
-          if (parent && parent.style.display !== 'none') {
-            console.log('NYLA Profile: Found Follow button for optimal placement:', element);
-            return { container: parent, insertAfter: element };
+        // Check if this element contains "Follow" text
+        const elementText = element.textContent?.toLowerCase() || '';
+        const ariaLabel = element.getAttribute('aria-label')?.toLowerCase() || '';
+        
+        if (elementText.includes('follow') || ariaLabel.includes('follow')) {
+          const profileHeader = element.closest('[data-testid="UserCell"]') || 
+                               element.closest('[data-testid="primaryColumn"]') ||
+                               element.closest('div[role="banner"]');
+          
+          if (profileHeader && isElementVisible(element)) {
+            // Find the immediate parent container that holds the Follow button
+            const directParent = element.parentElement;
+            
+            // Check if the parent is a flex container or if we can make it one
+            const parentStyle = window.getComputedStyle(directParent);
+            console.log('NYLA Profile: Follow button direct parent:', directParent);
+            console.log('NYLA Profile: Parent display style:', parentStyle.display);
+            
+            // Return the direct parent so we can insert right after the Follow button
+            return { 
+              container: directParent, 
+              insertAfter: element,
+              insertMethod: 'afterend' // Insert immediately after Follow button
+            };
           }
         }
       }
@@ -1103,14 +1129,27 @@
   // Inject NYLAgo icon into profile
   function injectNylagoIcon() {
     // Check if icon already exists
-    if (document.querySelector('.nyla-icon-container')) {
-      console.log('NYLA Profile: Icon already exists');
+    if (document.querySelector('.nyla-icon-container') || document.querySelector('.nyla-button-wrapper')) {
+      console.log('NYLA Profile: Icon or wrapper already exists');
       return;
     }
     
     const placement = findIconPlacement();
     if (!placement) {
-      console.log('NYLA Profile: Could not find suitable placement');
+      console.log('NYLA Profile: Could not find suitable placement, trying emergency fallback');
+      // Emergency fallback: try to find any button in profile area
+      const anyButton = document.querySelector('[data-testid="primaryColumn"] [role="button"], main [role="button"]');
+      if (anyButton && isElementVisible(anyButton)) {
+        const emergencyContainer = anyButton.parentElement;
+        if (emergencyContainer) {
+          const nylaIcon = createNylaIcon();
+          nylaIcon.addEventListener('click', handleNylaIconClick);
+          emergencyContainer.appendChild(nylaIcon);
+          console.log('NYLA Profile: NYLAgo icon injected using emergency fallback');
+          return;
+        }
+      }
+      console.log('NYLA Profile: No placement options found at all');
       return;
     }
     
@@ -1120,19 +1159,61 @@
     nylaIcon.addEventListener('click', handleNylaIconClick);
     
     // Insert icon with optimal positioning
-    if (placement.container && placement.insertAfter) {
-      // Insert after the Follow button for rightmost positioning
+    if (placement.container && placement.insertAfter && placement.insertMethod === 'afterend') {
+      // Strategy: Create a horizontal wrapper container for Follow button + NYLAgo button
+      const followButton = placement.insertAfter;
+      const parentContainer = placement.container;
+      
+      console.log('NYLA Profile: Creating horizontal wrapper for buttons');
+      
+      // Create a flex wrapper container
+      const buttonWrapper = document.createElement('div');
+      buttonWrapper.className = 'nyla-button-wrapper';
+      buttonWrapper.style.cssText = `
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+      `;
+      
+      // Move the Follow button into the wrapper
+      parentContainer.insertBefore(buttonWrapper, followButton);
+      buttonWrapper.appendChild(followButton);
+      
+      // Add the NYLAgo button to the wrapper
+      buttonWrapper.appendChild(nylaIcon);
+      
+      console.log('NYLA Profile: NYLAgo icon placed in horizontal wrapper with Follow button');
+      console.log('NYLA Profile: Wrapper element:', buttonWrapper);
+      
+    } else if (placement.container && placement.insertAfter) {
+      // Legacy insertion method
       placement.insertAfter.insertAdjacentElement('afterend', nylaIcon);
-      console.log('NYLA Profile: NYLAgo icon injected after Follow button');
+      console.log('NYLA Profile: NYLAgo icon injected after Follow button (legacy)', placement.insertAfter);
     } else if (placement.container) {
       // Fallback: append to container
       placement.container.appendChild(nylaIcon);
-      console.log('NYLA Profile: NYLAgo icon injected to container');
+      console.log('NYLA Profile: NYLAgo icon injected to container', placement.container);
     } else {
       // Legacy placement structure
       placement.appendChild(nylaIcon);
-      console.log('NYLA Profile: NYLAgo icon injected with legacy placement');
+      console.log('NYLA Profile: NYLAgo icon injected with legacy placement', placement);
     }
+    
+    // Verify injection worked
+    setTimeout(() => {
+      const injectedIcon = document.querySelector('.nyla-icon-container');
+      if (injectedIcon) {
+        const rect = injectedIcon.getBoundingClientRect();
+        console.log('NYLA Profile: Icon verification - exists:', !!injectedIcon, 'visible:', rect.width > 0 && rect.height > 0, 'rect:', rect);
+        console.log('NYLA Profile: Icon parent:', injectedIcon.parentElement);
+        console.log('NYLA Profile: Icon computed style:', window.getComputedStyle(injectedIcon));
+      } else {
+        console.log('NYLA Profile: Icon injection failed - element not found in DOM');
+      }
+    }, 100);
   }
   
   // Handle NYLAgo icon click
@@ -1252,10 +1333,19 @@
         // Clear any existing timeout
         clearTimeout(profileCheckTimeout);
         
-        // Remove existing icon
+        // Remove existing icon and wrapper
         const existingIcon = document.querySelector('.nyla-icon-container');
+        const existingWrapper = document.querySelector('.nyla-button-wrapper');
         if (existingIcon) {
           existingIcon.remove();
+        }
+        if (existingWrapper) {
+          // Move Follow button back before removing wrapper
+          const followButton = existingWrapper.querySelector('[role="button"]');
+          if (followButton) {
+            existingWrapper.parentElement.insertBefore(followButton, existingWrapper);
+          }
+          existingWrapper.remove();
         }
         
         // Wait for page to load, then check for NYLA
