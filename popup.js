@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function saveValues() {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
       const values = {
-        recipient: recipientInput.value,
+        // Don't save recipient - let it reset each time for safety
         amount: amountInput.value,
         token: tokenSelect.value
       };
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Fallback to localStorage
       try {
         const values = {
-          recipient: recipientInput.value,
+          // Don't save recipient - let it reset each time for safety
           amount: amountInput.value,
           token: tokenSelect.value
         };
@@ -449,8 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.storage.local.get(['nylaFormValues']).then(result => {
           if (result.nylaFormValues) {
             const values = result.nylaFormValues;
-            // Use detected recipient if available, otherwise use saved recipient
-            recipientInput.value = detectedRecipient || values.recipient || '';
+            // Only use detected recipient - clear any saved recipient for fresh start
+            recipientInput.value = detectedRecipient || '';
             amountInput.value = values.amount || '';
             // Only set token if it exists in the current dropdown options
             const allTokens = [...defaultTokens, ...customTokens];
@@ -462,6 +462,9 @@ document.addEventListener('DOMContentLoaded', function() {
           } else if (detectedRecipient) {
             // If no saved values but we detected a recipient, use it
             recipientInput.value = detectedRecipient;
+          } else {
+            // Clear recipient field for fresh start
+            recipientInput.value = '';
           }
           validateAndUpdateCommand();
         }).catch(err => {
@@ -482,8 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const saved = localStorage.getItem('nylaFormValues');
       if (saved) {
         const values = JSON.parse(saved);
-        // Use detected recipient if available, otherwise use saved recipient
-        recipientInput.value = detectedRecipient || values.recipient || '';
+        // Only use detected recipient - clear any saved recipient for fresh start
+        recipientInput.value = detectedRecipient || '';
         amountInput.value = values.amount || '';
         // Only set token if it exists in the current dropdown options
         const allTokens = [...defaultTokens, ...customTokens];
@@ -495,6 +498,9 @@ document.addEventListener('DOMContentLoaded', function() {
       } else if (detectedRecipient) {
         // If no saved values but we detected a recipient, use it
         recipientInput.value = detectedRecipient;
+      } else {
+        // Clear recipient field for fresh start
+        recipientInput.value = '';
       }
       validateAndUpdateCommand();
     } catch (e) {
