@@ -698,11 +698,63 @@
     function getComposeDialogContext() {
       console.log('NYLA Debug: Checking compose dialog context');
       
-      // Check if we're in a compose dialog (/compose/post)
-      if (window.location.pathname === '/compose/post') {
-        console.log('NYLA Debug: In compose dialog, looking for context');
+      // Check if we're in a compose dialog (/compose/post) OR a reply dialog popup
+      const isComposeDialog = window.location.pathname === '/compose/post';
+      const isReplyDialog = document.querySelector('[role="dialog"]') && 
+                          (document.querySelector('[data-testid="tweetTextarea_0"]') || 
+                           document.querySelector('[data-testid="tweetTextarea_1"]'));
+      
+      if (isComposeDialog || isReplyDialog) {
+        console.log('NYLA Debug: In compose/reply dialog, looking for context');
         
-        // Method 1: Look for quoted tweet or referenced tweet in the dialog
+        // Method 1: For reply dialogs, look for "Replying to @username" text
+        if (isReplyDialog) {
+          console.log('NYLA Debug: Detected reply dialog, searching for reply context');
+          
+          // Look specifically for "Replying to" text in the dialog
+          const replyIndicators = document.querySelectorAll('[role="dialog"] *');
+          for (const element of replyIndicators) {
+            const text = element.textContent || '';
+            if (text.toLowerCase().includes('replying to')) {
+              console.log('NYLA Debug: Found "Replying to" text:', text);
+              const usernames = extractCleanUsernames(text);
+              if (usernames.length > 0) {
+                console.log('NYLA Debug: Extracted username from reply dialog:', usernames[0]);
+                return usernames[0];
+              }
+            }
+          }
+          
+          // Alternative: Look for username links in the reply dialog
+          const dialogUsernameLinks = document.querySelectorAll('[role="dialog"] a[href^="/"]');
+          for (const link of dialogUsernameLinks) {
+            const href = link.getAttribute('href');
+            const match = href.match(/^\/([a-zA-Z0-9_]+)$/);
+            if (match && match[1] && !href.includes('status') && !href.includes('photo')) {
+              const username = '@' + match[1];
+              console.log('NYLA Debug: Found username from reply dialog link:', username);
+              return username;
+            }
+          }
+          
+          // Additional method: Look for the original tweet content in the reply dialog
+          const originalTweetElements = document.querySelectorAll('[role="dialog"] [data-testid*="tweet"], [role="dialog"] article');
+          for (const tweetElement of originalTweetElements) {
+            // Look for username mentions or author information
+            const usernameElements = tweetElement.querySelectorAll('a[href^="/"]');
+            for (const userLink of usernameElements) {
+              const href = userLink.getAttribute('href');
+              const match = href.match(/^\/([a-zA-Z0-9_]+)(?:\/status\/\d+)?$/);
+              if (match && match[1] && !['home', 'explore', 'notifications'].includes(match[1])) {
+                const username = '@' + match[1];
+                console.log('NYLA Debug: Found username from original tweet in reply dialog:', username);
+                return username;
+              }
+            }
+          }
+        }
+        
+        // Method 2: Look for quoted tweet or referenced tweet in the dialog
         const quotedTweetSelectors = [
           '[data-testid="quoteTweet"]',
           '[data-testid*="tweet"]',
@@ -796,7 +848,18 @@
       return null;
     }
     
-    // First, check for compose dialog context (special case)
+    // Priority 1: Check for reply dialog popup context (highest priority)
+    const replyDialog = document.querySelector('[role="dialog"]');
+    if (replyDialog) {
+      console.log('NYLA Debug: Reply dialog detected, using specialized detection');
+      const dialogRecipient = getComposeDialogContext();
+      if (dialogRecipient) {
+        console.log('NYLA Debug: Using reply dialog recipient:', dialogRecipient);
+        return dialogRecipient;
+      }
+    }
+    
+    // Priority 2: Check for compose dialog context
     const composeContextRecipient = getComposeDialogContext();
     if (composeContextRecipient) {
       console.log('NYLA Debug: Using compose dialog context recipient:', composeContextRecipient);
