@@ -3,8 +3,26 @@
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
 ![NYLA Transfer Assistant](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
-![Version](https://img.shields.io/badge/Version-0.1.2-orange)
+![Version](https://img.shields.io/badge/Version-0.1.3-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+## 📸 Screenshots
+
+### Main Extension Popup
+![Extension Popup](screenshots/popup-interface.png)
+*Clean, intuitive interface with form fields for recipient, amount, and token selection*
+
+### X.com Integration
+![X.com Integration](screenshots/x-integration.png)
+*Seamless command insertion into X.com compose boxes*
+
+### Custom Token Management
+![Token Management](screenshots/custom-tokens.png)
+*Add and manage custom cryptocurrency tokens beyond the defaults*
+
+### Live Command Preview
+![Command Preview](screenshots/command-preview.png)
+*Real-time preview of generated transfer commands before sending*
 
 ## 🚀 Features
 
