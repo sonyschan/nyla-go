@@ -694,6 +694,105 @@
       return [];
     }
     
+    // Special case: Detect username from compose dialog context
+    function getComposeDialogContext() {
+      console.log('NYLA Debug: Checking compose dialog context');
+      
+      // Check if we're in a compose dialog (/compose/post)
+      if (window.location.pathname === '/compose/post') {
+        console.log('NYLA Debug: In compose dialog, looking for context');
+        
+        // Method 1: Look for quoted tweet or referenced tweet in the dialog
+        const quotedTweetSelectors = [
+          '[data-testid="quoteTweet"]',
+          '[data-testid*="tweet"]',
+          '.css-1dbjc4n[role="blockquote"]',
+          '[role="blockquote"]'
+        ];
+        
+        for (const selector of quotedTweetSelectors) {
+          const quotedElements = document.querySelectorAll(selector);
+          for (const element of quotedElements) {
+            const text = element.textContent || '';
+            const usernames = extractCleanUsernames(text);
+            if (usernames.length > 0) {
+              console.log('NYLA Debug: Found username in quoted tweet:', usernames[0]);
+              return usernames[0];
+            }
+            
+            // Also check for username links within quoted tweets
+            const usernameLinks = element.querySelectorAll('a[href^="/"]');
+            for (const link of usernameLinks) {
+              const href = link.getAttribute('href');
+              const match = href.match(/^\/([a-zA-Z0-9_]+)$/);
+              if (match && match[1] && !href.includes('status') && !href.includes('photo')) {
+                const username = '@' + match[1];
+                console.log('NYLA Debug: Found username from quoted tweet link:', username);
+                return username;
+              }
+            }
+          }
+        }
+        
+        // Method 2: Check document referrer or previous page context
+        if (document.referrer) {
+          const referrerMatch = document.referrer.match(/x\.com\/([a-zA-Z0-9_]+)/);
+          if (referrerMatch && referrerMatch[1] && 
+              !referrerMatch[1].includes('home') && 
+              !referrerMatch[1].includes('explore') &&
+              !referrerMatch[1].includes('notifications')) {
+            const username = '@' + referrerMatch[1];
+            console.log('NYLA Debug: Found username from referrer:', username);
+            return username;
+          }
+        }
+        
+        // Method 3: Look for any username in the compose dialog content
+        const dialogContent = document.querySelector('[role="dialog"]');
+        if (dialogContent) {
+          const dialogText = dialogContent.textContent || '';
+          const usernames = extractCleanUsernames(dialogText);
+          if (usernames.length > 0) {
+            console.log('NYLA Debug: Found username in dialog content:', usernames[0]);
+            return usernames[0];
+          }
+          
+          // Look for username links in the dialog
+          const usernameLinks = dialogContent.querySelectorAll('a[href^="/"]');
+          for (const link of usernameLinks) {
+            const href = link.getAttribute('href');
+            const match = href.match(/^\/([a-zA-Z0-9_]+)$/);
+            if (match && match[1] && !href.includes('status') && !href.includes('photo')) {
+              const username = '@' + match[1];
+              console.log('NYLA Debug: Found username from dialog link:', username);
+              return username;
+            }
+          }
+        }
+        
+        // Method 4: Check browser history or session storage for context
+        try {
+          const historyState = window.history.state;
+          if (historyState && historyState.usr) {
+            const username = '@' + historyState.usr;
+            console.log('NYLA Debug: Found username from history state:', username);
+            return username;
+          }
+        } catch (e) {
+          console.log('NYLA Debug: Could not access history state');
+        }
+      }
+      
+      return null;
+    }
+    
+    // First, check for compose dialog context (special case)
+    const composeContextRecipient = getComposeDialogContext();
+    if (composeContextRecipient) {
+      console.log('NYLA Debug: Using compose dialog context recipient:', composeContextRecipient);
+      return composeContextRecipient;
+    }
+    
     // Look for specific X.com reply indicators first
     const replyIndicators = document.querySelectorAll('[data-testid="reply"], [data-testid*="replyingTo"]');
     replyIndicators.forEach(element => {
