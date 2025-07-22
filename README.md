@@ -8,20 +8,6 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ![Version](https://img.shields.io/badge/Version-0.1.3-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 📸 Screenshots
-
-### Easy-to-Use Interface for NYLA Transfers
-![NYLA Transfer Interface](screenshots/1.Easy-to-use%20interface%20for%20NYLA%20transfers.png)
-*Clean, intuitive interface with form fields for recipient, amount, and token selection. Real-time command preview shows exactly what will be sent to X.com.*
-
-### Smart Reply Detection
-![Auto-Detect Recipients](screenshots/3.Detect%20who%20you%20are%20replying%20as%20default%20recipient%20name.png)
-*Automatically detects who you're replying to and pre-fills the recipient field, making transfers in conversations seamless and error-free.*
-
-### Custom Token Management
-![Custom Token Management](screenshots/2.Add%20and%20manage%20your%20own%20custom%20token.png)
-*Add and manage your own custom cryptocurrency tokens beyond the defaults (NYLA, SOL, USDC, USDT). Perfect for supporting new or niche tokens.*
-
 ## 🚀 Features
 
 - **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
