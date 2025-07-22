@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(zip:*)",
+      "Bash(rm:*)",
+      "WebFetch(domain:sonyschan.github.io)"
+    ],
+    "deny": []
+  }
+}

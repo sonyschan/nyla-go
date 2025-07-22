@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      color: #1da1f2;
+      font-size: 20px;
+      margin: 0 0 5px 0;
+      font-weight: 600;
+    }
+    
+    .header p {
+      color: #657786;
+      font-size: 12px;
+      margin: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #14171a;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1da1f2;
+      box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.1);
+    }
+    
+    .amount-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .amount-group input {
+      flex: 1;
+    }
+    
+    .token-select-container {
+      display: flex;
+      align-items: stretch;
+      flex: 0 0 110px;
+    }
+    
+    .token-select-container select {
+      flex: 1;
+      border-radius: 6px 0 0 6px;
+      border-right: none;
+    }
+    
+    .manage-tokens-btn {
+      background: #f7f9fa;
+      border: 1px solid #e1e8ed;
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      padding: 0 8px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #657786;
+      transition: all 0.2s ease;
+      min-width: 28px;
+    }
+    
+    .manage-tokens-btn:hover {
+      background: #e8f5e8;
+      color: #1da1f2;
+    }
+    
+    .command-preview {
+      background: #f7f9fa;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 15px 0;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 13px;
+      color: #14171a;
+      word-break: break-all;
+    }
+    
+    .command-preview.empty {
+      color: #657786;
+      font-style: italic;
+    }
+    
+    .send-button {
+      background: linear-gradient(135deg, #1da1f2, #0d8bd9);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+    
+    .send-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(29, 161, 242, 0.3);
+    }
+    
+    .send-button:disabled {
+      background: #aab8c2;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .error {
+      color: #e0245e;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    
+    .status.success {
+      background: #e8f5e8;
+      color: #0f7b0f;
+      border: 1px solid #c3e6c3;
+    }
+    
+    .status.error {
+      background: #ffeaea;
+      color: #e0245e;
+      border: 1px solid #ffb3b3;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 20px 15px;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      color: #1da1f2;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #657786;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s ease;
+    }
+    
+    .close-btn:hover {
+      background: #f7f9fa;
+    }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: calc(80vh - 100px);
+      overflow-y: auto;
+    }
+    
+    .add-token-section, .custom-tokens-section {
+      margin-bottom: 25px;
+    }
+    
+    .add-token-section h3, .custom-tokens-section h3 {
+      margin: 0 0 12px 0;
+      color: #14171a;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .add-token-form {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    
+    .add-token-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    
+    .add-btn {
+      background: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .add-btn:hover {
+      background: #0d8bd9;
+    }
+    
+    .custom-tokens-list {
+      min-height: 60px;
+    }
+    
+    .no-custom-tokens {
+      color: #657786;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+      border: 1px dashed #e1e8ed;
+      border-radius: 6px;
+      background: #f7f9fa;
+    }
+    
+    .custom-token-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #f7f9fa;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    
+    .custom-token-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .token-symbol {
+      font-weight: 600;
+      color: #14171a;
+      font-size: 14px;
+    }
+    
+    .remove-token-btn {
+      background: #e0245e;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .remove-token-btn:hover {
+      background: #c91b47;
+    }
+    
+    /* Developer Credit Styles */
+    .developer-credit {
+      text-align: center;
+      padding: 12px 20px 16px;
+      font-size: 12px;
+      color: #657786;
+      border-top: 1px solid #e1e8ed;
+      background: #f7f9fa;
+      margin-top: 10px;
+    }
+    
+    .developer-link {
+      color: #1da1f2;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .developer-link:hover {
+      color: #0d8bd9;
+      text-decoration: underline;
+    }
+    
+    .developer-link:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>NYLA Transfer</h1>
+    <p>Generate transfer commands for X.com</p>
+  </div>
+  
+  <form id="transferForm">
+    <div class="form-group">
+      <label for="recipient">Recipient Username</label>
+      <input type="text" id="recipient" placeholder="@username" />
+      <div class="error" id="recipientError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label for="amount">Amount & Token</label>
+      <div class="amount-group">
+        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0" />
+        <div class="token-select-container">
+          <select id="token">
+            <option value="NYLA">NYLA</option>
+            <option value="SOL">SOL</option>
+            <option value="USDC">USDC</option>
+            <option value="USDT">USDT</option>
+          </select>
+          <button type="button" class="manage-tokens-btn" id="manageTokensBtn" title="Manage Custom Tokens">⚙️</button>
+        </div>
+      </div>
+      <div class="error" id="amountError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label>Command Preview</label>
+      <div class="command-preview empty" id="commandPreview">
+        Fill in the fields above to see the command
+      </div>
+    </div>
+    
+    <button type="button" class="send-button" id="sendButton" disabled>
+      Send to X.com
+    </button>
+  </form>
+  
+  <div class="status" id="status" style="display: none;"></div>
+  
+  <!-- Developer Credit Footer -->
+  <div class="developer-credit">
+    Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
+  </div>
+  
+  <!-- Custom Token Management Modal -->
+  <div class="modal-overlay" id="modalOverlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Manage Custom Tokens</h2>
+        <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="add-token-section">
+          <h3>Add Custom Token</h3>
+          <div class="add-token-form">
+            <input type="text" id="newTokenInput" placeholder="Enter token symbol (e.g., BTC)" maxlength="10" />
+            <button type="button" id="addTokenBtn" class="add-btn">Add Token</button>
+          </div>
+          <div class="error" id="tokenError"></div>
+        </div>
+        
+        <div class="custom-tokens-section">
+          <h3>Custom Tokens</h3>
+          <div class="custom-tokens-list" id="customTokensList">
+            <div class="no-custom-tokens" id="noCustomTokens">No custom tokens added yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
