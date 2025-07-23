@@ -51,12 +51,17 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 - **🐦 Official X Account**: [@AgentNyla](https://x.com/AgentNyla)
 - **💬 Telegram Community**: [t.me/AgentNylaAI](https://t.me/AgentNylaAI)
 
-### 💡 Why This Extension?
-NYLA's command-line interface, while powerful, can be intimidating for everyday users. This extension bridges that gap by providing:
-- Visual form interface instead of memorizing command syntax
-- Real-time command preview and validation
-- Auto-detection of reply recipients
-- Custom token management for advanced users
+### 💡 Why Extension?
+• **Best assistant for desktop** - Seamless integration with your browser workflow
+• **X context awareness** - Smart detection of recipients and reply scenarios  
+• **Interactive** - Real-time UI that responds to your actions
+
+### 🚀 How Extension Empowers NYLA?
+• **Save community's brain to remember commands** - No more memorizing complex syntax
+• **Users get feature updates automatically** - Continuous improvements without manual updates
+• **Easy UI = Less effort = More usage** - Lower barrier drives higher adoption
+• **Possibly embrace new users by the tipping button** - Free tip buttons attract new NYLA users
+• **Brainstorm how NYLA fits in consumer apps** - Bridge between crypto and mainstream social platforms
 
 ## 🔧 Installation
 
