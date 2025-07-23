@@ -11,7 +11,8 @@
       "Bash(cp:*)",
       "Bash(git rm:*)",
       "Bash(ls:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
   }
