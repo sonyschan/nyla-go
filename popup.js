@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const developerCredit = document.getElementById('developerCredit');
   
   // Default tokens in order
-  const defaultTokens = ['NYLA', 'SOL', 'USDC', 'USDT'];
+  const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
   let customTokens = [];
   
   // Load saved values and custom tokens from storage
