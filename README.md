@@ -23,7 +23,7 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 - **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
 - **Form Memory** - Remembers your previous inputs for convenience and speed
 - **Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
-- **Multi-Token Support** - Supports NYLA, SOL, USDC, USDT + custom tokens
+- **Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom tokens
 - **Preview & Edit** - See exactly what command will be generated before sending
 
 ## 📱 How It Works
