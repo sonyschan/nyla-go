@@ -5,7 +5,7 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ![NYLA Transfer Assistant Hero](screenshots/1.Easy-to-use%20interface%20for%20NYLA%20transfers.png)
 
 ![NYLA Go](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
-![Version](https://img.shields.io/badge/Version-0.2.3-orange)
+![Version](https://img.shields.io/badge/Version-0.3.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 🚀 Features
@@ -18,6 +18,7 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 - **Boost Engagement** - Make it effortless for followers to tip you NYLA tokens
 
 ### 💫 **Core Transfer Features**
+- **Multi-Blockchain Support** - Choose from Solana (default), Ethereum, or Algorand networks
 - **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
 - **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
 - **Form Memory** - Remembers your previous inputs for convenience and speed
@@ -30,17 +31,25 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 1. Navigate to X.com and click on any reply box or compose area
 2. Click the NYLA Go icon in your browser toolbar
 3. Fill in the recipient username, amount, and select cryptocurrency
-4. Review the generated command in the live preview
-5. Click "Send to X.com" to insert the command instantly
+4. Choose your preferred blockchain (Solana, Ethereum, or Algorand)
+5. Review the generated command in the live preview
+6. Click "Send to X.com" to insert the command instantly
 
 ## 📝 Generated Commands
 
 The extension generates clean, properly formatted commands that work with the official NYLA bot:
+
+**Solana (Default):**
 ```
 Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME]
 ```
-
 **Example:** `Hey @AgentNyla transfer 50 $NYLA @alice`
+
+**Ethereum/Algorand:**
+```
+Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME] [BLOCKCHAIN]
+```
+**Example:** `Hey @AgentNyla transfer 50 $NYLA @alice Ethereum`
 
 ## 🧡 About NYLA
 
@@ -71,7 +80,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 ### Method 2: Install from ZIP File (Current)
 1. **Download the Extension**
    - Go to [Releases](https://github.com/sonyschan/nyla-transfer-assistant/releases)
-   - Download `nyla-transfer-assistant-v0.2.3.zip`
+   - Download `nyla-transfer-assistant-v0.3.0.zip`
 
 2. **Extract the ZIP File**
    - Unzip the downloaded file to a folder on your computer

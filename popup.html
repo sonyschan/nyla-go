@@ -94,6 +94,35 @@
       color: #1da1f2;
     }
     
+    .blockchain-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 8px;
+    }
+    
+    .blockchain-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex: 1;
+    }
+    
+    .blockchain-option input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #1da1f2;
+      cursor: pointer;
+    }
+    
+    .blockchain-option label {
+      cursor: pointer;
+      font-size: 13px;
+      color: #14171a;
+      font-weight: 500;
+      margin: 0;
+    }
+    
     .command-preview {
       background: #f7f9fa;
       border: 1px solid #e1e8ed;
@@ -377,6 +406,24 @@
         </div>
       </div>
       <div class="error" id="amountError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label>Blockchain</label>
+      <div class="blockchain-group">
+        <div class="blockchain-option">
+          <input type="radio" id="solana" name="blockchain" value="Solana" checked />
+          <label for="solana">Solana</label>
+        </div>
+        <div class="blockchain-option">
+          <input type="radio" id="ethereum" name="blockchain" value="Ethereum" />
+          <label for="ethereum">Ethereum</label>
+        </div>
+        <div class="blockchain-option">
+          <input type="radio" id="algorand" name="blockchain" value="Algorand" />
+          <label for="algorand">Algorand</label>
+        </div>
+      </div>
     </div>
     
     <div class="form-group">

@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const sendButton = document.getElementById('sendButton');
   const statusDiv = document.getElementById('status');
   
+  // Blockchain radio buttons
+  const blockchainRadios = document.querySelectorAll('input[name="blockchain"]');
+  
   const recipientError = document.getElementById('recipientError');
   const amountError = document.getElementById('amountError');
   
@@ -289,6 +292,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const amount = amountInput.value.trim();
     const token = tokenSelect.value;
     
+    // Get selected blockchain
+    const selectedBlockchain = document.querySelector('input[name="blockchain"]:checked').value;
+    
     let isValid = true;
     
     // Clear previous errors
@@ -316,7 +322,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update command preview
     if (isValid && recipient && amount) {
-      const command = `Hey @AgentNyla transfer ${amount} $${token} ${recipient}`;
+      let command;
+      if (selectedBlockchain === 'Solana') {
+        // Solana: Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME]
+        command = `Hey @AgentNyla transfer ${amount} $${token} ${recipient}`;
+      } else {
+        // Non-Solana: Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME] [BlockChain]
+        command = `Hey @AgentNyla transfer ${amount} $${token} ${recipient} ${selectedBlockchain}`;
+      }
       commandPreview.textContent = command;
       commandPreview.classList.remove('empty');
       sendButton.disabled = false;
@@ -346,6 +359,14 @@ document.addEventListener('DOMContentLoaded', function() {
   tokenSelect.addEventListener('change', function() {
     validateAndUpdateCommand();
     saveValues();
+  });
+  
+  // Add event listeners for blockchain radio buttons
+  blockchainRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      validateAndUpdateCommand();
+      saveValues();
+    });
   });
   
   // Handle send button click
@@ -397,7 +418,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const values = {
         // Don't save recipient - let it reset each time for safety
         amount: amountInput.value,
-        token: tokenSelect.value
+        token: tokenSelect.value,
+        blockchain: document.querySelector('input[name="blockchain"]:checked').value
       };
       chrome.storage.local.set({ nylaFormValues: values }).catch(err => {
         console.log('Storage save failed:', err);
@@ -414,7 +436,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const values = {
           // Don't save recipient - let it reset each time for safety
           amount: amountInput.value,
-          token: tokenSelect.value
+          token: tokenSelect.value,
+          blockchain: document.querySelector('input[name="blockchain"]:checked').value
         };
         localStorage.setItem('nylaFormValues', JSON.stringify(values));
       } catch (e) {
@@ -459,6 +482,12 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
               tokenSelect.value = defaultTokens[0]; // Default to NYLA
             }
+            // Set blockchain selection (default to Solana if not saved)
+            const savedBlockchain = values.blockchain || 'Solana';
+            const blockchainRadio = document.querySelector(`input[name="blockchain"][value="${savedBlockchain}"]`);
+            if (blockchainRadio) {
+              blockchainRadio.checked = true;
+            }
           } else if (detectedRecipient) {
             // If no saved values but we detected a recipient, use it
             recipientInput.value = detectedRecipient;
@@ -494,6 +523,12 @@ document.addEventListener('DOMContentLoaded', function() {
           tokenSelect.value = values.token;
         } else {
           tokenSelect.value = defaultTokens[0]; // Default to NYLA
+        }
+        // Set blockchain selection (default to Solana if not saved)
+        const savedBlockchain = values.blockchain || 'Solana';
+        const blockchainRadio = document.querySelector(`input[name="blockchain"][value="${savedBlockchain}"]`);
+        if (blockchainRadio) {
+          blockchainRadio.checked = true;
         }
       } else if (detectedRecipient) {
         // If no saved values but we detected a recipient, use it
