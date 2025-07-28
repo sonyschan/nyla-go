@@ -1,10 +1,10 @@
-# NYLA Transfer Assistant
+# NYLA Go
 
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
 ![NYLA Transfer Assistant Hero](screenshots/1.Easy-to-use%20interface%20for%20NYLA%20transfers.png)
 
-![NYLA Transfer Assistant](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
+![NYLA Go](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
 ![Version](https://img.shields.io/badge/Version-0.2.3-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
@@ -28,7 +28,7 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ## 📱 How It Works
 
 1. Navigate to X.com and click on any reply box or compose area
-2. Click the NYLA Transfer Assistant icon in your browser toolbar
+2. Click the NYLA Go icon in your browser toolbar
 3. Fill in the recipient username, amount, and select cryptocurrency
 4. Review the generated command in the live preview
 5. Click "Send to X.com" to insert the command instantly
@@ -83,11 +83,11 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
    - Enable **Developer mode** (toggle in top-right corner)
    - Click **Load unpacked**
    - Select the extracted folder from step 2
-   - The NYLA Transfer Assistant icon should appear in your browser toolbar
+   - The NYLA Go icon should appear in your browser toolbar
 
 4. **Verify Installation**
    - Navigate to [X.com](https://x.com)
-   - Click the NYLA Transfer Assistant icon in your toolbar
+   - Click the NYLA Go icon in your toolbar
    - The popup should open with the transfer form
 
 ### Method 3: For Developers
@@ -144,4 +144,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with ❤️ for the NYLA community**
+**NYLA Go - Made with ❤️ for the NYLA community**

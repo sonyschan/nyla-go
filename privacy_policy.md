@@ -1,9 +1,9 @@
-# Privacy Policy for NYLA Transfer Assistant
+# Privacy Policy for NYLA Go
 
 **Last Updated: January 2025**
 
 ## Overview
-NYLA Transfer Assistant is a browser extension that helps users generate NYLA cryptocurrency transfer commands on X.com. We are committed to protecting your privacy.
+NYLA Go is a browser extension that helps users generate NYLA cryptocurrency transfer commands on X.com. We are committed to protecting your privacy.
 
 ## Data Collection
 - **Form Data**: The extension stores your previously entered recipient usernames, token amounts, and selected cryptocurrencies locally in your browser to improve user experience
@@ -54,4 +54,4 @@ For questions about this privacy policy, please create an issue at our GitHub re
 
 ---
 
-*This privacy policy applies to NYLA Transfer Assistant Chrome Extension version 0.1.9 and later.*
+*This privacy policy applies to NYLA Go Chrome Extension version 0.1.9 and later.*
