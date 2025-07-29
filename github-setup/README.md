@@ -66,7 +66,7 @@ NYLA's command-line interface, while powerful, can be intimidating for everyday 
 - ✅ No external API calls or remote code
 - ✅ Open source and transparent
 
-[📋 Full Privacy Policy](https://yourusername.github.io/nyla-transfer-assistant/privacy-policy)
+[📋 Full Privacy Policy](https://yourusername.github.io/nyla-go/privacy-policy)
 
 ## 🛠️ Development
 
@@ -101,7 +101,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/nyla-transfer-assistant/issues)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/nyla-go/issues)
 - **Questions**: Create a discussion in this repository
 
 ---
