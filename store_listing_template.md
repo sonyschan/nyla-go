@@ -10,51 +10,30 @@
 ## Store Description
 
 ### Short Description (132 characters max)
-Generate NYLA transfer commands on X.com with mobile QR codes featuring the official NYLA logo.
+Easily send NYLA tokens on X.com with simple forms and mobile QR codes.
 
 ### Detailed Description
-Streamline NYLA cryptocurrency transfers on X.com with an intuitive interface that generates transfer commands and QR codes for mobile use. Perfect for crypto users who want to simplify their social media transfers.
+Send NYLA cryptocurrency easily on X.com without typing complex commands. Just fill out a simple form and click send, or scan a QR code on your phone.
 
-**🚀 Key Features:**
-• **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
-• **📱 Mobile QR Codes** - Generate scannable QR codes with the official NYLA logo for mobile transfers
-• **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
-• **Form Memory** - Remembers your previous inputs for convenience and speed
-• **Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
-• **Multi-Token & Blockchain Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT on multiple blockchains
-• **Custom Token Management** - Add and manage your own custom tokens
-• **Preview & QR Toggle** - Switch between text preview and scannable QR codes
+**What it does:**
+• Converts recipient, amount, and token into proper NYLA transfer commands
+• Generates QR codes with the NYLA logo for mobile users
+• Automatically detects who you're replying to on X.com
+• Remembers your settings for faster transfers
 
-**💡 How It Works:**
-1. Navigate to X.com and click on any reply box or compose area
-2. Click the NYLA Go icon in your browser toolbar
-3. Fill in the recipient username, amount, and select cryptocurrency/blockchain
-4. Toggle between text preview and QR code view
-5. **Desktop**: Click "Send to X.com" to insert the command instantly
-6. **Mobile**: Scan the QR code to open X.com with the command pre-filled
+**Why you need it:**
+• Skip learning complex command formats
+• Transfer from mobile by scanning QR codes  
+• Avoid typos in transfer commands
+• Speed up your NYLA transactions on social media
 
-**📝 Generated Command Format:**
-The extension generates clean, properly formatted commands:
-```
-Hey @AgentNyla transfer 50 $NYLA @username
-Hey @AgentNyla transfer 100 $USDC @username Ethereum
-```
+**How it works:**
+1. Open the extension while on X.com
+2. Fill in recipient, amount, and token
+3. Click "Send to X.com" or scan the QR code on mobile
+4. Your transfer command appears ready to post
 
-**📱 QR Code Features:**
-• Official NYLA logo centered in QR codes
-• High error correction for reliable scanning
-• Mobile-optimized URLs that open X.com compose
-• Loading animation with smooth transitions
-
-**🔒 Privacy & Security:**
-• Form data stored locally in your browser
-• QR generation uses trusted external services (api.qrserver.com, IPFS for logo)
-• Only transfer command text shared for QR generation - no personal information
-• No private keys, wallet data, or sensitive information collected
-• No analytics or user tracking
-• Transparent privacy policy included
-
-**Perfect for crypto users, traders, and anyone who wants to streamline their NYLA transfers on social media with both desktop and mobile support.**
+Supports NYLA, SOL, ETH, USDC, USDT and custom tokens across multiple blockchains.
 
 ---
 
