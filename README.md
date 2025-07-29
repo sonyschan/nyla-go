@@ -8,6 +8,12 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ![Version](https://img.shields.io/badge/Version-0.3.1-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+## 🎥 Video Demo
+
+[![NYLA Go Demo](https://img.youtube.com/vi/Kgih8vpaj0c/maxresdefault.jpg)](https://www.youtube.com/watch?v=Kgih8vpaj0c)
+
+**[Watch the Demo →](https://www.youtube.com/watch?v=Kgih8vpaj0c)** - See NYLA Go in action with multi-blockchain support and smart profile detection!
+
 ## 🚀 Features
 
 ### 🔍 **Smart Profile Detection** (NEW in v0.2.0!)
