@@ -85,12 +85,12 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 
 ### Method 2: Install from ZIP File (Current)
 1. **Download the Extension**
-   - Go to [Releases](https://github.com/sonyschan/nyla-transfer-assistant/releases)
-   - Download `nyla-transfer-assistant-v0.3.1.zip`
+   - Go to [Releases](https://github.com/sonyschan/nyla-go/releases)
+   - Download `nyla-go-v0.3.1.zip`
 
 2. **Extract the ZIP File**
    - Unzip the downloaded file to a folder on your computer
-   - Remember the folder location (e.g., `Downloads/nyla-transfer-assistant/`)
+   - Remember the folder location (e.g., `Downloads/nyla-go/`)
 
 3. **Install in Chrome**
    - Open Chrome browser
@@ -106,7 +106,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
    - The popup should open with the transfer form
 
 ### Method 3: For Developers
-1. Clone this repository: `git clone https://github.com/sonyschan/nyla-transfer-assistant.git`
+1. Clone this repository: `git clone https://github.com/sonyschan/nyla-go.git`
 2. Open Chrome → Extensions (`chrome://extensions/`)
 3. Enable **Developer mode**
 4. Click **Load unpacked** and select the cloned folder
@@ -119,7 +119,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 - ✅ No external API calls or remote code
 - ✅ Open source and transparent
 
-[📋 Full Privacy Policy](https://github.com/sonyschan/nyla-transfer-assistant/blob/master/privacy_policy.md)
+[📋 Full Privacy Policy](https://github.com/sonyschan/nyla-go/blob/master/privacy_policy.md)
 
 ## 🛠️ Development
 
@@ -154,7 +154,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/sonyschan/nyla-transfer-assistant/issues)
+- **Issues**: [GitHub Issues](https://github.com/sonyschan/nyla-go/issues)
 - **Questions**: Create a discussion in this repository
 
 ---

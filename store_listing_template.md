@@ -96,7 +96,7 @@ Example: `/transfer @alice 50 USDC`
 
 ## Submission Checklist
 
-- [x] Extension package created (nyla-transfer-assistant-v0.1.0.zip)
+- [x] Extension package created (nyla-go-v0.1.0.zip)
 - [x] All icons generated and included
 - [x] Privacy policy created
 - [x] Manifest.json properly configured

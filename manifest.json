@@ -4,7 +4,7 @@
   "version": "0.3.1",
   "description": "Simplify NYLA cryptocurrency transfers on X.com with an intuitive interface. Generate commands without complexity.",
   "author": "@h2crypto_eth",
-  "homepage_url": "https://github.com/sonyschan/nyla-transfer-assistant",
+  "homepage_url": "https://github.com/sonyschan/nyla-go",
   "action": {
     "default_popup": "popup.html",
     "default_title": "NYLA Go",
