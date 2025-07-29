@@ -25,6 +25,20 @@ document.addEventListener('DOMContentLoaded', function() {
   // Developer credit element
   const developerCredit = document.getElementById('developerCredit');
   
+  // QR Code elements
+  const qrToggleBtn = document.getElementById('qrToggleBtn');
+  const qrCodeContainer = document.getElementById('qrCodeContainer');
+  const qrCodeDiv = document.getElementById('qrCode');
+  let qrCodeInstance = null;
+  let isQRMode = false;
+  
+  // Debug QR elements
+  console.log('NYLA QR: Elements found:', {
+    qrToggleBtn: !!qrToggleBtn,
+    qrCodeContainer: !!qrCodeContainer,
+    qrCodeDiv: !!qrCodeDiv
+  });
+  
   // Default tokens in order
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
   let customTokens = [];
@@ -338,7 +352,188 @@ document.addEventListener('DOMContentLoaded', function() {
       commandPreview.classList.add('empty');
       sendButton.disabled = true;
     }
+    
+    // Update QR toggle button state
+    qrToggleBtn.disabled = !isValid || !recipient || !amount;
+    
+    // Update QR code if in QR mode
+    if (isQRMode && isValid && recipient && amount) {
+      updateQRCode(command);
+    }
   }
+  
+  // QR Code Functions
+  function generateXMobileURL(command) {
+    // URL encode the command text
+    const encodedCommand = encodeURIComponent(command);
+    // Generate X.com compose URL with pre-filled text
+    return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+  }
+  
+  function updateQRCode(command) {
+    if (!command) {
+      console.log('NYLA QR: No command provided');
+      return;
+    }
+    
+    console.log('NYLA QR: Updating QR code with command:', command);
+    
+    // Clear existing QR code
+    qrCodeDiv.innerHTML = '';
+    
+    // Generate the mobile URL
+    const mobileURL = generateXMobileURL(command);
+    console.log('NYLA QR: Generated URL:', mobileURL);
+    console.log('NYLA QR: URL length:', mobileURL.length);
+    
+    try {
+      // Use SimpleQR class for proper QR generation
+      if (typeof SimpleQR !== 'undefined') {
+        console.log('NYLA QR: Using SimpleQR generator');
+        
+        // Show loading state with QR placeholder and NYLA logo
+        qrCodeDiv.innerHTML = `
+          <div style="text-align: center;">
+            <div style="width: 180px; height: 180px; margin: 0 auto; background: #f7f9fa; border: 1px dashed #e1e8ed; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+              <!-- QR-like pattern placeholder -->
+              <div style="position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; background: #e1e8ed; opacity: 0.3; border-radius: 2px;"></div>
+              <div style="position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; background: #e1e8ed; opacity: 0.3; border-radius: 2px;"></div>
+              <div style="position: absolute; bottom: 8px; left: 8px; width: 20px; height: 20px; background: #e1e8ed; opacity: 0.3; border-radius: 2px;"></div>
+              
+              <!-- Center NYLA logo placeholder -->
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; background: white; border-radius: 8px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;">
+                <div style="background: linear-gradient(135deg, #FF8C42, #FF6B35); color: white; width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: Arial, sans-serif; font-weight: 900; font-size: 10px;">NYLA</div>
+              </div>
+              
+              <!-- Loading text below -->
+              <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); text-align: center; color: #657786;">
+                <div style="font-size: 12px; margin-bottom: 2px;">⏳ Generating...</div>
+                <div style="font-size: 9px; color: #8899a6;">QR Code</div>
+              </div>
+            </div>
+            <div style="margin-top: 10px; padding: 8px; background: #f7f9fa; border-radius: 4px; font-size: 10px; color: #8899a6; text-align: center; opacity: 0.7;">
+              <strong>📱 Scan or Click QR Code</strong><br>
+              <span style="color: #aab8c2;">Manual Link →</span>
+            </div>
+          </div>
+        `;
+        
+        // Generate QR code (async)
+        setTimeout(() => {
+          try {
+            // Clear loading state
+            qrCodeDiv.innerHTML = '';
+            
+            // Create QR element
+            const qrElement = SimpleQR.create(mobileURL, 180);
+            
+            // Add container styling (no blue border)
+            qrElement.style.margin = '0 auto';
+            qrElement.style.cursor = 'pointer';
+            qrElement.title = 'Click to open X.com compose';
+            qrElement.style.borderRadius = '4px';
+            
+            // Add click handler to open URL
+            qrElement.addEventListener('click', () => {
+              window.open(mobileURL, '_blank');
+            });
+            
+            // Add to container
+            qrCodeDiv.appendChild(qrElement);
+            
+            // Add URL display below QR code
+            const urlDisplay = document.createElement('div');
+            urlDisplay.style.cssText = `
+              margin-top: 10px; 
+              padding: 8px; 
+              background: #f7f9fa; 
+              border-radius: 4px; 
+              font-size: 10px; 
+              color: #657786; 
+              word-break: break-all;
+              text-align: center;
+            `;
+            urlDisplay.innerHTML = `
+              <strong>📱 Scan or Click QR Code</strong><br>
+              <a href="${mobileURL}" target="_blank" style="color: #1da1f2; text-decoration: none;">Manual Link →</a>
+            `;
+            qrCodeDiv.appendChild(urlDisplay);
+            
+            console.log('NYLA QR: SimpleQR code generated successfully');
+          } catch (innerError) {
+            console.error('NYLA QR: QR generation failed during async creation:', innerError);
+            qrCodeDiv.innerHTML = `
+              <div style="text-align: center; padding: 20px; color: #e0245e;">
+                <div style="font-size: 18px; margin-bottom: 10px;">⚠️</div>
+                <div style="font-size: 12px;">QR generation failed</div>
+                <a href="${mobileURL}" target="_blank" style="color: #1da1f2; font-size: 11px; display: inline-block; margin-top: 8px; text-decoration: underline;">Open manually →</a>
+              </div>
+            `;
+          }
+        }, 200); // Small delay to show loading state
+        
+      } else {
+        throw new Error('SimpleQR not available');
+      }
+      
+    } catch (error) {
+      console.error('NYLA QR: Local generation failed:', error);
+      
+      // Fallback: Show URL directly
+      qrCodeDiv.innerHTML = `
+        <div style="color: #657786; padding: 20px; text-align: center; border: 1px dashed #e1e8ed; border-radius: 4px;">
+          <p style="margin: 10px 0; font-weight: 600;">⚠️ QR Generation Failed</p>
+          <p style="font-size: 12px; margin: 10px 0;">Click the link below to open on mobile:</p>
+          <a href="${mobileURL}" target="_blank" style="color: #1da1f2; word-break: break-all; font-size: 11px; text-decoration: underline; display: inline-block; padding: 8px; background: #f0f8ff; border-radius: 4px; margin: 5px 0;">${mobileURL}</a>
+          <p style="font-size: 10px; margin: 10px 0; color: #8899a6;">Copy this link to your phone to compose the tweet</p>
+        </div>
+      `;
+    }
+  }
+  
+  function toggleQRMode() {
+    console.log('NYLA QR: Toggle clicked, current mode:', isQRMode ? 'QR' : 'Text');
+    isQRMode = !isQRMode;
+    console.log('NYLA QR: Switching to mode:', isQRMode ? 'QR' : 'Text');
+    
+    if (isQRMode) {
+      // Switch to QR mode
+      console.log('NYLA QR: Switching to QR mode');
+      commandPreview.style.display = 'none';
+      qrCodeContainer.style.display = 'block';
+      qrToggleBtn.classList.add('active');
+      qrToggleBtn.querySelector('.qr-text').textContent = 'Switch to Text';
+      qrToggleBtn.querySelector('.qr-icon').textContent = '💬';
+      
+      // Generate QR code with current command
+      const command = commandPreview.textContent;
+      console.log('NYLA QR: Command from preview:', command);
+      console.log('NYLA QR: Command preview is empty:', commandPreview.classList.contains('empty'));
+      
+      if (command && !commandPreview.classList.contains('empty')) {
+        console.log('NYLA QR: Generating QR code with command:', command);
+        // Add a small delay to ensure UI is ready
+        setTimeout(() => {
+          updateQRCode(command);
+        }, 100);
+      } else {
+        console.log('NYLA QR: No valid command to generate QR code');
+        qrCodeDiv.innerHTML = '<div style="color: #657786; padding: 20px; text-align: center;">Fill in the form to generate QR code</div>';
+      }
+    } else {
+      // Switch to text mode
+      console.log('NYLA QR: Switching to text mode');
+      commandPreview.style.display = 'block';
+      qrCodeContainer.style.display = 'none';
+      qrToggleBtn.classList.remove('active');
+      qrToggleBtn.querySelector('.qr-text').textContent = 'Switch to QR Code';
+      qrToggleBtn.querySelector('.qr-icon').textContent = '📱';
+    }
+  }
+  
+  // QR Toggle Button Event Listener
+  qrToggleBtn.addEventListener('click', toggleQRMode);
+  
   
   // Add auto @ symbol to recipient and save values
   recipientInput.addEventListener('input', function() {
