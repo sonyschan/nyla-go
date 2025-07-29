@@ -25,12 +25,14 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 
 ### 💫 **Core Transfer Features**
 - **Multi-Blockchain Support** - Choose from Solana (default), Ethereum, or Algorand networks
+- **QR Code Generation** - Generate scannable QR codes with official NYLA logo for mobile transfers
 - **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
 - **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
 - **Form Memory** - Remembers your previous inputs for convenience and speed
 - **Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
 - **Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom tokens
 - **Preview & Edit** - See exactly what command will be generated before sending
+- **Mobile-First Design** - Switch between text commands and QR codes for cross-platform transfers
 
 ## 📱 How It Works
 
@@ -39,7 +41,8 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 3. Fill in the recipient username, amount, and select cryptocurrency
 4. Choose your preferred blockchain (Solana, Ethereum, or Algorand)
 5. Review the generated command in the live preview
-6. Click "Send to X.com" to insert the command instantly
+6. **Desktop**: Click "Send to X.com" to insert the command instantly
+7. **Mobile**: Click "Switch to QR Code" and scan with your phone to open X.com mobile app
 
 ## 📝 Generated Commands
 
