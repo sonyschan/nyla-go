@@ -16,7 +16,8 @@
       "Bash(grep:*)",
       "Bash(sips:*)",
       "Bash(gh run view:*)",
-      "Bash(gh run list:*)"
+      "Bash(gh run list:*)",
+      "Bash(git tag:*)"
     ],
     "deny": []
   }
