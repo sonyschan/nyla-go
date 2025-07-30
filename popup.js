@@ -370,11 +370,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // Get extension version from manifest
   function updateAppVersion() {
     if (appVersionElement) {
-      // Get version from Chrome extension manifest
-      const manifestData = chrome.runtime.getManifest();
-      if (manifestData && manifestData.version) {
-        appVersionElement.textContent = `NYLA Go v${manifestData.version}`;
-        console.log('NYLA: Version updated to', manifestData.version);
+      try {
+        // Get version from Chrome extension manifest
+        const manifestData = chrome.runtime.getManifest();
+        if (manifestData && manifestData.version) {
+          appVersionElement.textContent = `NYLA Go v${manifestData.version}`;
+          console.log('NYLA: Version updated to', manifestData.version);
+        } else {
+          // Fallback to hardcoded version if manifest unavailable
+          appVersionElement.textContent = 'NYLA Go v0.7.4';
+          console.log('NYLA: Using fallback version 0.7.4');
+        }
+      } catch (error) {
+        // Fallback to hardcoded version if error occurs
+        appVersionElement.textContent = 'NYLA Go v0.7.4';
+        console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
   }
