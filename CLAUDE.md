@@ -53,8 +53,8 @@ This file contains important information for Claude to remember across sessions.
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v0.6.0
-- **Features**: PWA with video splash screen, mobile payment requests, QR code sharing, multi-blockchain support
+- **Latest Release**: v0.7.0
+- **Features**: PWA with improved UX, username persistence, automatic QR generation, streamlined interface
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
