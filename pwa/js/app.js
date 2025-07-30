@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveAmountInput = document.getElementById('receiveAmount');
   const receiveTokenSelect = document.getElementById('receiveToken');
   const receiveQrCode = document.getElementById('receiveQrCode');
-  const refreshQrButton = document.getElementById('refreshQrButton');
   const shareButton = document.getElementById('shareButton');
   const statusDiv = document.getElementById('status');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
@@ -132,17 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
     radio.addEventListener('change', generateReceiveQRCode);
   });
 
-  // Refresh QR button
-  refreshQrButton.addEventListener('click', function() {
-    this.classList.add('loading');
-    generateReceiveQRCode();
-    showStatus('QR Code refreshed!', 'success');
-    
-    setTimeout(() => {
-      this.classList.remove('loading');
-      hideStatus();
-    }, 2000);
-  });
 
   // Share functionality
   shareButton.addEventListener('click', async function() {
