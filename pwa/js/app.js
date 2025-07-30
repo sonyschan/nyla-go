@@ -16,12 +16,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const statusDiv = document.getElementById('status');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
   const qrInstructionText = document.getElementById('qrInstructionText');
+  const versionText = document.getElementById('versionText');
   
   // Tab Elements
   const tabButtons = document.querySelectorAll('.tab-button');
   const receiveTab = document.getElementById('receiveTab');
   const raidTab = document.getElementById('raidTab');
   const raidListItems = document.querySelectorAll('.raid-list-item');
+
+  // App version - will be dynamically determined
+  let APP_VERSION = '0.7.0';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -37,9 +41,42 @@ document.addEventListener('DOMContentLoaded', function() {
       receiveUsernameInput.value = savedUsername;
     }
     
+    // Update version text dynamically
+    updateVersionText();
+    
     setTimeout(() => {
       generateReceiveQRCode();
     }, 200);
+  }
+
+  // Get version from service worker cache or fallback to default
+  async function getAppVersion() {
+    try {
+      // Try to get version from service worker
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        // Check cache names to extract version
+        const cacheNames = await caches.keys();
+        const nylaCache = cacheNames.find(name => name.includes('nyla-go-pwa-v'));
+        if (nylaCache) {
+          const versionMatch = nylaCache.match(/v(\d+\.\d+\.\d+)/);
+          if (versionMatch) {
+            return versionMatch[1];
+          }
+        }
+      }
+    } catch (error) {
+      console.log('NYLA GO PWA: Could not get version from service worker, using default');
+    }
+    return APP_VERSION; // fallback to default
+  }
+
+  // Update version text in footer
+  async function updateVersionText() {
+    if (versionText) {
+      const version = await getAppVersion();
+      versionText.textContent = `NYLA Go v${version}`;
+      console.log('NYLA GO PWA: Version updated to', version);
+    }
   }
 
   // Generate X.com mobile URL for QR codes
