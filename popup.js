@@ -851,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const values = result.nylaFormValues;
             // Only use detected recipient - clear any saved recipient for fresh start
             recipientInput.value = detectedRecipient || '';
-            amountInput.value = values.amount || '';
+            amountInput.value = values.amount || '1';
             // Only set token if it exists in the current dropdown options
             const allTokens = [...defaultTokens, ...customTokens];
             if (allTokens.includes(values.token)) {
@@ -868,9 +868,11 @@ document.addEventListener('DOMContentLoaded', function() {
           } else if (detectedRecipient) {
             // If no saved values but we detected a recipient, use it
             recipientInput.value = detectedRecipient;
+            amountInput.value = '1';
           } else {
             // Clear recipient field for fresh start
             recipientInput.value = '';
+            amountInput.value = '1';
           }
           validateAndUpdateCommand();
         }).catch(err => {
@@ -893,7 +895,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const values = JSON.parse(saved);
         // Only use detected recipient - clear any saved recipient for fresh start
         recipientInput.value = detectedRecipient || '';
-        amountInput.value = values.amount || '';
+        amountInput.value = values.amount || '1';
         // Only set token if it exists in the current dropdown options
         const allTokens = [...defaultTokens, ...customTokens];
         if (allTokens.includes(values.token)) {
@@ -910,9 +912,11 @@ document.addEventListener('DOMContentLoaded', function() {
       } else if (detectedRecipient) {
         // If no saved values but we detected a recipient, use it
         recipientInput.value = detectedRecipient;
+        amountInput.value = '1';
       } else {
         // Clear recipient field for fresh start
         recipientInput.value = '';
+        amountInput.value = '1';
       }
       validateAndUpdateCommand();
     } catch (e) {
@@ -923,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Clear form and storage
   function clearForm() {
     recipientInput.value = '';
-    amountInput.value = '';
+    amountInput.value = '1';
     tokenSelect.selectedIndex = 0;
     
     // Clear from Chrome storage
