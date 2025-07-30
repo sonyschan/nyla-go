@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveAmountInput = document.getElementById('receiveAmount');
   const receiveTokenSelect = document.getElementById('receiveToken');
   const receiveQrCode = document.getElementById('receiveQrCode');
-  const refreshQrButton = document.getElementById('refreshQrButton');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
   
   // Debug QR elements
@@ -403,7 +402,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Update QR toggle button state
-    qrToggleBtn.disabled = !isValid || !recipient || !amount;
+    if (qrToggleBtn) {
+      qrToggleBtn.disabled = !isValid || !recipient || !amount;
+    }
     
     // Update QR code if in QR mode
     if (isQRMode && isValid && recipient && amount) {
@@ -428,7 +429,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('NYLA QR: Updating QR code with command:', command);
     
     // Clear existing QR code
-    qrCodeDiv.innerHTML = '';
+    if (qrCodeDiv) {
+      qrCodeDiv.innerHTML = '';
+    }
     
     // Generate the mobile URL
     const mobileURL = generateXMobileURL(command);
@@ -548,18 +551,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isQRMode) {
       // Switch to QR mode
       console.log('NYLA QR: Switching to QR mode');
-      commandPreview.style.display = 'none';
-      qrCodeContainer.style.display = 'block';
-      qrToggleBtn.classList.add('active');
-      qrToggleBtn.querySelector('.qr-text').textContent = 'Switch to Text';
-      qrToggleBtn.querySelector('.qr-icon').textContent = '💬';
+      if (commandPreview) commandPreview.style.display = 'none';
+      if (qrCodeContainer) qrCodeContainer.style.display = 'block';
+      if (qrToggleBtn) {
+        qrToggleBtn.classList.add('active');
+        const qrText = qrToggleBtn.querySelector('.qr-text');
+        const qrIcon = qrToggleBtn.querySelector('.qr-icon');
+        if (qrText) qrText.textContent = 'Switch to Text';
+        if (qrIcon) qrIcon.textContent = '💬';
+      }
       
       // Generate QR code with current command
-      const command = commandPreview.textContent;
+      const command = commandPreview ? commandPreview.textContent : '';
       console.log('NYLA QR: Command from preview:', command);
-      console.log('NYLA QR: Command preview is empty:', commandPreview.classList.contains('empty'));
+      console.log('NYLA QR: Command preview is empty:', commandPreview ? commandPreview.classList.contains('empty') : true);
       
-      if (command && !commandPreview.classList.contains('empty')) {
+      if (command && commandPreview && !commandPreview.classList.contains('empty')) {
         console.log('NYLA QR: Generating QR code with command:', command);
         // Add a small delay to ensure UI is ready
         setTimeout(() => {
@@ -567,21 +574,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 100);
       } else {
         console.log('NYLA QR: No valid command to generate QR code');
-        qrCodeDiv.innerHTML = '<div style="color: #657786; padding: 20px; text-align: center;">Fill in the form to generate QR code</div>';
+        if (qrCodeDiv) {
+          qrCodeDiv.innerHTML = '<div style="color: #657786; padding: 20px; text-align: center;">Fill in the form to generate QR code</div>';
+        }
       }
     } else {
       // Switch to text mode
       console.log('NYLA QR: Switching to text mode');
-      commandPreview.style.display = 'block';
-      qrCodeContainer.style.display = 'none';
-      qrToggleBtn.classList.remove('active');
-      qrToggleBtn.querySelector('.qr-text').textContent = 'Switch to QR Code';
-      qrToggleBtn.querySelector('.qr-icon').textContent = '📱';
+      if (commandPreview) commandPreview.style.display = 'block';
+      if (qrCodeContainer) qrCodeContainer.style.display = 'none';
+      if (qrToggleBtn) {
+        qrToggleBtn.classList.remove('active');
+        const qrText = qrToggleBtn.querySelector('.qr-text');
+        const qrIcon = qrToggleBtn.querySelector('.qr-icon');
+        if (qrText) qrText.textContent = 'Switch to QR Code';
+        if (qrIcon) qrIcon.textContent = '📱';
+      }
     }
   }
   
   // QR Toggle Button Event Listener
-  qrToggleBtn.addEventListener('click', toggleQRMode);
+  if (qrToggleBtn) {
+    qrToggleBtn.addEventListener('click', toggleQRMode);
+  }
   
   
   // Add auto @ symbol to recipient and save values
@@ -678,6 +693,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Receive QR Code generation  
   function generateReceiveQRCode() {
+    if (!receiveUsernameInput || !receiveAmountInput || !receiveTokenSelect || !receiveQrCode) {
+      console.log('NYLA: Receive elements not found, skipping QR generation');
+      return;
+    }
+    
     const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
     const amount = receiveAmountInput.value || '1';
     const token = receiveTokenSelect.value || 'NYLA';
