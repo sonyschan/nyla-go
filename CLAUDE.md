@@ -53,24 +53,30 @@ This file contains important information for Claude to remember across sessions.
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v0.7.1
-- **Features**: PWA with Raid tab, extension UI improvements, dynamic versioning, enhanced UX
+- **Latest Release**: v0.7.3
+- **Features**: PWA with Raid tab, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
 - `popup.html` - Main UI with dark theme
-- `popup.js` - Core functionality and tab switching
+- `popup.js` - Core functionality and tab switching (with comprehensive null checks)
 - `qr-simple.js` - QR code generation library
-- `content.js` - X.com page integration
+- `content.js` - X.com page integration with enhanced debugging
 - `README.md` - Main documentation
 - `SECURITY.md` - Security documentation
 - `privacy_policy.md` - Privacy policy
+- `pwa/` - Progressive Web App directory
+  - `pwa/index.html` - PWA main interface with video splash screen
+  - `pwa/js/app.js` - PWA functionality with localStorage
+  - `pwa/video/NYLAGo-v2.mp4` - Updated splash video
 
 ### Architecture
 - **Three-tab system**: Send | Receive | Raid
-- **Dark theme**: Black background with orange (#FF6B35) accents
+- **Dark theme**: Black background with orange (#FF6B35) accents, gray (#888888) version text
 - **QR generation**: Uses SimpleQR with NYLA logo integration
-- **Web App ready**: Receive tab structured for PWA extraction
+- **Progressive Web App**: Full PWA with splash video, offline functionality, home screen installation
+- **Extension**: Chrome extension with comprehensive error handling and null checks
+- **Dual deployment**: Extension and PWA versions with shared functionality
 
 ### Testing Commands
 - Run lint: `npm run lint` (if available)
@@ -82,8 +88,10 @@ This file contains important information for Claude to remember across sessions.
 ### UI/UX Guidelines
 - Maintain dark theme consistency
 - Use orange (#FF6B35) for primary actions and accents
+- Use gray (#888888) for version text and subtle elements
 - Keep QR codes prominent in receive tab
 - Ensure mobile-first design principles
+- Video splash screen duration: 4+ seconds for PWA
 
 ### Security Best Practices
 - Never expose secrets or private keys
@@ -92,7 +100,17 @@ This file contains important information for Claude to remember across sessions.
 - Clear disclosure of external services (QR generation, IPFS)
 
 ### Code Conventions
+- **ALWAYS add null checks** for DOM elements before use
 - Follow existing patterns in popup.js
 - Maintain tab switching logic consistency
 - Use TodoWrite tool for complex multi-step tasks
 - Keep functions modular for easy testing
+- Avoid duplicate variable declarations
+- Test extension functionality after JavaScript changes
+
+### Recent Fixes (v0.7.2-v0.7.3)
+- **JavaScript Error Handling**: Comprehensive null checks added to prevent console errors
+- **Extension Tab Switching**: Fixed broken tab functionality with proper DOM element validation
+- **PWA Splash Video**: Updated to NYLAGo-v2.mp4 for improved user experience
+- **Version Text Styling**: Consistent gray color across extension and PWA
+- **Username Detection**: Enhanced debugging for X.com integration
