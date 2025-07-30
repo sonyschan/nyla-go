@@ -31,6 +31,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const qrCodeDiv = document.getElementById('qrCode');
   let qrCodeInstance = null;
   let isQRMode = false;
+
+  // Tab elements
+  const actionTabs = document.querySelectorAll('.action-tab');
+  const sendSection = document.getElementById('sendSection');
+  const receiveSection = document.getElementById('receiveSection');
+  const raidSection = document.getElementById('raidSection');
+  const raidListItems = document.querySelectorAll('.raid-list-item');
+
+  // Receive elements
+  const receiveUsernameInput = document.getElementById('receiveUsername');
+  const receiveAmountInput = document.getElementById('receiveAmount');
+  const receiveTokenSelect = document.getElementById('receiveToken');
+  const receiveQrCode = document.getElementById('receiveQrCode');
+  const refreshQrButton = document.getElementById('refreshQrButton');
+  const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
   
   // Debug QR elements
   console.log('NYLA QR: Elements found:', {
@@ -45,6 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load saved values and custom tokens from storage
   loadSavedValues();
+  
+  // Generate initial receive QR code with default values
+  setTimeout(() => {
+    if (receiveQrCode) {
+      generateReceiveQRCode();
+    }
+  }, 500);
   
   // Token Management Functions
   function updateTokenDropdown() {
@@ -564,6 +586,139 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  // Tab switching functionality
+  actionTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      
+      // Remove active class from all tabs and content
+      actionTabs.forEach(t => t.classList.remove('active'));
+      sendSection.classList.remove('active');
+      receiveSection.classList.remove('active');
+      raidSection.classList.remove('active');
+      
+      // Add active class to clicked tab
+      this.classList.add('active');
+      
+      // Hide all sections first
+      sendSection.style.display = 'none';
+      receiveSection.style.display = 'none';
+      raidSection.style.display = 'none';
+      
+      // Show corresponding content
+      if (tabName === 'send') {
+        sendSection.classList.add('active');
+        sendSection.style.display = 'block';
+      } else if (tabName === 'receive') {
+        receiveSection.classList.add('active');
+        receiveSection.style.display = 'block';
+        // Generate initial QR code when receive tab is opened
+        generateReceiveQRCode();
+      } else if (tabName === 'raid') {
+        raidSection.classList.add('active');
+        raidSection.style.display = 'block';
+      }
+    });
+  });
+
+  // Raid list item click handlers
+  raidListItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const listUrl = this.dataset.url;
+      const listName = this.querySelector('.list-name').textContent;
+      
+      // Open the X.com list in a new tab
+      chrome.tabs.create({ 
+        url: listUrl,
+        active: true  // Focus the new tab
+      });
+      
+      // Show feedback
+      showStatus(`Opened ${listName} in new tab`, 'success');
+      
+      // Hide status after 2 seconds
+      setTimeout(() => {
+        hideStatus();
+      }, 2000);
+    });
+  });
+
+  // Generate X.com mobile URL for QR codes
+  function generateXMobileURL(command) {
+    const encodedCommand = encodeURIComponent(command);
+    return `https://x.com/compose/post?text=${encodedCommand}`;
+  }
+
+  // Receive QR Code generation  
+  function generateReceiveQRCode() {
+    const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
+    const amount = receiveAmountInput.value || '1';
+    const token = receiveTokenSelect.value || 'NYLA';
+    
+    // Get selected blockchain
+    let blockchain = 'Solana'; // default
+    receiveBlockchainRadios.forEach(radio => {
+      if (radio.checked) {
+        blockchain = radio.value;
+      }
+    });
+    
+    // Generate command for QR code (same format as send)
+    let command;
+    if (blockchain === 'Solana') {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${username}`;
+    } else {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${username} ${blockchain}`;
+    }
+    
+    // Generate mobile URL
+    const mobileURL = generateXMobileURL(command);
+    
+    // Clear existing QR code
+    receiveQrCode.innerHTML = '';
+    
+    // Add loading placeholder
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = `
+      width: 180px;
+      height: 180px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 14px;
+    `;
+    loadingDiv.textContent = 'Generating...';
+    receiveQrCode.appendChild(loadingDiv);
+    
+    // Generate QR code after small delay
+    setTimeout(() => {
+      receiveQrCode.innerHTML = '';
+      const qrElement = SimpleQR.create(mobileURL, 180);
+      receiveQrCode.appendChild(qrElement);
+    }, 100);
+  }
+
+  // Receive form event listeners
+  receiveUsernameInput.addEventListener('input', generateReceiveQRCode);
+  receiveAmountInput.addEventListener('input', generateReceiveQRCode);
+  receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
+  
+  receiveBlockchainRadios.forEach(radio => {
+    radio.addEventListener('change', generateReceiveQRCode);
+  });
+
+  // Refresh QR button
+  refreshQrButton.addEventListener('click', function() {
+    generateReceiveQRCode();
+    showStatus('QR Code refreshed!', 'success');
+    setTimeout(() => {
+      hideStatus();
+    }, 2000);
+  });
+
   // Handle send button click
   sendButton.addEventListener('click', async function() {
     const command = commandPreview.textContent;
