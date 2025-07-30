@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const raidSection = document.getElementById('raidSection');
   const raidListItems = document.querySelectorAll('.raid-list-item');
   const appVersionElement = document.getElementById('appVersion');
-  const developerCredit = document.getElementById('developerCredit');
 
   // Receive elements
   const receiveUsernameInput = document.getElementById('receiveUsername');
@@ -47,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveTokenSelect = document.getElementById('receiveToken');
   const receiveQrCode = document.getElementById('receiveQrCode');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
+  const refreshQrButton = document.getElementById('refreshQrButton');
   
   // Debug QR elements
   console.log('NYLA QR: Elements found:', {
@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Token Management Functions
   function updateTokenDropdown() {
+    if (!tokenSelect) return;
+    
     const currentValue = tokenSelect.value;
     const allTokens = [...defaultTokens, ...customTokens];
     
@@ -154,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function updateCustomTokensList() {
+    if (!customTokensList || !noCustomTokens) return;
+    
     console.log('NYLA: Updating custom tokens list. Current tokens:', customTokens);
     
     // Always clear existing items first
@@ -200,26 +204,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const cleanToken = tokenSymbol.trim().toUpperCase();
     
     // Clear previous errors
-    tokenError.textContent = '';
+    if (tokenError) {
+      tokenError.textContent = '';
+    }
     
     if (!cleanToken) {
-      tokenError.textContent = 'Please enter a token symbol';
+      if (tokenError) tokenError.textContent = 'Please enter a token symbol';
       return false;
     }
     
     if (cleanToken.length > 10) {
-      tokenError.textContent = 'Token symbol must be 10 characters or less';
+      if (tokenError) tokenError.textContent = 'Token symbol must be 10 characters or less';
       return false;
     }
     
     if (!/^[A-Z0-9]+$/.test(cleanToken)) {
-      tokenError.textContent = 'Token symbol can only contain letters and numbers';
+      if (tokenError) tokenError.textContent = 'Token symbol can only contain letters and numbers';
       return false;
     }
     
     // Check if token already exists (in default or custom tokens)
     if (defaultTokens.includes(cleanToken) || customTokens.includes(cleanToken)) {
-      tokenError.textContent = 'Token already exists';
+      if (tokenError) tokenError.textContent = 'Token already exists';
       return false;
     }
     
@@ -230,7 +236,9 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCustomTokensList();
     
     // Clear input
-    newTokenInput.value = '';
+    if (newTokenInput) {
+      newTokenInput.value = '';
+    }
     
     return true;
   }
@@ -250,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
       updateCustomTokensList();
       
       // If the removed token was selected in the dropdown, switch to default
-      if (tokenSelect.value === tokenSymbol) {
+      if (tokenSelect && tokenSelect.value === tokenSymbol) {
         tokenSelect.value = defaultTokens[0]; // Switch to NYLA
         validateAndUpdateCommand(); // Update command preview
       }
@@ -259,42 +267,64 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Modal Management
   function openModal() {
-    modalOverlay.style.display = 'flex';
-    newTokenInput.focus();
+    if (modalOverlay) {
+      modalOverlay.style.display = 'flex';
+    }
+    if (newTokenInput) {
+      newTokenInput.focus();
+    }
   }
   
   function closeModal() {
-    modalOverlay.style.display = 'none';
-    tokenError.textContent = '';
-    newTokenInput.value = '';
+    if (modalOverlay) {
+      modalOverlay.style.display = 'none';
+    }
+    if (tokenError) {
+      tokenError.textContent = '';
+    }
+    if (newTokenInput) {
+      newTokenInput.value = '';
+    }
   }
   
   // Event Listeners for Token Management
-  manageTokensBtn.addEventListener('click', openModal);
-  closeModalBtn.addEventListener('click', closeModal);
+  if (manageTokensBtn) {
+    manageTokensBtn.addEventListener('click', openModal);
+  }
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', closeModal);
+  }
   
-  modalOverlay.addEventListener('click', function(e) {
-    if (e.target === modalOverlay) {
-      closeModal();
-    }
-  });
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+  }
   
-  addTokenBtn.addEventListener('click', function() {
-    addCustomToken(newTokenInput.value);
-  });
+  if (addTokenBtn) {
+    addTokenBtn.addEventListener('click', function() {
+      addCustomToken(newTokenInput ? newTokenInput.value : '');
+    });
+  }
   
-  newTokenInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      addCustomToken(newTokenInput.value);
-    }
-  });
-  
-  newTokenInput.addEventListener('input', function() {
-    // Clear error when user starts typing
-    tokenError.textContent = '';
-    // Auto-uppercase
-    this.value = this.value.toUpperCase();
-  });
+  if (newTokenInput) {
+    newTokenInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        addCustomToken(this.value);
+      }
+    });
+    
+    newTokenInput.addEventListener('input', function() {
+      // Clear error when user starts typing
+      if (tokenError) {
+        tokenError.textContent = '';
+      }
+      // Auto-uppercase
+      this.value = this.value.toUpperCase();
+    });
+  }
   
   // Initialize custom tokens
   loadCustomTokens();
@@ -313,7 +343,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Auto-fill recipient with developer's X username
-      recipientInput.value = '@h2crypto_eth';
+      if (recipientInput) {
+        recipientInput.value = '@h2crypto_eth';
+      }
       
       // Update command preview and validation
       validateAndUpdateCommand();
@@ -350,27 +382,37 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Form validation and command generation
   function validateAndUpdateCommand() {
+    if (!recipientInput || !amountInput || !tokenSelect) {
+      return;
+    }
+    
     const recipient = recipientInput.value.trim();
     const amount = amountInput.value.trim();
     const token = tokenSelect.value;
     
     // Get selected blockchain
-    const selectedBlockchain = document.querySelector('input[name="blockchain"]:checked').value;
+    const blockchainRadio = document.querySelector('input[name="blockchain"]:checked');
+    if (!blockchainRadio) return;
+    const selectedBlockchain = blockchainRadio.value;
     
     let isValid = true;
     
     // Clear previous errors
-    recipientError.textContent = '';
-    amountError.textContent = '';
+    if (recipientError) {
+      recipientError.textContent = '';
+    }
+    if (amountError) {
+      amountError.textContent = '';
+    }
     
     // Validate recipient
     if (!recipient) {
       isValid = false;
     } else if (!recipient.startsWith('@')) {
-      recipientError.textContent = 'Username must start with @';
+      if (recipientError) recipientError.textContent = 'Username must start with @';
       isValid = false;
     } else if (recipient.length < 2) {
-      recipientError.textContent = 'Please enter a valid username';
+      if (recipientError) recipientError.textContent = 'Please enter a valid username';
       isValid = false;
     }
     
@@ -378,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!amount) {
       isValid = false;
     } else if (isNaN(amount) || parseFloat(amount) <= 0) {
-      amountError.textContent = 'Please enter a valid amount';
+      if (amountError) amountError.textContent = 'Please enter a valid amount';
       isValid = false;
     }
     
@@ -392,13 +434,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // Non-Solana: Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME] [BlockChain]
         command = `Hey @AgentNyla transfer ${amount} $${token} ${recipient} ${selectedBlockchain}`;
       }
-      commandPreview.textContent = command;
-      commandPreview.classList.remove('empty');
-      sendButton.disabled = false;
+      if (commandPreview) {
+        commandPreview.textContent = command;
+        commandPreview.classList.remove('empty');
+      }
+      if (sendButton) {
+        sendButton.disabled = false;
+      }
     } else {
-      commandPreview.textContent = 'Fill in the fields above to see the command';
-      commandPreview.classList.add('empty');
-      sendButton.disabled = true;
+      if (commandPreview) {
+        commandPreview.textContent = 'Fill in the fields above to see the command';
+        commandPreview.classList.add('empty');
+      }
+      if (sendButton) {
+        sendButton.disabled = true;
+      }
     }
     
     // Update QR toggle button state
@@ -407,7 +457,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Update QR code if in QR mode
-    if (isQRMode && isValid && recipient && amount) {
+    if (isQRMode && isValid && recipient && amount && commandPreview) {
+      const command = commandPreview.textContent;
       updateQRCode(command);
     }
   }
@@ -600,90 +651,118 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   // Add auto @ symbol to recipient and save values
-  recipientInput.addEventListener('input', function() {
-    let value = this.value;
-    if (value && !value.startsWith('@')) {
-      this.value = '@' + value;
-    }
-    validateAndUpdateCommand();
-    saveValues();
-  });
-  
-  // Add event listeners for validation and saving
-  amountInput.addEventListener('input', function() {
-    validateAndUpdateCommand();
-    saveValues();
-  });
-  
-  tokenSelect.addEventListener('change', function() {
-    validateAndUpdateCommand();
-    saveValues();
-  });
-  
-  // Add event listeners for blockchain radio buttons
-  blockchainRadios.forEach(radio => {
-    radio.addEventListener('change', function() {
+  if (recipientInput) {
+    recipientInput.addEventListener('input', function() {
+      let value = this.value;
+      if (value && !value.startsWith('@')) {
+        this.value = '@' + value;
+      }
       validateAndUpdateCommand();
       saveValues();
     });
-  });
+  }
   
-  // Tab switching functionality
-  actionTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-      const tabName = this.dataset.tab;
-      
-      // Remove active class from all tabs and content
-      actionTabs.forEach(t => t.classList.remove('active'));
-      sendSection.classList.remove('active');
-      receiveSection.classList.remove('active');
-      raidSection.classList.remove('active');
-      
-      // Add active class to clicked tab
-      this.classList.add('active');
-      
-      // Hide all sections first
-      sendSection.style.display = 'none';
-      receiveSection.style.display = 'none';
-      raidSection.style.display = 'none';
-      
-      // Show corresponding content
-      if (tabName === 'send') {
-        sendSection.classList.add('active');
-        sendSection.style.display = 'block';
-      } else if (tabName === 'receive') {
-        receiveSection.classList.add('active');
-        receiveSection.style.display = 'block';
-        // Generate initial QR code when receive tab is opened
-        generateReceiveQRCode();
-      } else if (tabName === 'raid') {
-        raidSection.classList.add('active');
-        raidSection.style.display = 'block';
+  // Add event listeners for validation and saving
+  if (amountInput) {
+    amountInput.addEventListener('input', function() {
+      validateAndUpdateCommand();
+      saveValues();
+    });
+  }
+  
+  if (tokenSelect) {
+    tokenSelect.addEventListener('change', function() {
+      validateAndUpdateCommand();
+      saveValues();
+    });
+  }
+  
+  // Add event listeners for blockchain radio buttons
+  if (blockchainRadios && blockchainRadios.length > 0) {
+    blockchainRadios.forEach(radio => {
+      if (radio) {
+        radio.addEventListener('change', function() {
+          validateAndUpdateCommand();
+          saveValues();
+        });
       }
     });
-  });
+  }
+  
+  // Tab switching functionality
+  if (actionTabs && actionTabs.length > 0) {
+    actionTabs.forEach(tab => {
+      if (tab) {
+        tab.addEventListener('click', function() {
+          const tabName = this.dataset.tab;
+          
+          // Remove active class from all tabs and content
+          actionTabs.forEach(t => {
+            if (t) t.classList.remove('active');
+          });
+          if (sendSection) sendSection.classList.remove('active');
+          if (receiveSection) receiveSection.classList.remove('active');
+          if (raidSection) raidSection.classList.remove('active');
+          
+          // Add active class to clicked tab
+          this.classList.add('active');
+          
+          // Hide all sections first
+          if (sendSection) sendSection.style.display = 'none';
+          if (receiveSection) receiveSection.style.display = 'none';
+          if (raidSection) raidSection.style.display = 'none';
+          
+          // Show corresponding content
+          if (tabName === 'send') {
+            if (sendSection) {
+              sendSection.classList.add('active');
+              sendSection.style.display = 'block';
+            }
+          } else if (tabName === 'receive') {
+            if (receiveSection) {
+              receiveSection.classList.add('active');
+              receiveSection.style.display = 'block';
+              // Generate initial QR code when receive tab is opened
+              generateReceiveQRCode();
+            }
+          } else if (tabName === 'raid') {
+            if (raidSection) {
+              raidSection.classList.add('active');
+              raidSection.style.display = 'block';
+            }
+          }
+        });
+      }
+    });
+  }
 
   // Raid list item click handlers
-  raidListItems.forEach(item => {
-    item.addEventListener('click', function() {
-      const listUrl = this.dataset.url;
-      const listName = this.querySelector('.list-name').textContent;
+  if (raidListItems && raidListItems.length > 0) {
+    raidListItems.forEach(item => {
+      if (item) {
+        item.addEventListener('click', function() {
+          const listUrl = this.dataset.url;
+          const listNameElement = this.querySelector('.list-name');
+          const listName = listNameElement ? listNameElement.textContent : 'List';
+          
+          // Open the X.com list in a new tab
+          chrome.tabs.create({ 
+            url: listUrl,
+            active: true  // Focus the new tab
+          });
+          
+          // Show feedback
+          showStatus(`Opened ${listName} in new tab`, 'success');
       
-      // Open the X.com list in a new tab
-      chrome.tabs.create({ 
-        url: listUrl,
-        active: true  // Focus the new tab
-      });
-      
-      // Show feedback
-      showStatus(`Opened ${listName} in new tab`, 'success');
-      
-      // Hide status after 2 seconds
-      setTimeout(() => {
-        hideStatus();
-      }, 2000);
+          
+          // Hide status after 2 seconds
+          setTimeout(() => {
+            hideStatus();
+          }, 2000);
+        });
+      }
     });
-  });
+  }
 
   // Generate X.com mobile URL for QR codes
   function generateXMobileURL(command) {
@@ -749,26 +828,40 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Receive form event listeners
-  receiveUsernameInput.addEventListener('input', generateReceiveQRCode);
-  receiveAmountInput.addEventListener('input', generateReceiveQRCode);
-  receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
+  if (receiveUsernameInput) {
+    receiveUsernameInput.addEventListener('input', generateReceiveQRCode);
+  }
+  if (receiveAmountInput) {
+    receiveAmountInput.addEventListener('input', generateReceiveQRCode);
+  }
+  if (receiveTokenSelect) {
+    receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
+  }
   
-  receiveBlockchainRadios.forEach(radio => {
-    radio.addEventListener('change', generateReceiveQRCode);
-  });
+  if (receiveBlockchainRadios && receiveBlockchainRadios.length > 0) {
+    receiveBlockchainRadios.forEach(radio => {
+      if (radio) {
+        radio.addEventListener('change', generateReceiveQRCode);
+      }
+    });
+  }
 
   // Refresh QR button
-  refreshQrButton.addEventListener('click', function() {
-    generateReceiveQRCode();
-    showStatus('QR Code refreshed!', 'success');
-    setTimeout(() => {
-      hideStatus();
-    }, 2000);
-  });
+  if (refreshQrButton) {
+    refreshQrButton.addEventListener('click', function() {
+      generateReceiveQRCode();
+      showStatus('QR Code refreshed!', 'success');
+      setTimeout(() => {
+        hideStatus();
+      }, 2000);
+    });
+  }
 
   // Handle send button click
-  sendButton.addEventListener('click', async function() {
-    const command = commandPreview.textContent;
+  if (sendButton) {
+    sendButton.addEventListener('click', async function() {
+      if (!commandPreview) return;
+      const command = commandPreview.textContent;
     
     try {
       // Check if we're on X.com
@@ -797,26 +890,36 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Error sending command:', error);
       showStatus('Error: Make sure you are on X.com and refresh the page', 'error');
     }
-  });
+    });
+  }
   
   function showStatus(message, type) {
-    statusDiv.textContent = message;
-    statusDiv.className = `status ${type}`;
-    statusDiv.style.display = 'block';
+    if (statusDiv) {
+      statusDiv.textContent = message;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+    }
   }
   
   function hideStatus() {
-    statusDiv.style.display = 'none';
+    if (statusDiv) {
+      statusDiv.style.display = 'none';
+    }
   }
   
   // Save form values to storage
   function saveValues() {
+    if (!amountInput || !tokenSelect) return;
+    
+    const blockchainRadio = document.querySelector('input[name="blockchain"]:checked');
+    if (!blockchainRadio) return;
+    
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
       const values = {
         // Don't save recipient - let it reset each time for safety
         amount: amountInput.value,
         token: tokenSelect.value,
-        blockchain: document.querySelector('input[name="blockchain"]:checked').value
+        blockchain: blockchainRadio.value
       };
       chrome.storage.local.set({ nylaFormValues: values }).catch(err => {
         console.log('Storage save failed:', err);
@@ -834,7 +937,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // Don't save recipient - let it reset each time for safety
           amount: amountInput.value,
           token: tokenSelect.value,
-          blockchain: document.querySelector('input[name="blockchain"]:checked').value
+          blockchain: blockchainRadio.value
         };
         localStorage.setItem('nylaFormValues', JSON.stringify(values));
       } catch (e) {
@@ -870,14 +973,20 @@ document.addEventListener('DOMContentLoaded', function() {
           if (result.nylaFormValues) {
             const values = result.nylaFormValues;
             // Only use detected recipient - clear any saved recipient for fresh start
-            recipientInput.value = detectedRecipient || '';
-            amountInput.value = values.amount || '1';
+            if (recipientInput) {
+              recipientInput.value = detectedRecipient || '';
+            }
+            if (amountInput) {
+              amountInput.value = values.amount || '1';
+            }
             // Only set token if it exists in the current dropdown options
-            const allTokens = [...defaultTokens, ...customTokens];
-            if (allTokens.includes(values.token)) {
-              tokenSelect.value = values.token;
-            } else {
-              tokenSelect.value = defaultTokens[0]; // Default to NYLA
+            if (tokenSelect) {
+              const allTokens = [...defaultTokens, ...customTokens];
+              if (allTokens.includes(values.token)) {
+                tokenSelect.value = values.token;
+              } else {
+                tokenSelect.value = defaultTokens[0]; // Default to NYLA
+              }
             }
             // Set blockchain selection (default to Solana if not saved)
             const savedBlockchain = values.blockchain || 'Solana';
@@ -887,12 +996,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           } else if (detectedRecipient) {
             // If no saved values but we detected a recipient, use it
-            recipientInput.value = detectedRecipient;
-            amountInput.value = '1';
+            if (recipientInput) {
+              recipientInput.value = detectedRecipient;
+            }
+            if (amountInput) {
+              amountInput.value = '1';
+            }
           } else {
             // Clear recipient field for fresh start
-            recipientInput.value = '';
-            amountInput.value = '1';
+            if (recipientInput) {
+              recipientInput.value = '';
+            }
+            if (amountInput) {
+              amountInput.value = '1';
+            }
           }
           validateAndUpdateCommand();
         }).catch(err => {
@@ -914,14 +1031,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (saved) {
         const values = JSON.parse(saved);
         // Only use detected recipient - clear any saved recipient for fresh start
-        recipientInput.value = detectedRecipient || '';
-        amountInput.value = values.amount || '1';
+        if (recipientInput) {
+          recipientInput.value = detectedRecipient || '';
+        }
+        if (amountInput) {
+          amountInput.value = values.amount || '1';
+        }
         // Only set token if it exists in the current dropdown options
-        const allTokens = [...defaultTokens, ...customTokens];
-        if (allTokens.includes(values.token)) {
-          tokenSelect.value = values.token;
-        } else {
-          tokenSelect.value = defaultTokens[0]; // Default to NYLA
+        if (tokenSelect) {
+          const allTokens = [...defaultTokens, ...customTokens];
+          if (allTokens.includes(values.token)) {
+            tokenSelect.value = values.token;
+          } else {
+            tokenSelect.value = defaultTokens[0]; // Default to NYLA
+          }
         }
         // Set blockchain selection (default to Solana if not saved)
         const savedBlockchain = values.blockchain || 'Solana';
@@ -931,12 +1054,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } else if (detectedRecipient) {
         // If no saved values but we detected a recipient, use it
-        recipientInput.value = detectedRecipient;
-        amountInput.value = '1';
+        if (recipientInput) {
+          recipientInput.value = detectedRecipient;
+        }
+        if (amountInput) {
+          amountInput.value = '1';
+        }
       } else {
         // Clear recipient field for fresh start
-        recipientInput.value = '';
-        amountInput.value = '1';
+        if (recipientInput) {
+          recipientInput.value = '';
+        }
+        if (amountInput) {
+          amountInput.value = '1';
+        }
       }
       validateAndUpdateCommand();
     } catch (e) {
@@ -946,9 +1077,15 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Clear form and storage
   function clearForm() {
-    recipientInput.value = '';
-    amountInput.value = '1';
-    tokenSelect.selectedIndex = 0;
+    if (recipientInput) {
+      recipientInput.value = '';
+    }
+    if (amountInput) {
+      amountInput.value = '1';
+    }
+    if (tokenSelect) {
+      tokenSelect.selectedIndex = 0;
+    }
     
     // Clear from Chrome storage
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
