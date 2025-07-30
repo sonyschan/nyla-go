@@ -96,7 +96,14 @@
 .splash-tagline {
   font-size: 16px;
   color: #cccccc;
+  margin-bottom: 8px;
+}
+
+.splash-powered {
+  font-size: 14px;
+  color: #FF6B35;
   margin-bottom: 30px;
+  font-weight: 600;
 }
 
 .splash-loading {
