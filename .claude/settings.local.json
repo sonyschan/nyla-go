@@ -12,7 +12,11 @@
       "Bash(git rm:*)",
       "Bash(ls:*)",
       "Bash(mkdir:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(grep:*)",
+      "Bash(sips:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)"
     ],
     "deny": []
   }
