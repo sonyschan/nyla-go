@@ -1,15 +1,16 @@
 // NYLA GO PWA - Service Worker
 
-const CACHE_NAME = 'nyla-go-pwa-v0.7.1';
+const CACHE_NAME = 'nyla-go-pwa-v0.7.4';
 const urlsToCache = [
   '/nyla-go/',
   '/nyla-go/index.html',
   '/nyla-go/css/styles.css',
   '/nyla-go/css/splash.css',
+  '/nyla-go/css/tabs.css',
   '/nyla-go/js/app.js',
   '/nyla-go/lib/qr-simple.js',
   '/nyla-go/manifest.json',
-  '/nyla-go/video/NYLAGo.mp4',
+  '/nyla-go/video/NYLAGo-v2.mp4',
   '/nyla-go/icons/icon-192.png',
   '/nyla-go/icons/icon-512.png',
   '/nyla-go/favicon-16.png',
