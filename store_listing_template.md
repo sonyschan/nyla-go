@@ -5,7 +5,7 @@
 - **Summary**: Simplify NYLA cryptocurrency transfers on X.com with QR codes
 - **Category**: Productivity
 - **Language**: English
-- **Version**: 0.4.0
+- **Version**: 0.5.0
 
 ## Store Description
 
@@ -93,7 +93,7 @@ Supports NYLA, SOL, ETH, USDC, USDT and custom tokens across multiple blockchain
 
 ## Submission Checklist
 
-- [x] Extension package created (nyla-go-v0.4.0.zip)
+- [x] Extension package created (nyla-go-v0.5.0.zip)
 - [x] All icons generated and included
 - [x] Privacy policy updated for QR Code feature
 - [x] Manifest.json properly configured with new permissions
@@ -108,12 +108,12 @@ Supports NYLA, SOL, ETH, USDC, USDT and custom tokens across multiple blockchain
 **Next Steps:**
 1. Take screenshots showing QR Code feature and NYLA logo integration
 2. Register Chrome Web Store Developer account (if not done)
-3. Upload nyla-go-v0.4.0.zip and configure listing
-4. Highlight QR Code and mobile features in store listing
+3. Upload nyla-go-v0.5.0.zip and configure listing
+4. Highlight Send/Receive tabs and dark theme in store listing
 5. Submit for review (1-7 days typical review time)
 
-**🎯 Marketing Highlights for v0.4.0:**
-- **Mobile-First Design**: QR codes for seamless mobile transfers
-- **Official NYLA Branding**: Logo integration in QR codes
-- **Cross-Platform**: Works on desktop and mobile
-- **Professional UX**: Loading states and smooth transitions
+**🎯 Marketing Highlights for v0.5.0:**
+- **Send/Receive Tabs**: Complete payment workflow system
+- **Professional Dark Theme**: Modern UI with orange brand colors
+- **QR-First Receive**: Instant payment request generation
+- **Web App Ready**: Architecture prepared for PWA deployment

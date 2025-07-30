@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NYLA Go",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Simplify NYLA cryptocurrency transfers on X.com with an intuitive interface. Generate commands without complexity.",
   "author": "@h2crypto_eth",
   "homepage_url": "https://github.com/sonyschan/nyla-go",
@@ -24,7 +24,8 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "host_permissions": [
     "https://x.com/*",
