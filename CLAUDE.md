@@ -53,8 +53,8 @@ This file contains important information for Claude to remember across sessions.
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v0.7.0
-- **Features**: PWA with improved UX, username persistence, automatic QR generation, streamlined interface
+- **Latest Release**: v0.7.1
+- **Features**: PWA with Raid tab, extension UI improvements, dynamic versioning, enhanced UX
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
