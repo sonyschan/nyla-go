@@ -2,19 +2,19 @@
 
 const CACHE_NAME = 'nyla-go-pwa-v1.0.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/css/splash.css',
-  '/js/app.js',
-  '/lib/qr-simple.js',
-  '/manifest.json',
-  '/video/NYLAGo.mp4',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/favicon-16.png',
-  '/favicon-32.png',
-  '/apple-touch-icon.png'
+  '/nyla-go/',
+  '/nyla-go/index.html',
+  '/nyla-go/css/styles.css',
+  '/nyla-go/css/splash.css',
+  '/nyla-go/js/app.js',
+  '/nyla-go/lib/qr-simple.js',
+  '/nyla-go/manifest.json',
+  '/nyla-go/video/NYLAGo.mp4',
+  '/nyla-go/icons/icon-192.png',
+  '/nyla-go/icons/icon-512.png',
+  '/nyla-go/favicon-16.png',
+  '/nyla-go/favicon-32.png',
+  '/nyla-go/apple-touch-icon.png'
 ];
 
 // Install event - cache resources
@@ -97,7 +97,7 @@ self.addEventListener('fetch', function(event) {
         }).catch(function() {
           // Network failed, try to return cached fallback
           if (event.request.destination === 'document') {
-            return caches.match('/index.html');
+            return caches.match('/nyla-go/index.html');
           }
         });
       })
