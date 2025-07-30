@@ -117,7 +117,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 ## 🔒 Security & Trust
 
 ### 🛡️ Third-Party Verified
-- **VirusTotal**: [Clean Scan - 0/72 detections](https://www.virustotal.com/gui/file/fcfc1fb5ae7727c723f522af7b2babe332fa725deae687415876c4ad07f9ab03) ✅
+- **VirusTotal**: [Clean Scan - 0/72 detections](https://www.virustotal.com/gui/file/03465f740d2c92139d014d3356224abd486e80f294453fee20a80f66bbdce797) ✅
 - **Open Source**: Full source code auditable on GitHub ✅
 - **No Malware**: Verified safe by multiple antivirus engines ✅
 
@@ -134,7 +134,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 - ✅ Regular security updates
 - ✅ Responsible disclosure policy
 
-**[📖 Full Security Policy](SECURITY.md)** | **[🔍 Latest Security Scan](https://www.virustotal.com/gui/file/fcfc1fb5ae7727c723f522af7b2babe332fa725deae687415876c4ad07f9ab03)**
+**[📖 Full Security Policy](SECURITY.md)** | **[🔍 Latest Security Scan](https://www.virustotal.com/gui/file/03465f740d2c92139d014d3356224abd486e80f294453fee20a80f66bbdce797)**
 - ✅ Open source and transparent
 
 [📋 Full Privacy Policy](https://github.com/sonyschan/nyla-go/blob/master/privacy_policy.md)
