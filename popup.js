@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveSection = document.getElementById('receiveSection');
   const raidSection = document.getElementById('raidSection');
   const raidListItems = document.querySelectorAll('.raid-list-item');
+  const appVersionElement = document.getElementById('appVersion');
+  const developerCredit = document.getElementById('developerCredit');
 
   // Receive elements
   const receiveUsernameInput = document.getElementById('receiveUsername');
@@ -298,29 +300,54 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize custom tokens
   loadCustomTokens();
   
-  // Developer Credit Click Handler
-  developerCredit.addEventListener('click', function() {
-    // Auto-fill recipient with developer's X username
-    recipientInput.value = '@h2crypto_eth';
-    
-    // Update command preview and validation
-    validateAndUpdateCommand();
-    
-    // Save the new values
-    saveValues();
-    
-    // Show a subtle feedback animation
-    this.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      this.style.transform = 'scale(1)';
-    }, 150);
-    
-    // Optional: Show a brief thank you message
-    showStatus('Thanks for considering a donation! 💜', 'success');
-    setTimeout(() => {
-      hideStatus();
-    }, 2000);
-  });
+  // Initialize app version
+  updateAppVersion();
+  
+  // Developer credit click handler
+  if (developerCredit) {
+    developerCredit.addEventListener('click', function() {
+      // Check if Send tab is not currently active and switch to it
+      const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+      if (sendTab && !sendTab.classList.contains('active')) {
+        sendTab.click();
+        console.log('NYLA: Switched to Send tab via developer credit');
+      }
+      
+      // Auto-fill recipient with developer's X username
+      recipientInput.value = '@h2crypto_eth';
+      
+      // Update command preview and validation
+      validateAndUpdateCommand();
+      
+      // Save the new values
+      saveValues();
+      
+      // Show a subtle feedback animation
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = 'scale(1)';
+      }, 150);
+      
+      // Optional: Show a brief thank you message
+      showStatus('Thanks for considering a donation! 💜', 'success');
+      setTimeout(() => {
+        hideStatus();
+      }, 2000);
+    });
+  }
+  
+  // Get extension version from manifest
+  function updateAppVersion() {
+    if (appVersionElement) {
+      // Get version from Chrome extension manifest
+      const manifestData = chrome.runtime.getManifest();
+      if (manifestData && manifestData.version) {
+        appVersionElement.textContent = `NYLA Go v${manifestData.version}`;
+        console.log('NYLA: Version updated to', manifestData.version);
+      }
+    }
+  }
+  
   
   // Form validation and command generation
   function validateAndUpdateCommand() {
