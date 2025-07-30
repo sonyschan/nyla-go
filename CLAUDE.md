@@ -19,6 +19,7 @@ This file contains important information for Claude to remember across sessions.
   - [ ] `popup.html` - Extension UI version display (fallback only)
   - [ ] `pwa/index.html` - PWA version display (fallback only)
   - [ ] `pwa/js/app.js` - **CRITICAL**: PWA APP_VERSION hardcoded value
+  - [ ] `pwa/sw.js` - **CRITICAL**: Service worker CACHE_NAME version (forces cache refresh)
   - [ ] `popup.js` - Extension fallback version (updateAppVersion function)
   - [ ] `CLAUDE.md` - Current version reference
 - [ ] **2. Update All Documentation** for new version:
@@ -79,23 +80,27 @@ echo "2. PWA hardcoded version (MUST match release):"
 grep -n "APP_VERSION = " pwa/js/app.js
 
 echo ""
-echo "3. Extension fallback version:"
+echo "3. PWA Service Worker cache version (CRITICAL for cache refresh):"
+grep -n "CACHE_NAME = " pwa/sw.js
+
+echo ""
+echo "4. Extension fallback version:"
 grep -n "NYLA Go v0\." popup.js
 
 echo ""
-echo "4. PWA fallback version:"
+echo "5. PWA fallback version:"
 grep -n "NYLA Go v0\." pwa/index.html
 
 echo ""
-echo "5. README version badge:"
+echo "6. README version badge:"
 grep -n "Version-" README.md
 
 echo ""
-echo "6. README download link:"
+echo "7. README download link:"
 grep -n "nyla-go-v" README.md
 
 echo ""
-echo "7. CLAUDE.md version reference:"
+echo "8. CLAUDE.md version reference:"
 grep -n "Latest Release" CLAUDE.md
 
 echo ""
@@ -221,3 +226,41 @@ EOF
 - **📝 Documentation & Maintenance** - For docs and housekeeping
 - **✨ New Features** - For new functionality
 - **🔒 Security Updates** - For security-related changes
+
+## 🗄️ GitHub Pages Cache Management
+
+### Cache Sources & Solutions
+GitHub Pages has multiple cache layers that can cause old versions to persist:
+
+1. **Service Worker Cache** (Primary Issue)
+   - **Problem**: Old service worker with outdated cache name
+   - **Solution**: Update `CACHE_NAME` in `pwa/sw.js` for each release
+   - **Effect**: Forces browser to download new assets
+
+2. **CDN Cache** (GitHub's Edge Servers)
+   - **Problem**: GitHub's CDN caches files for performance
+   - **Solution**: Usually clears within 10-15 minutes after deployment
+   - **Manual**: No direct control, wait for automatic clearing
+
+3. **Browser Cache** (User's Browser)
+   - **Problem**: Browser caches files locally
+   - **Solutions**:
+     - Hard refresh: `Ctrl+F5` (Windows) or `Cmd+Shift+R` (Mac)
+     - Clear browser cache for the site
+     - Open in incognito/private mode
+
+### Force Cache Refresh Commands
+```bash
+# After updating service worker cache name, verify deployment
+gh run list --limit 1
+# Wait for "completed success" status
+
+# Check if PWA shows new version (may take 5-15 minutes)
+curl -s "https://sonyschan.github.io/nyla-go/js/app.js" | grep "APP_VERSION"
+```
+
+### Cache Debugging Tips
+- **Always update service worker cache name** when releasing
+- **Wait 10-15 minutes** after successful deployment
+- **Test in incognito mode** to bypass browser cache
+- **Check browser developer tools** → Application → Service Workers
