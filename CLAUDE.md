@@ -53,7 +53,7 @@ This file contains important information for Claude to remember across sessions.
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v0.7.3
+- **Latest Release**: v0.7.4
 - **Features**: PWA with Raid tab, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
