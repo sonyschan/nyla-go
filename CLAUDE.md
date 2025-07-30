@@ -10,9 +10,13 @@ This file contains important information for Claude to remember across sessions.
 - [ ] **Cross-tab Testing** - Send/Receive/Raid tabs all working properly
 
 ### 🏷️ **Version Management**
-- [ ] **1. Update Version Tag in `manifest.json`** - Bump version number (e.g., 0.5.0 → 0.6.0)
+- [ ] **1. Update Version Tag in ALL Files** - Bump version number (e.g., 0.5.0 → 0.6.0):
+  - [ ] `manifest.json` - Extension version
+  - [ ] `popup.html` - Extension UI version display
+  - [ ] `pwa/index.html` - PWA version display
+  - [ ] `CLAUDE.md` - Current version reference
 - [ ] **2. Update All Documentation** for new version:
-  - [ ] `README.md` - Version badge and download links
+  - [ ] `README.md` - **CRITICAL**: Version badge AND download links (nyla-go-v[X.X.X].zip)
   - [ ] `store_listing_template.md` - Package names and marketing highlights  
   - [ ] `privacy_policy.md` - Version coverage
   - [ ] `SECURITY.md` - Release scan version (placeholder first)
@@ -29,8 +33,16 @@ This file contains important information for Claude to remember across sessions.
   - [ ] Security best practices compliance
 
 ### 📦 **Release Creation**
+- [ ] **Create Git Tags** - REQUIRED before GitHub releases:
+  ```bash
+  git tag v[X.X.X] [commit-hash]
+  git push origin v[X.X.X]
+  ```
+- [ ] **Create GitHub Releases** - Use `gh release create` with detailed changelog:
+  - [ ] Include comprehensive release notes with features/fixes
+  - [ ] Add links to PWA and full changelog
+  - [ ] Use consistent formatting with previous releases
 - [ ] **Create Release Package** - Generate `nyla-go-v[X.X.X].zip`
-- [ ] **GitHub Release** - Create release with changelog and package
 - [ ] **Commit Version Updates** - Push all documentation changes
 
 ### 🔒 **Security Verification**
@@ -45,10 +57,11 @@ This file contains important information for Claude to remember across sessions.
 - [ ] **User Communication** - Any necessary announcements
 
 ### 🎯 **Core Steps Summary:**
-1. ✅ **Update version tag** (manifest.json + all docs)
-2. ✅ **Update README** for new release tag (+ all version references)  
-3. ✅ **Redo VirusTotal** & send new verify link
-4. ✅ **Update privacy and security documents** for any new features/changes
+1. ✅ **Update version tag** (manifest.json + popup.html + pwa/index.html + CLAUDE.md)
+2. ✅ **Update README** for new release tag (version badge + download links)  
+3. ✅ **Create git tags and GitHub releases** with proper changelog
+4. ✅ **Redo VirusTotal** & send new verify link
+5. ✅ **Update privacy and security documents** for any new features/changes
 
 ## 📋 Project Information
 
@@ -108,9 +121,53 @@ This file contains important information for Claude to remember across sessions.
 - Avoid duplicate variable declarations
 - Test extension functionality after JavaScript changes
 
-### Recent Fixes (v0.7.2-v0.7.3)
+### Recent Fixes (v0.7.2-v0.7.4)
 - **JavaScript Error Handling**: Comprehensive null checks added to prevent console errors
 - **Extension Tab Switching**: Fixed broken tab functionality with proper DOM element validation
 - **PWA Splash Video**: Updated to NYLAGo-v2.mp4 for improved user experience
 - **Version Text Styling**: Consistent gray color across extension and PWA
 - **Username Detection**: Enhanced debugging for X.com integration
+
+## 🚀 GitHub Release Process
+
+### Git Tag Creation Commands
+```bash
+# Create tags for releases
+git tag v[X.X.X] [commit-hash]
+git push origin v[X.X.X]
+
+# Example:
+git tag v0.7.4 5f0f37b
+git push origin v0.7.4
+```
+
+### GitHub Release Commands
+```bash
+# Create release with notes
+gh release create v[X.X.X] --title "NYLA Go v[X.X.X] - [Title]" --notes "$(cat <<'EOF'
+## [Icon] [Category]
+
+### [Feature/Fix Title]
+- **[Description]** - [Details]
+- **[Description]** - [Details]
+
+### Technical Changes
+- [Technical detail 1]
+- [Technical detail 2]
+
+**Full Changelog:** https://github.com/sonyschan/nyla-go/compare/v[PREV]...v[CURR]
+
+**🌐 [Try the PWA](https://sonyschan.github.io/nyla-go/)**
+
+---
+🤖 *Generated with Claude Code*
+EOF
+)"
+```
+
+### Release Note Templates
+- **🐛 Bug Fixes & Improvements** - For error fixes and stability
+- **🎬 PWA Enhancement** - For Progressive Web App updates  
+- **📝 Documentation & Maintenance** - For docs and housekeeping
+- **✨ New Features** - For new functionality
+- **🔒 Security Updates** - For security-related changes
