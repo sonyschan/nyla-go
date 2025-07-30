@@ -16,23 +16,16 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 
 ## 🚀 Features
 
-### 🔍 **Smart Profile Detection** (NEW in v0.2.0!)
-- **Free Tip Button** - Simply mention "NYLA" or "AgentNyla" in your X profile and get a free NYLAgo tip button on your profile
-- **Auto-Discovery** - NYLAgo icons appear automatically on any profile containing NYLA keywords
-- **One-Click Transfers** - Visitors can click your profile icon → Opens compose → Send you NYLA tokens instantly
-- **Zero Setup** - No registration, no coding - just add NYLA to your bio and the tip button appears automatically
-- **Boost Engagement** - Make it effortless for followers to tip you NYLA tokens
-
-### 💫 **Core Transfer Features**
-- **Multi-Blockchain Support** - Choose from Solana (default), Ethereum, or Algorand networks
-- **QR Code Generation** - Generate scannable QR codes with official NYLA logo for mobile transfers
-- **Easy Transfer Setup** - Simple form interface with recipient, amount, and token selection
-- **Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations  
-- **Form Memory** - Remembers your previous inputs for convenience and speed
-- **Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
-- **Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom tokens
-- **Preview & Edit** - See exactly what command will be generated before sending
-- **Mobile-First Design** - Switch between text commands and QR codes for cross-platform transfers
+### 💫 **Core Features**
+- **🌐 Multi-Blockchain Support** - Choose from Solana (default), Ethereum, or Algorand networks
+- **📱 QR Code Generation** - Generate scannable QR codes with official NYLA logo for mobile transfers
+- **🎯 Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations
+- **🔄 Tabbed Interface** - Send, Receive, and Raid tabs for organized functionality
+- **💾 Form Memory** - Remembers your inputs for convenience and speed
+- **🔗 Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
+- **🪙 Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom tokens
+- **👥 Community Features** - Access NYLA Core and Community Raiders lists for engagement
+- **📱 Cross-Platform** - Available as both Chrome extension and Progressive Web App
 
 ## 📱 How It Works
 
@@ -59,6 +52,17 @@ Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME]
 Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME] [BLOCKCHAIN]
 ```
 **Example:** `Hey @AgentNyla transfer 50 $NYLA @alice Ethereum`
+
+## 📱 Progressive Web Application
+
+Experience NYLA Go directly in your mobile browser with our PWA:
+
+**🌐 [Launch NYLA Go PWA →](https://sonyschan.github.io/nyla-go/)**
+
+- **📱 Mobile Optimized** - Install directly to your home screen
+- **🔄 Auto-Updates** - Always get the latest features automatically  
+- **🎯 Raid Lists** - Access NYLA Core and Community Raiders with X.com deeplinks
+- **💾 Offline Ready** - Works even without internet connection
 
 ## 🧡 About NYLA
 
