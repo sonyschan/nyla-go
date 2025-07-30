@@ -8,12 +8,18 @@ This file contains important information for Claude to remember across sessions.
 - [ ] **Feature Development Complete** - All planned features implemented and tested
 - [ ] **Code Quality Check** - No console errors, clean functionality
 - [ ] **Cross-tab Testing** - Send/Receive/Raid tabs all working properly
+- [ ] **Version Display Test** - **CRITICAL**: Verify version on bottom of page matches release tag:
+  - [ ] **Extension**: Load extension → Check bottom shows "NYLA Go v[X.X.X]"
+  - [ ] **PWA**: Visit https://sonyschan.github.io/nyla-go/ → Check footer shows "NYLA Go v[X.X.X]"
+  - [ ] **Both must match the intended release version exactly**
 
 ### 🏷️ **Version Management**
 - [ ] **1. Update Version Tag in ALL Files** - Bump version number (e.g., 0.5.0 → 0.6.0):
   - [ ] `manifest.json` - Extension version
-  - [ ] `popup.html` - Extension UI version display
-  - [ ] `pwa/index.html` - PWA version display
+  - [ ] `popup.html` - Extension UI version display (fallback only)
+  - [ ] `pwa/index.html` - PWA version display (fallback only)
+  - [ ] `pwa/js/app.js` - **CRITICAL**: PWA APP_VERSION hardcoded value
+  - [ ] `popup.js` - Extension fallback version (updateAppVersion function)
   - [ ] `CLAUDE.md` - Current version reference
 - [ ] **2. Update All Documentation** for new version:
   - [ ] `README.md` - **CRITICAL**: Version badge AND download links (nyla-go-v[X.X.X].zip)
@@ -56,12 +62,55 @@ This file contains important information for Claude to remember across sessions.
 - [ ] **Marketing Updates** - Update store listing highlights for new features
 - [ ] **User Communication** - Any necessary announcements
 
+### 🧪 **Version Verification Commands**
+Before creating any release, run these verification commands to ensure version consistency:
+
+```bash
+# Check all version references match intended release
+RELEASE_VERSION="0.7.4"  # Update this to intended release version
+
+echo "=== VERSION VERIFICATION FOR v$RELEASE_VERSION ==="
+echo ""
+echo "1. Extension manifest.json:"
+grep -n "\"version\":" manifest.json
+
+echo ""
+echo "2. PWA hardcoded version (MUST match release):"
+grep -n "APP_VERSION = " pwa/js/app.js
+
+echo ""
+echo "3. Extension fallback version:"
+grep -n "NYLA Go v0\." popup.js
+
+echo ""
+echo "4. PWA fallback version:"
+grep -n "NYLA Go v0\." pwa/index.html
+
+echo ""
+echo "5. README version badge:"
+grep -n "Version-" README.md
+
+echo ""
+echo "6. README download link:"
+grep -n "nyla-go-v" README.md
+
+echo ""
+echo "7. CLAUDE.md version reference:"
+grep -n "Latest Release" CLAUDE.md
+
+echo ""
+echo "✅ ALL VERSIONS ABOVE MUST SHOW: $RELEASE_VERSION"
+echo "❌ If any version is different, UPDATE IT before release!"
+```
+
 ### 🎯 **Core Steps Summary:**
-1. ✅ **Update version tag** (manifest.json + popup.html + pwa/index.html + CLAUDE.md)
-2. ✅ **Update README** for new release tag (version badge + download links)  
-3. ✅ **Create git tags and GitHub releases** with proper changelog
-4. ✅ **Redo VirusTotal** & send new verify link
-5. ✅ **Update privacy and security documents** for any new features/changes
+1. ✅ **Run version verification commands** - Ensure ALL versions match intended release
+2. ✅ **Update version tag** (manifest.json + pwa/js/app.js + popup.js + CLAUDE.md)
+3. ✅ **Update README** for new release tag (version badge + download links)  
+4. ✅ **Test version display** - Load extension and PWA to verify displayed versions
+5. ✅ **Create git tags and GitHub releases** with proper changelog
+6. ✅ **Redo VirusTotal** & send new verify link
+7. ✅ **Update privacy and security documents** for any new features/changes
 
 ## 📋 Project Information
 
@@ -120,6 +169,7 @@ This file contains important information for Claude to remember across sessions.
 - Keep functions modular for easy testing
 - Avoid duplicate variable declarations
 - Test extension functionality after JavaScript changes
+- **CRITICAL: Test version display** after any version changes - load both extension and PWA
 
 ### Recent Fixes (v0.7.2-v0.7.4)
 - **JavaScript Error Handling**: Comprehensive null checks added to prevent console errors
