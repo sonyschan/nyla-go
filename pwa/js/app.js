@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const raidListItems = document.querySelectorAll('.raid-list-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '0.7.1';
+  let APP_VERSION = '0.7.4';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
