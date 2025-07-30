@@ -669,6 +669,10 @@
   
   // Function to detect reply recipients
   function getReplyRecipients() {
+    console.log('NYLA Debug: ========== Starting getReplyRecipients ==========');
+    console.log('NYLA Debug: Current URL:', window.location.href);
+    console.log('NYLA Debug: Document referrer:', document.referrer);
+    
     const recipients = [];
     
     // Helper function to clean and extract usernames more precisely
@@ -696,13 +700,35 @@
     
     // Special case: Detect username from compose dialog context
     function getComposeDialogContext() {
-      console.log('NYLA Debug: Checking compose dialog context');
+      console.log('NYLA Debug: === getComposeDialogContext called ===');
+      console.log('NYLA Debug: Current pathname:', window.location.pathname);
       
       // Check if we're in a compose dialog (/compose/post) OR a reply dialog popup
       const isComposeDialog = window.location.pathname === '/compose/post';
-      const isReplyDialog = document.querySelector('[role="dialog"]') && 
-                          (document.querySelector('[data-testid="tweetTextarea_0"]') || 
-                           document.querySelector('[data-testid="tweetTextarea_1"]'));
+      const textareaSelectors = [
+        '[data-testid="tweetTextarea_0"]',
+        '[data-testid="tweetTextarea_1"]',
+        '[data-testid="tweetTextarea"]',
+        '[contenteditable="true"][data-testid*="tweet"]',
+        '[role="textbox"][data-testid*="tweet"]'
+      ];
+      
+      let foundTextarea = false;
+      for (const selector of textareaSelectors) {
+        if (document.querySelector(selector)) {
+          console.log('NYLA Debug: Found textarea with selector:', selector);
+          foundTextarea = true;
+          break;
+        }
+      }
+      
+      const isReplyDialog = document.querySelector('[role="dialog"]') && foundTextarea;
+      
+      console.log('NYLA Debug: isComposeDialog:', isComposeDialog);
+      console.log('NYLA Debug: isReplyDialog:', isReplyDialog);
+      console.log('NYLA Debug: Dialog element:', !!document.querySelector('[role="dialog"]'));
+      console.log('NYLA Debug: tweetTextarea_0:', !!document.querySelector('[data-testid="tweetTextarea_0"]'));
+      console.log('NYLA Debug: tweetTextarea_1:', !!document.querySelector('[data-testid="tweetTextarea_1"]'));
       
       if (isComposeDialog || isReplyDialog) {
         console.log('NYLA Debug: In compose/reply dialog, looking for context');
@@ -713,6 +739,7 @@
           
           // Look specifically for "Replying to" text in the dialog
           const replyIndicators = document.querySelectorAll('[role="dialog"] *');
+          console.log('NYLA Debug: Found', replyIndicators.length, 'dialog elements to check');
           for (const element of replyIndicators) {
             const text = element.textContent || '';
             if (text.toLowerCase().includes('replying to')) {
@@ -720,6 +747,15 @@
               const usernames = extractCleanUsernames(text);
               if (usernames.length > 0) {
                 console.log('NYLA Debug: Extracted username from reply dialog:', usernames[0]);
+                return usernames[0];
+              }
+            }
+            // Also check for newer patterns
+            if (text.toLowerCase().includes('reply to') || text.toLowerCase().includes('responding to')) {
+              console.log('NYLA Debug: Found alternative reply text:', text);
+              const usernames = extractCleanUsernames(text);
+              if (usernames.length > 0) {
+                console.log('NYLA Debug: Extracted username from alternative reply text:', usernames[0]);
                 return usernames[0];
               }
             }
@@ -850,8 +886,10 @@
     
     // Priority 1: Check for reply dialog popup context (highest priority)
     const replyDialog = document.querySelector('[role="dialog"]');
+    console.log('NYLA Debug: Reply dialog found:', !!replyDialog);
     if (replyDialog) {
       console.log('NYLA Debug: Reply dialog detected, using specialized detection');
+      console.log('NYLA Debug: Dialog HTML:', replyDialog.innerHTML.substring(0, 500) + '...');
       const dialogRecipient = getComposeDialogContext();
       if (dialogRecipient) {
         console.log('NYLA Debug: Using reply dialog recipient:', dialogRecipient);
