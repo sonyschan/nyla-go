@@ -264,12 +264,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Try to play video
-    splashVideo.addEventListener('loadeddata', function() {
-      console.log('NYLA GO PWA: Splash video loaded');
-      splashVideo.play().catch(function(error) {
-        console.log('NYLA GO PWA: Video autoplay failed, showing fallback');
-        showSplashFallback();
-      });
+    splashVideo.addEventListener('canplay', function() {
+      console.log('NYLA GO PWA: Splash video ready to play');
+      
+      // Hide fallback and show video smoothly
+      splashFallback.classList.add('hide');
+      
+      setTimeout(function() {
+        splashVideo.classList.add('loaded');
+        splashVideo.play().catch(function(error) {
+          console.log('NYLA GO PWA: Video autoplay failed, showing fallback');
+          showSplashFallback();
+        });
+      }, 300);
     });
     
     // Video ended handler
@@ -298,8 +305,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }, minDisplayTime);
     
     function showSplashFallback() {
-      splashVideo.style.display = 'none';
-      splashFallback.classList.add('show');
+      splashVideo.style.opacity = '0';
+      splashFallback.classList.remove('hide');
     }
     
     function checkSplashCompletion() {

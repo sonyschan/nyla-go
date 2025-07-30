@@ -25,6 +25,12 @@
   height: 100%;
   object-fit: cover;
   background: #000000;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.splash-video.loaded {
+  opacity: 1;
 }
 
 /* Mobile optimizations */
@@ -47,17 +53,20 @@
 
 /* Fallback for video loading issues */
 .splash-fallback {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   text-align: center;
   padding: 40px;
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
 }
 
-.splash-fallback.show {
-  display: flex;
+.splash-fallback.hide {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .splash-logo {
