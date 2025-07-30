@@ -27,6 +27,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/splash.css">
+  <link rel="stylesheet" href="css/tabs.css">
 </head>
 <body>
   <!-- Splash Screen -->
@@ -53,13 +54,21 @@
     <!-- Header -->
     <div class="header">
       <h1>NYLA GO</h1>
-      <p>Receive Payment via X</p>
+      <p>Mobile NYLA Assistant</p>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button class="tab-button active" data-tab="receive">Receive</button>
+      <button class="tab-button" data-tab="raid">Raid</button>
     </div>
     
     <!-- Main Content -->
     <div class="main-content">
       
-      <!-- QR Code Display (Top) -->
+      <!-- Receive Tab Content -->
+      <div class="tab-content active" id="receiveTab">
+        <!-- QR Code Display (Top) -->
       <div class="receive-qr-container">
         <div class="receive-qr-code" id="receiveQrCode">
           <!-- QR code will be generated here -->
@@ -120,6 +129,42 @@
           </button>
         </div>
       </form>
+      </div>
+      
+      <!-- Raid Tab Content -->
+      <div class="tab-content" id="raidTab" style="display: none;">
+        <div class="raid-categories">
+          
+          <!-- NYLA Core Category -->
+          <div class="raid-category">
+            <h4>NYLA Core</h4>
+            <div class="raid-list-item" data-url="https://x.com/i/lists/1940678457350029559">
+              <div class="list-info">
+                <div class="list-name">NYLA Contributors</div>
+                <div class="list-description">Key NYLA project contributors - support their posts</div>
+              </div>
+              <div class="list-action">
+                <span class="open-icon">→</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Community Raiders Category -->
+          <div class="raid-category">
+            <h4>Community Raiders</h4>
+            <div class="raid-list-item" data-url="https://x.com/i/lists/1950200431432647034">
+              <div class="list-info">
+                <div class="list-name">Active NYLA Raiders</div>
+                <div class="list-description">Follow these community members' engagement patterns</div>
+              </div>
+              <div class="list-action">
+                <span class="open-icon">→</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
       
     </div>
     
