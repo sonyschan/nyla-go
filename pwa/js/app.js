@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Splash Screen Management
   function initializeSplashScreen() {
     let splashCompleted = false;
-    let minDisplayTime = 4000; // Minimum 4 seconds display
+    let minDisplayTime = 4500; // Minimum 4.5 seconds display
     let startTime = Date.now();
     
     // Check if user prefers reduced motion
