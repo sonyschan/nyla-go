@@ -1,0 +1,110 @@
+/* NYLA GO PWA - Splash Screen Styles */
+
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000000;
+}
+
+/* Mobile optimizations */
+@media (orientation: portrait) {
+  .splash-video {
+    width: 100vw;
+    height: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+  }
+}
+
+@media (orientation: landscape) {
+  .splash-video {
+    width: 100vh;
+    height: 100vh;
+    object-fit: contain;
+  }
+}
+
+/* Fallback for video loading issues */
+.splash-fallback {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+  padding: 40px;
+}
+
+.splash-fallback.show {
+  display: flex;
+}
+
+.splash-logo {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: #FF6B35;
+  text-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.splash-tagline {
+  font-size: 16px;
+  color: #cccccc;
+  margin-bottom: 30px;
+}
+
+.splash-loading {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333333;
+  border-top: 3px solid #FF6B35;
+  border-radius: 50%;
+  animation: splash-spin 1s linear infinite;
+}
+
+@keyframes splash-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility - respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .splash-screen {
+    transition: none;
+  }
+  
+  .splash-loading {
+    animation: none;
+    border: 3px solid #FF6B35;
+  }
+  
+  .splash-video {
+    display: none;
+  }
+  
+  .splash-fallback {
+    display: flex !important;
+  }
+}
