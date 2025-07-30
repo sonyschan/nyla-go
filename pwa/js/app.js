@@ -367,14 +367,24 @@ document.addEventListener('DOMContentLoaded', function() {
     let minDisplayTime = 4500; // Minimum 4.5 seconds display
     let startTime = Date.now();
     
-    // Check if user prefers reduced motion
+    // Detect iOS and user preferences
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    console.log('NYLA GO PWA: Platform detection - iOS:', isIOS, 'Reduced motion:', prefersReducedMotion);
     
     if (prefersReducedMotion) {
       // Skip video, show fallback immediately
       showSplashFallback();
       setTimeout(completeSplash, 2000); // Shorter duration for accessibility
       return;
+    }
+    
+    // iOS-specific adjustments
+    if (isIOS) {
+      minDisplayTime = 5000; // Slightly longer for iOS loading
+      console.log('NYLA GO PWA: iOS detected, adjusting splash timing');
     }
     
     // Try to play video
@@ -387,10 +397,13 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
         splashVideo.classList.add('loaded');
         splashVideo.play().catch(function(error) {
-          console.log('NYLA GO PWA: Video autoplay failed, showing fallback');
+          console.log('NYLA GO PWA: Video autoplay failed:', error.name, error.message);
+          if (isIOS) {
+            console.log('NYLA GO PWA: iOS autoplay restriction detected');
+          }
           showSplashFallback();
         });
-      }, 300);
+      }, isIOS ? 500 : 300); // Longer delay for iOS
     });
     
     // Video ended handler
@@ -405,13 +418,17 @@ document.addEventListener('DOMContentLoaded', function() {
       showSplashFallback();
     });
     
-    // Fallback timer (if video doesn't load within 2 seconds)
+    // Fallback timer (iOS needs more time)
+    const fallbackTimeout = isIOS ? 3000 : 2000;
     setTimeout(function() {
       if (!splashCompleted && splashVideo.paused) {
-        console.log('NYLA GO PWA: Video loading timeout, showing fallback');
+        console.log(`NYLA GO PWA: Video loading timeout after ${fallbackTimeout}ms, showing fallback`);
+        if (isIOS) {
+          console.log('NYLA GO PWA: iOS video loading took too long');
+        }
         showSplashFallback();
       }
-    }, 2000);
+    }, fallbackTimeout);
     
     // Ensure minimum display time
     setTimeout(function() {
