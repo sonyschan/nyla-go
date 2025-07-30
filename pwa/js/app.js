@@ -25,6 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Generate initial QR code with default values (after splash)
   function initializeApp() {
+    // Load saved username from localStorage
+    const savedUsername = localStorage.getItem('nylaGoUsername');
+    if (savedUsername) {
+      receiveUsernameInput.value = savedUsername;
+    }
+    
     setTimeout(() => {
       generateReceiveQRCode();
     }, 200);
@@ -122,8 +128,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 200);
   }
 
+  // Save username to localStorage when changed
+  function saveUsername() {
+    const username = receiveUsernameInput.value.trim();
+    if (username) {
+      localStorage.setItem('nylaGoUsername', username);
+    } else {
+      localStorage.removeItem('nylaGoUsername');
+    }
+  }
+
   // Event Listeners
-  receiveUsernameInput.addEventListener('input', generateReceiveQRCode);
+  receiveUsernameInput.addEventListener('input', function() {
+    saveUsername();
+    generateReceiveQRCode();
+  });
   receiveAmountInput.addEventListener('input', generateReceiveQRCode);
   receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
   
