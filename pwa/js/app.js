@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const statusDiv = document.getElementById('status');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
   const qrInstructionText = document.getElementById('qrInstructionText');
+  
+  // Tab Elements
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const receiveTab = document.getElementById('receiveTab');
+  const raidTab = document.getElementById('raidTab');
+  const raidListItems = document.querySelectorAll('.raid-list-item');
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -148,6 +154,48 @@ document.addEventListener('DOMContentLoaded', function() {
   
   receiveBlockchainRadios.forEach(radio => {
     radio.addEventListener('change', generateReceiveQRCode);
+  });
+
+  // Tab switching functionality
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      
+      // Remove active class from all tabs and buttons
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      receiveTab.classList.remove('active');
+      raidTab.classList.remove('active');
+      
+      // Hide all tab content
+      receiveTab.style.display = 'none';
+      raidTab.style.display = 'none';
+      
+      // Show selected tab
+      this.classList.add('active');
+      
+      if (tabName === 'receive') {
+        receiveTab.classList.add('active');
+        receiveTab.style.display = 'block';
+        // Generate QR code when switching to receive tab
+        generateReceiveQRCode();
+      } else if (tabName === 'raid') {
+        raidTab.classList.add('active');
+        raidTab.style.display = 'block';
+      }
+    });
+  });
+
+  // Raid list item click handlers
+  raidListItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const listUrl = this.dataset.url;
+      if (listUrl) {
+        console.log('NYLA GO PWA: Opening raid list:', listUrl);
+        window.open(listUrl, '_blank');
+        showStatus('Opening X.com list...', 'success');
+        setTimeout(hideStatus, 2000);
+      }
+    });
   });
 
 
