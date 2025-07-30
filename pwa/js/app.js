@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Generate QR Code for payment requests
   function generateReceiveQRCode() {
-    const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
+    const username = receiveUsernameInput.value.trim().replace('@', '') || 'username';
     const amount = receiveAmountInput.value || '1';
     const token = receiveTokenSelect.value || 'NYLA';
     
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Share functionality
   shareButton.addEventListener('click', async function() {
-    const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
+    const username = receiveUsernameInput.value.trim().replace('@', '') || 'username';
     const amount = receiveAmountInput.value || '1';
     const token = receiveTokenSelect.value || 'NYLA';
     
@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
           url: mobileURL
         });
         showStatus('Shared successfully!', 'success');
+        setTimeout(hideStatus, 3000);
       } catch (error) {
         if (error.name !== 'AbortError') {
           fallbackShare(shareText);
