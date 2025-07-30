@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const shareButton = document.getElementById('shareButton');
   const statusDiv = document.getElementById('status');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
+  const qrInstructionText = document.getElementById('qrInstructionText');
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -36,11 +37,20 @@ document.addEventListener('DOMContentLoaded', function() {
     return `https://x.com/compose/post?text=${encodedCommand}`;
   }
 
+  // Update QR instruction text based on token
+  function updateQRInstructionText() {
+    const token = receiveTokenSelect.value || 'NYLA';
+    qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+  }
+
   // Generate QR Code for payment requests
   function generateReceiveQRCode() {
     const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
     const amount = receiveAmountInput.value || '1';
     const token = receiveTokenSelect.value || 'NYLA';
+    
+    // Update instruction text
+    updateQRInstructionText();
     
     // Get selected blockchain
     let blockchain = 'Solana'; // default
@@ -145,7 +155,18 @@ document.addEventListener('DOMContentLoaded', function() {
       if (radio.checked) blockchain = radio.value;
     });
     
-    const shareText = `💰 Send me ${amount} $${token} on ${blockchain}!\n\nScan my NYLA GO payment request: ${window.location.href}`;
+    // Generate the actual transfer command
+    let command;
+    if (blockchain === 'Solana') {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${username}`;
+    } else {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${username} ${blockchain}`;
+    }
+    
+    // Generate mobile URL for the command
+    const mobileURL = generateXMobileURL(command);
+    
+    const shareText = `💰 Send me ${amount} $${token} via X by using following link:\n\n${mobileURL}`;
     
     if (navigator.share) {
       // Native sharing (mobile)
@@ -153,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await navigator.share({
           title: 'NYLA Payment Request',
           text: shareText,
-          url: window.location.href
+          url: mobileURL
         });
         showStatus('Shared successfully!', 'success');
       } catch (error) {
