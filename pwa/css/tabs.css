@@ -221,14 +221,14 @@
 
 /* App Tab Styles */
 .app-showcase {
-  max-height: 400px;
-  overflow-y: auto;
+  /* Remove height restriction for better UX - let content flow naturally */
+  padding-bottom: 20px;
 }
 
 .app-intro {
   text-align: center;
-  margin-bottom: 24px;
-  padding: 16px;
+  margin-bottom: 28px;
+  padding: 20px;
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
   border-radius: 12px;
   border: 1px solid #333333;
@@ -249,7 +249,7 @@
 }
 
 .app-category {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .app-category h4 {
@@ -267,11 +267,11 @@
 .app-item {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 18px;
   background: #1a1a1a;
   border: 1px solid #333333;
   border-radius: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -351,11 +351,12 @@
 }
 
 .coming-soon {
-  padding: 20px;
+  padding: 24px;
   background: #1a1a1a;
   border: 2px dashed #333333;
   border-radius: 12px;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .coming-soon-text p {
@@ -385,11 +386,11 @@
 /* Mobile optimizations for App tab */
 @media (max-width: 480px) {
   .app-showcase {
-    max-height: 320px;
+    padding-bottom: 16px;
   }
   
   .app-item {
-    padding: 12px;
+    padding: 14px;
   }
   
   .app-icon {
@@ -408,6 +409,6 @@
   }
   
   .coming-soon {
-    padding: 16px;
+    padding: 18px;
   }
 }
