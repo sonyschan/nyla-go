@@ -45,7 +45,17 @@ This file contains important information for Claude to remember across sessions.
   git tag v[X.X.X] [commit-hash]
   git push origin v[X.X.X]
   ```
-- [ ] **Create GitHub Releases** - Use `gh release create` with detailed changelog:
+- [ ] **Create GitHub Releases** - Use correct `gh release create` syntax (AVOID --body flag):
+  ```bash
+  # ✅ CORRECT syntax (use --notes, NOT --body):
+  gh release create v[X.X.X] --title "NYLA Go v[X.X.X] - Title" --notes "$(cat <<'EOF'
+  Release notes content here...
+  EOF
+  )"
+  
+  # ❌ WRONG syntax (--body flag doesn't exist):
+  # gh release create v[X.X.X] --body "content"  # This will ERROR!
+  ```
   - [ ] Include comprehensive release notes with features/fixes
   - [ ] Add links to PWA and full changelog
   - [ ] Use consistent formatting with previous releases
@@ -264,3 +274,29 @@ curl -s "https://sonyschan.github.io/nyla-go/js/app.js" | grep "APP_VERSION"
 - **Wait 10-15 minutes** after successful deployment
 - **Test in incognito mode** to bypass browser cache
 - **Check browser developer tools** → Application → Service Workers
+
+## ⚠️ Common Command Errors & Fixes
+
+### GitHub CLI Release Command
+**❌ Error**: `unknown flag: --body`
+```bash
+# WRONG - This will fail:
+gh release create v0.7.6 --body "content"
+```
+
+**✅ Fix**: Use `--notes` instead of `--body`:
+```bash
+# CORRECT - This works:
+gh release create v0.7.6 --title "Title" --notes "content"
+```
+
+**🔧 Prevention**: Git alias configured for consistent usage:
+```bash
+# Already set up - use this format:
+git config --global alias.release-create '!f() { gh release create "$1" --title "$2" --notes "$3"; }; f'
+```
+
+### Other Common Errors
+- **Git Permission Issues**: Use SSH keys instead of HTTPS
+- **Missing GitHub Token**: Run `gh auth login` to authenticate
+- **Wrong Branch**: Verify you're on master/main before tagging
