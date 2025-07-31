@@ -183,13 +183,18 @@ rm -rf extension-package
 ```
 
 ### 📁 **Extension Package Contents:**
-- ✅ `manifest.json` (extension only)
+- ✅ `manifest.json` (extension only, without "scripting" permission)
 - ✅ `popup.html` & `popup.js` 
 - ✅ `content.js`
 - ✅ `qr-simple.js`
 - ✅ `icons/` directory
 - ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
 - ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
+
+### ⚠️ **Chrome Store Permission Requirements:**
+- **REMOVED**: `"scripting"` permission (causes review delays)
+- **KEPT**: `"activeTab"`, `"storage"`, `"tabs"` (essential permissions)
+- **FUNCTIONALITY**: Uses content scripts instead of scripting API for X.com interaction
 
 ### 🚫 **Files to EXCLUDE from Chrome Store Package:**
 - `pwa/` directory (contains PWA manifest)
