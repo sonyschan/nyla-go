@@ -23,8 +23,8 @@ NYLA Go is a browser extension that helps users generate NYLA cryptocurrency tra
 
 ## Permissions Usage
 - **ActiveTab**: Required to detect X.com pages, read current page URL for username detection, and insert transfer commands
-- **Scripting**: Required to interact with X.com's compose boxes and analyze page content for recipient detection
 - **Storage**: Required to save form preferences locally in your browser
+- **Tabs**: Required to detect when you're on X.com pages for extension functionality
 - **Host Permissions**: 
   - **x.com and twitter.com**: For core extension functionality
   - **api.qrserver.com**: For generating QR codes from transfer commands

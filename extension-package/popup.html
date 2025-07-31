@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000000 url('GO-BACKGROUND.png') center/cover no-repeat;
+      background-attachment: fixed;
+      color: #ffffff;
+      position: relative;
+    }
+    
+    
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .header-logo {
+      width: 240px;
+      height: auto;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 2px 8px rgba(255, 107, 53, 0.3));
+    }
+    
+    .header p {
+      color: #cccccc;
+      font-size: 12px;
+      margin: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      background: rgba(26, 26, 26, 0.7);
+      color: #ffffff;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+    }
+
+    input::placeholder {
+      color: #888888;
+    }
+    
+    .amount-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .amount-group input {
+      flex: 0 0 120px;
+    }
+    
+    .token-select-container {
+      display: flex;
+      align-items: stretch;
+      flex: 1;
+      min-width: 140px;
+    }
+    
+    .token-select-container select {
+      flex: 1;
+      border-radius: 8px 0 0 8px;
+      border-right: none;
+    }
+    
+    .manage-tokens-btn {
+      background: transparent;
+      border: 1px solid #333333;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      padding: 0 8px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #FF6B35;
+      transition: all 0.2s ease;
+      min-width: 28px;
+    }
+    
+    .manage-tokens-btn:hover {
+      background: rgba(255, 107, 53, 0.1);
+      color: #FF5722;
+    }
+    
+    .blockchain-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 8px;
+    }
+    
+    .blockchain-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex: 1;
+    }
+    
+    .blockchain-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #FF6B35;
+      cursor: pointer;
+    }
+    
+    .blockchain-option label {
+      cursor: pointer;
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .command-preview {
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 14px;
+      color: #ffffff;
+      word-break: break-all;
+    }
+    
+    .command-preview.empty {
+      color: #888888;
+      font-style: italic;
+    }
+    
+    .send-button {
+      background: #FF6B35;
+      color: #000000;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 15px;
+      transition: all 0.2s ease;
+    }
+    
+    .send-button:hover:not(:disabled) {
+      background: #FF5722;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+    
+    .send-button:disabled {
+      background: #444444;
+      color: #888888;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .error {
+      color: #e0245e;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    
+    .status.success {
+      background: #e8f5e8;
+      color: #0f7b0f;
+      border: 1px solid #c3e6c3;
+    }
+    
+    .status.error {
+      background: #ffeaea;
+      color: #e0245e;
+      border: 1px solid #ffb3b3;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 20px 15px;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      color: #1da1f2;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #657786;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s ease;
+    }
+    
+    .close-btn:hover {
+      background: #f7f9fa;
+    }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: calc(80vh - 100px);
+      overflow-y: auto;
+    }
+    
+    .add-token-section, .custom-tokens-section {
+      margin-bottom: 25px;
+    }
+    
+    .add-token-section h3, .custom-tokens-section h3 {
+      margin: 0 0 12px 0;
+      color: #14171a;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .add-token-form {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    
+    .add-token-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+    
+    .add-btn {
+      background: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .add-btn:hover {
+      background: #0d8bd9;
+    }
+    
+    .custom-tokens-list {
+      min-height: 60px;
+    }
+    
+    .no-custom-tokens {
+      color: #657786;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+      border: 1px dashed #e1e8ed;
+      border-radius: 6px;
+      background: #f7f9fa;
+    }
+    
+    .custom-token-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #f7f9fa;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    
+    .custom-token-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .token-symbol {
+      font-weight: 600;
+      color: #14171a;
+      font-size: 14px;
+    }
+    
+    .remove-token-btn {
+      background: #e0245e;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .remove-token-btn:hover {
+      background: #c91b47;
+    }
+    
+    /* Version and Developer Credit Styles */
+    .app-version {
+      text-align: center;
+      padding: 8px 20px 4px;
+      font-size: 11px;
+      color: #888888;
+      background: #000000;
+      font-weight: 600;
+      margin-top: 10px;
+      border-top: 1px solid #333333;
+    }
+    
+    .developer-credit {
+      text-align: center;
+      padding: 4px 20px 16px;
+      font-size: 12px;
+      color: #888888;
+      background: #000000;
+    }
+    
+    .developer-link {
+      color: #FF6B35;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    
+    .developer-link:hover {
+      color: #FF5722;
+      text-decoration: underline;
+    }
+    
+    .developer-link:active {
+      transform: scale(0.98);
+    }
+
+    /* QR Code Styles */
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .qr-toggle-btn {
+      background: #FF6B35;
+      color: #000000;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 130px;
+      justify-content: center;
+    }
+
+    .qr-toggle-btn:hover:not(:disabled) {
+      background: #FF5722;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(255, 107, 53, 0.4);
+    }
+
+    .qr-toggle-btn:disabled {
+      background: #444444;
+      color: #888888;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .qr-toggle-btn.active {
+      background: #FF5722;
+      color: #ffffff;
+    }
+
+    .qr-icon {
+      font-size: 14px;
+    }
+
+    .qr-text {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .qr-code-container {
+      background: #f7f9fa;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .qr-code {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 0 auto 15px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .qr-instructions {
+      color: #657786;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .qr-instructions p {
+      margin: 5px 0;
+    }
+
+    .qr-hint {
+      font-size: 11px !important;
+      color: #8899a6 !important;
+      font-style: italic;
+    }
+
+    /* Action Tabs */
+    .action-tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #333333;
+      background: rgba(26, 26, 26, 0.8);
+      border-radius: 6px 6px 0 0;
+      overflow: hidden;
+    }
+
+    .action-tab {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: rgba(51, 51, 51, 0.7);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888888;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+
+    .action-tab:hover {
+      background: rgba(68, 68, 68, 0.8);
+      color: #FF6B35;
+    }
+
+    .action-tab.active {
+      background: rgba(26, 26, 26, 0.8);
+      color: #FF6B35;
+      border-bottom-color: #FF6B35;
+      font-weight: 600;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Raid Section Styles */
+    .raid-categories {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .raid-category {
+      margin-bottom: 20px;
+    }
+
+    .raid-category h4 {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #333333;
+    }
+
+    .raid-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .raid-list-item:hover {
+      background: #2a2a2a;
+      border-color: #FF6B35;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(255,107,53,0.3);
+    }
+
+    .list-info {
+      flex: 1;
+    }
+
+    .list-name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .list-description {
+      font-size: 12px;
+      color: #cccccc;
+      line-height: 1.3;
+    }
+
+    .list-action {
+      margin-left: 12px;
+    }
+
+    .open-icon {
+      font-size: 16px;
+      color: #FF6B35;
+      transition: transform 0.2s ease;
+    }
+
+    .raid-list-item:hover .open-icon {
+      transform: scale(1.1);
+    }
+
+    /* Receive Section Styles */
+    .receive-qr-container {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .receive-qr-code {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 180px;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 10px;
+    }
+
+    .receive-qr-code img {
+      border-radius: 6px;
+    }
+
+    .receive-qr-container .qr-instructions {
+      margin-top: 10px;
+    }
+
+    .receive-qr-container .qr-instructions p {
+      margin: 5px 0;
+      color: #ffffff;
+    }
+
+    .receive-qr-container .qr-hint {
+      font-size: 11px !important;
+      color: #888888 !important;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
+    <p>Your AI agent for payments and community</p>
+  </div>
+  
+  <!-- Action Tabs -->
+  <div class="form-group">
+    <div class="action-tabs">
+      <button type="button" class="action-tab active" data-tab="send">Send</button>
+      <button type="button" class="action-tab" data-tab="receive">Receive</button>
+      <button type="button" class="action-tab" data-tab="raid">Raid</button>
+    </div>
+  </div>
+  
+  <!-- Send Section -->
+  <div id="sendSection" class="tab-content active">
+    <form id="transferForm">
+    <div class="form-group">
+      <label for="recipient">Recipient Username on X</label>
+      <input type="text" id="recipient" placeholder="@username" />
+      <div class="error" id="recipientError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label for="amount">Amount & Token</label>
+      <div class="amount-group">
+        <input type="number" id="amount" placeholder="1" value="1" step="0.01" min="0" />
+        <div class="token-select-container">
+          <select id="token">
+            <option value="NYLA">NYLA</option>
+            <option value="SOL">SOL</option>
+            <option value="ETH">ETH</option>
+            <option value="ALGO">ALGO</option>
+            <option value="USDC">USDC</option>
+            <option value="USDT">USDT</option>
+          </select>
+          <button type="button" class="manage-tokens-btn" id="manageTokensBtn" title="Manage Custom Tokens">📝</button>
+        </div>
+      </div>
+      <div class="error" id="amountError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label>Blockchain</label>
+      <div class="blockchain-group">
+        <div class="blockchain-option">
+          <input type="radio" id="solana" name="blockchain" value="Solana" checked />
+          <label for="solana">Solana</label>
+        </div>
+        <div class="blockchain-option">
+          <input type="radio" id="ethereum" name="blockchain" value="Ethereum" />
+          <label for="ethereum">Ethereum</label>
+        </div>
+        <div class="blockchain-option">
+          <input type="radio" id="algorand" name="blockchain" value="Algorand" />
+          <label for="algorand">Algorand</label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <div class="preview-header">
+        <label>Command Preview</label>
+        <button type="button" class="qr-toggle-btn" id="qrToggleBtn" disabled>
+          <span class="qr-icon">📱</span>
+          <span class="qr-text">Switch to QR Code</span>
+        </button>
+      </div>
+      <div class="command-preview empty" id="commandPreview">
+        Fill in the fields above to see the command
+      </div>
+      <div class="qr-code-container" id="qrCodeContainer" style="display: none;">
+        <div class="qr-code" id="qrCode"></div>
+        <div class="qr-instructions">
+          <p>📱 Scan with your phone to open X.com with the transfer command ready!</p>
+          <p class="qr-hint">The QR code will open X.com compose with your transfer command pre-filled</p>
+        </div>
+      </div>
+    </div>
+    
+    <button type="button" class="send-button" id="sendButton" disabled>
+      Send to X.com
+    </button>
+    </form>
+  </div>
+  
+  <!-- Receive Section -->
+  <div id="receiveSection" class="tab-content" style="display: none;">
+    
+    <!-- QR Code Display (Top) -->
+    <div class="receive-qr-container">
+      <div class="receive-qr-code" id="receiveQrCode">
+        <!-- QR code will be generated here -->
+      </div>
+      <div class="qr-instructions">
+        <p>📱 Share this QR code to receive NYLA payments</p>
+        <p class="qr-hint">Others can scan to send you tokens instantly</p>
+      </div>
+    </div>
+    
+    <!-- Receive Form -->
+    <form id="receiveForm">
+      <div class="form-group">
+        <label for="receiveUsername">Your Username on X</label>
+        <input type="text" id="receiveUsername" placeholder="@h2crypto_eth" value="h2crypto_eth" />
+        <div class="error" id="receiveUsernameError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="receiveAmount">Amount & Token</label>
+        <div class="amount-group">
+          <input type="number" id="receiveAmount" placeholder="1" step="0.01" min="0" value="1" />
+          <div class="token-select-container">
+            <select id="receiveToken">
+              <option value="NYLA" selected>NYLA</option>
+              <option value="SOL">SOL</option>
+              <option value="ETH">ETH</option>
+              <option value="ALGO">ALGO</option>
+              <option value="USDC">USDC</option>
+              <option value="USDT">USDT</option>
+            </select>
+            <button type="button" class="manage-tokens-btn" id="receiveManageTokensBtn" title="Manage Custom Tokens">📝</button>
+          </div>
+        </div>
+        <div class="error" id="receiveAmountError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label>Blockchain</label>
+        <div class="blockchain-group">
+          <div class="blockchain-option">
+            <input type="radio" id="receiveSolana" name="receiveBlockchain" value="Solana" checked />
+            <label for="receiveSolana">Solana</label>
+          </div>
+          <div class="blockchain-option">
+            <input type="radio" id="receiveEthereum" name="receiveBlockchain" value="Ethereum" />
+            <label for="receiveEthereum">Ethereum</label>
+          </div>
+          <div class="blockchain-option">
+            <input type="radio" id="receiveAlgorand" name="receiveBlockchain" value="Algorand" />
+            <label for="receiveAlgorand">Algorand</label>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" class="send-button" id="refreshQrButton">
+        Refresh QR Code
+      </button>
+    </form>
+    
+  </div>
+  
+  <!-- Raid Section -->
+  <div id="raidSection" class="tab-content" style="display: none;">
+    <div class="raid-categories">
+      
+      <!-- NYLA Core Category -->
+      <div class="raid-category">
+        <h4>NYLA Core</h4>
+        <div class="raid-list-item" data-url="https://x.com/i/lists/1940678457350029559">
+          <div class="list-info">
+            <div class="list-name">NYLA Contributors</div>
+            <div class="list-description">Key NYLA project contributors - support their posts</div>
+          </div>
+          <div class="list-action">
+            <span class="open-icon">🔗</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Community Raiders Category -->
+      <div class="raid-category">
+        <h4>Community Raiders</h4>
+        <div class="raid-list-item" data-url="https://x.com/i/lists/1950200431432647034">
+          <div class="list-info">
+            <div class="list-name">Active NYLA Raiders</div>
+            <div class="list-description">Follow these community members' engagement patterns</div>
+          </div>
+          <div class="list-action">
+            <span class="open-icon">🔗</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <div class="status" id="status" style="display: none;"></div>
+  
+  <!-- Version and Developer Credit Footer -->
+  <div class="app-version" id="appVersion">
+    NYLA Go v0.7.5
+  </div>
+  <div class="developer-credit">
+    Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
+  </div>
+  
+  <!-- Custom Token Management Modal -->
+  <div class="modal-overlay" id="modalOverlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Manage Custom Tokens</h2>
+        <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="add-token-section">
+          <h3>Add Custom Token</h3>
+          <div class="add-token-form">
+            <input type="text" id="newTokenInput" placeholder="Enter token symbol (e.g., BTC)" maxlength="10" />
+            <button type="button" id="addTokenBtn" class="add-btn">Add Token</button>
+          </div>
+          <div class="error" id="tokenError"></div>
+        </div>
+        
+        <div class="custom-tokens-section">
+          <h3>Custom Tokens</h3>
+          <div class="custom-tokens-list" id="customTokensList">
+            <div class="no-custom-tokens" id="noCustomTokens">No custom tokens added yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="qr-simple.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
