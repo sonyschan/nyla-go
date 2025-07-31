@@ -155,8 +155,8 @@ echo "❌ If any version is different, UPDATE IT before release!"
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.2.0
-- **Features**: PWA with expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
+- **Latest Release**: v1.3.0
+- **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
