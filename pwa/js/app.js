@@ -22,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const tabButtons = document.querySelectorAll('.tab-button');
   const receiveTab = document.getElementById('receiveTab');
   const raidTab = document.getElementById('raidTab');
+  const appTab = document.getElementById('appTab');
   const raidListItems = document.querySelectorAll('.raid-list-item');
+  const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
   let APP_VERSION = '0.7.5';
@@ -200,24 +202,35 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Remove active class from all tabs and buttons
       tabButtons.forEach(btn => btn.classList.remove('active'));
-      receiveTab.classList.remove('active');
-      raidTab.classList.remove('active');
+      if (receiveTab) receiveTab.classList.remove('active');
+      if (raidTab) raidTab.classList.remove('active');
+      if (appTab) appTab.classList.remove('active');
       
       // Hide all tab content
-      receiveTab.style.display = 'none';
-      raidTab.style.display = 'none';
+      if (receiveTab) receiveTab.style.display = 'none';
+      if (raidTab) raidTab.style.display = 'none';
+      if (appTab) appTab.style.display = 'none';
       
       // Show selected tab
       this.classList.add('active');
       
       if (tabName === 'receive') {
-        receiveTab.classList.add('active');
-        receiveTab.style.display = 'block';
-        // Generate QR code when switching to receive tab
-        generateReceiveQRCode();
+        if (receiveTab) {
+          receiveTab.classList.add('active');
+          receiveTab.style.display = 'block';
+          // Generate QR code when switching to receive tab
+          generateReceiveQRCode();
+        }
       } else if (tabName === 'raid') {
-        raidTab.classList.add('active');
-        raidTab.style.display = 'block';
+        if (raidTab) {
+          raidTab.classList.add('active');
+          raidTab.style.display = 'block';
+        }
+      } else if (tabName === 'app') {
+        if (appTab) {
+          appTab.classList.add('active');
+          appTab.style.display = 'block';
+        }
       }
     });
   });
@@ -230,6 +243,19 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('NYLA GO PWA: Opening raid list:', listUrl);
         window.open(listUrl, '_blank');
         showStatus('Opening X.com list...', 'success');
+        setTimeout(hideStatus, 2000);
+      }
+    });
+  });
+
+  // App item click handlers  
+  appItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const appUrl = this.dataset.url;
+      if (appUrl) {
+        console.log('NYLA GO PWA: Opening community app:', appUrl);
+        window.open(appUrl, '_blank');
+        showStatus('Opening community app...', 'success');
         setTimeout(hideStatus, 2000);
       }
     });
