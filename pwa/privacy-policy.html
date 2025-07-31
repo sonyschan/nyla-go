@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - NYLA Go</title>
+  <meta name="description" content="Privacy Policy for NYLA Go - Your AI agent for payments and community">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#FF6B35">
+  
+  <!-- Styles -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000000;
+      color: #ffffff;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px 0;
+      border-bottom: 1px solid #333333;
+    }
+    
+    .header h1 {
+      color: #FF6B35;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .back-link {
+      color: #FF6B35;
+      text-decoration: none;
+      font-size: 16px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    h2 {
+      color: #FF6B35;
+      font-size: 22px;
+      margin: 30px 0 15px 0;
+      border-bottom: 1px solid #333333;
+      padding-bottom: 5px;
+    }
+    
+    h3 {
+      color: #ffffff;
+      font-size: 18px;
+      margin: 20px 0 10px 0;
+    }
+    
+    p, li {
+      color: #cccccc;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    
+    ul {
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    strong {
+      color: #ffffff;
+    }
+    
+    .highlight {
+      background: rgba(255, 107, 53, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #FF6B35;
+      margin: 20px 0;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #333333;
+      color: #888888;
+      font-size: 14px;
+    }
+    
+    .footer a {
+      color: #FF6B35;
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="/" class="back-link">← Back to NYLA Go</a>
+    <h1>Privacy Policy for NYLA Go</h1>
+    <p><strong>Last Updated: July 2025</strong></p>
+  </div>
+
+  <h2>Overview</h2>
+  <p>NYLA Go is a browser extension that helps users generate NYLA cryptocurrency transfer commands on X.com. We are committed to protecting your privacy.</p>
+
+  <h2>Data Collection</h2>
+  <ul>
+    <li><strong>Form Data</strong>: The extension stores your previously entered recipient usernames, token amounts, and selected cryptocurrencies locally in your browser to improve user experience</li>
+    <li><strong>URL Processing</strong>: The extension reads the current X.com page URL to automatically detect usernames for transfer recipients (e.g., extracting 'username' from 'x.com/username/status/123')</li>
+    <li><strong>Page Context</strong>: The extension analyzes visible X.com page content to detect reply recipients and compose dialog context</li>
+    <li><strong>QR Code Generation</strong>: Transfer commands are sent to external QR code generation services to create scannable QR codes for mobile use</li>
+    <li><strong>Logo Integration</strong>: The official NYLA logo is loaded from IPFS (InterPlanetary File System) for display in QR codes</li>
+    <li><strong>No Personal Information</strong>: We do not collect, store, or transmit any personal information, private keys, or sensitive data beyond transfer commands for QR generation</li>
+    <li><strong>No Analytics</strong>: We do not use analytics services or track user behavior</li>
+    <li><strong>Limited External Communication</strong>: QR generation and logo loading require external requests, but only contain transfer command text and no personal data</li>
+  </ul>
+
+  <h2>Data Storage</h2>
+  <ul>
+    <li>All form data is stored locally in your browser using Chrome's storage API</li>
+    <li>Transfer commands are temporarily sent to QR generation services but are not stored by those services</li>
+    <li>You can clear local data at any time by removing the extension</li>
+    <li>No personal data is shared with third parties</li>
+  </ul>
+
+  <h2>Permissions Usage</h2>
+  <ul>
+    <li><strong>ActiveTab</strong>: Required to detect X.com pages, read current page URL for username detection, and insert transfer commands</li>
+    <li><strong>Scripting</strong>: Required to interact with X.com's compose boxes and analyze page content for recipient detection</li>
+    <li><strong>Storage</strong>: Required to save form preferences locally in your browser</li>
+    <li><strong>Host Permissions</strong>:
+      <ul>
+        <li><strong>x.com and twitter.com</strong>: For core extension functionality</li>
+        <li><strong>api.qrserver.com</strong>: For generating QR codes from transfer commands</li>
+        <li><strong>chart.googleapis.com</strong>: For backup QR code generation service</li>
+        <li><strong>ipfs.io</strong>: For loading the official NYLA logo displayed in QR codes</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>What We Access (And Why)</h2>
+  <ul>
+    <li><strong>Current Page URL</strong>: To extract usernames from URLs like 'x.com/username/status/123' for automatic recipient detection</li>
+    <li><strong>Page Content</strong>: To find "Replying to" text and compose dialog context for smart recipient suggestions</li>
+    <li><strong>Text Input Fields</strong>: To insert generated transfer commands into X.com compose boxes</li>
+    <li><strong>Navigation Context</strong>: To detect when you're commenting from profiles or replying to specific users</li>
+  </ul>
+
+  <h2>What We DON'T Access</h2>
+  <div class="highlight">
+    <ul>
+      <li>No browsing history outside of the current X.com tab</li>
+      <li>No data from other websites or browser tabs</li>
+      <li>No personal files, downloads, or system information</li>
+      <li>No private keys, wallet information, or cryptocurrency balances</li>
+      <li>No personal identification or contact information</li>
+    </ul>
+  </div>
+
+  <h2>External Services Used</h2>
+  <ul>
+    <li><strong>QR Code Generation</strong>: api.qrserver.com and chart.googleapis.com receive transfer command text to generate QR codes</li>
+    <li><strong>Logo Hosting</strong>: ipfs.io serves the official NYLA logo for display in QR codes</li>
+    <li><strong>No Data Storage</strong>: These services do not store or log the transfer commands sent to them</li>
+    <li><strong>Limited Data</strong>: Only the transfer command text (e.g., "Hey @AgentNyla transfer 50 $NYLA @username") is shared, no personal information</li>
+  </ul>
+
+  <h2>Data Sharing</h2>
+  <p>We do not share, sell, or transmit any personal user data to third parties. Transfer commands are only sent to QR generation services for functionality purposes.</p>
+
+  <h2>Security</h2>
+  <ul>
+    <li>No remote code execution</li>
+    <li>Limited external API calls only to trusted QR generation and logo hosting services</li>
+    <li>No sensitive data transmission - only transfer command text for QR generation</li>
+    <li>No data persistence on external servers</li>
+    <li>All form data and preferences remain local to your browser</li>
+  </ul>
+
+  <h2>Changes to This Policy</h2>
+  <p>We may update this privacy policy from time to time. Users will be notified of any material changes through extension updates.</p>
+
+  <h2>Contact</h2>
+  <p>For questions about this privacy policy, please create an issue at our <a href="https://github.com/sonyschan/nyla-go" target="_blank">GitHub repository</a>.</p>
+
+  <div class="footer">
+    <p><em>This privacy policy applies to NYLA Go Chrome Extension version 1.3.4 and later.</em></p>
+    <p><a href="/">← Back to NYLA Go</a> | <a href="https://github.com/sonyschan/nyla-go" target="_blank">GitHub</a></p>
+  </div>
+</body>
+</html>
