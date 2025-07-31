@@ -23,7 +23,8 @@
       "Bash(__NEW_LINE__ echo \"\")",
       "Bash(echo:*)",
       "Bash(RELEASE_VERSION=\"1.1.0\")",
-      "Bash(RELEASE_VERSION=\"1.2.0\")"
+      "Bash(RELEASE_VERSION=\"1.2.0\")",
+      "Bash(RELEASE_VERSION=\"1.3.3\")"
     ],
     "deny": []
   }

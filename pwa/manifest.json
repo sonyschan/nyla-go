@@ -1,7 +1,7 @@
 {
   "name": "NYLA GO - Payment Requests",
   "short_name": "NYLA GO",
-  "description": "Generate QR codes for NYLA cryptocurrency payment requests on X.com",
+  "description": "Your AI agent for crypto payments and community",
   "start_url": "/nyla-go/",
   "display": "standalone",
   "background_color": "#000000",
