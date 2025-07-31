@@ -148,9 +148,70 @@ echo "❌ If any version is different, UPDATE IT before release!"
 2. ✅ **Update version tag** (manifest.json + pwa/js/app.js + popup.js + CLAUDE.md)
 3. ✅ **Update README** for new release tag (version badge + download links)  
 4. ✅ **Test version display** - Load extension and PWA to verify displayed versions
-5. ✅ **Create git tags and GitHub releases** with proper changelog
-6. ✅ **Redo VirusTotal** & send new verify link
-7. ✅ **Update privacy and security documents** for any new features/changes
+5. ✅ **Create Chrome Store package** - Extension-only ZIP without PWA files
+6. ✅ **Move release files to /releases directory** - Organize all release artifacts
+7. ✅ **Create git tags and GitHub releases** with proper changelog
+8. ✅ **Redo VirusTotal** & send new verify link
+9. ✅ **Update privacy and security documents** for any new features/changes
+
+## 🏪 Chrome Store Packaging
+
+### ⚠️ **CRITICAL: Multiple Manifest Issue**
+Chrome Web Store will **reject packages with multiple manifest.json files**. Our project has:
+- `manifest.json` (Extension manifest) 
+- `pwa/manifest.json` (PWA manifest)
+
+### 📦 **Create Extension-Only Package:**
+```bash
+# Create extension package directory
+mkdir -p extension-package
+
+# Copy ONLY extension files (exclude PWA directory)
+cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png extension-package/
+cp -r icons extension-package/
+
+# Create Chrome Store ZIP package
+cd extension-package
+zip -r ../nyla-go-v${RELEASE_VERSION}-extension-only.zip . -x "*.DS_Store"
+cd ..
+
+# Move to releases directory
+mv nyla-go-v${RELEASE_VERSION}-extension-only.zip releases/
+
+# Clean up
+rm -rf extension-package
+```
+
+### 📁 **Extension Package Contents:**
+- ✅ `manifest.json` (extension only)
+- ✅ `popup.html` & `popup.js` 
+- ✅ `content.js`
+- ✅ `qr-simple.js`
+- ✅ `icons/` directory
+- ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
+- ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
+
+### 🚫 **Files to EXCLUDE from Chrome Store Package:**
+- `pwa/` directory (contains PWA manifest)
+- `CLAUDE.md`, `README.md`, documentation files
+- `.git/`, `.github/`, development files
+- `releases/`, `screenshots/`, `design/` directories
+
+## 📁 Release File Management
+
+### 📂 **All Release Files Go to `/releases` Directory:**
+```bash
+# Move all release artifacts to releases directory
+mv nyla-go-v${RELEASE_VERSION}-extension-only.zip releases/
+```
+
+### 📋 **Release Directory Structure:**
+```
+releases/
+├── nyla-go-v1.3.5-extension-only.zip    # Chrome Store package
+├── previous-versions/                     # Older releases
+└── README.md                             # Release notes
+```
 
 ## 📋 Project Information
 
