@@ -1,6 +1,6 @@
 // NYLA GO PWA - Service Worker
 
-const CACHE_NAME = 'nyla-go-pwa-v1.3.3';
+const CACHE_NAME = 'nyla-go-pwa-v1.3.4';
 const urlsToCache = [
   '/nyla-go/',
   '/nyla-go/index.html',
@@ -15,7 +15,8 @@ const urlsToCache = [
   '/nyla-go/icons/icon-512.png',
   '/nyla-go/favicon-16.png',
   '/nyla-go/favicon-32.png',
-  '/nyla-go/apple-touch-icon.png'
+  '/nyla-go/apple-touch-icon.png',
+  '/nyla-go/privacy-policy.html'
 ];
 
 // Install event - cache resources
