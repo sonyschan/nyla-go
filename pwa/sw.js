@@ -1,6 +1,6 @@
 // NYLA GO PWA - Service Worker
 
-const CACHE_NAME = 'nyla-go-pwa-v1.2.0';
+const CACHE_NAME = 'nyla-go-pwa-v1.3.0';
 const urlsToCache = [
   '/nyla-go/',
   '/nyla-go/index.html',
