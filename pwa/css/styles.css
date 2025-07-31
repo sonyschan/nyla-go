@@ -16,16 +16,6 @@ body {
   position: relative;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: -1;
-}
 
 .app-container {
   min-height: 100vh;
@@ -40,26 +30,17 @@ body::before {
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 30px;
-  padding-top: 20px;
+  margin-bottom: 15px;
+  padding-top: 10px;
   position: relative;
   z-index: 1;
 }
 
 .header-logo {
-  width: 100px;
+  width: 280px;
   height: auto;
-  margin-bottom: 15px;
+  margin-bottom: 6px;
   filter: drop-shadow(0 4px 12px rgba(255, 107, 53, 0.4));
-}
-
-.header h1 {
-  color: #ffffff;
-  font-size: 28px;
-  margin: 0 0 8px 0;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 .header p {
@@ -94,7 +75,7 @@ input, select {
   border-radius: 12px;
   font-size: 16px;
   box-sizing: border-box;
-  background: #1a1a1a;
+  background: rgba(26, 26, 26, 0.7);
   color: #ffffff;
   transition: all 0.2s ease;
 }
