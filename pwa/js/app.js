@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.3.6';
+  let APP_VERSION = '1.3.7';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update version text dynamically
     updateVersionText();
+    
+    // Generate raid section from shared data
+    generateRaidSection();
     
     setTimeout(() => {
       generateReceiveQRCode();
@@ -183,6 +186,65 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Function to generate raid section dynamically
+  function generateRaidSection() {
+    const raidCategoriesContainer = document.getElementById('raidCategories');
+    if (!raidCategoriesContainer || !window.NYLA_RAID_DATA) return;
+    
+    // Clear existing content
+    raidCategoriesContainer.innerHTML = '';
+    
+    // Generate categories
+    window.NYLA_RAID_DATA.categories.forEach(category => {
+      const categoryDiv = document.createElement('div');
+      categoryDiv.className = 'raid-category';
+      
+      const categoryTitle = document.createElement('h4');
+      categoryTitle.textContent = category.title;
+      categoryDiv.appendChild(categoryTitle);
+      
+      // Generate items for this category
+      category.items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'raid-list-item';
+        itemDiv.setAttribute('data-url', item.url);
+        
+        itemDiv.innerHTML = `
+          <div class="list-info">
+            <div class="list-name">${item.name}</div>
+            <div class="list-description">${item.description}</div>
+          </div>
+          <div class="list-action">
+            <span class="open-icon">${item.icon}</span>
+          </div>
+        `;
+        
+        categoryDiv.appendChild(itemDiv);
+      });
+      
+      raidCategoriesContainer.appendChild(categoryDiv);
+    });
+    
+    // Add click handlers to dynamically generated items
+    addRaidClickHandlers();
+  }
+  
+  // Function to add click handlers to raid items
+  function addRaidClickHandlers() {
+    const raidListItems = document.querySelectorAll('.raid-list-item');
+    raidListItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const listUrl = this.dataset.url;
+        if (listUrl) {
+          console.log('NYLA GO PWA: Opening raid list:', listUrl);
+          window.open(listUrl, '_blank');
+          showStatus('Opening X.com list...', 'success');
+          setTimeout(hideStatus, 2000);
+        }
+      });
+    });
+  }
+
   // Event Listeners
   receiveUsernameInput.addEventListener('input', function() {
     saveUsername();
@@ -235,18 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Raid list item click handlers
-  raidListItems.forEach(item => {
-    item.addEventListener('click', function() {
-      const listUrl = this.dataset.url;
-      if (listUrl) {
-        console.log('NYLA GO PWA: Opening raid list:', listUrl);
-        window.open(listUrl, '_blank');
-        showStatus('Opening X.com list...', 'success');
-        setTimeout(hideStatus, 2000);
-      }
-    });
-  });
+  // Raid list item click handlers are now added dynamically in generateRaidSection()
 
   // App item click handlers  
   appItems.forEach(item => {

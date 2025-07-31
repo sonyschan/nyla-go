@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveTokenSelect = document.getElementById('receiveToken');
   const receiveQrCode = document.getElementById('receiveQrCode');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
-  const refreshQrButton = document.getElementById('refreshQrButton');
   
   // Debug QR elements
   console.log('NYLA QR: Elements found:', {
@@ -62,12 +61,75 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load saved values and custom tokens from storage
   loadSavedValues();
   
-  // Generate initial receive QR code with default values
+  // Load saved receive values and generate initial QR code
+  loadReceiveValues();
   setTimeout(() => {
     if (receiveQrCode) {
       generateReceiveQRCode();
     }
   }, 500);
+  
+  // Generate raid section from shared data
+  generateRaidSection();
+  
+  // Function to generate raid section dynamically
+  function generateRaidSection() {
+    const raidCategoriesContainer = document.getElementById('raidCategories');
+    if (!raidCategoriesContainer || !window.NYLA_RAID_DATA) return;
+    
+    // Clear existing content
+    raidCategoriesContainer.innerHTML = '';
+    
+    // Generate categories
+    window.NYLA_RAID_DATA.categories.forEach(category => {
+      const categoryDiv = document.createElement('div');
+      categoryDiv.className = 'raid-category';
+      
+      const categoryTitle = document.createElement('h4');
+      categoryTitle.textContent = category.title;
+      categoryDiv.appendChild(categoryTitle);
+      
+      // Generate items for this category
+      category.items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'raid-list-item';
+        itemDiv.setAttribute('data-url', item.url);
+        
+        itemDiv.innerHTML = `
+          <div class="list-info">
+            <div class="list-name">${item.name}</div>
+            <div class="list-description">${item.description}</div>
+          </div>
+          <div class="list-action">
+            <span class="open-icon">${item.icon}</span>
+          </div>
+        `;
+        
+        categoryDiv.appendChild(itemDiv);
+      });
+      
+      raidCategoriesContainer.appendChild(categoryDiv);
+    });
+    
+    // Add click handlers to dynamically generated items
+    addRaidClickHandlers();
+  }
+  
+  // Function to add click handlers to raid items
+  function addRaidClickHandlers() {
+    const raidListItems = document.querySelectorAll('.raid-list-item');
+    raidListItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const listUrl = this.dataset.url;
+        if (listUrl) {
+          console.log('NYLA: Opening raid list:', listUrl);
+          chrome.tabs.create({ url: listUrl });
+          showStatus('Opening X.com list...', 'success');
+          setTimeout(hideStatus, 2000);
+        }
+      });
+    });
+  }
   
   // Token Management Functions
   function updateTokenDropdown() {
@@ -378,12 +440,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.3.6';
+          appVersionElement.textContent = 'NYLA Go v1.3.7';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.3.6';
+        appVersionElement.textContent = 'NYLA Go v1.3.7';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -732,8 +794,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (receiveSection) {
               receiveSection.classList.add('active');
               receiveSection.style.display = 'block';
-              // Generate initial QR code when receive tab is opened
-              generateReceiveQRCode();
+              // Generate QR code when receive tab is opened
+              setTimeout(() => {
+                generateReceiveQRCode();
+              }, 100);
             }
           } else if (tabName === 'raid') {
             if (raidSection) {
@@ -746,33 +810,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Raid list item click handlers
-  if (raidListItems && raidListItems.length > 0) {
-    raidListItems.forEach(item => {
-      if (item) {
-        item.addEventListener('click', function() {
-          const listUrl = this.dataset.url;
-          const listNameElement = this.querySelector('.list-name');
-          const listName = listNameElement ? listNameElement.textContent : 'List';
-          
-          // Open the X.com list in a new tab
-          chrome.tabs.create({ 
-            url: listUrl,
-            active: true  // Focus the new tab
-          });
-          
-          // Show feedback
-          showStatus(`Opened ${listName} in new tab`, 'success');
-      
-          
-          // Hide status after 2 seconds
-          setTimeout(() => {
-            hideStatus();
-          }, 2000);
-        });
-      }
-    });
-  }
+  // Raid list item click handlers are now added dynamically in generateRaidSection()
 
   // Generate X.com mobile URL for QR codes
   function generateXMobileURL(command) {
@@ -790,6 +828,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const username = receiveUsernameInput.value.trim().replace('@', '') || 'h2crypto_eth';
     const amount = receiveAmountInput.value || '1';
     const token = receiveTokenSelect.value || 'NYLA';
+    
+    // Update instruction text based on token
+    const qrInstructionText = document.getElementById('qrInstructionText');
+    if (qrInstructionText) {
+      qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+    }
     
     // Get selected blockchain
     let blockchain = 'Solana'; // default
@@ -837,33 +881,84 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
   }
 
-  // Receive form event listeners
+  // Receive form event listeners - dynamic QR generation on field changes
   if (receiveUsernameInput) {
-    receiveUsernameInput.addEventListener('input', generateReceiveQRCode);
+    receiveUsernameInput.addEventListener('input', function() {
+      generateReceiveQRCode();
+      saveReceiveValues();
+    });
   }
   if (receiveAmountInput) {
-    receiveAmountInput.addEventListener('input', generateReceiveQRCode);
+    receiveAmountInput.addEventListener('input', function() {
+      generateReceiveQRCode();
+      saveReceiveValues();
+    });
   }
   if (receiveTokenSelect) {
-    receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
+    receiveTokenSelect.addEventListener('change', function() {
+      generateReceiveQRCode();
+      saveReceiveValues();
+    });
   }
   
   if (receiveBlockchainRadios && receiveBlockchainRadios.length > 0) {
     receiveBlockchainRadios.forEach(radio => {
       if (radio) {
-        radio.addEventListener('change', generateReceiveQRCode);
+        radio.addEventListener('change', function() {
+          generateReceiveQRCode();
+          saveReceiveValues();
+        });
       }
     });
   }
 
-  // Refresh QR button
-  if (refreshQrButton) {
-    refreshQrButton.addEventListener('click', function() {
-      generateReceiveQRCode();
-      showStatus('QR Code refreshed!', 'success');
-      setTimeout(() => {
-        hideStatus();
-      }, 2000);
+  // Share Payment Request button
+  const shareButton = document.getElementById('shareButton');
+  if (shareButton) {
+    shareButton.addEventListener('click', async function() {
+      const username = receiveUsernameInput.value.trim().replace('@', '') || 'username';
+      const amount = receiveAmountInput.value || '1';
+      const token = receiveTokenSelect.value || 'NYLA';
+      
+      let blockchain = 'Solana';
+      receiveBlockchainRadios.forEach(radio => {
+        if (radio.checked) blockchain = radio.value;
+      });
+      
+      // Generate the actual transfer command
+      let command;
+      if (blockchain === 'Solana') {
+        command = `Hey @AgentNyla transfer ${amount} $${token} @${username}`;
+      } else {
+        command = `Hey @AgentNyla transfer ${amount} $${token} @${username} ${blockchain}`;
+      }
+      
+      // Generate mobile URL for the command
+      const mobileURL = generateXMobileURL(command);
+      
+      const shareText = `💰 Send me ${amount} $${token} via X by using following link:\n\n${mobileURL}`;
+      
+      // Copy to clipboard (extension environment doesn't have native sharing)
+      try {
+        await navigator.clipboard.writeText(shareText);
+        showStatus('Payment request copied to clipboard!', 'success');
+        setTimeout(hideStatus, 3000);
+      } catch (error) {
+        console.error('Clipboard access failed:', error);
+        // Fallback - create a text area and copy
+        const textArea = document.createElement('textarea');
+        textArea.value = shareText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showStatus('Payment request copied to clipboard!', 'success');
+        } catch (fallbackError) {
+          showStatus('Unable to copy to clipboard', 'error');
+        }
+        document.body.removeChild(textArea);
+        setTimeout(hideStatus, 3000);
+      }
     });
   }
 
@@ -1114,6 +1209,121 @@ document.addEventListener('DOMContentLoaded', function() {
     validateAndUpdateCommand();
   }
   
+  // Save receive form values to storage
+  function saveReceiveValues() {
+    if (!receiveUsernameInput || !receiveAmountInput || !receiveTokenSelect) return;
+    
+    const receiveBlockchainRadio = document.querySelector('input[name="receiveBlockchain"]:checked');
+    if (!receiveBlockchainRadio) return;
+    
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      const values = {
+        receiveUsername: receiveUsernameInput.value,
+        receiveAmount: receiveAmountInput.value,
+        receiveToken: receiveTokenSelect.value,
+        receiveBlockchain: receiveBlockchainRadio.value
+      };
+      chrome.storage.local.set({ nylaReceiveValues: values }).catch(err => {
+        console.log('Receive storage save failed:', err);
+        // Fallback to localStorage
+        try {
+          localStorage.setItem('nylaReceiveValues', JSON.stringify(values));
+        } catch (e) {
+          console.log('localStorage fallback failed:', e);
+        }
+      });
+    } else {
+      // Fallback to localStorage
+      try {
+        const values = {
+          receiveUsername: receiveUsernameInput.value,
+          receiveAmount: receiveAmountInput.value,
+          receiveToken: receiveTokenSelect.value,
+          receiveBlockchain: receiveBlockchainRadio.value
+        };
+        localStorage.setItem('nylaReceiveValues', JSON.stringify(values));
+      } catch (e) {
+        console.log('localStorage fallback failed:', e);
+      }
+    }
+  }
+  
+  // Load saved receive values from storage
+  function loadReceiveValues() {
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.get(['nylaReceiveValues']).then(result => {
+        if (result.nylaReceiveValues) {
+          const values = result.nylaReceiveValues;
+          if (receiveUsernameInput) {
+            receiveUsernameInput.value = values.receiveUsername || 'h2crypto_eth';
+          }
+          if (receiveAmountInput) {
+            receiveAmountInput.value = values.receiveAmount || '1';
+          }
+          if (receiveTokenSelect) {
+            receiveTokenSelect.value = values.receiveToken || 'NYLA';
+          }
+          // Set blockchain selection (default to Solana if not saved)
+          const savedBlockchain = values.receiveBlockchain || 'Solana';
+          const blockchainRadio = document.querySelector(`input[name="receiveBlockchain"][value="${savedBlockchain}"]`);
+          if (blockchainRadio) {
+            blockchainRadio.checked = true;
+          }
+        } else {
+          // Set default values
+          if (receiveUsernameInput) {
+            receiveUsernameInput.value = 'h2crypto_eth';
+          }
+          if (receiveAmountInput) {
+            receiveAmountInput.value = '1';
+          }
+        }
+      }).catch(err => {
+        console.log('Receive storage load failed:', err);
+        // Fallback to localStorage
+        loadReceiveFromLocalStorage();
+      });
+    } else {
+      // Fallback to localStorage
+      loadReceiveFromLocalStorage();
+    }
+  }
+  
+  // Fallback localStorage loading for receive values
+  function loadReceiveFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('nylaReceiveValues');
+      if (saved) {
+        const values = JSON.parse(saved);
+        if (receiveUsernameInput) {
+          receiveUsernameInput.value = values.receiveUsername || 'h2crypto_eth';
+        }
+        if (receiveAmountInput) {
+          receiveAmountInput.value = values.receiveAmount || '1';
+        }
+        if (receiveTokenSelect) {
+          receiveTokenSelect.value = values.receiveToken || 'NYLA';
+        }
+        // Set blockchain selection (default to Solana if not saved)
+        const savedBlockchain = values.receiveBlockchain || 'Solana';
+        const blockchainRadio = document.querySelector(`input[name="receiveBlockchain"][value="${savedBlockchain}"]`);
+        if (blockchainRadio) {
+          blockchainRadio.checked = true;
+        }
+      } else {
+        // Set default values
+        if (receiveUsernameInput) {
+          receiveUsernameInput.value = 'h2crypto_eth';
+        }
+        if (receiveAmountInput) {
+          receiveAmountInput.value = '1';
+        }
+      }
+    } catch (e) {
+      console.log('localStorage load failed:', e);
+    }
+  }
+
   // Initialize
   validateAndUpdateCommand();
 });
