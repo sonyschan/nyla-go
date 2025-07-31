@@ -300,6 +300,14 @@
   background: #333333;
   border-radius: 12px;
   transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 .app-item:hover .app-icon {
