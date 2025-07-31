@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.3.5';
+  let APP_VERSION = '1.3.6';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
