@@ -17,7 +17,13 @@
       "Bash(sips:*)",
       "Bash(gh run view:*)",
       "Bash(gh run list:*)",
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(RELEASE_VERSION=\"1.0.0\")",
+      "Bash(__NEW_LINE__ echo \"=== VERSION VERIFICATION FOR v$RELEASE_VERSION ===\")",
+      "Bash(__NEW_LINE__ echo \"\")",
+      "Bash(echo:*)",
+      "Bash(RELEASE_VERSION=\"1.1.0\")",
+      "Bash(RELEASE_VERSION=\"1.2.0\")"
     ],
     "deny": []
   }
