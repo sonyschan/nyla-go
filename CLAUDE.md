@@ -14,7 +14,32 @@ This file contains important information for Claude to remember across sessions.
   - [ ] **Both must match the intended release version exactly**
 
 ### 🏷️ **Version Management**
-- [ ] **1. Update Version Tag in ALL Files** - Bump version number (e.g., 0.5.0 → 0.6.0):
+
+#### 📝 **Semantic Versioning Guidelines**
+Follow semantic versioning (X.Y.Z) to determine appropriate version increments:
+
+**Major Version (X.y.z):**
+- First number represents a major release
+- Signifies breaking changes that are NOT backward compatible
+- Older versions may not work with new major version without modifications
+- Examples: Significant architectural changes, API overhauls, removal of deprecated features
+- **Use when**: Major UX overhauls, breaking API changes, significant feature removals
+
+**Minor Version (x.Y.z):**
+- Second number represents a minor release
+- Addition of new features or functionality that ARE backward compatible
+- Users can upgrade without expecting existing code/configurations to break
+- **Use when**: New tabs, new features, UI enhancements, new integrations
+
+**Patch Version (x.y.Z):**
+- Third number represents a patch release
+- Backward-compatible bug fixes or minor improvements
+- Most frequent release type for small, non-breaking enhancements  
+- **Use when**: Bug fixes, small UX improvements, security patches, minor optimizations
+
+**Decision Priority:** If user doesn't specify version type, choose based on change impact using above guidelines.
+
+- [ ] **1. Update Version Tag in ALL Files** - Bump version number following semantic versioning:
   - [ ] `manifest.json` - Extension version
   - [ ] `popup.html` - Extension UI version display (fallback only)
   - [ ] `pwa/index.html` - PWA version display (fallback only)
