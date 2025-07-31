@@ -739,7 +739,7 @@
         <!-- QR code will be generated here -->
       </div>
       <div class="qr-instructions">
-        <p>📱 Share this QR code to receive NYLA payments</p>
+        <p id="qrInstructionText">📱 Share this QR code to receive NYLA payments</p>
         <p class="qr-hint">Others can scan to send you tokens instantly</p>
       </div>
     </div>
@@ -789,8 +789,8 @@
         </div>
       </div>
       
-      <button type="button" class="send-button" id="refreshQrButton">
-        Refresh QR Code
+      <button type="button" class="send-button" id="shareButton">
+        📤 Share Payment Request
       </button>
     </form>
     
@@ -798,36 +798,8 @@
   
   <!-- Raid Section -->
   <div id="raidSection" class="tab-content" style="display: none;">
-    <div class="raid-categories">
-      
-      <!-- NYLA Core Category -->
-      <div class="raid-category">
-        <h4>NYLA Core</h4>
-        <div class="raid-list-item" data-url="https://x.com/i/lists/1940678457350029559">
-          <div class="list-info">
-            <div class="list-name">NYLA Contributors</div>
-            <div class="list-description">Key NYLA project contributors - support their posts</div>
-          </div>
-          <div class="list-action">
-            <span class="open-icon">🔗</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Community Raiders Category -->
-      <div class="raid-category">
-        <h4>Community Raiders</h4>
-        <div class="raid-list-item" data-url="https://x.com/i/lists/1950200431432647034">
-          <div class="list-info">
-            <div class="list-name">Active NYLA Raiders</div>
-            <div class="list-description">Follow these community members' engagement patterns</div>
-          </div>
-          <div class="list-action">
-            <span class="open-icon">🔗</span>
-          </div>
-        </div>
-      </div>
-      
+    <div class="raid-categories" id="raidCategories">
+      <!-- Raid items will be dynamically generated from shared data source -->
     </div>
   </div>
   
@@ -870,6 +842,7 @@
   </div>
   
   <script src="qr-simple.js"></script>
+  <script src="raid-data.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

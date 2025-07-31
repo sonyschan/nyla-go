@@ -137,46 +137,8 @@
       
       <!-- Raid Tab Content -->
       <div class="tab-content" id="raidTab" style="display: none;">
-        <div class="raid-categories">
-          
-          <!-- NYLA Core Category -->
-          <div class="raid-category">
-            <h4>NYLA Core</h4>
-            <div class="raid-list-item" data-url="https://x.com/i/lists/1940678457350029559">
-              <div class="list-info">
-                <div class="list-name">The Team</div>
-                <div class="list-description">Key NYLA project contributors - support their posts</div>
-              </div>
-              <div class="list-action">
-                <span class="open-icon">→</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Community Raiders Category -->
-          <div class="raid-category">
-            <h4>Community</h4>
-            <div class="raid-list-item" data-url="https://x.com/i/lists/1950200431432647034">
-              <div class="list-info">
-                <div class="list-name">Active NYLA Raiders</div>
-                <div class="list-description">Follow these community members' engagement patterns</div>
-              </div>
-              <div class="list-action">
-                <span class="open-icon">→</span>
-              </div>
-            </div>
-            
-            <div class="raid-list-item" data-url="https://x.com/search?q=%24NYLA&src=typed_query&f=live">
-              <div class="list-info">
-                <div class="list-name">$NYLA ticker mentioned</div>
-                <div class="list-description">Engage top/latest X posts around $NYLA</div>
-              </div>
-              <div class="list-action">
-                <span class="open-icon">→</span>
-              </div>
-            </div>
-          </div>
-          
+        <div class="raid-categories" id="raidCategories">
+          <!-- Raid items will be dynamically generated from shared data source -->
         </div>
       </div>
       
@@ -247,7 +209,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v1.3.6
+        NYLA Go v1.3.7
       </div>
       <div class="links">
         <a href="https://www.agentnyla.com/" target="_blank">Home</a> | <a href="https://x.com/h2crypto_eth" target="_blank">Feedback</a>
@@ -258,6 +220,7 @@
   
   <!-- Scripts -->
   <script src="lib/qr-simple.js"></script>
+  <script src="raid-data.js"></script>
   <script src="js/app.js"></script>
   
   <!-- PWA Service Worker -->
