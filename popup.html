@@ -13,10 +13,13 @@
       position: relative;
     }
     
+    .main-container {
+      padding: 0;
+    }
     
     .header {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 20px;
       position: relative;
       z-index: 1;
     }
@@ -41,7 +44,7 @@
     label {
       display: block;
       margin-bottom: 8px;
-      color: #ffffff;
+      color: #cccccc;
       font-weight: 500;
       font-size: 14px;
     }
@@ -64,7 +67,7 @@
     }
 
     input::placeholder {
-      color: #888888;
+      color: #777777;
     }
     
     .amount-group {
@@ -131,7 +134,7 @@
     .blockchain-option label {
       cursor: pointer;
       font-size: 14px;
-      color: #ffffff;
+      color: #cccccc;
       font-weight: 500;
       margin: 0;
     }
@@ -149,7 +152,7 @@
     }
     
     .command-preview.empty {
-      color: #888888;
+      color: #777777;
       font-style: italic;
     }
     
@@ -174,8 +177,8 @@
     }
     
     .send-button:disabled {
-      background: #444444;
-      color: #888888;
+      background: #333333;
+      color: #777777;
       cursor: not-allowed;
       transform: none;
     }
@@ -213,7 +216,8 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -221,10 +225,12 @@
     }
     
     .modal {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      width: 400px;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      width: 420px;
       max-width: 90vw;
       max-height: 80vh;
       overflow: hidden;
@@ -234,109 +240,139 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 20px 15px;
-      border-bottom: 1px solid #e1e8ed;
+      padding: 24px 24px 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
     
     .modal-header h2 {
       margin: 0;
-      color: #1da1f2;
-      font-size: 18px;
-      font-weight: 600;
+      color: #FF6B35;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
     
     .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: #657786;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      font-size: 20px;
+      color: #ffffff;
       cursor: pointer;
       padding: 0;
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      transition: background 0.2s ease;
+      transition: all 0.3s ease;
     }
     
     .close-btn:hover {
-      background: #f7f9fa;
+      background: rgba(255, 107, 53, 0.2);
+      border-color: #FF6B35;
+      color: #FF6B35;
+      transform: rotate(90deg);
     }
     
     .modal-body {
-      padding: 20px;
+      padding: 24px;
       max-height: calc(80vh - 100px);
       overflow-y: auto;
     }
     
     .add-token-section, .custom-tokens-section {
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
     
     .add-token-section h3, .custom-tokens-section h3 {
-      margin: 0 0 12px 0;
-      color: #14171a;
-      font-size: 16px;
-      font-weight: 600;
+      margin: 0 0 16px 0;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
     
     .add-token-form {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: flex-start;
     }
     
-    .add-token-form input {
+    .modal .add-token-form input {
       flex: 1;
-      padding: 10px;
-      border: 1px solid #e1e8ed;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 14px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 15px;
       text-transform: uppercase;
+      background: rgba(26, 26, 26, 0.8);
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    
+    .modal .add-token-form input:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+      background: rgba(26, 26, 26, 0.9);
+    }
+    
+    .modal .add-token-form input::placeholder {
+      color: #999999;
     }
     
     .add-btn {
-      background: #1da1f2;
-      color: white;
+      background: linear-gradient(135deg, #FF6B35, #FF5722);
+      color: #000000;
       border: none;
-      border-radius: 6px;
-      padding: 10px 16px;
+      border-radius: 10px;
+      padding: 14px 20px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.3s ease;
       white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
     
     .add-btn:hover {
-      background: #0d8bd9;
+      background: linear-gradient(135deg, #FF5722, #E53E3E);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
     }
     
     .custom-tokens-list {
-      min-height: 60px;
+      min-height: 80px;
     }
     
     .no-custom-tokens {
-      color: #657786;
+      color: #999999;
       font-style: italic;
       text-align: center;
-      padding: 20px;
-      border: 1px dashed #e1e8ed;
-      border-radius: 6px;
-      background: #f7f9fa;
+      padding: 24px;
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(26, 26, 26, 0.6);
     }
     
     .custom-token-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      background: #f7f9fa;
-      border: 1px solid #e1e8ed;
-      border-radius: 6px;
-      margin-bottom: 8px;
+      padding: 16px 20px;
+      background: rgba(26, 26, 26, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .custom-token-item:hover {
+      border-color: rgba(255, 107, 53, 0.3);
+      background: rgba(26, 26, 26, 0.9);
+      transform: translateY(-1px);
     }
     
     .custom-token-item:last-child {
@@ -344,44 +380,64 @@
     }
     
     .token-symbol {
-      font-weight: 600;
-      color: #14171a;
-      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 16px;
+      letter-spacing: 0.3px;
     }
     
     .remove-token-btn {
-      background: #e0245e;
+      background: linear-gradient(135deg, #e0245e, #c91b47);
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 6px 10px;
+      border-radius: 8px;
+      padding: 8px 14px;
       font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
     }
     
     .remove-token-btn:hover {
-      background: #c91b47;
+      background: linear-gradient(135deg, #c91b47, #a91939);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(224, 36, 94, 0.4);
+    }
+    
+    /* Modal-specific error styling */
+    .modal .error {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-top: 8px;
+      font-weight: 500;
+      padding: 8px 12px;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 8px;
     }
     
     /* Version and Developer Credit Styles */
+    .footer-container {
+      margin-top: 10px;
+      border-top: 1px solid #333333;
+      background: #000000;
+    }
+    
     .app-version {
       text-align: center;
       padding: 8px 20px 4px;
       font-size: 11px;
-      color: #888888;
-      background: #000000;
+      color: #777777;
       font-weight: 600;
-      margin-top: 10px;
-      border-top: 1px solid #333333;
     }
     
     .developer-credit {
       text-align: center;
       padding: 4px 20px 16px;
       font-size: 12px;
-      color: #888888;
-      background: #000000;
+      color: #777777;
     }
     
     .developer-link {
@@ -433,8 +489,8 @@
     }
 
     .qr-toggle-btn:disabled {
-      background: #444444;
-      color: #888888;
+      background: #333333;
+      color: #777777;
       cursor: not-allowed;
       transform: none;
     }
@@ -504,7 +560,7 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      color: #888888;
+      color: #777777;
       transition: all 0.2s ease;
       border-bottom: 2px solid transparent;
     }
@@ -583,7 +639,7 @@
 
     .list-description {
       font-size: 12px;
-      color: #cccccc;
+      color: #999999;
       line-height: 1.3;
     }
 
@@ -638,16 +694,17 @@
 
     .receive-qr-container .qr-hint {
       font-size: 11px !important;
-      color: #888888 !important;
+      color: #777777 !important;
       font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
-    <p>Your AI agent for payments and community</p>
-  </div>
+  <div class="main-container">
+    <div class="header">
+      <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
+      <p>Your AI agent for payments and community</p>
+    </div>
   
   <!-- Action Tabs -->
   <div class="form-group">
@@ -803,14 +860,17 @@
     </div>
   </div>
   
-  <div class="status" id="status" style="display: none;"></div>
+    <div class="status" id="status" style="display: none;"></div>
+  </div>
   
   <!-- Version and Developer Credit Footer -->
-  <div class="app-version" id="appVersion">
-    NYLA Go v0.7.5
-  </div>
-  <div class="developer-credit">
-    Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
+  <div class="footer-container">
+    <div class="app-version" id="appVersion">
+      NYLA Go v1.4.4
+    </div>
+    <div class="developer-credit">
+      Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
+    </div>
   </div>
   
   <!-- Custom Token Management Modal -->
