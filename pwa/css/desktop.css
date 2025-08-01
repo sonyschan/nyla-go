@@ -1,0 +1,272 @@
+/* NYLA GO PWA - Desktop-Specific Styles */
+
+/* Desktop Layout (1024px and up) */
+@media (min-width: 1024px) {
+  /* Transform app container to CSS Grid layout */
+  .app-container {
+    max-width: 1400px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "header header"
+      "sidebar content"
+      "footer footer";
+    gap: 2rem;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  /* Header spans full width */
+  .header {
+    grid-area: header;
+    margin-bottom: 0;
+  }
+
+  .header-logo {
+    width: 320px;
+  }
+
+  /* Transform tabs into sidebar */
+  .tab-navigation {
+    grid-area: sidebar;
+    flex-direction: column;
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid #333333;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .tab-button {
+    flex: none;
+    padding: 16px 20px;
+    border-radius: 0;
+    text-align: left;
+    font-size: 16px;
+    border-bottom: 1px solid #333333;
+  }
+
+  .tab-button:first-child {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .tab-button:last-child {
+    border-radius: 0 0 12px 12px;
+    border-bottom: none;
+  }
+
+  .tab-button.active::after {
+    display: none; /* Remove bottom indicator */
+  }
+
+  .tab-button.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #FF6B35;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Main content area */
+  .main-content {
+    grid-area: content;
+    margin-bottom: 0;
+  }
+
+  /* Show all tab content simultaneously on desktop */
+  .desktop-mode .tab-content {
+    display: block !important;
+    margin-bottom: 3rem;
+    background: rgba(26, 26, 26, 0.4);
+    border: 1px solid #333333;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .desktop-mode .tab-content:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Add section headers for desktop multi-view */
+  .desktop-mode .tab-content::before {
+    content: attr(data-section-title);
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #FF6B35;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333333;
+  }
+
+  /* Footer spans full width */
+  .footer {
+    grid-area: footer;
+    margin-top: 0;
+  }
+
+  /* Desktop-specific enhancements */
+  
+  /* Enhanced receive section for desktop */
+  .desktop-mode .receive-qr-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .desktop-mode .receive-form {
+    grid-column: 1;
+  }
+
+  .desktop-mode .receive-qr-display {
+    grid-column: 2;
+    position: sticky;
+    top: 2rem;
+  }
+
+  /* Desktop raid grid layout */
+  .desktop-mode .raid-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    max-height: none;
+  }
+
+  .desktop-mode .raid-category {
+    background: rgba(42, 42, 42, 0.3);
+    border: 1px solid #444444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: fit-content;
+  }
+
+  /* Desktop app showcase grid */
+  .desktop-mode .app-showcase {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .desktop-mode .app-category {
+    background: rgba(42, 42, 42, 0.3);
+    border: 1px solid #444444;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .desktop-mode .app-intro {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+  }
+
+  /* Enhanced hover states for desktop */
+  .desktop-mode .tab-button:hover {
+    background: rgba(42, 42, 42, 0.6);
+    transform: translateX(4px);
+  }
+
+  .desktop-mode .tab-button.active:hover {
+    transform: translateX(0);
+  }
+
+  /* Desktop-specific status positioning */
+  .desktop-mode .status {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    max-width: 400px;
+  }
+
+  /* Keyboard navigation indicators */
+  .desktop-mode .tab-button:focus {
+    outline: 2px solid #FF6B35;
+    outline-offset: 2px;
+  }
+
+  .desktop-mode input:focus,
+  .desktop-mode select:focus {
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.3);
+  }
+}
+
+/* Ultra-wide desktop optimizations (1440px+) */
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 1600px;
+    grid-template-columns: 360px 1fr;
+    gap: 3rem;
+    padding: 3rem;
+  }
+
+  .tab-navigation {
+    width: 360px;
+  }
+
+  .desktop-mode .receive-qr-container {
+    grid-template-columns: 1fr 350px;
+    gap: 3rem;
+  }
+
+  .desktop-mode .raid-categories {
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+/* Desktop-specific animations */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .desktop-mode .tab-content {
+    animation: slideInRight 0.4s ease-out;
+  }
+
+  .desktop-mode .tab-button {
+    transition: all 0.3s ease;
+  }
+
+  .desktop-mode .raid-list-item,
+  .desktop-mode .app-item {
+    transition: all 0.2s ease;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Desktop-specific scrollbar styling */
+@media (min-width: 1024px) {
+  .desktop-mode ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .desktop-mode ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  .desktop-mode ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 4px;
+  }
+
+  .desktop-mode ::-webkit-scrollbar-thumb:hover {
+    background: #FF6B35;
+  }
+}
