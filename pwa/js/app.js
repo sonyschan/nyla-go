@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.4.2';
+  let APP_VERSION = '1.4.3';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -873,11 +873,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const MobileGestureManager = {
       // Configuration
       config: {
-        swipeThreshold: 80,           // Minimum distance for swipe (increased)
-        velocityThreshold: 0.4,       // Minimum velocity for swipe (increased)
-        fastSwipeThreshold: 1.8,      // Velocity for fast swipe (increased)
-        maxVerticalDeviation: 60,     // Max vertical movement during horizontal swipe (decreased)
-        minHorizontalRatio: 2.0,      // Minimum horizontal:vertical ratio for swipe detection
+        swipeThreshold: 50,           // Minimum distance for swipe (reduced for easier swiping)
+        velocityThreshold: 0.3,       // Minimum velocity for swipe
+        fastSwipeThreshold: 1.5,      // Velocity for fast swipe
+        maxVerticalDeviation: 40,     // Max vertical movement during horizontal swipe (stricter)
+        minHorizontalRatio: 2.5,      // Minimum horizontal:vertical ratio for swipe detection (stricter)
+        gestureDetectionThreshold: 10, // Minimum movement to start tracking gestures
         pinchThreshold: 1.1,          // Minimum scale change for pinch
         hapticSupport: 'vibrate' in navigator
       },
@@ -911,6 +912,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.cacheElements();
         this.bindEvents();
         this.setupInitialState();
+        this.bindGlobalCleanup();
         console.log('NYLA GO PWA: Mobile gestures initialized');
       },
       
@@ -949,6 +951,34 @@ document.addEventListener('DOMContentLoaded', function() {
         
       },
       
+      bindGlobalCleanup() {
+        // Add a global touch listener to force cleanup any lingering effects
+        document.addEventListener('touchstart', (e) => {
+          if (!this.state.isGesturing) {
+            this.forceCleanup();
+          }
+        }, { passive: true });
+        
+        // Also cleanup on scroll events
+        document.addEventListener('scroll', () => {
+          if (!this.state.isGesturing) {
+            this.forceCleanup();
+          }
+        }, { passive: true });
+      },
+      
+      forceCleanup() {
+        // Force remove any lingering visual effects
+        this.elements.tabContents.forEach(content => {
+          content.classList.remove('swiping', 'swipe-preview', 'elastic-left', 'elastic-right');
+          if (content.style.transform) {
+            content.style.transform = '';
+          }
+        });
+        document.body.classList.remove('gesture-active');
+        this.hideVelocityIndicator();
+      },
+      
       handleTouchStart(e) {
         if (document.body.classList.contains('desktop-mode') || this.state.gestureDebounce) return;
         
@@ -958,14 +988,11 @@ document.addEventListener('DOMContentLoaded', function() {
         this.state.currentX = touch.clientX;
         this.state.currentY = touch.clientY;
         this.state.startTime = Date.now();
-        this.state.isGesturing = true;
-        
-        // Add gesture-active class to prevent text selection
-        document.body.classList.add('gesture-active');
+        this.state.isGesturing = false; // Don't start gesturing immediately
       },
       
       handleTouchMove(e) {
-        if (!this.state.isGesturing || document.body.classList.contains('desktop-mode')) return;
+        if (document.body.classList.contains('desktop-mode')) return;
         
         const touch = e.touches[0];
         this.state.currentX = touch.clientX;
@@ -975,12 +1002,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const deltaY = Math.abs(this.state.currentY - this.state.startY);
         const absDeltaX = Math.abs(deltaX);
         
-        // Improved horizontal swipe detection
-        const isHorizontalGesture = absDeltaX > 15 && 
+        // Only start gesture tracking if there's enough movement
+        if (!this.state.isGesturing && (absDeltaX > this.config.gestureDetectionThreshold || deltaY > this.config.gestureDetectionThreshold)) {
+          // Determine if this should be a horizontal gesture
+          const isHorizontalIntent = absDeltaX > deltaY && 
+            absDeltaX > this.config.gestureDetectionThreshold &&
+            (deltaY === 0 || absDeltaX / deltaY >= this.config.minHorizontalRatio);
+          
+          if (isHorizontalIntent) {
+            this.state.isGesturing = true;
+            document.body.classList.add('gesture-active');
+          } else {
+            // This is clearly a vertical scroll, don't track it
+            return;
+          }
+        }
+        
+        // Continue only if we're tracking a horizontal gesture
+        if (!this.state.isGesturing) return;
+        
+        // Check if still a valid horizontal gesture
+        const isValidHorizontalGesture = absDeltaX > 15 && 
           deltaY < this.config.maxVerticalDeviation && 
           (deltaY === 0 || absDeltaX / deltaY >= this.config.minHorizontalRatio);
         
-        if (isHorizontalGesture) {
+        if (isValidHorizontalGesture) {
           e.preventDefault(); // Prevent scrolling
           
           // Mark tab content as swiping (only when horizontal gesture detected)
@@ -998,7 +1044,10 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       
       handleTouchEnd(e) {
-        if (!this.state.isGesturing || document.body.classList.contains('desktop-mode')) return;
+        if (document.body.classList.contains('desktop-mode')) return;
+        
+        // If we weren't tracking a gesture, nothing to clean up
+        if (!this.state.isGesturing) return;
         
         const deltaX = this.state.currentX - this.state.startX;
         const deltaY = Math.abs(this.state.currentY - this.state.startY);
@@ -1012,12 +1061,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         this.hideVelocityIndicator();
         
-        // Reset any lingering transforms
+        // Reset any lingering transforms and ensure clean state
         this.elements.tabContents.forEach(content => {
-          if (content.style.transform && content.style.transform.includes('translate')) {
+          if (content.style.transform) {
             content.style.transform = '';
           }
+          // Force remove any lingering classes
+          content.classList.remove('swiping', 'swipe-preview', 'elastic-left', 'elastic-right');
         });
+        
+        // Ensure body is clean
+        document.body.classList.remove('gesture-active');
         
         // Determine if swipe should trigger tab change with improved detection
         const absDeltaX = Math.abs(deltaX);
@@ -1037,10 +1091,10 @@ document.addEventListener('DOMContentLoaded', function() {
             this.handleNormalSwipe(direction);
           }
         } else {
-          // Only show elastic boundary if there was an attempted horizontal gesture
-          const wasHorizontalAttempt = absDeltaX > 30 && 
+          // Only show elastic boundary if there was a clear horizontal gesture attempt
+          const wasHorizontalAttempt = absDeltaX > 35 && 
             deltaY < this.config.maxVerticalDeviation &&
-            absDeltaX > deltaY;
+            absDeltaX / Math.max(deltaY, 1) >= this.config.minHorizontalRatio;
             
           if (wasHorizontalAttempt) {
             this.showElasticBoundary(deltaX);
@@ -1096,7 +1150,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       updateSwipeVisuals(deltaX) {
         const activeContent = document.querySelector('.tab-content.active');
-        if (activeContent && Math.abs(deltaX) > 40) {
+        if (activeContent && Math.abs(deltaX) > 25) {
           activeContent.classList.add('swipe-preview');
         }
       },

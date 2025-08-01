@@ -221,7 +221,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.4.2
+- **Latest Release**: v1.4.3
 - **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
