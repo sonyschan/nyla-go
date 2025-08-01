@@ -132,7 +132,7 @@
     grid-column: 1;
   }
 
-  .desktop-mode .receive-qr-display {
+  .desktop-mode .receive-qr-container {
     grid-column: 2;
     position: sticky;
     top: 2rem;

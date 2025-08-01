@@ -163,31 +163,37 @@ Chrome Web Store will **reject packages with multiple manifest.json files**. Our
 
 ### 📦 **Create Extension-Only Package:**
 ```bash
+# CRITICAL: Don't forget raid-data.js file!
 # Create extension package directory
 mkdir -p extension-package
 
 # Copy ONLY extension files (exclude PWA directory)
-cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png extension-package/
+cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png raid-data.js extension-package/
 cp -r icons extension-package/
 
-# Create Chrome Store ZIP package
+# Create Chrome Store ZIP package - IMPORTANT: Create directly in releases directory to avoid path issues
 cd extension-package
-zip -r ../nyla-go-v${RELEASE_VERSION}-extension-only.zip . -x "*.DS_Store"
+zip -r ../releases/nyla-go-v${RELEASE_VERSION}-extension-only.zip . -x "*.DS_Store"
 cd ..
 
-# Move to releases directory
-mv nyla-go-v${RELEASE_VERSION}-extension-only.zip releases/
-
-# Clean up
+# Clean up temporary directory
 rm -rf extension-package
 ```
+
+### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4)**
+1. **Missing raid-data.js**: Don't forget to include `raid-data.js` - it's required for the Raid tab functionality
+2. **Directory Navigation**: Create ZIP directly in `releases/` to avoid path confusion and nested directory issues
+3. **Git Staging**: The ZIP file path should be `releases/nyla-go-v${VERSION}-extension-only.zip` when adding to git
+4. **Common Error**: Using `../nyla-go-v${VERSION}-extension-only.zip` creates file in wrong location
+5. **Working Directory**: Always ensure you're in the project root when running packaging commands
 
 ### 📁 **Extension Package Contents:**
 - ✅ `manifest.json` (extension only, without "scripting" permission)
 - ✅ `popup.html` & `popup.js` 
 - ✅ `content.js`
 - ✅ `qr-simple.js`
-- ✅ `icons/` directory
+- ✅ `raid-data.js` ⚠️ **CRITICAL: Don't forget this file!**
+- ✅ `icons/` directory (all icon files)
 - ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
 - ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
 
@@ -221,7 +227,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.4.4
+- **Latest Release**: v1.4.5
 - **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
@@ -283,6 +289,15 @@ releases/
 - **PWA Splash Video**: Updated to NYLAGo-v2.mp4 for improved user experience
 - **Version Text Styling**: Consistent gray color across extension and PWA
 - **Username Detection**: Enhanced debugging for X.com integration
+
+### Release Workflow Lessons Learned (v1.4.4)
+- **File Staging Order**: Always commit version updates first, then add ZIP package separately
+- **Git Reset Strategy**: Use `git reset --soft HEAD~1` to undo commits while keeping changes staged
+- **Directory Management**: Avoid nested directory confusion by always working from project root
+- **ZIP File Location**: Create ZIP directly in `releases/` directory to avoid path issues
+- **Missing Files**: Include all required files in checklist - `raid-data.js` is essential for Raid tab
+- **Git Path Issues**: Use relative paths like `releases/filename.zip` when adding to git
+- **Commit Messages**: Use detailed commit messages with proper formatting for release history
 
 ## 🚀 GitHub Release Process
 
