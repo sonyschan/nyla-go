@@ -319,11 +319,18 @@ input::placeholder {
   }
   
   .amount-group {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 10px;
   }
   
   .amount-group input {
-    flex: none;
+    flex: 0 0 100px;
+    min-width: 100px;
+  }
+  
+  .token-select-container {
+    flex: 1;
+    min-width: 120px;
   }
 }
 

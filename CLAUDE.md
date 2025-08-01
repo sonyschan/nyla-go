@@ -180,12 +180,49 @@ cd ..
 rm -rf extension-package
 ```
 
-### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4)**
+### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4 - v1.4.5)**
+
+#### **Directory Structure & Navigation Issues:**
 1. **Missing raid-data.js**: Don't forget to include `raid-data.js` - it's required for the Raid tab functionality
 2. **Directory Navigation**: Create ZIP directly in `releases/` to avoid path confusion and nested directory issues
 3. **Git Staging**: The ZIP file path should be `releases/nyla-go-v${VERSION}-extension-only.zip` when adding to git
 4. **Common Error**: Using `../nyla-go-v${VERSION}-extension-only.zip` creates file in wrong location
 5. **Working Directory**: Always ensure you're in the project root when running packaging commands
+
+#### **File System Navigation Problems (v1.4.5):**
+6. **Claude Code Directory Restrictions**: Cannot use `cd ..` to navigate above working directory - blocked for security
+7. **Nested Directory Confusion**: Creating ZIP from subdirectory causes path resolution issues
+8. **ZIP Location Verification**: Always use full path verification after ZIP creation: `ls -la releases/filename.zip`
+9. **Path Resolution**: Use `pwd` and `find` commands to locate files when path confusion occurs
+10. **Cleanup Timing**: Remove temporary directories AFTER verifying ZIP file creation, not before
+
+#### **Safe Command Patterns:**
+```bash
+# ✅ CORRECT: Avoid directory navigation issues
+cd extension-package && zip -r ../releases/nyla-go-v${VERSION}-extension-only.zip .
+
+# ❌ WRONG: Causes directory navigation errors  
+cd extension-package && zip -r ../nyla-go-v${VERSION}-extension-only.zip . && cd ..
+
+# ✅ CORRECT: Verify file creation before cleanup
+ls -la releases/nyla-go-v${VERSION}-extension-only.zip && rm -rf extension-package
+
+# ✅ CORRECT: Use find to locate files when confused
+find . -name "*v${VERSION}*.zip" -type f
+```
+
+#### **Directory Structure Map:**
+```
+/Users/sonyschan/NYLAgo/ (PROJECT ROOT - Always work from here)
+├── manifest.json
+├── popup.html, popup.js
+├── content.js, qr-simple.js, raid-data.js
+├── GO-BACKGROUND.png, NYLAGO-Logo-v2.png
+├── icons/ (directory with all icon files)
+├── pwa/ (EXCLUDE from extension package)
+├── releases/ (TARGET: ZIP files go here)
+└── extension-package/ (TEMPORARY: Delete after ZIP creation)
+```
 
 ### 📁 **Extension Package Contents:**
 - ✅ `manifest.json` (extension only, without "scripting" permission)
@@ -227,7 +264,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.4.5
+- **Latest Release**: v1.4.6
 - **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
@@ -282,6 +319,15 @@ releases/
 - Avoid duplicate variable declarations
 - Test extension functionality after JavaScript changes
 - **CRITICAL: Test version display** after any version changes - load both extension and PWA
+
+### Directory & File System Best Practices
+- **Always start from project root**: `/Users/sonyschan/NYLAgo/` before any packaging commands
+- **Use pwd command**: Verify current directory before running commands
+- **Claude Code limitations**: Cannot navigate above working directory with `cd ..`
+- **ZIP verification**: Always verify ZIP file creation with `ls -la releases/filename.zip`
+- **Path troubleshooting**: Use `find . -name "*pattern*" -type f` to locate files
+- **Cleanup timing**: Verify file creation BEFORE removing temporary directories
+- **Git staging**: Use relative paths from project root: `git add releases/filename.zip`
 
 ### Recent Fixes (v0.7.2-v0.7.4)
 - **JavaScript Error Handling**: Comprehensive null checks added to prevent console errors
@@ -380,6 +426,62 @@ curl -s "https://sonyschan.github.io/nyla-go/js/app.js" | grep "APP_VERSION"
 - **Wait 10-15 minutes** after successful deployment
 - **Test in incognito mode** to bypass browser cache
 - **Check browser developer tools** → Application → Service Workers
+
+## 🚨 Directory & File System Troubleshooting
+
+### Common Directory Navigation Errors
+
+#### **Error**: `cd to '/Users/sonyschan' was blocked`
+```bash
+# ❌ PROBLEM: Trying to navigate above working directory
+cd extension-package && zip -r ../nyla-go-v1.4.5.zip . && cd ..
+
+# ✅ SOLUTION: Stay within allowed directory structure  
+cd extension-package && zip -r ../releases/nyla-go-v1.4.5.zip .
+```
+
+#### **Error**: `ls: releases/filename.zip: No such file or directory`
+```bash
+# ❌ PROBLEM: Wrong current directory or file path
+ls -la releases/nyla-go-v1.4.5.zip
+
+# ✅ SOLUTION: Check current directory and find file
+pwd  # Verify you're in project root
+find . -name "*v1.4.5*.zip" -type f  # Locate the file
+```
+
+#### **Error**: `fatal: pathspec 'releases/filename.zip' did not match any files`
+```bash
+# ❌ PROBLEM: Git staging path incorrect or file doesn't exist
+git add releases/nyla-go-v1.4.5.zip
+
+# ✅ SOLUTION: Verify file exists and use correct path
+ls -la releases/nyla-go-v1.4.5.zip  # Confirm file exists
+git add releases/nyla-go-v1.4.5.zip  # Stage with correct path
+```
+
+### Directory Recovery Commands
+```bash
+# When confused about current location:
+pwd  # Shows current directory
+cd /Users/sonyschan/NYLAgo  # Navigate to project root
+
+# When can't find created files:
+find . -name "*.zip" -type f  # Find all ZIP files
+find . -name "*v1.4.5*" -type f  # Find version-specific files
+
+# When git staging fails:
+git status  # Check which files are actually changed
+ls -la releases/  # Verify ZIP file exists in releases directory
+```
+
+### Prevention Checklist
+- ✅ Always start commands from project root: `/Users/sonyschan/NYLAgo/`
+- ✅ Use `pwd` to verify current directory before complex operations
+- ✅ Create ZIP directly in target directory: `../releases/filename.zip`
+- ✅ Verify file creation before cleanup: `ls -la releases/filename.zip`
+- ✅ Use `find` commands when path confusion occurs
+- ✅ Clean up temporary directories AFTER verifying outputs
 
 ## ⚠️ Common Command Errors & Fixes
 
