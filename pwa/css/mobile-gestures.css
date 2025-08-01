@@ -102,68 +102,6 @@
     100% { transform: translate(-50%, -50%) scale(1); }
   }
   
-  /* QR Code Zoom Container */
-  .qr-zoom-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    touch-action: none; /* Prevent default pinch behavior */
-    cursor: grab;
-  }
-  
-  .qr-zoom-container.zoomed {
-    cursor: grabbing;
-  }
-  
-  .qr-zoom-container .qr-content {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center center;
-    will-change: transform;
-  }
-  
-  .qr-zoom-container.pinching .qr-content {
-    transition: none; /* Disable transition during pinch */
-  }
-  
-  /* QR Zoom Controls */
-  .qr-zoom-controls {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .qr-zoom-container:hover .qr-zoom-controls,
-  .qr-zoom-container.zoomed .qr-zoom-controls {
-    opacity: 1;
-  }
-  
-  .qr-zoom-btn {
-    width: 32px;
-    height: 32px;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-  
-  .qr-zoom-btn:hover {
-    background: rgba(255, 107, 53, 0.8);
-    transform: scale(1.1);
-  }
-  
-  .qr-zoom-btn:active {
-    transform: scale(0.95);
-  }
   
   /* Haptic feedback visual indicators */
   .haptic-pulse {
@@ -250,8 +188,7 @@
   }
   
   /* Performance optimizations for mobile */
-  .mobile-mode .tab-content,
-  .mobile-mode .qr-content {
+  .mobile-mode .tab-content {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     perspective: 1000px;
@@ -269,9 +206,6 @@
     transition: none !important;
   }
   
-  .qr-zoom-container .qr-content {
-    transition: none !important;
-  }
   
   .haptic-pulse::after {
     animation: none !important;
