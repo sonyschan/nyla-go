@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.4.1';
+  let APP_VERSION = '1.4.2';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -892,6 +892,7 @@ document.addEventListener('DOMContentLoaded', function() {
         startTime: 0,
         currentTab: 0,
         tabs: ['receive', 'raid', 'app'],
+        gestureDebounce: false,
       },
       
       // Elements
@@ -949,7 +950,7 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       
       handleTouchStart(e) {
-        if (document.body.classList.contains('desktop-mode')) return;
+        if (document.body.classList.contains('desktop-mode') || this.state.gestureDebounce) return;
         
         const touch = e.touches[0];
         this.state.startX = touch.clientX;
@@ -961,11 +962,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add gesture-active class to prevent text selection
         document.body.classList.add('gesture-active');
-        
-        // Mark tab content as swiping
-        this.elements.tabContents.forEach(content => {
-          content.classList.add('swiping');
-        });
       },
       
       handleTouchMove(e) {
@@ -987,6 +983,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isHorizontalGesture) {
           e.preventDefault(); // Prevent scrolling
           
+          // Mark tab content as swiping (only when horizontal gesture detected)
+          this.elements.tabContents.forEach(content => {
+            content.classList.add('swiping');
+          });
+          
           // Show velocity indicator
           const velocity = this.calculateVelocity();
           this.showVelocityIndicator(velocity);
@@ -1003,13 +1004,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const deltaY = Math.abs(this.state.currentY - this.state.startY);
         const velocity = this.calculateVelocity();
         
-        // Clean up
+        // Clean up - always remove all gesture-related classes
         this.state.isGesturing = false;
         document.body.classList.remove('gesture-active');
         this.elements.tabContents.forEach(content => {
           content.classList.remove('swiping', 'swipe-preview', 'elastic-left', 'elastic-right');
         });
         this.hideVelocityIndicator();
+        
+        // Reset any lingering transforms
+        this.elements.tabContents.forEach(content => {
+          if (content.style.transform && content.style.transform.includes('translate')) {
+            content.style.transform = '';
+          }
+        });
         
         // Determine if swipe should trigger tab change with improved detection
         const absDeltaX = Math.abs(deltaX);
@@ -1029,9 +1037,21 @@ document.addEventListener('DOMContentLoaded', function() {
             this.handleNormalSwipe(direction);
           }
         } else {
-          // Show elastic boundary if swipe was at edge
-          this.showElasticBoundary(deltaX);
+          // Only show elastic boundary if there was an attempted horizontal gesture
+          const wasHorizontalAttempt = absDeltaX > 30 && 
+            deltaY < this.config.maxVerticalDeviation &&
+            absDeltaX > deltaY;
+            
+          if (wasHorizontalAttempt) {
+            this.showElasticBoundary(deltaX);
+          }
         }
+        
+        // Add brief debounce to prevent rapid gesture conflicts
+        this.state.gestureDebounce = true;
+        setTimeout(() => {
+          this.state.gestureDebounce = false;
+        }, 50);
       },
       
       calculateVelocity() {
@@ -1076,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       updateSwipeVisuals(deltaX) {
         const activeContent = document.querySelector('.tab-content.active');
-        if (activeContent && Math.abs(deltaX) > 20) {
+        if (activeContent && Math.abs(deltaX) > 40) {
           activeContent.classList.add('swipe-preview');
         }
       },
