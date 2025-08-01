@@ -2,6 +2,12 @@
 
 /* Desktop Layout (1024px and up) */
 @media (min-width: 1024px) {
+  /* Hide mobile gesture indicators on desktop */
+  .swipe-indicator,
+  .fast-swipe-indicator,
+  .velocity-indicator {
+    display: none !important;
+  }
   /* Transform app container to CSS Grid layout */
   .app-container {
     max-width: 1400px;

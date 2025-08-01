@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.4.0';
+  let APP_VERSION = '1.4.1';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -812,8 +812,10 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       
       enableMobileFeatures() {
-        // Initialize mobile gestures
-        initializeMobileGestures();
+        // Initialize mobile gestures only for mobile devices
+        if (!this.isDesktop()) {
+          initializeMobileGestures();
+        }
         console.log('NYLA GO PWA: Mobile features enabled');
       },
       
@@ -871,10 +873,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const MobileGestureManager = {
       // Configuration
       config: {
-        swipeThreshold: 50,           // Minimum distance for swipe
-        velocityThreshold: 0.3,       // Minimum velocity for swipe
-        fastSwipeThreshold: 1.5,      // Velocity for fast swipe
-        maxVerticalDeviation: 100,    // Max vertical movement during horizontal swipe
+        swipeThreshold: 80,           // Minimum distance for swipe (increased)
+        velocityThreshold: 0.4,       // Minimum velocity for swipe (increased)
+        fastSwipeThreshold: 1.8,      // Velocity for fast swipe (increased)
+        maxVerticalDeviation: 60,     // Max vertical movement during horizontal swipe (decreased)
+        minHorizontalRatio: 2.0,      // Minimum horizontal:vertical ratio for swipe detection
         pinchThreshold: 1.1,          // Minimum scale change for pinch
         hapticSupport: 'vibrate' in navigator
       },
@@ -889,9 +892,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startTime: 0,
         currentTab: 0,
         tabs: ['receive', 'raid', 'app'],
-        qrZoomLevel: 1,
-        qrPanX: 0,
-        qrPanY: 0
       },
       
       // Elements
@@ -903,7 +903,6 @@ document.addEventListener('DOMContentLoaded', function() {
         swipeRightIndicator: null,
         fastSwipeIndicator: null,
         velocityIndicator: null,
-        qrZoomContainer: null,
         qrContent: null
       },
       
@@ -922,7 +921,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this.elements.swipeRightIndicator = document.getElementById('swipeRightIndicator');
         this.elements.fastSwipeIndicator = document.getElementById('fastSwipeIndicator');
         this.elements.velocityIndicator = document.getElementById('velocityIndicator');
-        this.elements.qrZoomContainer = document.getElementById('qrZoomContainer');
         this.elements.qrContent = document.getElementById('receiveQrCode');
       },
       
@@ -948,13 +946,6 @@ document.addEventListener('DOMContentLoaded', function() {
           this.elements.mainContent.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
         }
         
-        // QR Code pinch/zoom events
-        if (this.elements.qrZoomContainer) {
-          this.bindQRZoomEvents();
-        }
-        
-        // Zoom control buttons
-        this.bindZoomControls();
       },
       
       handleTouchStart(e) {
@@ -986,9 +977,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const deltaX = this.state.currentX - this.state.startX;
         const deltaY = Math.abs(this.state.currentY - this.state.startY);
+        const absDeltaX = Math.abs(deltaX);
         
-        // Check if this is a horizontal swipe
-        if (Math.abs(deltaX) > 10 && deltaY < this.config.maxVerticalDeviation) {
+        // Improved horizontal swipe detection
+        const isHorizontalGesture = absDeltaX > 15 && 
+          deltaY < this.config.maxVerticalDeviation && 
+          (deltaY === 0 || absDeltaX / deltaY >= this.config.minHorizontalRatio);
+        
+        if (isHorizontalGesture) {
           e.preventDefault(); // Prevent scrolling
           
           // Show velocity indicator
@@ -1015,10 +1011,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         this.hideVelocityIndicator();
         
-        // Determine if swipe should trigger tab change
-        if (Math.abs(deltaX) > this.config.swipeThreshold && 
+        // Determine if swipe should trigger tab change with improved detection
+        const absDeltaX = Math.abs(deltaX);
+        const isValidSwipe = absDeltaX > this.config.swipeThreshold && 
             deltaY < this.config.maxVerticalDeviation &&
-            velocity > this.config.velocityThreshold) {
+            velocity > this.config.velocityThreshold &&
+            (deltaY === 0 || absDeltaX / deltaY >= this.config.minHorizontalRatio);
+            
+        if (isValidSwipe) {
           
           const direction = deltaX > 0 ? -1 : 1; // Right swipe = previous tab, Left swipe = next tab
           
@@ -1125,155 +1125,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       },
       
-      // QR Code Pinch/Zoom Implementation
-      bindQRZoomEvents() {
-        const container = this.elements.qrZoomContainer;
-        const content = this.elements.qrContent;
-        
-        if (!container || !content) return;
-        
-        let pinchState = {
-          isActive: false,
-          startDistance: 0,
-          startScale: 1,
-          startX: 0,
-          startY: 0,
-          isPanning: false
-        };
-        
-        // Touch events for pinch/zoom
-        container.addEventListener('touchstart', (e) => {
-          if (e.touches.length === 2) {
-            // Pinch start
-            e.preventDefault();
-            pinchState.isActive = true;
-            pinchState.startDistance = this.getDistance(e.touches[0], e.touches[1]);
-            pinchState.startScale = this.state.qrZoomLevel;
-            container.classList.add('pinching');
-          } else if (e.touches.length === 1 && this.state.qrZoomLevel > 1) {
-            // Pan start (when zoomed)
-            const touch = e.touches[0];
-            pinchState.isPanning = true;
-            pinchState.startX = touch.clientX - this.state.qrPanX;
-            pinchState.startY = touch.clientY - this.state.qrPanY;
-          }
-        }, { passive: false });
-        
-        container.addEventListener('touchmove', (e) => {
-          if (pinchState.isActive && e.touches.length === 2) {
-            // Pinch zoom
-            e.preventDefault();
-            const currentDistance = this.getDistance(e.touches[0], e.touches[1]);
-            const scale = Math.max(1, Math.min(3, pinchState.startScale * (currentDistance / pinchState.startDistance)));
-            this.updateQRZoom(scale);
-          } else if (pinchState.isPanning && e.touches.length === 1) {
-            // Pan when zoomed
-            e.preventDefault();
-            const touch = e.touches[0];
-            this.state.qrPanX = touch.clientX - pinchState.startX;
-            this.state.qrPanY = touch.clientY - pinchState.startY;
-            this.updateQRTransform();
-          }
-        }, { passive: false });
-        
-        container.addEventListener('touchend', (e) => {
-          pinchState.isActive = false;
-          pinchState.isPanning = false;
-          container.classList.remove('pinching');
-          
-          if (this.state.qrZoomLevel > 1) {
-            container.classList.add('zoomed');
-          } else {
-            container.classList.remove('zoomed');
-            this.state.qrPanX = 0;
-            this.state.qrPanY = 0;
-            this.updateQRTransform();
-          }
-        });
-        
-        // Double tap to zoom
-        let doubleTapTimeout = null;
-        container.addEventListener('touchend', (e) => {
-          if (e.touches.length === 0) {
-            if (doubleTapTimeout) {
-              clearTimeout(doubleTapTimeout);
-              doubleTapTimeout = null;
-              // Double tap detected
-              this.handleQRDoubleTap();
-            } else {
-              doubleTapTimeout = setTimeout(() => {
-                doubleTapTimeout = null;
-              }, 300);
-            }
-          }
-        });
-      },
-      
-      bindZoomControls() {
-        const zoomIn = document.getElementById('qrZoomIn');
-        const zoomOut = document.getElementById('qrZoomOut');
-        const zoomReset = document.getElementById('qrZoomReset');
-        
-        if (zoomIn) {
-          zoomIn.addEventListener('click', () => {
-            this.updateQRZoom(Math.min(3, this.state.qrZoomLevel + 0.5));
-            this.triggerHapticFeedback('light');
-          });
-        }
-        
-        if (zoomOut) {
-          zoomOut.addEventListener('click', () => {
-            this.updateQRZoom(Math.max(1, this.state.qrZoomLevel - 0.5));
-            this.triggerHapticFeedback('light');
-          });
-        }
-        
-        if (zoomReset) {
-          zoomReset.addEventListener('click', () => {
-            this.updateQRZoom(1);
-            this.state.qrPanX = 0;
-            this.state.qrPanY = 0;
-            this.updateQRTransform();
-            this.triggerHapticFeedback('medium');
-          });
-        }
-      },
-      
-      getDistance(touch1, touch2) {
-        const dx = touch1.clientX - touch2.clientX;
-        const dy = touch1.clientY - touch2.clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-      },
-      
-      updateQRZoom(scale) {
-        this.state.qrZoomLevel = scale;
-        this.updateQRTransform();
-        
-        if (scale > 1) {
-          this.elements.qrZoomContainer?.classList.add('zoomed');
-        } else {
-          this.elements.qrZoomContainer?.classList.remove('zoomed');
-        }
-      },
-      
-      updateQRTransform() {
-        if (this.elements.qrContent) {
-          this.elements.qrContent.style.transform = 
-            `scale(${this.state.qrZoomLevel}) translate(${this.state.qrPanX}px, ${this.state.qrPanY}px)`;
-        }
-      },
-      
-      handleQRDoubleTap() {
-        if (this.state.qrZoomLevel === 1) {
-          this.updateQRZoom(2);
-        } else {
-          this.updateQRZoom(1);
-          this.state.qrPanX = 0;
-          this.state.qrPanY = 0;
-          this.updateQRTransform();
-        }
-        this.triggerHapticFeedback('medium');
-      },
       
       // Haptic Feedback
       triggerHapticFeedback(type = 'light') {
