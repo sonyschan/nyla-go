@@ -11,7 +11,7 @@
   </defs>
   
   <!-- Main background circle -->
-  <circle cx="12" cy="12" r="11" fill="url(#nylaGradient24)" filter="url(#shadow24)"/>
+  <circle cx="12" cy="12" r="11" fill="url(#nylaGradient24)"/>
   
   <!-- Inner circle border for depth -->
   <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
