@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYLA Go - Mobile Gesture Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+        }
+        
+        .test-area {
+            height: 200px;
+            background: #444;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qr-test {
+            width: 150px;
+            height: 150px;
+            background: #fff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .log {
+            background: #000;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .status {
+            color: #FF6B35;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #222;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            background: #FF6B35;
+            color: #000;
+        }
+        
+        .gesture-indicator {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #FF6B35;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .gesture-indicator.left {
+            left: 20px;
+        }
+        
+        .gesture-indicator.right {
+            right: 20px;
+        }
+        
+        .gesture-indicator.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎮 Mobile Gesture Test</h1>
+        
+        <!-- Tab Swipe Test -->
+        <div class="test-section">
+            <h3>📱 Tab Swipe Test</h3>
+            <div class="status" id="swipeStatus">Ready - Try swiping left/right</div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="0">Receive</div>
+                <div class="tab" data-tab="1">Raid</div>
+                <div class="tab" data-tab="2">App</div>
+            </div>
+            
+            <div class="test-area" id="swipeArea">
+                <div id="tabContent">Swipe left or right to change tabs</div>
+            </div>
+            
+            <div class="log" id="swipeLog"></div>
+        </div>
+        
+        <!-- QR Zoom Test -->
+        <div class="test-section">
+            <h3>🔍 QR Zoom Test</h3>
+            <div class="status" id="zoomStatus">Ready - Try pinch, double-tap, or buttons</div>
+            
+            <div class="test-area" id="qrArea">
+                <div class="qr-test" id="qrCode">
+                    📱<br>
+                    QR CODE<br>
+                    Pinch to zoom<br>
+                    Double-tap toggle
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 10px;">
+                <button onclick="zoomIn()">➕ Zoom In</button>
+                <button onclick="zoomOut()">➖ Zoom Out</button>
+                <button onclick="resetZoom()">🏠 Reset</button>
+            </div>
+            
+            <div class="log" id="zoomLog"></div>
+        </div>
+        
+        <!-- Haptic Test -->
+        <div class="test-section">
+            <h3>📳 Haptic Test</h3>
+            <div class="status" id="hapticStatus">Ready - Try different vibration patterns</div>
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="testHaptic('light')">Light</button>
+                <button onclick="testHaptic('medium')">Medium</button>
+                <button onclick="testHaptic('heavy')">Heavy</button>
+                <button onclick="testHaptic('error')">Error</button>
+                <button onclick="testHaptic('success')">Success</button>
+            </div>
+            
+            <div class="log" id="hapticLog"></div>
+        </div>
+    </div>
+    
+    <!-- Gesture Indicators -->
+    <div class="gesture-indicator left" id="leftIndicator">‹</div>
+    <div class="gesture-indicator right" id="rightIndicator">›</div>
+    
+    <script>
+        // Test State
+        let currentTab = 0;
+        let zoomLevel = 1;
+        let panX = 0;
+        let panY = 0;
+        
+        // Touch State
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        let isGesturing = false;
+        
+        // QR Zoom State
+        let pinchStartDistance = 0;
+        let pinchStartScale = 1;
+        let isPinching = false;
+        let isPanning = false;
+        let panStartX = 0;
+        let panStartY = 0;
+        
+        // Logging Functions
+        function log(section, message) {
+            const logEl = document.getElementById(section + 'Log');
+            const time = new Date().toLocaleTimeString();
+            logEl.innerHTML += `<div>[${time}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function updateStatus(section, message) {
+            document.getElementById(section + 'Status').textContent = message;
+        }
+        
+        // Tab Functions
+        function switchTab(newTab) {
+            if (newTab < 0 || newTab > 2) return false;
+            
+            document.querySelectorAll('.tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === newTab);
+            });
+            
+            const tabNames = ['Receive', 'Raid', 'App'];
+            document.getElementById('tabContent').textContent = `${tabNames[newTab]} Tab Content`;
+            currentTab = newTab;
+            
+            log('swipe', `Switched to tab: ${tabNames[newTab]}`);
+            updateStatus('swipe', `Active: ${tabNames[newTab]} Tab`);
+            return true;
+        }
+        
+        // Swipe Gesture Implementation
+        function handleTouchStart(e) {
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+            isGesturing = true;
+            
+            log('swipe', `Touch start: (${touch.clientX}, ${touch.clientY})`);
+        }
+        
+        function handleTouchMove(e) {
+            if (!isGesturing) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = Math.abs(touch.clientY - touchStartY);
+            
+            if (Math.abs(deltaX) > 10 && deltaY < 100) {
+                e.preventDefault();
+                
+                const velocity = Math.abs(deltaX) / (Date.now() - touchStartTime);
+                updateStatus('swipe', `Swiping... Velocity: ${velocity.toFixed(2)}`);
+                
+                // Show direction indicators
+                if (deltaX > 20) {
+                    document.getElementById('leftIndicator').classList.add('show');
+                    document.getElementById('rightIndicator').classList.remove('show');
+                } else if (deltaX < -20) {
+                    document.getElementById('rightIndicator').classList.add('show');
+                    document.getElementById('leftIndicator').classList.remove('show');
+                }
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            if (!isGesturing) return;
+            
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = Math.abs(touch.clientY - touchStartY);
+            const velocity = Math.abs(deltaX) / (Date.now() - touchStartTime);
+            
+            isGesturing = false;
+            document.getElementById('leftIndicator').classList.remove('show');
+            document.getElementById('rightIndicator').classList.remove('show');
+            
+            log('swipe', `Touch end: deltaX=${deltaX}, velocity=${velocity.toFixed(2)}`);
+            
+            if (Math.abs(deltaX) > 50 && deltaY < 100 && velocity > 0.3) {
+                const direction = deltaX > 0 ? -1 : 1;
+                const newTab = currentTab + direction;
+                
+                if (velocity > 1.5) {
+                    // Fast swipe - jump to first/last
+                    const fastTab = direction > 0 ? 2 : 0;
+                    if (switchTab(fastTab)) {
+                        testHaptic('medium');
+                        log('swipe', `Fast swipe detected! Jumped to ${fastTab === 0 ? 'first' : 'last'} tab`);
+                    }
+                } else {
+                    // Normal swipe
+                    if (switchTab(newTab)) {
+                        testHaptic('light');
+                    } else {
+                        testHaptic('error');
+                        log('swipe', 'Boundary reached - elastic bounce effect');
+                    }
+                }
+            } else {
+                updateStatus('swipe', 'Swipe threshold not met');
+            }
+        }
+        
+        // QR Zoom Functions
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function updateQRTransform() {
+            const qrCode = document.getElementById('qrCode');
+            qrCode.style.transform = `scale(${zoomLevel}) translate(${panX}px, ${panY}px)`;
+            updateStatus('zoom', `Zoom: ${zoomLevel.toFixed(1)}x, Pan: (${panX}, ${panY})`);
+        }
+        
+        function handleQRTouchStart(e) {
+            if (e.touches.length === 2) {
+                // Pinch start
+                isPinching = true;
+                pinchStartDistance = getDistance(e.touches[0], e.touches[1]);
+                pinchStartScale = zoomLevel;
+                log('zoom', 'Pinch gesture started');
+                e.preventDefault();
+            } else if (e.touches.length === 1 && zoomLevel > 1) {
+                // Pan start
+                isPanning = true;
+                const touch = e.touches[0];
+                panStartX = touch.clientX - panX;
+                panStartY = touch.clientY - panY;
+                log('zoom', 'Pan gesture started');
+            }
+        }
+        
+        function handleQRTouchMove(e) {
+            if (isPinching && e.touches.length === 2) {
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                const scale = Math.max(1, Math.min(3, pinchStartScale * (currentDistance / pinchStartDistance)));
+                zoomLevel = scale;
+                updateQRTransform();
+                e.preventDefault();
+            } else if (isPanning && e.touches.length === 1) {
+                const touch = e.touches[0];
+                panX = touch.clientX - panStartX;
+                panY = touch.clientY - panStartY;
+                updateQRTransform();
+                e.preventDefault();
+            }
+        }
+        
+        function handleQRTouchEnd(e) {
+            isPinching = false;
+            isPanning = false;
+            
+            if (zoomLevel <= 1) {
+                panX = 0;
+                panY = 0;
+                updateQRTransform();
+            }
+            
+            log('zoom', `Gesture ended - Zoom: ${zoomLevel.toFixed(1)}x`);
+        }
+        
+        // Double tap detection
+        let doubleTapTimeout = null;
+        function handleQRSingleTap() {
+            if (doubleTapTimeout) {
+                clearTimeout(doubleTapTimeout);
+                doubleTapTimeout = null;
+                // Double tap detected
+                if (zoomLevel === 1) {
+                    zoomLevel = 2;
+                } else {
+                    zoomLevel = 1;
+                    panX = 0;
+                    panY = 0;
+                }
+                updateQRTransform();
+                testHaptic('medium');
+                log('zoom', 'Double tap detected');
+            } else {
+                doubleTapTimeout = setTimeout(() => {
+                    doubleTapTimeout = null;
+                }, 300);
+            }
+        }
+        
+        // Zoom Control Functions
+        function zoomIn() {
+            zoomLevel = Math.min(3, zoomLevel + 0.5);
+            updateQRTransform();
+            testHaptic('light');
+            log('zoom', 'Zoom in button pressed');
+        }
+        
+        function zoomOut() {
+            zoomLevel = Math.max(1, zoomLevel - 0.5);
+            if (zoomLevel === 1) {
+                panX = 0;
+                panY = 0;
+            }
+            updateQRTransform();
+            testHaptic('light');
+            log('zoom', 'Zoom out button pressed');
+        }
+        
+        function resetZoom() {
+            zoomLevel = 1;
+            panX = 0;
+            panY = 0;
+            updateQRTransform();
+            testHaptic('medium');
+            log('zoom', 'Zoom reset');
+        }
+        
+        // Haptic Feedback
+        function testHaptic(type) {
+            const patterns = {
+                light: 10,
+                medium: 20,
+                heavy: 40,
+                error: [10, 50, 10],
+                success: [10, 30, 10, 30, 10]
+            };
+            
+            const pattern = patterns[type] || patterns.light;
+            
+            try {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(pattern);
+                    log('haptic', `${type} haptic triggered: ${JSON.stringify(pattern)}`);
+                    updateStatus('haptic', `${type} vibration sent`);
+                } else {
+                    log('haptic', 'Vibration not supported');
+                    updateStatus('haptic', 'Vibration not supported');
+                }
+            } catch (error) {
+                log('haptic', `Error: ${error.message}`);
+                updateStatus('haptic', 'Haptic error');
+            }
+        }
+        
+        // Initialize Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const swipeArea = document.getElementById('swipeArea');
+            const qrArea = document.getElementById('qrArea');
+            const qrCode = document.getElementById('qrCode');
+            
+            // Swipe gestures
+            swipeArea.addEventListener('touchstart', handleTouchStart, { passive: false });
+            swipeArea.addEventListener('touchmove', handleTouchMove, { passive: false });
+            swipeArea.addEventListener('touchend', handleTouchEnd, { passive: false });
+            
+            // QR zoom gestures
+            qrArea.addEventListener('touchstart', handleQRTouchStart, { passive: false });
+            qrArea.addEventListener('touchmove', handleQRTouchMove, { passive: false });
+            qrArea.addEventListener('touchend', handleQRTouchEnd, { passive: false });
+            qrCode.addEventListener('touchend', handleQRSingleTap);
+            
+            // Initial status
+            updateStatus('swipe', 'Ready - Try swiping left/right');
+            updateStatus('zoom', 'Ready - Try pinch, double-tap, or buttons');
+            updateStatus('haptic', 'Ready - Try different vibration patterns');
+            
+            log('swipe', 'Touch gesture test initialized');
+            log('zoom', 'QR zoom test initialized');
+            log('haptic', 'Haptic feedback test initialized');
+        });
+    </script>
+</body>
+</html>

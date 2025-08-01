@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/splash.css">
   <link rel="stylesheet" href="css/tabs.css">
+  <link rel="stylesheet" href="css/desktop.css">
+  <link rel="stylesheet" href="css/mobile-gestures.css">
 </head>
 <body>
   <!-- Splash Screen -->
@@ -53,6 +55,12 @@
     </div>
   </div>
 
+  <!-- Mobile Gesture Indicators -->
+  <div class="swipe-indicator left" id="swipeLeftIndicator">‹</div>
+  <div class="swipe-indicator right" id="swipeRightIndicator">›</div>
+  <div class="fast-swipe-indicator" id="fastSwipeIndicator">Fast Swipe!</div>
+  <div class="velocity-indicator" id="velocityIndicator">Velocity: 0</div>
+
   <div class="app-container" id="appContainer" style="opacity: 0;">
     <!-- Header -->
     <div class="header">
@@ -71,20 +79,10 @@
     <div class="main-content">
       
       <!-- Receive Tab Content -->
-      <div class="tab-content active" id="receiveTab">
-        <!-- QR Code Display (Top) -->
-      <div class="receive-qr-container">
-        <div class="receive-qr-code" id="receiveQrCode">
-          <!-- QR code will be generated here -->
-        </div>
-        <div class="qr-instructions">
-          <p id="qrInstructionText">📱 Share this QR code to receive NYLA payments</p>
-          <p class="qr-hint">Others can scan to send you tokens instantly</p>
-        </div>
-      </div>
-      
-      <!-- Receive Form -->
-      <form id="receiveForm" class="receive-form">
+      <div class="tab-content active" id="receiveTab" data-section-title="💰 Receive Payments">
+        <div class="receive-qr-container">
+          <!-- Receive Form -->
+          <form id="receiveForm" class="receive-form">
         <div class="form-group">
           <label for="receiveUsername">Your Username on X</label>
           <input type="text" id="receiveUsername" placeholder="@username" value="" />
@@ -127,23 +125,42 @@
           </div>
         </div>
         
-        <div class="button-group">
-          <button type="button" class="share-button" id="shareButton">
-            📤 Share Payment Request
-          </button>
+            <div class="button-group">
+              <button type="button" class="share-button" id="shareButton">
+                📤 Share Payment Request
+              </button>
+            </div>
+          </form>
+          
+          <!-- QR Code Display -->
+          <div class="receive-qr-display">
+            <div class="qr-zoom-container" id="qrZoomContainer">
+              <div class="receive-qr-code qr-content" id="receiveQrCode">
+                <!-- QR code will be generated here -->
+              </div>
+              <div class="qr-zoom-controls">
+                <button class="qr-zoom-btn" id="qrZoomIn" title="Zoom In">+</button>
+                <button class="qr-zoom-btn" id="qrZoomOut" title="Zoom Out">-</button>
+                <button class="qr-zoom-btn" id="qrZoomReset" title="Reset Zoom">⌂</button>
+              </div>
+            </div>
+            <div class="qr-instructions">
+              <p id="qrInstructionText">📱 Share this QR code to receive NYLA payments</p>
+              <p class="qr-hint">Others can scan to send you tokens instantly</p>
+            </div>
+          </div>
         </div>
-      </form>
       </div>
       
       <!-- Raid Tab Content -->
-      <div class="tab-content" id="raidTab" style="display: none;">
+      <div class="tab-content" id="raidTab" style="display: none;" data-section-title="🎯 Community Raids">
         <div class="raid-categories" id="raidCategories">
           <!-- Raid items will be dynamically generated from shared data source -->
         </div>
       </div>
       
       <!-- App Tab Content -->
-      <div class="tab-content" id="appTab" style="display: none;">
+      <div class="tab-content" id="appTab" style="display: none;" data-section-title="🚀 Community Apps">
         <div class="app-showcase">
           <div class="app-intro">
             <h3>Community Apps</h3>
@@ -209,7 +226,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v1.3.7
+        NYLA Go v1.4.0
       </div>
       <div class="links">
         <a href="https://www.agentnyla.com/" target="_blank">Home</a> | <a href="https://x.com/h2crypto_eth" target="_blank">Feedback</a>

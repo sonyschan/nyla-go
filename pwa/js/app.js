@@ -27,10 +27,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.3.7';
+  let APP_VERSION = '1.4.0';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
+  
+  // Initialize device detection and layout
+  initializeDeviceDetection();
   
   // Initialize splash screen
   initializeSplashScreen();
@@ -313,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
-  // Share functionality
+  // Adaptive sharing functionality
   shareButton.addEventListener('click', async function() {
     const username = receiveUsernameInput.value.trim().replace('@', '') || 'username';
     const amount = receiveAmountInput.value || '1';
@@ -335,28 +338,213 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate mobile URL for the command
     const mobileURL = generateXMobileURL(command);
     
-    const shareText = `💰 Send me ${amount} $${token} via X by using following link:\n\n${mobileURL}`;
+    // Adaptive sharing based on device type
+    const isDesktop = document.body.classList.contains('desktop-mode');
     
-    if (navigator.share) {
-      // Native sharing (mobile)
-      try {
-        await navigator.share({
-          title: 'NYLA Payment Request',
-          text: shareText,
-          url: mobileURL
-        });
-        showStatus('Shared successfully!', 'success');
-        setTimeout(hideStatus, 3000);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          fallbackShare(shareText);
-        }
-      }
+    if (isDesktop) {
+      // Desktop: Show direct link dialog and copy to clipboard
+      showDesktopShareDialog(command, mobileURL, amount, token, username);
     } else {
-      // Fallback sharing
-      fallbackShare(shareText);
+      // Mobile: Use native sharing or fallback
+      const shareText = `💰 Send me ${amount} $${token} via X by using following link:\n\n${mobileURL}`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'NYLA Payment Request',
+            text: shareText,
+            url: mobileURL
+          });
+          showStatus('Shared successfully!', 'success');
+          setTimeout(hideStatus, 3000);
+        } catch (error) {
+          if (error.name !== 'AbortError') {
+            fallbackShare(shareText);
+          }
+        }
+      } else {
+        fallbackShare(shareText);
+      }
     }
   });
+
+  // Desktop-specific share dialog
+  function showDesktopShareDialog(command, mobileURL, amount, token, username) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'desktop-share-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.2s ease-out;
+    `;
+    
+    // Create dialog
+    const dialog = document.createElement('div');
+    dialog.className = 'desktop-share-dialog';
+    dialog.style.cssText = `
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      animation: slideInUp 0.3s ease-out;
+    `;
+    
+    dialog.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="color: #FF6B35; font-size: 20px; margin: 0;">💰 Payment Request Created</h3>
+        <button class="close-dialog" style="background: none; border: none; color: #888; font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s ease;">×</button>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <p style="color: #cccccc; margin: 0 0 1rem 0;">Request ${amount} ${token} from @${username}</p>
+        <div style="background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+          <div style="color: #888; font-size: 12px; margin-bottom: 0.5rem;">X.com Command:</div>
+          <div style="color: #ffffff; font-family: monospace; font-size: 14px; word-break: break-all;">${command}</div>
+        </div>
+        <div style="background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 1rem;">
+          <div style="color: #888; font-size: 12px; margin-bottom: 0.5rem;">Shareable Link:</div>
+          <div style="color: #FF6B35; font-size: 14px; word-break: break-all; cursor: pointer;" class="copy-link">${mobileURL}</div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="copy-command" style="flex: 1; min-width: 140px; background: #FF6B35; color: #000; border: none; padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+          📋 Copy Command
+        </button>
+        <button class="copy-link" style="flex: 1; min-width: 140px; background: #333; color: #fff; border: 1px solid #555; padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+          🔗 Copy Link
+        </button>
+        <button class="open-twitter" style="flex: 1; min-width: 140px; background: #1DA1F2; color: #fff; border: none; padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+          🐦 Open X.com
+        </button>
+      </div>
+    `;
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideInUp {
+        from { 
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        to { 
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      .desktop-share-dialog button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+      
+      .close-dialog:hover {
+        background: #333 !important;
+        color: #fff !important;
+      }
+      
+      .copy-link:hover {
+        background: #444 !important;
+        border-color: #FF6B35 !important;
+      }
+      
+      .copy-command:hover {
+        background: #FF5722 !important;
+      }
+      
+      .open-twitter:hover {
+        background: #1991DA !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // Event handlers
+    const copyCommand = async () => {
+      try {
+        await navigator.clipboard.writeText(command);
+        showStatus('Command copied to clipboard!', 'success');
+        setTimeout(hideStatus, 2000);
+      } catch (error) {
+        showStatus('Failed to copy command', 'error');
+      }
+    };
+    
+    const copyLink = async () => {
+      try {
+        await navigator.clipboard.writeText(mobileURL);
+        showStatus('Link copied to clipboard!', 'success');
+        setTimeout(hideStatus, 2000);
+      } catch (error) {
+        showStatus('Failed to copy link', 'error');
+      }
+    };
+    
+    const openTwitter = () => {
+      window.open(mobileURL, '_blank');
+      closeDialog();
+    };
+    
+    const closeDialog = () => {
+      overlay.style.animation = 'fadeOut 0.2s ease-out forwards';
+      setTimeout(() => {
+        document.body.removeChild(overlay);
+        document.head.removeChild(style);
+      }, 200);
+    };
+    
+    // Add event listeners
+    dialog.querySelector('.close-dialog').addEventListener('click', closeDialog);
+    dialog.querySelector('.copy-command').addEventListener('click', copyCommand);
+    dialog.querySelector('.copy-link').addEventListener('click', copyLink);
+    dialog.querySelector('.open-twitter').addEventListener('click', openTwitter);
+    
+    // Click link to copy
+    dialog.querySelector('.copy-link[style*="color: #FF6B35"]').addEventListener('click', copyLink);
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDialog();
+    });
+    
+    // Close on Escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeDialog();
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    
+    // Add fadeOut animation
+    style.textContent += `
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+    `;
+  }
 
   function fallbackShare(text) {
     if (navigator.clipboard) {
@@ -551,6 +739,572 @@ document.addEventListener('DOMContentLoaded', function() {
         completeSplash();
       }
     });
+  }
+
+  // Device Detection and Layout Management
+  function initializeDeviceDetection() {
+    const DeviceDetector = {
+      isDesktop: () => window.innerWidth >= 1024 && window.innerHeight >= 768,
+      hasTouchSupport: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+      isLikelyMobile: () => /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+      
+      updateLayout() {
+        const body = document.body;
+        const isDesktop = this.isDesktop() && !this.hasTouchSupport;
+        
+        // Remove existing classes
+        body.classList.remove('desktop-mode', 'mobile-mode');
+        
+        // Add appropriate class
+        if (isDesktop) {
+          body.classList.add('desktop-mode');
+          console.log('NYLA GO PWA: Desktop mode activated');
+          this.enableDesktopFeatures();
+        } else {
+          body.classList.add('mobile-mode');
+          console.log('NYLA GO PWA: Mobile mode activated');
+          this.enableMobileFeatures();
+        }
+        
+        // Update tab behavior
+        this.updateTabBehavior(isDesktop);
+      },
+      
+      updateTabBehavior(isDesktop) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        
+        if (isDesktop) {
+          // Desktop: Show all sections simultaneously
+          tabContents.forEach(content => {
+            content.style.display = 'block';
+          });
+          
+          // Update active tab styling for desktop sidebar
+          tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              const targetId = button.dataset.tab + 'Tab';
+              const targetSection = document.getElementById(targetId);
+              if (targetSection) {
+                targetSection.scrollIntoView({ 
+                  behavior: 'smooth', 
+                  block: 'start' 
+                });
+              }
+            });
+          });
+        } else {
+          // Mobile: Traditional tab switching
+          const activeTab = document.querySelector('.tab-content.active');
+          tabContents.forEach(content => {
+            content.style.display = content === activeTab ? 'block' : 'none';
+          });
+        }
+      },
+      
+      enableDesktopFeatures() {
+        // Add keyboard navigation
+        this.addKeyboardNavigation();
+        
+        // Enhanced hover states are handled by CSS
+        console.log('NYLA GO PWA: Desktop features enabled');
+      },
+      
+      enableMobileFeatures() {
+        // Initialize mobile gestures
+        initializeMobileGestures();
+        console.log('NYLA GO PWA: Mobile features enabled');
+      },
+      
+      addKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+          // Tab navigation with Ctrl+1, Ctrl+2, Ctrl+3
+          if (e.ctrlKey || e.metaKey) {
+            switch(e.key) {
+              case '1':
+                e.preventDefault();
+                document.querySelector('[data-tab="receive"]')?.click();
+                break;
+              case '2':
+                e.preventDefault();
+                document.querySelector('[data-tab="raid"]')?.click();
+                break;
+              case '3':
+                e.preventDefault();
+                document.querySelector('[data-tab="app"]')?.click();
+                break;
+            }
+          }
+          
+          // Escape to clear focus
+          if (e.key === 'Escape') {
+            document.activeElement?.blur();
+          }
+        });
+      },
+      
+      handleResize() {
+        // Debounce resize events
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+          this.updateLayout();
+        }, 250);
+      },
+      
+      init() {
+        this.updateLayout();
+        window.addEventListener('resize', this.handleResize.bind(this));
+        
+        // Listen for orientation changes on mobile
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => this.updateLayout(), 100);
+        });
+      }
+    };
+    
+    DeviceDetector.init();
+  }
+
+  // Mobile Gesture System
+  function initializeMobileGestures() {
+    const MobileGestureManager = {
+      // Configuration
+      config: {
+        swipeThreshold: 50,           // Minimum distance for swipe
+        velocityThreshold: 0.3,       // Minimum velocity for swipe
+        fastSwipeThreshold: 1.5,      // Velocity for fast swipe
+        maxVerticalDeviation: 100,    // Max vertical movement during horizontal swipe
+        pinchThreshold: 1.1,          // Minimum scale change for pinch
+        hapticSupport: 'vibrate' in navigator
+      },
+      
+      // State
+      state: {
+        isGesturing: false,
+        startX: 0,
+        startY: 0,
+        currentX: 0,
+        currentY: 0,
+        startTime: 0,
+        currentTab: 0,
+        tabs: ['receive', 'raid', 'app'],
+        qrZoomLevel: 1,
+        qrPanX: 0,
+        qrPanY: 0
+      },
+      
+      // Elements
+      elements: {
+        mainContent: null,
+        tabContents: null,
+        tabButtons: null,
+        swipeLeftIndicator: null,
+        swipeRightIndicator: null,
+        fastSwipeIndicator: null,
+        velocityIndicator: null,
+        qrZoomContainer: null,
+        qrContent: null
+      },
+      
+      init() {
+        this.cacheElements();
+        this.bindEvents();
+        this.setupInitialState();
+        console.log('NYLA GO PWA: Mobile gestures initialized');
+      },
+      
+      cacheElements() {
+        this.elements.mainContent = document.querySelector('.main-content');
+        this.elements.tabContents = document.querySelectorAll('.tab-content');
+        this.elements.tabButtons = document.querySelectorAll('.tab-button');
+        this.elements.swipeLeftIndicator = document.getElementById('swipeLeftIndicator');
+        this.elements.swipeRightIndicator = document.getElementById('swipeRightIndicator');
+        this.elements.fastSwipeIndicator = document.getElementById('fastSwipeIndicator');
+        this.elements.velocityIndicator = document.getElementById('velocityIndicator');
+        this.elements.qrZoomContainer = document.getElementById('qrZoomContainer');
+        this.elements.qrContent = document.getElementById('receiveQrCode');
+      },
+      
+      setupInitialState() {
+        // Find currently active tab
+        this.elements.tabButtons.forEach((button, index) => {
+          if (button.classList.contains('active')) {
+            this.state.currentTab = index;
+          }
+        });
+        
+        // Show swipe hints briefly on first load
+        setTimeout(() => {
+          this.showSwipeHints();
+        }, 2000);
+      },
+      
+      bindEvents() {
+        // Touch events for swipe navigation
+        if (this.elements.mainContent) {
+          this.elements.mainContent.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+          this.elements.mainContent.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+          this.elements.mainContent.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+        }
+        
+        // QR Code pinch/zoom events
+        if (this.elements.qrZoomContainer) {
+          this.bindQRZoomEvents();
+        }
+        
+        // Zoom control buttons
+        this.bindZoomControls();
+      },
+      
+      handleTouchStart(e) {
+        if (document.body.classList.contains('desktop-mode')) return;
+        
+        const touch = e.touches[0];
+        this.state.startX = touch.clientX;
+        this.state.startY = touch.clientY;
+        this.state.currentX = touch.clientX;
+        this.state.currentY = touch.clientY;
+        this.state.startTime = Date.now();
+        this.state.isGesturing = true;
+        
+        // Add gesture-active class to prevent text selection
+        document.body.classList.add('gesture-active');
+        
+        // Mark tab content as swiping
+        this.elements.tabContents.forEach(content => {
+          content.classList.add('swiping');
+        });
+      },
+      
+      handleTouchMove(e) {
+        if (!this.state.isGesturing || document.body.classList.contains('desktop-mode')) return;
+        
+        const touch = e.touches[0];
+        this.state.currentX = touch.clientX;
+        this.state.currentY = touch.clientY;
+        
+        const deltaX = this.state.currentX - this.state.startX;
+        const deltaY = Math.abs(this.state.currentY - this.state.startY);
+        
+        // Check if this is a horizontal swipe
+        if (Math.abs(deltaX) > 10 && deltaY < this.config.maxVerticalDeviation) {
+          e.preventDefault(); // Prevent scrolling
+          
+          // Show velocity indicator
+          const velocity = this.calculateVelocity();
+          this.showVelocityIndicator(velocity);
+          
+          // Visual feedback during swipe
+          this.updateSwipeVisuals(deltaX);
+        }
+      },
+      
+      handleTouchEnd(e) {
+        if (!this.state.isGesturing || document.body.classList.contains('desktop-mode')) return;
+        
+        const deltaX = this.state.currentX - this.state.startX;
+        const deltaY = Math.abs(this.state.currentY - this.state.startY);
+        const velocity = this.calculateVelocity();
+        
+        // Clean up
+        this.state.isGesturing = false;
+        document.body.classList.remove('gesture-active');
+        this.elements.tabContents.forEach(content => {
+          content.classList.remove('swiping', 'swipe-preview', 'elastic-left', 'elastic-right');
+        });
+        this.hideVelocityIndicator();
+        
+        // Determine if swipe should trigger tab change
+        if (Math.abs(deltaX) > this.config.swipeThreshold && 
+            deltaY < this.config.maxVerticalDeviation &&
+            velocity > this.config.velocityThreshold) {
+          
+          const direction = deltaX > 0 ? -1 : 1; // Right swipe = previous tab, Left swipe = next tab
+          
+          // Check for fast swipe
+          if (velocity > this.config.fastSwipeThreshold) {
+            this.handleFastSwipe(direction);
+          } else {
+            this.handleNormalSwipe(direction);
+          }
+        } else {
+          // Show elastic boundary if swipe was at edge
+          this.showElasticBoundary(deltaX);
+        }
+      },
+      
+      calculateVelocity() {
+        const deltaTime = Date.now() - this.state.startTime;
+        const deltaX = Math.abs(this.state.currentX - this.state.startX);
+        return deltaTime > 0 ? deltaX / deltaTime : 0;
+      },
+      
+      handleNormalSwipe(direction) {
+        const newTabIndex = this.state.currentTab + direction;
+        
+        if (newTabIndex >= 0 && newTabIndex < this.state.tabs.length) {
+          this.switchToTab(newTabIndex);
+          this.triggerHapticFeedback('light');
+        } else {
+          this.showElasticBoundary(direction > 0 ? 100 : -100);
+          this.triggerHapticFeedback('error');
+        }
+      },
+      
+      handleFastSwipe(direction) {
+        // Fast swipe jumps to first/last tab
+        const newTabIndex = direction > 0 ? this.state.tabs.length - 1 : 0;
+        
+        if (newTabIndex !== this.state.currentTab) {
+          this.showFastSwipeIndicator();
+          this.switchToTab(newTabIndex);
+          this.triggerHapticFeedback('medium');
+        } else {
+          this.showElasticBoundary(direction > 0 ? 100 : -100);
+          this.triggerHapticFeedback('error');
+        }
+      },
+      
+      switchToTab(tabIndex) {
+        this.state.currentTab = tabIndex;
+        const targetButton = this.elements.tabButtons[tabIndex];
+        if (targetButton) {
+          targetButton.click();
+        }
+      },
+      
+      updateSwipeVisuals(deltaX) {
+        const activeContent = document.querySelector('.tab-content.active');
+        if (activeContent && Math.abs(deltaX) > 20) {
+          activeContent.classList.add('swipe-preview');
+        }
+      },
+      
+      showElasticBoundary(deltaX) {
+        const activeContent = document.querySelector('.tab-content.active');
+        if (activeContent) {
+          activeContent.classList.add(deltaX > 0 ? 'elastic-left' : 'elastic-right');
+          setTimeout(() => {
+            activeContent.classList.remove('elastic-left', 'elastic-right');
+          }, 200);
+        }
+      },
+      
+      showSwipeHints() {
+        if (this.elements.swipeLeftIndicator && this.elements.swipeRightIndicator) {
+          this.elements.swipeLeftIndicator.classList.add('show');
+          this.elements.swipeRightIndicator.classList.add('show');
+          
+          setTimeout(() => {
+            this.elements.swipeLeftIndicator.classList.remove('show');
+            this.elements.swipeRightIndicator.classList.remove('show');
+          }, 3000);
+        }
+      },
+      
+      showFastSwipeIndicator() {
+        if (this.elements.fastSwipeIndicator) {
+          this.elements.fastSwipeIndicator.classList.add('show');
+          setTimeout(() => {
+            this.elements.fastSwipeIndicator.classList.remove('show');
+          }, 1000);
+        }
+      },
+      
+      showVelocityIndicator(velocity) {
+        if (this.elements.velocityIndicator) {
+          this.elements.velocityIndicator.textContent = `Velocity: ${velocity.toFixed(2)}`;
+          this.elements.velocityIndicator.classList.add('show');
+        }
+      },
+      
+      hideVelocityIndicator() {
+        if (this.elements.velocityIndicator) {
+          this.elements.velocityIndicator.classList.remove('show');
+        }
+      },
+      
+      // QR Code Pinch/Zoom Implementation
+      bindQRZoomEvents() {
+        const container = this.elements.qrZoomContainer;
+        const content = this.elements.qrContent;
+        
+        if (!container || !content) return;
+        
+        let pinchState = {
+          isActive: false,
+          startDistance: 0,
+          startScale: 1,
+          startX: 0,
+          startY: 0,
+          isPanning: false
+        };
+        
+        // Touch events for pinch/zoom
+        container.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+            // Pinch start
+            e.preventDefault();
+            pinchState.isActive = true;
+            pinchState.startDistance = this.getDistance(e.touches[0], e.touches[1]);
+            pinchState.startScale = this.state.qrZoomLevel;
+            container.classList.add('pinching');
+          } else if (e.touches.length === 1 && this.state.qrZoomLevel > 1) {
+            // Pan start (when zoomed)
+            const touch = e.touches[0];
+            pinchState.isPanning = true;
+            pinchState.startX = touch.clientX - this.state.qrPanX;
+            pinchState.startY = touch.clientY - this.state.qrPanY;
+          }
+        }, { passive: false });
+        
+        container.addEventListener('touchmove', (e) => {
+          if (pinchState.isActive && e.touches.length === 2) {
+            // Pinch zoom
+            e.preventDefault();
+            const currentDistance = this.getDistance(e.touches[0], e.touches[1]);
+            const scale = Math.max(1, Math.min(3, pinchState.startScale * (currentDistance / pinchState.startDistance)));
+            this.updateQRZoom(scale);
+          } else if (pinchState.isPanning && e.touches.length === 1) {
+            // Pan when zoomed
+            e.preventDefault();
+            const touch = e.touches[0];
+            this.state.qrPanX = touch.clientX - pinchState.startX;
+            this.state.qrPanY = touch.clientY - pinchState.startY;
+            this.updateQRTransform();
+          }
+        }, { passive: false });
+        
+        container.addEventListener('touchend', (e) => {
+          pinchState.isActive = false;
+          pinchState.isPanning = false;
+          container.classList.remove('pinching');
+          
+          if (this.state.qrZoomLevel > 1) {
+            container.classList.add('zoomed');
+          } else {
+            container.classList.remove('zoomed');
+            this.state.qrPanX = 0;
+            this.state.qrPanY = 0;
+            this.updateQRTransform();
+          }
+        });
+        
+        // Double tap to zoom
+        let doubleTapTimeout = null;
+        container.addEventListener('touchend', (e) => {
+          if (e.touches.length === 0) {
+            if (doubleTapTimeout) {
+              clearTimeout(doubleTapTimeout);
+              doubleTapTimeout = null;
+              // Double tap detected
+              this.handleQRDoubleTap();
+            } else {
+              doubleTapTimeout = setTimeout(() => {
+                doubleTapTimeout = null;
+              }, 300);
+            }
+          }
+        });
+      },
+      
+      bindZoomControls() {
+        const zoomIn = document.getElementById('qrZoomIn');
+        const zoomOut = document.getElementById('qrZoomOut');
+        const zoomReset = document.getElementById('qrZoomReset');
+        
+        if (zoomIn) {
+          zoomIn.addEventListener('click', () => {
+            this.updateQRZoom(Math.min(3, this.state.qrZoomLevel + 0.5));
+            this.triggerHapticFeedback('light');
+          });
+        }
+        
+        if (zoomOut) {
+          zoomOut.addEventListener('click', () => {
+            this.updateQRZoom(Math.max(1, this.state.qrZoomLevel - 0.5));
+            this.triggerHapticFeedback('light');
+          });
+        }
+        
+        if (zoomReset) {
+          zoomReset.addEventListener('click', () => {
+            this.updateQRZoom(1);
+            this.state.qrPanX = 0;
+            this.state.qrPanY = 0;
+            this.updateQRTransform();
+            this.triggerHapticFeedback('medium');
+          });
+        }
+      },
+      
+      getDistance(touch1, touch2) {
+        const dx = touch1.clientX - touch2.clientX;
+        const dy = touch1.clientY - touch2.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      },
+      
+      updateQRZoom(scale) {
+        this.state.qrZoomLevel = scale;
+        this.updateQRTransform();
+        
+        if (scale > 1) {
+          this.elements.qrZoomContainer?.classList.add('zoomed');
+        } else {
+          this.elements.qrZoomContainer?.classList.remove('zoomed');
+        }
+      },
+      
+      updateQRTransform() {
+        if (this.elements.qrContent) {
+          this.elements.qrContent.style.transform = 
+            `scale(${this.state.qrZoomLevel}) translate(${this.state.qrPanX}px, ${this.state.qrPanY}px)`;
+        }
+      },
+      
+      handleQRDoubleTap() {
+        if (this.state.qrZoomLevel === 1) {
+          this.updateQRZoom(2);
+        } else {
+          this.updateQRZoom(1);
+          this.state.qrPanX = 0;
+          this.state.qrPanY = 0;
+          this.updateQRTransform();
+        }
+        this.triggerHapticFeedback('medium');
+      },
+      
+      // Haptic Feedback
+      triggerHapticFeedback(type = 'light') {
+        if (!this.config.hapticSupport) return;
+        
+        const patterns = {
+          light: 10,
+          medium: 20,
+          heavy: 40,
+          error: [10, 50, 10],
+          success: [10, 30, 10, 30, 10]
+        };
+        
+        const pattern = patterns[type] || patterns.light;
+        
+        try {
+          if (Array.isArray(pattern)) {
+            navigator.vibrate(pattern);
+          } else {
+            navigator.vibrate(pattern);
+          }
+        } catch (error) {
+          console.log('Haptic feedback not supported:', error);
+        }
+      }
+    };
+    
+    // Initialize if on mobile
+    if (document.body.classList.contains('mobile-mode')) {
+      MobileGestureManager.init();
+    }
   }
 
   console.log('NYLA GO PWA: Application initialized successfully');
