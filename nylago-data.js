@@ -21,6 +21,25 @@ const NYLA_COMMUNITY_DATA = {
   ]
 };
 
+const NYLA_FOOTER_DATA = {
+  // Shared footer links for both Extension and PWA
+  links: [
+    {
+      id: 'feedback',
+      text: 'Feedback',
+      url: 'https://x.com/h2crypto_eth',
+      target: '_blank',
+      type: 'link'
+    },
+    {
+      id: 'donate',
+      text: 'Donate',
+      action: 'showDonate',
+      type: 'action'
+    }
+  ]
+};
+
 const NYLA_RAID_DATA = {
   categories: [
     {
@@ -62,9 +81,10 @@ const NYLA_RAID_DATA = {
 // Export for different environments
 if (typeof module !== 'undefined' && module.exports) {
   // Node.js environment
-  module.exports = { NYLA_COMMUNITY_DATA, NYLA_RAID_DATA };
+  module.exports = { NYLA_COMMUNITY_DATA, NYLA_FOOTER_DATA, NYLA_RAID_DATA };
 } else {
   // Browser environment
   window.NYLA_COMMUNITY_DATA = NYLA_COMMUNITY_DATA;
+  window.NYLA_FOOTER_DATA = NYLA_FOOTER_DATA;
   window.NYLA_RAID_DATA = NYLA_RAID_DATA;
 }

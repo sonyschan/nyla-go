@@ -746,7 +746,7 @@
       color: #777777;
     }
     
-    .developer-link {
+    .footer-links a, .footer-links .donate-link {
       color: #FF6B35;
       cursor: pointer;
       font-weight: 600;
@@ -754,12 +754,12 @@
       text-decoration: none;
     }
     
-    .developer-link:hover {
+    .footer-links a:hover, .footer-links .donate-link:hover {
       color: #FF5722;
       text-decoration: underline;
     }
     
-    .developer-link:active {
+    .footer-links .donate-link:active {
       transform: scale(0.98);
     }
 
@@ -1305,13 +1305,13 @@
     <!-- Menu items will be dynamically generated from shared data source -->
   </div>
   
-  <!-- Version and Developer Credit Footer -->
+  <!-- Version and Footer -->
   <div class="footer-container">
     <div class="app-version" id="appVersion">
       NYLA Go v1.6.0
     </div>
-    <div class="developer-credit">
-      Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
+    <div class="footer-links" id="footerLinks">
+      <!-- Footer links will be dynamically generated from shared data source -->
     </div>
   </div>
   

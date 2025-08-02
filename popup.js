@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Generate app section from shared data
   generateAppSection();
   
+  // Generate footer from shared data
+  generateFooter();
+  
   // Function to generate raid section dynamically
   function generateRaidSection() {
     const raidCategoriesContainer = document.getElementById('raidCategories');
@@ -168,6 +171,75 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // App section is static in HTML for Extension, no dynamic generation needed
     // Click handlers for app items are added in the app section event listeners
+  }
+  
+  // Function to generate footer from shared data
+  function generateFooter() {
+    const footerLinks = document.getElementById('footerLinks');
+    if (!footerLinks || !window.NYLA_FOOTER_DATA) {
+      console.log('NYLA Extension: Footer generation failed - missing elements or data');
+      return;
+    }
+    console.log('NYLA Extension: Generating footer with shared data');
+    
+    // Clear existing content
+    footerLinks.innerHTML = '';
+    
+    // Generate links from shared data
+    const linkElements = window.NYLA_FOOTER_DATA.links.map(link => {
+      if (link.type === 'link') {
+        return `<a href="${link.url}" target="${link.target || '_self'}">${link.text}</a>`;
+      } else if (link.type === 'action') {
+        return `<span class="donate-link" id="${link.id}Link">${link.text}</span>`;
+      }
+    });
+    
+    // Join with separator
+    footerLinks.innerHTML = linkElements.join(' | ');
+    
+    // Add event listeners after generating footer
+    addFooterEventListeners();
+  }
+  
+  // Add event listeners to dynamically generated footer links
+  function addFooterEventListeners() {
+    console.log('NYLA Extension: Adding footer event listeners');
+    // Donate link click handler
+    const donateLink = document.getElementById('donateLink');
+    if (donateLink) {
+      console.log('NYLA Extension: Donate link found, adding event listener');
+      donateLink.addEventListener('click', function() {
+        // Check if Send tab is not currently active and switch to it
+        const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+        if (sendTab && !sendTab.classList.contains('active')) {
+          sendTab.click();
+          console.log('NYLA Extension: Switched to Send tab via donate link');
+        }
+        
+        // Auto-fill recipient with developer's X username
+        if (recipientInput) {
+          recipientInput.value = '@h2crypto_eth';
+        }
+        
+        // Update command preview and validation
+        validateAndUpdateCommand();
+        
+        // Save the new values
+        saveValues();
+        
+        // Show a subtle feedback animation
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 150);
+        
+        // Optional: Show a brief thank you message
+        showStatus('Thanks for considering a donation! 💜', 'success');
+        setTimeout(() => {
+          hideStatus();
+        }, 2000);
+      });
+    }
   }
   
   // Function to add click handlers to raid items
@@ -508,40 +580,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize app version
   updateAppVersion();
   
-  // Developer credit click handler
-  if (developerCredit) {
-    developerCredit.addEventListener('click', function() {
-      // Check if Send tab is not currently active and switch to it
-      const sendTab = document.querySelector('.action-tab[data-tab="send"]');
-      if (sendTab && !sendTab.classList.contains('active')) {
-        sendTab.click();
-        console.log('NYLA: Switched to Send tab via developer credit');
-      }
-      
-      // Auto-fill recipient with developer's X username
-      if (recipientInput) {
-        recipientInput.value = '@h2crypto_eth';
-      }
-      
-      // Update command preview and validation
-      validateAndUpdateCommand();
-      
-      // Save the new values
-      saveValues();
-      
-      // Show a subtle feedback animation
-      this.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        this.style.transform = 'scale(1)';
-      }, 150);
-      
-      // Optional: Show a brief thank you message
-      showStatus('Thanks for considering a donation! 💜', 'success');
-      setTimeout(() => {
-        hideStatus();
-      }, 2000);
-    });
-  }
   
   // Get extension version from manifest
   function updateAppVersion() {
@@ -554,12 +592,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.6.0';
+          appVersionElement.textContent = 'NYLA Go v1.7.0';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.6.0';
+        appVersionElement.textContent = 'NYLA Go v1.7.0';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
