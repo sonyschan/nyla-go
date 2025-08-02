@@ -483,8 +483,10 @@ input::placeholder {
 
 .fab-icon {
   font-size: 24px;
-  color: #ffffff;
+  color: #ffffff !important;
   font-weight: bold;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
 }
 
 /* Floating Menu */
