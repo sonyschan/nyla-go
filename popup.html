@@ -417,6 +417,313 @@
       border-radius: 8px;
     }
     
+    /* Header Layout Styles */
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .header-main {
+      flex: 1;
+    }
+    
+    .header-menu {
+      flex-shrink: 0;
+      margin-top: 5px;
+      position: relative;
+    }
+    
+    .menu-button {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid #333333;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+      min-width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .menu-button:hover {
+      background: rgba(255, 107, 53, 0.1);
+      border-color: #FF6B35;
+      color: #FF6B35;
+    }
+    
+    .menu-button.active {
+      background: rgba(255, 107, 53, 0.2);
+      border-color: #FF6B35;
+      color: #FF6B35;
+    }
+    
+    .menu-icon {
+      transform: rotate(90deg);
+    }
+    
+    /* Community Menu Dropdown */
+    .community-menu-dropdown {
+      position: fixed;
+      background: rgba(26, 26, 26, 0.98);
+      backdrop-filter: blur(10px);
+      border: 2px solid #FF6B35;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 107, 53, 0.3);
+      z-index: 1000;
+      min-width: 180px;
+      animation: slideDown 0.2s ease-out;
+    }
+    
+    /* Main content blur when menu is open */
+    .main-container.menu-open {
+      filter: blur(2px);
+      transition: filter 0.2s ease;
+    }
+    
+    /* Dark overlay when menu is open */
+    .backdrop-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: 998;
+      pointer-events: none;
+    }
+    
+    .community-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #ffffff;
+    }
+    
+    .community-menu-item:hover {
+      background: rgba(255, 107, 53, 0.15);
+      transform: translateX(2px);
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+    }
+    
+    .community-menu-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .community-menu-text {
+      flex: 1;
+    }
+    
+    .community-menu-title {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    /* Section Header Styles */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333333;
+    }
+    
+    .back-button {
+      background: transparent;
+      border: 1px solid #333333;
+      color: #cccccc;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .back-button:hover {
+      border-color: #FF6B35;
+      color: #FF6B35;
+      background: rgba(255, 107, 53, 0.1);
+    }
+    
+    .section-header h3 {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      flex: 1;
+    }
+    
+    .community-menu-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    .community-menu-desc {
+      font-size: 11px;
+      color: #999999;
+      line-height: 1.2;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Swap Arrow Styles */
+    .swap-arrow {
+      text-align: center;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .arrow-icon {
+      font-size: 20px;
+      color: #FF6B35;
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid #333333;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    
+    /* App Showcase Styles */
+    .app-showcase {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .app-intro {
+      margin-bottom: 15px;
+    }
+    
+    .app-intro h3 {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+    }
+    
+    .app-intro p {
+      color: #999999;
+      font-size: 12px;
+      margin: 0;
+    }
+    
+    .app-category {
+      margin-bottom: 15px;
+    }
+    
+    .app-category h4 {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #333333;
+    }
+    
+    .app-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .app-item:hover {
+      background: #2a2a2a;
+      border-color: #FF6B35;
+      transform: translateY(-1px);
+    }
+    
+    .app-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: #333333;
+      flex-shrink: 0;
+    }
+    
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    
+    .app-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .app-name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+    
+    .app-author {
+      font-size: 11px;
+      color: #999999;
+      margin-bottom: 3px;
+    }
+    
+    .app-description {
+      font-size: 11px;
+      color: #cccccc;
+      line-height: 1.3;
+    }
+    
+    .app-action {
+      flex-shrink: 0;
+    }
+    
+    .play-icon {
+      font-size: 14px;
+      color: #FF6B35;
+      transition: transform 0.2s ease;
+    }
+    
+    .app-item:hover .play-icon {
+      transform: scale(1.1);
+    }
+
     /* Version and Developer Credit Styles */
     .footer-container {
       margin-top: 10px;
@@ -701,8 +1008,17 @@
 <body>
   <div class="main-container">
     <div class="header">
-      <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
-      <p>Your AI agent for payments and community</p>
+      <div class="header-content">
+        <div class="header-main">
+          <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
+          <p>Your AI agent for payments and community</p>
+        </div>
+        <div class="header-menu">
+          <button type="button" class="menu-button" id="communityMenuButton" title="Community Features">
+            <span class="menu-icon">⋯</span>
+          </button>
+        </div>
+      </div>
     </div>
   
   <!-- Action Tabs -->
@@ -710,7 +1026,7 @@
     <div class="action-tabs">
       <button type="button" class="action-tab active" data-tab="send">Send</button>
       <button type="button" class="action-tab" data-tab="receive">Receive</button>
-      <button type="button" class="action-tab" data-tab="raid">Raid</button>
+      <button type="button" class="action-tab" data-tab="swap">Swap</button>
     </div>
   </div>
   
@@ -852,20 +1168,147 @@
     
   </div>
   
+  <!-- Swap Section -->
+  <div id="swapSection" class="tab-content" style="display: none;">
+    <form id="swapForm">
+      <div class="form-group">
+        <label for="swapAmount">Amount & From Token</label>
+        <div class="amount-group">
+          <input type="number" id="swapAmount" placeholder="1" value="1" step="0.01" min="0" />
+          <div class="token-select-container">
+            <select id="swapFromToken">
+              <option value="SOL" selected>SOL</option>
+              <option value="NYLA">NYLA</option>
+              <option value="ETH">ETH</option>
+              <option value="ALGO">ALGO</option>
+              <option value="USDC">USDC</option>
+              <option value="USDT">USDT</option>
+            </select>
+            <button type="button" class="manage-tokens-btn" id="swapManageTokensBtn" title="Manage Custom Tokens">📝</button>
+          </div>
+        </div>
+        <div class="error" id="swapAmountError"></div>
+      </div>
+      
+      <div class="swap-arrow">
+        <span class="arrow-icon">↓</span>
+      </div>
+      
+      <div class="form-group">
+        <label for="swapToToken">To Token</label>
+        <div class="token-select-container">
+          <select id="swapToToken">
+            <option value="NYLA" selected>NYLA</option>
+            <option value="SOL">SOL</option>
+            <option value="ETH">ETH</option>
+            <option value="ALGO">ALGO</option>
+            <option value="USDC">USDC</option>
+            <option value="USDT">USDT</option>
+          </select>
+          <button type="button" class="manage-tokens-btn" id="swapManageTokensBtn2" title="Manage Custom Tokens">📝</button>
+        </div>
+        <div class="error" id="swapToTokenError"></div>
+      </div>
+      
+      <div class="form-group">
+        <div class="preview-header">
+          <label>Command Preview</label>
+        </div>
+        <div class="command-preview empty" id="swapCommandPreview">
+          Fill in the fields above to see the swap command
+        </div>
+      </div>
+      
+      <button type="button" class="send-button" id="swapButton" disabled>
+        🔄 Send to X.com
+      </button>
+    </form>
+  </div>
+  
   <!-- Raid Section -->
   <div id="raidSection" class="tab-content" style="display: none;">
+    <div class="section-header">
+      <button type="button" class="back-button" id="raidBackButton">← Back</button>
+      <h3>🎯 Community Raids</h3>
+    </div>
     <div class="raid-categories" id="raidCategories">
       <!-- Raid items will be dynamically generated from shared data source -->
+    </div>
+  </div>
+  
+  <!-- App Section -->
+  <div id="appSection" class="tab-content" style="display: none;">
+    <div class="section-header">
+      <button type="button" class="back-button" id="appBackButton">← Back</button>
+      <h3>🚀 Community Apps</h3>
+    </div>
+    <div class="app-showcase">
+      <div class="app-intro">
+        <p>Discover amazing applications built by the NYLA community</p>
+      </div>
+      
+      <!-- Ecosystem Apps Category -->
+      <div class="app-category">
+        <h4>🌐 Ecosystem</h4>
+        
+        <div class="app-item" data-url="https://www.loreagentnyla.com/">
+          <div class="app-icon">
+            <img src="app/Yuki.jpg" alt="Yuki" />
+          </div>
+          <div class="app-info">
+            <div class="app-name">NYLA x YUKI</div>
+            <div class="app-author">by @yukisofficial</div>
+            <div class="app-description">Interactive NYLA-powered experience with community features and engagement</div>
+          </div>
+          <div class="app-action">
+            <span class="play-icon">▶</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Gaming Apps Category -->
+      <div class="app-category">
+        <h4>🎯 Gaming</h4>
+        
+        <div class="app-item" data-url="https://nyla-dodge.vercel.app">
+          <div class="app-icon">🌙</div>
+          <div class="app-info">
+            <div class="app-name">Nyla Moon Dodge</div>
+            <div class="app-author">by @AgentPuffle</div>
+            <div class="app-description">Navigate through space obstacles in this exciting moon-themed dodge game</div>
+          </div>
+          <div class="app-action">
+            <span class="play-icon">▶</span>
+          </div>
+        </div>
+        
+        <div class="app-item" data-url="https://nyla-jump.vercel.app/mobile">
+          <div class="app-icon">🎮</div>
+          <div class="app-info">
+            <div class="app-name">Nyla Jump</div>
+            <div class="app-author">by @AgentPuffle</div>
+            <div class="app-description">Fun jumping game featuring NYLA themes and mechanics</div>
+          </div>
+          <div class="app-action">
+            <span class="play-icon">▶</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   
     <div class="status" id="status" style="display: none;"></div>
   </div>
   
+  <!-- Community Menu Dropdown (outside main container to avoid blur) -->
+  <div class="community-menu-dropdown" id="communityDropdown" style="display: none;">
+    <!-- Menu items will be dynamically generated from shared data source -->
+  </div>
+  
   <!-- Version and Developer Credit Footer -->
   <div class="footer-container">
     <div class="app-version" id="appVersion">
-      NYLA Go v1.4.8
+      NYLA Go v1.6.0
     </div>
     <div class="developer-credit">
       Created by <span class="developer-link" id="developerCredit">@h2crypto_eth</span>
@@ -901,7 +1344,7 @@
   </div>
   
   <script src="qr-simple.js"></script>
-  <script src="raid-data.js"></script>
+  <script src="nylago-data.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

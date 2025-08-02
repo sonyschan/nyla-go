@@ -34,11 +34,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Tab elements
   const actionTabs = document.querySelectorAll('.action-tab');
+  const swapSection = document.getElementById('swapSection');
   const sendSection = document.getElementById('sendSection');
   const receiveSection = document.getElementById('receiveSection');
   const raidSection = document.getElementById('raidSection');
+  const appSection = document.getElementById('appSection');
   const raidListItems = document.querySelectorAll('.raid-list-item');
   const appVersionElement = document.getElementById('appVersion');
+  
+  // Community menu elements
+  const communityMenuButton = document.getElementById('communityMenuButton');
+  const communityDropdown = document.getElementById('communityDropdown');
+  
+  // Swap form elements
+  const swapAmountInput = document.getElementById('swapAmount');
+  const swapFromTokenSelect = document.getElementById('swapFromToken');
+  const swapToTokenSelect = document.getElementById('swapToToken');
+  const swapCommandPreview = document.getElementById('swapCommandPreview');
+  const swapButton = document.getElementById('swapButton');
 
   // Receive elements
   const receiveUsernameInput = document.getElementById('receiveUsername');
@@ -71,6 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Generate raid section from shared data
   generateRaidSection();
+  
+  // Generate community menu from shared data
+  generateCommunityMenu();
+  
+  // Generate app section from shared data
+  generateAppSection();
   
   // Function to generate raid section dynamically
   function generateRaidSection() {
@@ -115,6 +134,42 @@ document.addEventListener('DOMContentLoaded', function() {
     addRaidClickHandlers();
   }
   
+  // Function to generate community menu dynamically
+  function generateCommunityMenu() {
+    if (!communityDropdown || !window.NYLA_COMMUNITY_DATA) return;
+    
+    // Clear existing content
+    communityDropdown.innerHTML = '';
+    
+    // Generate menu items
+    window.NYLA_COMMUNITY_DATA.menuItems.forEach(item => {
+      const menuItem = document.createElement('div');
+      menuItem.className = 'community-menu-item';
+      menuItem.setAttribute('data-action', item.action);
+      
+      menuItem.innerHTML = `
+        <span class="community-menu-icon">${item.icon}</span>
+        <div class="community-menu-text">
+          <div class="community-menu-title">${item.name}</div>
+        </div>
+      `;
+      
+      communityDropdown.appendChild(menuItem);
+    });
+    
+    // Add click handlers to menu items
+    addCommunityMenuHandlers();
+  }
+  
+  // Function to generate app section dynamically
+  function generateAppSection() {
+    const appShowcase = document.getElementById('appShowcase');
+    if (!appShowcase) return;
+    
+    // App section is static in HTML for Extension, no dynamic generation needed
+    // Click handlers for app items are added in the app section event listeners
+  }
+  
   // Function to add click handlers to raid items
   function addRaidClickHandlers() {
     const raidListItems = document.querySelectorAll('.raid-list-item');
@@ -128,6 +183,65 @@ document.addEventListener('DOMContentLoaded', function() {
           setTimeout(hideStatus, 2000);
         }
       });
+    });
+  }
+  
+  // Function to add click handlers to community menu items
+  function addCommunityMenuHandlers() {
+    const dropdownItems = document.querySelectorAll('.community-menu-item');
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const action = this.getAttribute('data-action');
+        
+        if (action === 'showRaid') {
+          // Extension: Show raid page with multiple options (like PWA)
+          showRaidSection();
+        } else if (action === 'showApp') {
+          // Switch to app section (part of current tab)
+          showAppSection();
+        }
+        
+        // Close dropdown
+        closeCommunityDropdown();
+      });
+    });
+  }
+  
+  // Function to show raid section
+  function showRaidSection() {
+    // Hide all tab sections
+    if (swapSection) swapSection.style.display = 'none';
+    if (sendSection) sendSection.style.display = 'none';
+    if (receiveSection) receiveSection.style.display = 'none';
+    if (appSection) appSection.style.display = 'none';
+    
+    // Show raid section
+    if (raidSection) {
+      raidSection.style.display = 'block';
+    }
+    
+    // Update tab states - make sure no tab appears active when showing raid section
+    actionTabs.forEach(tab => {
+      tab.classList.remove('active');
+    });
+  }
+  
+  // Function to show app section
+  function showAppSection() {
+    // Hide all tab sections
+    if (swapSection) swapSection.style.display = 'none';
+    if (sendSection) sendSection.style.display = 'none';
+    if (receiveSection) receiveSection.style.display = 'none';
+    if (raidSection) raidSection.style.display = 'none';
+    
+    // Show app section
+    if (appSection) {
+      appSection.style.display = 'block';
+    }
+    
+    // Update tab states - make sure no tab appears active when showing app section
+    actionTabs.forEach(tab => {
+      tab.classList.remove('active');
     });
   }
   
@@ -440,12 +554,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.5.2';
+          appVersionElement.textContent = 'NYLA Go v1.6.0';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.5.2';
+        appVersionElement.textContent = 'NYLA Go v1.6.0';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -749,6 +863,62 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // Swap form event listeners
+  if (swapAmountInput) {
+    swapAmountInput.addEventListener('input', function() {
+      updateSwapCommand();
+    });
+  }
+  
+  if (swapFromTokenSelect) {
+    swapFromTokenSelect.addEventListener('change', function() {
+      updateSwapCommand();
+    });
+  }
+  
+  if (swapToTokenSelect) {
+    swapToTokenSelect.addEventListener('change', function() {
+      updateSwapCommand();
+    });
+  }
+  
+  // Swap button event listener
+  if (swapButton) {
+    swapButton.addEventListener('click', function() {
+      if (!swapCommandPreview) return;
+      const command = swapCommandPreview.textContent;
+      if (command && !swapCommandPreview.classList.contains('empty')) {
+        const encodedCommand = encodeURIComponent(command);
+        const xUrl = `https://x.com/compose/post?text=${encodedCommand}`;
+        chrome.tabs.create({ url: xUrl });
+        showStatus('Opening X.com with swap command...', 'success');
+        setTimeout(hideStatus, 2000);
+      }
+    });
+  }
+  
+  // Community menu button event listener
+  if (communityMenuButton) {
+    communityMenuButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleCommunityDropdown();
+    });
+  }
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (communityDropdown && !communityDropdown.contains(e.target) && !communityMenuButton.contains(e.target)) {
+      closeCommunityDropdown();
+    }
+  });
+  
+  // Close dropdown when clicking overlay
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'communityBackdrop') {
+      closeCommunityDropdown();
+    }
+  });
+  
   // Add event listeners for blockchain radio buttons
   if (blockchainRadios && blockchainRadios.length > 0) {
     blockchainRadios.forEach(radio => {
@@ -772,6 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
           actionTabs.forEach(t => {
             if (t) t.classList.remove('active');
           });
+          if (swapSection) swapSection.classList.remove('active');
           if (sendSection) sendSection.classList.remove('active');
           if (receiveSection) receiveSection.classList.remove('active');
           if (raidSection) raidSection.classList.remove('active');
@@ -779,13 +950,21 @@ document.addEventListener('DOMContentLoaded', function() {
           // Add active class to clicked tab
           this.classList.add('active');
           
-          // Hide all sections first
+          // Hide all sections first (including community sections)
+          if (swapSection) swapSection.style.display = 'none';
           if (sendSection) sendSection.style.display = 'none';
           if (receiveSection) receiveSection.style.display = 'none';
           if (raidSection) raidSection.style.display = 'none';
+          if (appSection) appSection.style.display = 'none';
           
           // Show corresponding content
-          if (tabName === 'send') {
+          if (tabName === 'swap') {
+            if (swapSection) {
+              swapSection.classList.add('active');
+              swapSection.style.display = 'block';
+              updateSwapCommand();
+            }
+          } else if (tabName === 'send') {
             if (sendSection) {
               sendSection.classList.add('active');
               sendSection.style.display = 'block';
@@ -1324,6 +1503,134 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Community dropdown functions
+  function toggleCommunityDropdown() {
+    if (!communityDropdown) return;
+    
+    const isVisible = communityDropdown.style.display === 'block';
+    if (isVisible) {
+      closeCommunityDropdown();
+    } else {
+      openCommunityDropdown();
+    }
+  }
+  
+  function openCommunityDropdown() {
+    if (!communityDropdown || !communityMenuButton) return;
+    
+    // Blur main content
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+      mainContainer.classList.add('menu-open');
+    }
+    
+    // Add dark overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'backdrop-overlay';
+    overlay.id = 'communityBackdrop';
+    document.body.appendChild(overlay);
+    
+    // Position dropdown relative to button
+    const buttonRect = communityMenuButton.getBoundingClientRect();
+    communityDropdown.style.position = 'fixed';
+    communityDropdown.style.top = (buttonRect.bottom + 5) + 'px';
+    communityDropdown.style.right = (window.innerWidth - buttonRect.right) + 'px';
+    
+    // Show dropdown
+    communityDropdown.style.display = 'block';
+  }
+  
+  function closeCommunityDropdown() {
+    if (!communityDropdown) return;
+    
+    // Remove blur from main content
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+      mainContainer.classList.remove('menu-open');
+    }
+    
+    // Remove overlay
+    const overlay = document.getElementById('communityBackdrop');
+    if (overlay) {
+      overlay.remove();
+    }
+    
+    // Hide dropdown
+    communityDropdown.style.display = 'none';
+  }
+  
+  // Swap command generation
+  function updateSwapCommand() {
+    if (!swapAmountInput || !swapFromTokenSelect || !swapToTokenSelect || !swapCommandPreview) {
+      return;
+    }
+    
+    const amount = swapAmountInput.value.trim();
+    const fromToken = swapFromTokenSelect.value;
+    const toToken = swapToTokenSelect.value;
+    
+    if (amount && fromToken && toToken && amount > 0) {
+      const command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken}`;
+      swapCommandPreview.textContent = command;
+      swapCommandPreview.classList.remove('empty');
+      if (swapButton) {
+        swapButton.disabled = false;
+      }
+    } else {
+      swapCommandPreview.textContent = 'Fill in the tokens above to see the swap command';
+      swapCommandPreview.classList.add('empty');
+      if (swapButton) {
+        swapButton.disabled = true;
+      }
+    }
+  }
+  
+  // App section click handlers
+  const appItems = document.querySelectorAll('.app-item');
+  appItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const url = this.getAttribute('data-url');
+      if (url) {
+        chrome.tabs.create({ url: url });
+        showStatus('Opening community app...', 'success');
+        setTimeout(hideStatus, 2000);
+      }
+    });
+  });
+  
+  // Back button handlers
+  const raidBackButton = document.getElementById('raidBackButton');
+  const appBackButton = document.getElementById('appBackButton');
+  
+  if (raidBackButton) {
+    raidBackButton.addEventListener('click', function() {
+      // Go back to the Send tab (default tab)
+      const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+      if (sendTab) {
+        sendTab.click();
+      }
+    });
+  }
+  
+  if (appBackButton) {
+    appBackButton.addEventListener('click', function() {
+      // Go back to the Send tab (default tab)
+      const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+      if (sendTab) {
+        sendTab.click();
+      }
+    });
+  }
+  
+  // Set default active tab to Send (different from PWA)
+  setTimeout(() => {
+    const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+    if (sendTab && !document.querySelector('.action-tab.active')) {
+      sendTab.click();
+    }
+  }, 100);
+  
   // Initialize
   validateAndUpdateCommand();
+  updateSwapCommand();
 });

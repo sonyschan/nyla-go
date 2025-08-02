@@ -163,12 +163,12 @@ Chrome Web Store will **reject packages with multiple manifest.json files**. Our
 
 ### 📦 **Create Extension-Only Package:**
 ```bash
-# CRITICAL: Don't forget raid-data.js file!
+# CRITICAL: Don't forget nylago-data.js file!
 # Create extension package directory
 mkdir -p extension-package
 
 # Copy ONLY extension files (exclude PWA directory)
-cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png raid-data.js extension-package/
+cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png nylago-data.js extension-package/
 cp -r icons extension-package/
 
 # Create Chrome Store ZIP package - IMPORTANT: Create directly in releases directory to avoid path issues
@@ -183,7 +183,7 @@ rm -rf extension-package
 ### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4 - v1.4.5)**
 
 #### **Directory Structure & Navigation Issues:**
-1. **Missing raid-data.js**: Don't forget to include `raid-data.js` - it's required for the Raid tab functionality
+1. **Missing nylago-data.js**: Don't forget to include `nylago-data.js` - it's required for community features (Raid/App tabs)
 2. **Directory Navigation**: Create ZIP directly in `releases/` to avoid path confusion and nested directory issues
 3. **Git Staging**: The ZIP file path should be `releases/nyla-go-v${VERSION}-extension-only.zip` when adding to git
 4. **Common Error**: Using `../nyla-go-v${VERSION}-extension-only.zip` creates file in wrong location
@@ -216,7 +216,7 @@ find . -name "*v${VERSION}*.zip" -type f
 /Users/sonyschan/NYLAgo/ (PROJECT ROOT - Always work from here)
 ├── manifest.json
 ├── popup.html, popup.js
-├── content.js, qr-simple.js, raid-data.js
+├── content.js, qr-simple.js, nylago-data.js
 ├── GO-BACKGROUND.png, NYLAGO-Logo-v2.png
 ├── icons/ (directory with all icon files)
 ├── pwa/ (EXCLUDE from extension package)
@@ -229,7 +229,7 @@ find . -name "*v${VERSION}*.zip" -type f
 - ✅ `popup.html` & `popup.js` 
 - ✅ `content.js`
 - ✅ `qr-simple.js`
-- ✅ `raid-data.js` ⚠️ **CRITICAL: Don't forget this file!**
+- ✅ `nylago-data.js` ⚠️ **CRITICAL: Don't forget this file!**
 - ✅ `icons/` directory (all icon files)
 - ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
 - ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
@@ -264,7 +264,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.5.2
+- **Latest Release**: v1.6.0
 - **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
 
 ### Key Files Structure
@@ -341,7 +341,7 @@ releases/
 - **Git Reset Strategy**: Use `git reset --soft HEAD~1` to undo commits while keeping changes staged
 - **Directory Management**: Avoid nested directory confusion by always working from project root
 - **ZIP File Location**: Create ZIP directly in `releases/` directory to avoid path issues
-- **Missing Files**: Include all required files in checklist - `raid-data.js` is essential for Raid tab
+- **Missing Files**: Include all required files in checklist - `nylago-data.js` is essential for community features
 - **Git Path Issues**: Use relative paths like `releases/filename.zip` when adding to git
 - **Commit Messages**: Use detailed commit messages with proper formatting for release history
 

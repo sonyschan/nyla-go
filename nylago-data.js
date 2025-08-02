@@ -1,5 +1,25 @@
-// NYLA Go - Shared Raid Data Source
-// This file contains the definitive raid list data used by both Extension and PWA
+// NYLA Go - Shared Application Data Source  
+// This file contains all shared data structures used by both Extension and PWA
+
+const NYLA_COMMUNITY_DATA = {
+  // Community menu items for Extension three-dot menu and PWA floating menu
+  menuItems: [
+    {
+      id: 'raid',
+      name: 'Community Raids',
+      description: 'Join community engagement campaigns',
+      icon: '🎯',
+      action: 'showRaid'
+    },
+    {
+      id: 'app',
+      name: 'Community Apps',
+      description: 'Discover NYLA community applications',
+      icon: '🚀', 
+      action: 'showApp'
+    }
+  ]
+};
 
 const NYLA_RAID_DATA = {
   categories: [
@@ -42,8 +62,9 @@ const NYLA_RAID_DATA = {
 // Export for different environments
 if (typeof module !== 'undefined' && module.exports) {
   // Node.js environment
-  module.exports = NYLA_RAID_DATA;
+  module.exports = { NYLA_COMMUNITY_DATA, NYLA_RAID_DATA };
 } else {
   // Browser environment
+  window.NYLA_COMMUNITY_DATA = NYLA_COMMUNITY_DATA;
   window.NYLA_RAID_DATA = NYLA_RAID_DATA;
 }
