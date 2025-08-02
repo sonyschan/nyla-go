@@ -70,13 +70,121 @@
     
     <!-- Tab Navigation -->
     <div class="tab-navigation">
+      <button class="tab-button" data-tab="swap">Swap</button>
       <button class="tab-button active" data-tab="receive">Receive</button>
-      <button class="tab-button" data-tab="raid">Raid</button>
-      <button class="tab-button" data-tab="app">App</button>
+      <button class="tab-button" data-tab="send">Send</button>
     </div>
     
     <!-- Main Content -->
     <div class="main-content">
+      
+      <!-- Swap Tab Content -->
+      <div class="tab-content" id="swapTab" data-section-title="🔄 Token Swap">
+        <form id="swapForm" class="swap-form">
+          <div class="form-group">
+            <label for="swapFromToken">From Token</label>
+            <div class="token-select-container">
+              <select id="swapFromToken">
+                <option value="NYLA" selected>NYLA</option>
+                <option value="SOL">SOL</option>
+                <option value="ETH">ETH</option>
+                <option value="ALGO">ALGO</option>
+                <option value="USDC">USDC</option>
+                <option value="USDT">USDT</option>
+              </select>
+            </div>
+            <div class="error" id="swapFromTokenError"></div>
+          </div>
+          
+          <div class="swap-arrow">
+            <span class="arrow-icon">↓</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="swapToToken">To Token</label>
+            <div class="token-select-container">
+              <select id="swapToToken">
+                <option value="SOL" selected>SOL</option>
+                <option value="NYLA">NYLA</option>
+                <option value="ETH">ETH</option>
+                <option value="ALGO">ALGO</option>
+                <option value="USDC">USDC</option>
+                <option value="USDT">USDT</option>
+              </select>
+            </div>
+            <div class="error" id="swapToTokenError"></div>
+          </div>
+          
+          <div class="form-group">
+            <label>Command Preview</label>
+            <div class="command-preview" id="swapCommandPreview">
+              Fill in the tokens above to see the swap command
+            </div>
+          </div>
+          
+          <button type="button" class="share-button" id="swapButton">
+            🔄 Generate Swap Command
+          </button>
+        </form>
+      </div>
+      
+      <!-- Send Tab Content -->
+      <div class="tab-content" id="sendTab" data-section-title="💸 Send Payments" style="display: none;">
+        <form id="sendForm" class="send-form">
+          <div class="form-group">
+            <label for="sendRecipient">Recipient Username on X</label>
+            <input type="text" id="sendRecipient" placeholder="@username" />
+            <div class="error" id="sendRecipientError"></div>
+          </div>
+          
+          <div class="form-group">
+            <label for="sendAmount">Amount & Token</label>
+            <div class="amount-group">
+              <input type="number" id="sendAmount" placeholder="1" value="1" step="0.01" min="0" />
+              <div class="token-select-container">
+                <select id="sendToken">
+                  <option value="NYLA" selected>NYLA</option>
+                  <option value="SOL">SOL</option>
+                  <option value="ETH">ETH</option>
+                  <option value="ALGO">ALGO</option>
+                  <option value="USDC">USDC</option>
+                  <option value="USDT">USDT</option>
+                </select>
+              </div>
+            </div>
+            <div class="error" id="sendAmountError"></div>
+          </div>
+          
+          <div class="form-group">
+            <label>Blockchain</label>
+            <div class="blockchain-group">
+              <div class="blockchain-option">
+                <input type="radio" id="sendSolana" name="sendBlockchain" value="Solana" checked />
+                <label for="sendSolana">Solana</label>
+              </div>
+              <div class="blockchain-option">
+                <input type="radio" id="sendEthereum" name="sendBlockchain" value="Ethereum" />
+                <label for="sendEthereum">Ethereum</label>
+              </div>
+              <div class="blockchain-option">
+                <input type="radio" id="sendAlgorand" name="sendBlockchain" value="Algorand" />
+                <label for="sendAlgorand">Algorand</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Command Preview</label>
+            <div class="command-preview" id="sendCommandPreview">
+              Fill in the fields above to see the transfer command
+            </div>
+          </div>
+          
+          <button type="button" class="share-button" id="sendButton">
+            💸 Send to X.com
+          </button>
+        </form>
+      </div>
       
       <!-- Receive Tab Content -->
       <div class="tab-content active" id="receiveTab" data-section-title="💰 Receive Payments">
@@ -219,10 +327,27 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v1.4.8
+        NYLA Go v1.5.0
       </div>
       <div class="links">
         <a href="https://www.agentnyla.com/" target="_blank">Home</a> | <a href="https://x.com/h2crypto_eth" target="_blank">Feedback</a> | <a href="https://x.com/compose/post?text=Hey%20%40AgentNyla%20transfer%201%20%24NYLA%20%40h2crypto_eth" target="_blank">Donate</a>
+      </div>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <div class="floating-action-button" id="floatingActionButton">
+      <span class="fab-icon">👥</span>
+    </div>
+    
+    <!-- Floating Menu -->
+    <div class="floating-menu" id="floatingMenu" style="display: none;">
+      <div class="floating-menu-item" data-action="raid">
+        <span class="menu-icon">🎯</span>
+        <span class="menu-text">Community Raids</span>
+      </div>
+      <div class="floating-menu-item" data-action="app">
+        <span class="menu-icon">🚀</span>
+        <span class="menu-text">Community Apps</span>
       </div>
     </div>
     
