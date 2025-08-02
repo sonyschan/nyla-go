@@ -337,13 +337,14 @@ input::placeholder {
   font-size: 11px;
 }
 
-.links a {
+.links a, .links .donate-link {
   color: #FF6B35;
   text-decoration: none;
   transition: color 0.2s ease;
+  cursor: pointer;
 }
 
-.links a:hover {
+.links a:hover, .links .donate-link:hover {
   color: #FF5722;
   text-decoration: underline;
 }

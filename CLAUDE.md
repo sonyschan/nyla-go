@@ -264,8 +264,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.6.0
-- **Features**: PWA with professional branding, expanded App tab (Memes & Gaming categories), simplified Raid tab with ticker search, extension UI improvements, dynamic versioning, enhanced UX, JavaScript error fixes, updated splash video
+- **Latest Release**: v1.7.0
+- **Features**: Extension-PWA feature alignment, shared data structures, enhanced community navigation, dynamic footer generation, unified cross-platform experience
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

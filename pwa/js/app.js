@@ -46,10 +46,79 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.6.0';
+  let APP_VERSION = '1.7.0';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
+  
+  // Generate footer from shared data
+  generateFooter();
+  
+  // Generate footer from shared data
+  function generateFooter() {
+    const footerLinks = document.getElementById('footerLinks');
+    if (!footerLinks || !window.NYLA_FOOTER_DATA) {
+      console.log('NYLA PWA: Footer generation failed - missing elements or data');
+      return;
+    }
+    console.log('NYLA PWA: Generating footer with shared data');
+    
+    // Clear existing content
+    footerLinks.innerHTML = '';
+    
+    // Generate links from shared data
+    const linkElements = window.NYLA_FOOTER_DATA.links.map(link => {
+      if (link.type === 'link') {
+        return `<a href="${link.url}" target="${link.target || '_self'}">${link.text}</a>`;
+      } else if (link.type === 'action') {
+        return `<span class="donate-link" id="${link.id}Link">${link.text}</span>`;
+      }
+    });
+    
+    // Join with separator
+    footerLinks.innerHTML = linkElements.join(' | ');
+    
+    // Add event listeners after generating footer
+    addFooterEventListeners();
+  }
+  
+  // Add event listeners to dynamically generated footer links
+  function addFooterEventListeners() {
+    console.log('NYLA PWA: Adding footer event listeners');
+    // Donate link click handler (same behavior as Extension)
+    const donateLink = document.getElementById('donateLink');
+    if (donateLink) {
+      console.log('NYLA PWA: Donate link found, adding event listener');
+    donateLink.addEventListener('click', function() {
+      // Check if Send tab is not currently active and switch to it
+      const sendButton = document.querySelector('.tab-button[data-tab="send"]');
+      if (sendButton && !sendButton.classList.contains('active')) {
+        sendButton.click();
+        console.log('NYLA PWA: Switched to Send tab via donate link');
+      }
+      
+      // Auto-fill recipient with developer's X username
+      const sendRecipientInput = document.getElementById('sendRecipient');
+      if (sendRecipientInput) {
+        sendRecipientInput.value = '@h2crypto_eth';
+      }
+      
+      // Update command preview - PWA will auto-update via event listeners
+      
+      // Save the username
+      saveUsername();
+      
+      // Show a subtle feedback animation
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = 'scale(1)';
+      }, 150);
+      
+      // Optional: Show a brief thank you message
+      showStatus('Thanks for considering a donation! 💜', 'success');
+    });
+    }
+  }
   
   // Initialize device detection and layout
   initializeDeviceDetection();
