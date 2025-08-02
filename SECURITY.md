@@ -13,8 +13,8 @@ NYLA Go is committed to providing a secure browser extension for cryptocurrency 
 
 ### 🔍 Third-Party Verification
 
-#### Latest Release Security Scan (v0.5.0)
-- **VirusTotal**: [Scan Results - Clean](https://www.virustotal.com/gui/file/03465f740d2c92139d014d3356224abd486e80f294453fee20a80f66bbdce797) - 0/72 detections ✅
+#### Latest Release Security Scan (v1.7.0)
+- **VirusTotal**: [Scan Results - Pending Upload](https://www.virustotal.com/) - Upload releases/nyla-go-v1.7.0-extension-only.zip for verification ⏳
 - **CRXcavator**: [Extension Analysis](https://crxcavator.io/report/[extension-id]) - Pending Chrome Store approval
 - **GitHub Security**: No vulnerabilities detected in dependencies ✅
 
