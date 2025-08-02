@@ -592,12 +592,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.7.0';
+          appVersionElement.textContent = 'NYLA Go v1.7.1';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.7.0';
+        appVersionElement.textContent = 'NYLA Go v1.7.1';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -1179,6 +1179,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Generate X.com compose URL for fallback
+  function generateXComposeURL(command) {
+    const encodedCommand = encodeURIComponent(command);
+    return `https://x.com/compose/post?text=${encodedCommand}`;
+  }
+
   // Handle send button click
   if (sendButton) {
     sendButton.addEventListener('click', async function() {
@@ -1190,27 +1196,64 @@ document.addEventListener('DOMContentLoaded', function() {
       const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
       
       if (!tab.url.includes('x.com') && !tab.url.includes('twitter.com')) {
-        showStatus('Please navigate to X.com first', 'error');
+        // Not on X.com - use fallback to open new window
+        console.log('NYLA Extension: Not on X.com, using fallback to open new window');
+        const composeURL = generateXComposeURL(command);
+        window.open(composeURL, '_blank');
+        showStatus('Opening X.com with your command...', 'success');
+        
+        // Clear form and storage after successful send
+        setTimeout(() => {
+          clearForm();
+          hideStatus();
+        }, 2000);
         return;
       }
       
-      // Send command to content script
-      await chrome.tabs.sendMessage(tab.id, {
-        action: 'insertCommand',
-        command: command
-      });
+      // Try to send command to content script
+      try {
+        const response = await chrome.tabs.sendMessage(tab.id, {
+          action: 'insertCommand',
+          command: command
+        });
+        
+        if (response.success) {
+          showStatus('Command sent to X.com!', 'success');
+          
+          // Clear form and storage after successful send
+          setTimeout(() => {
+            clearForm();
+            hideStatus();
+          }, 2000);
+        } else {
+          throw new Error(response.error || 'Failed to insert command');
+        }
+        
+      } catch (contentScriptError) {
+        // Content script failed (no text box found) - use fallback
+        console.log('NYLA Extension: Content script failed, using fallback:', contentScriptError);
+        const composeURL = generateXComposeURL(command);
+        window.open(composeURL, '_blank');
+        showStatus('Text box not found - opening X.com compose window...', 'success');
+        
+        // Clear form and storage after successful fallback
+        setTimeout(() => {
+          clearForm();
+          hideStatus();
+        }, 2000);
+      }
       
-      showStatus('Command sent to X.com!', 'success');
+    } catch (error) {
+      console.error('Error in send button handler:', error);
+      // Final fallback - always try to open compose window
+      const composeURL = generateXComposeURL(command);
+      window.open(composeURL, '_blank');
+      showStatus('Opening X.com with your command...', 'success');
       
-      // Clear form and storage after successful send
       setTimeout(() => {
         clearForm();
         hideStatus();
       }, 2000);
-      
-    } catch (error) {
-      console.error('Error sending command:', error);
-      showStatus('Error: Make sure you are on X.com and refresh the page', 'error');
     }
     });
   }

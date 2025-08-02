@@ -155,19 +155,19 @@
   }
 
   /* Desktop app showcase grid */
-  .desktop-mode .app-showcase {
+  .desktop-mode .app-showcase, .desktop-mode .raid-showcase {
     display: grid;
     gap: 2rem;
   }
 
-  .desktop-mode .app-category {
+  .desktop-mode .app-category, .desktop-mode .raid-category {
     background: rgba(42, 42, 42, 0.3);
     border: 1px solid #444444;
     border-radius: 12px;
     padding: 1.5rem;
   }
 
-  .desktop-mode .app-intro {
+  .desktop-mode .app-intro, .desktop-mode .raid-intro {
     grid-column: 1 / -1;
     background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
   }
