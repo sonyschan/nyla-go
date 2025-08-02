@@ -39,7 +39,7 @@ body {
 .header-logo {
   width: 280px;
   height: auto;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .header p {
@@ -331,6 +331,10 @@ input::placeholder {
   .token-select-container {
     flex: 1;
     min-width: 120px;
+  }
+  
+  .header-logo {
+    margin-bottom: 1px;
   }
 }
 
