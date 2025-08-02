@@ -220,12 +220,12 @@
 }
 
 /* App Tab Styles */
-.app-showcase {
+.app-showcase, .raid-showcase {
   /* Remove height restriction for better UX - let content flow naturally */
   padding-bottom: 20px;
 }
 
-.app-intro {
+.app-intro, .raid-intro {
   text-align: center;
   margin-bottom: 28px;
   padding: 20px;
@@ -234,14 +234,14 @@
   border: 1px solid #333333;
 }
 
-.app-intro h3 {
+.app-intro h3, .raid-intro h3 {
   color: #ffffff;
   font-size: 20px;
   font-weight: 700;
   margin: 0 0 8px 0;
 }
 
-.app-intro p {
+.app-intro p, .raid-intro p {
   color: #cccccc;
   font-size: 14px;
   margin: 0;

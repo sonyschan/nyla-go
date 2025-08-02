@@ -618,18 +618,18 @@
       overflow-y: auto;
     }
     
-    .app-intro {
+    .app-intro, .raid-intro {
       margin-bottom: 15px;
     }
     
-    .app-intro h3 {
+    .app-intro h3, .raid-intro h3 {
       color: #ffffff;
       font-size: 16px;
       font-weight: 600;
       margin: 0 0 5px 0;
     }
     
-    .app-intro p {
+    .app-intro p, .raid-intro p {
       color: #999999;
       font-size: 12px;
       margin: 0;
@@ -1231,8 +1231,13 @@
       <button type="button" class="back-button" id="raidBackButton">← Back</button>
       <h3>🎯 Community Raids</h3>
     </div>
-    <div class="raid-categories" id="raidCategories">
-      <!-- Raid items will be dynamically generated from shared data source -->
+    <div class="raid-showcase">
+      <div class="raid-intro">
+        <p>Join community engagement campaigns and support NYLA ecosystem growth</p>
+      </div>
+      <div class="raid-categories" id="raidCategories">
+        <!-- Raid items will be dynamically generated from shared data source -->
+      </div>
     </div>
   </div>
   
