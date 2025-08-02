@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const qrInstructionText = document.getElementById('qrInstructionText');
   
   // DOM Elements - Swap Tab
+  const swapAmount = document.getElementById('swapAmount');
   const swapFromToken = document.getElementById('swapFromToken');
   const swapToToken = document.getElementById('swapToToken');
   const swapCommandPreview = document.getElementById('swapCommandPreview');
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.5.0';
+  let APP_VERSION = '1.5.1';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -201,10 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Generate Swap Command Preview
   function generateSwapCommand() {
-    if (!swapFromToken || !swapToToken || !swapCommandPreview) return;
+    if (!swapAmount || !swapFromToken || !swapToToken || !swapCommandPreview) return;
     
-    const fromToken = swapFromToken.value || 'NYLA';
-    const toToken = swapToToken.value || 'SOL';
+    const amount = swapAmount.value || '1';
+    const fromToken = swapFromToken.value || 'SOL';
+    const toToken = swapToToken.value || 'NYLA';
     
     if (fromToken === toToken) {
       swapCommandPreview.textContent = 'Please select different tokens for swap';
@@ -212,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    const command = `Hey @AgentNyla swap ${fromToken} to ${toToken}`;
+    const command = `Hey @AgentNyla swap ${amount} ${fromToken} to ${toToken}`;
     swapCommandPreview.textContent = command;
     swapCommandPreview.classList.remove('empty');
   }
@@ -329,6 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Event Listeners - Swap Tab
+  if (swapAmount) swapAmount.addEventListener('input', generateSwapCommand);
   if (swapFromToken) swapFromToken.addEventListener('change', generateSwapCommand);
   if (swapToToken) swapToToken.addEventListener('change', generateSwapCommand);
   
@@ -415,8 +418,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Swap button click handler
   if (swapButton) {
     swapButton.addEventListener('click', function() {
-      const fromToken = swapFromToken?.value || 'NYLA';
-      const toToken = swapToToken?.value || 'SOL';
+      const amount = swapAmount?.value || '1';
+      const fromToken = swapFromToken?.value || 'SOL';
+      const toToken = swapToToken?.value || 'NYLA';
       
       if (fromToken === toToken) {
         showStatus('Please select different tokens for swap', 'error');
@@ -424,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      const command = `Hey @AgentNyla swap ${fromToken} to ${toToken}`;
+      const command = `Hey @AgentNyla swap ${amount} ${fromToken} to ${toToken}`;
       const mobileURL = generateXMobileURL(command);
       
       window.open(mobileURL, '_blank');
