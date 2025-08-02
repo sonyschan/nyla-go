@@ -7,27 +7,45 @@ document.addEventListener('DOMContentLoaded', function() {
   const splashFallback = document.getElementById('splashFallback');
   const appContainer = document.getElementById('appContainer');
 
-  // DOM Elements
+  // DOM Elements - Receive Tab
   const receiveUsernameInput = document.getElementById('receiveUsername');
   const receiveAmountInput = document.getElementById('receiveAmount');
   const receiveTokenSelect = document.getElementById('receiveToken');
   const receiveQrCode = document.getElementById('receiveQrCode');
   const shareButton = document.getElementById('shareButton');
-  const statusDiv = document.getElementById('status');
   const receiveBlockchainRadios = document.querySelectorAll('input[name="receiveBlockchain"]');
   const qrInstructionText = document.getElementById('qrInstructionText');
+  
+  // DOM Elements - Swap Tab
+  const swapFromToken = document.getElementById('swapFromToken');
+  const swapToToken = document.getElementById('swapToToken');
+  const swapCommandPreview = document.getElementById('swapCommandPreview');
+  const swapButton = document.getElementById('swapButton');
+  
+  // DOM Elements - Send Tab
+  const sendRecipient = document.getElementById('sendRecipient');
+  const sendAmount = document.getElementById('sendAmount');
+  const sendToken = document.getElementById('sendToken');
+  const sendCommandPreview = document.getElementById('sendCommandPreview');
+  const sendButton = document.getElementById('sendButton');
+  const sendBlockchainRadios = document.querySelectorAll('input[name="sendBlockchain"]');
+  
+  // Common Elements
+  const statusDiv = document.getElementById('status');
   const versionText = document.getElementById('versionText');
   
   // Tab Elements
   const tabButtons = document.querySelectorAll('.tab-button');
+  const swapTab = document.getElementById('swapTab');
   const receiveTab = document.getElementById('receiveTab');
+  const sendTab = document.getElementById('sendTab');
   const raidTab = document.getElementById('raidTab');
   const appTab = document.getElementById('appTab');
   const raidListItems = document.querySelectorAll('.raid-list-item');
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.4.8';
+  let APP_VERSION = '1.5.0';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -54,6 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setTimeout(() => {
       generateReceiveQRCode();
+      generateSwapCommand();
+      generateSendCommand();
     }, 200);
   }
 
@@ -179,6 +199,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 200);
   }
 
+  // Generate Swap Command Preview
+  function generateSwapCommand() {
+    if (!swapFromToken || !swapToToken || !swapCommandPreview) return;
+    
+    const fromToken = swapFromToken.value || 'NYLA';
+    const toToken = swapToToken.value || 'SOL';
+    
+    if (fromToken === toToken) {
+      swapCommandPreview.textContent = 'Please select different tokens for swap';
+      swapCommandPreview.classList.add('empty');
+      return;
+    }
+    
+    const command = `Hey @AgentNyla swap ${fromToken} to ${toToken}`;
+    swapCommandPreview.textContent = command;
+    swapCommandPreview.classList.remove('empty');
+  }
+
+  // Generate Send Command Preview
+  function generateSendCommand() {
+    if (!sendRecipient || !sendAmount || !sendToken || !sendCommandPreview) return;
+    
+    const recipient = sendRecipient.value.trim().replace('@', '') || 'username';
+    const amount = sendAmount.value || '1';
+    const token = sendToken.value || 'NYLA';
+    
+    // Get selected blockchain
+    let blockchain = 'Solana'; // default
+    sendBlockchainRadios.forEach(radio => {
+      if (radio && radio.checked) {
+        blockchain = radio.value;
+      }
+    });
+    
+    // Generate command
+    let command;
+    if (blockchain === 'Solana') {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${recipient}`;
+    } else {
+      command = `Hey @AgentNyla transfer ${amount} $${token} @${recipient} ${blockchain}`;
+    }
+    
+    sendCommandPreview.textContent = command;
+    sendCommandPreview.classList.remove('empty');
+  }
+
   // Save username to localStorage when changed
   function saveUsername() {
     const username = receiveUsernameInput.value.trim();
@@ -248,16 +314,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Event Listeners
-  receiveUsernameInput.addEventListener('input', function() {
-    saveUsername();
-    generateReceiveQRCode();
-  });
-  receiveAmountInput.addEventListener('input', generateReceiveQRCode);
-  receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
+  // Event Listeners - Receive Tab
+  if (receiveUsernameInput) {
+    receiveUsernameInput.addEventListener('input', function() {
+      saveUsername();
+      generateReceiveQRCode();
+    });
+  }
+  if (receiveAmountInput) receiveAmountInput.addEventListener('input', generateReceiveQRCode);
+  if (receiveTokenSelect) receiveTokenSelect.addEventListener('change', generateReceiveQRCode);
   
   receiveBlockchainRadios.forEach(radio => {
-    radio.addEventListener('change', generateReceiveQRCode);
+    if (radio) radio.addEventListener('change', generateReceiveQRCode);
+  });
+
+  // Event Listeners - Swap Tab
+  if (swapFromToken) swapFromToken.addEventListener('change', generateSwapCommand);
+  if (swapToToken) swapToToken.addEventListener('change', generateSwapCommand);
+  
+  // Event Listeners - Send Tab
+  if (sendRecipient) sendRecipient.addEventListener('input', generateSendCommand);
+  if (sendAmount) sendAmount.addEventListener('input', generateSendCommand);
+  if (sendToken) sendToken.addEventListener('change', generateSendCommand);
+  
+  sendBlockchainRadios.forEach(radio => {
+    if (radio) radio.addEventListener('change', generateSendCommand);
   });
 
   // Tab switching functionality
@@ -267,24 +348,40 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Remove active class from all tabs and buttons
       tabButtons.forEach(btn => btn.classList.remove('active'));
+      if (swapTab) swapTab.classList.remove('active');
       if (receiveTab) receiveTab.classList.remove('active');
+      if (sendTab) sendTab.classList.remove('active');
       if (raidTab) raidTab.classList.remove('active');
       if (appTab) appTab.classList.remove('active');
       
       // Hide all tab content
+      if (swapTab) swapTab.style.display = 'none';
       if (receiveTab) receiveTab.style.display = 'none';
+      if (sendTab) sendTab.style.display = 'none';
       if (raidTab) raidTab.style.display = 'none';
       if (appTab) appTab.style.display = 'none';
       
       // Show selected tab
       this.classList.add('active');
       
-      if (tabName === 'receive') {
+      if (tabName === 'swap') {
+        if (swapTab) {
+          swapTab.classList.add('active');
+          swapTab.style.display = 'block';
+          generateSwapCommand();
+        }
+      } else if (tabName === 'receive') {
         if (receiveTab) {
           receiveTab.classList.add('active');
           receiveTab.style.display = 'block';
           // Generate QR code when switching to receive tab
           generateReceiveQRCode();
+        }
+      } else if (tabName === 'send') {
+        if (sendTab) {
+          sendTab.classList.add('active');
+          sendTab.style.display = 'block';
+          generateSendCommand();
         }
       } else if (tabName === 'raid') {
         if (raidTab) {
@@ -315,6 +412,61 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Swap button click handler
+  if (swapButton) {
+    swapButton.addEventListener('click', function() {
+      const fromToken = swapFromToken?.value || 'NYLA';
+      const toToken = swapToToken?.value || 'SOL';
+      
+      if (fromToken === toToken) {
+        showStatus('Please select different tokens for swap', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
+      
+      const command = `Hey @AgentNyla swap ${fromToken} to ${toToken}`;
+      const mobileURL = generateXMobileURL(command);
+      
+      window.open(mobileURL, '_blank');
+      showStatus('Opening X.com with swap command...', 'success');
+      setTimeout(hideStatus, 3000);
+    });
+  }
+
+  // Send button click handler
+  if (sendButton) {
+    sendButton.addEventListener('click', function() {
+      const recipient = sendRecipient?.value?.trim()?.replace('@', '') || '';
+      const amount = sendAmount?.value || '1';
+      const token = sendToken?.value || 'NYLA';
+      
+      if (!recipient) {
+        showStatus('Please enter a recipient username', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
+      
+      // Get selected blockchain
+      let blockchain = 'Solana';
+      sendBlockchainRadios.forEach(radio => {
+        if (radio && radio.checked) blockchain = radio.value;
+      });
+      
+      // Generate command
+      let command;
+      if (blockchain === 'Solana') {
+        command = `Hey @AgentNyla transfer ${amount} $${token} @${recipient}`;
+      } else {
+        command = `Hey @AgentNyla transfer ${amount} $${token} @${recipient} ${blockchain}`;
+      }
+      
+      const mobileURL = generateXMobileURL(command);
+      
+      window.open(mobileURL, '_blank');
+      showStatus('Opening X.com with transfer command...', 'success');
+      setTimeout(hideStatus, 3000);
+    });
+  }
 
   // Adaptive sharing functionality
   shareButton.addEventListener('click', async function() {
@@ -891,8 +1043,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentX: 0,
         currentY: 0,
         startTime: 0,
-        currentTab: 0,
-        tabs: ['receive', 'raid', 'app'],
+        currentTab: 1,
+        tabs: ['swap', 'receive', 'send'],
         gestureDebounce: false,
       },
       
@@ -1230,6 +1382,86 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.body.classList.contains('mobile-mode')) {
       MobileGestureManager.init();
     }
+  }
+
+  // Floating Action Button functionality
+  const floatingActionButton = document.getElementById('floatingActionButton');
+  const floatingMenu = document.getElementById('floatingMenu');
+  
+  if (floatingActionButton && floatingMenu) {
+    let isMenuOpen = false;
+    
+    floatingActionButton.addEventListener('click', function() {
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        floatingActionButton.classList.add('active');
+        floatingMenu.style.display = 'block';
+      } else {
+        floatingActionButton.classList.remove('active');
+        floatingMenu.style.display = 'none';
+      }
+    });
+    
+    // Floating Menu Item handlers
+    const floatingMenuItems = document.querySelectorAll('.floating-menu-item');
+    floatingMenuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const action = this.dataset.action;
+        
+        if (action === 'raid') {
+          // Show raid tab
+          if (raidTab) {
+            // Hide all tabs
+            if (swapTab) swapTab.style.display = 'none';
+            if (receiveTab) receiveTab.style.display = 'none';
+            if (sendTab) sendTab.style.display = 'none';
+            if (appTab) appTab.style.display = 'none';
+            
+            // Show raid tab
+            raidTab.style.display = 'block';
+            raidTab.classList.add('active');
+            
+            // Update tab buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            
+            console.log('NYLA GO PWA: Showing Community Raids');
+          }
+        } else if (action === 'app') {
+          // Show app tab
+          if (appTab) {
+            // Hide all tabs
+            if (swapTab) swapTab.style.display = 'none';
+            if (receiveTab) receiveTab.style.display = 'none';
+            if (sendTab) sendTab.style.display = 'none';
+            if (raidTab) raidTab.style.display = 'none';
+            
+            // Show app tab
+            appTab.style.display = 'block';
+            appTab.classList.add('active');
+            
+            // Update tab buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            
+            console.log('NYLA GO PWA: Showing Community Apps');
+          }
+        }
+        
+        // Close floating menu
+        isMenuOpen = false;
+        floatingActionButton.classList.remove('active');
+        floatingMenu.style.display = 'none';
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (isMenuOpen && !floatingActionButton.contains(e.target) && !floatingMenu.contains(e.target)) {
+        isMenuOpen = false;
+        floatingActionButton.classList.remove('active');
+        floatingMenu.style.display = 'none';
+      }
+    });
   }
 
   console.log('NYLA GO PWA: Application initialized successfully');

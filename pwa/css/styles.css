@@ -39,11 +39,11 @@ body {
 .header-logo {
   width: 280px;
   height: auto;
-  margin-bottom: 2px;
+  margin-bottom: 0px;
 }
 
 .header p {
-  color: #cccccc;
+  color: #888888;
   font-size: 14px;
   margin: 0;
 }
@@ -141,6 +141,56 @@ input::placeholder {
   color: #ffffff;
   font-weight: 500;
   margin: 0;
+}
+
+/* Command Preview */
+.command-preview {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+  font-size: 14px;
+  color: #ffffff;
+  word-break: break-all;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.command-preview.empty {
+  color: #777777;
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Swap Arrow */
+.swap-arrow {
+  text-align: center;
+  margin: 15px 0;
+  position: relative;
+}
+
+.arrow-icon {
+  font-size: 24px;
+  color: #FF6B35;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333333;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* Send Form */
+.send-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 /* Receive QR Container */
@@ -334,7 +384,7 @@ input::placeholder {
   }
   
   .header-logo {
-    margin-bottom: 1px;
+    margin-bottom: 0px;
   }
 }
 
@@ -400,4 +450,93 @@ input::placeholder {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Floating Action Button */
+.floating-action-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #FF6B35, #FF5722);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: none;
+}
+
+.floating-action-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+}
+
+.floating-action-button.active {
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, #FF5722, #E53E3E);
+}
+
+.fab-icon {
+  font-size: 24px;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* Floating Menu */
+.floating-menu {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  animation: slideUp 0.3s ease-out;
+  min-width: 180px;
+}
+
+.floating-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #ffffff;
+}
+
+.floating-menu-item:hover {
+  background: rgba(255, 107, 53, 0.1);
+  transform: translateX(-2px);
+}
+
+.menu-icon {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
