@@ -205,13 +205,13 @@ document.addEventListener('DOMContentLoaded', function() {
   function addNYLAGoSignature(command) {
     if (!command || command.trim() === '') {
       console.error('NYLA PWA: Empty command passed to signature function!');
-      return 'ERROR: Empty command - please fill in recipient, amount, and token fields\n\nSent via #NYLAGo';
+      return 'ERROR: Empty command - please fill in recipient, amount, and token fields\n\nSent via NYLAGo';
     }
     // Check if signature already exists to prevent double-signature
-    if (command.includes('Sent via #NYLAGo')) {
+    if (command.includes('Sent via NYLAGo')) {
       return command;
     }
-    return `${command}\n\nSent via #NYLAGo`;
+    return `${command}\n\nSent via NYLAGo`;
   }
 
   // Generate X.com mobile URL for QR codes
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', function() {
       showDesktopShareDialog(command, mobileURL, amount, token, username);
     } else {
       // Mobile: Use native sharing or fallback
-      const shareText = `💰 Send me ${amount} $${token} via X by using following link:\n\n${mobileURL}`;
+      const shareText = `💰 Send me ${amount} $${token} via X`;
       
       if (navigator.share) {
         try {
@@ -908,11 +908,13 @@ document.addEventListener('DOMContentLoaded', function() {
           setTimeout(hideStatus, 3000);
         } catch (error) {
           if (error.name !== 'AbortError') {
-            fallbackShare(shareText);
+            // Fallback with full text including URL
+            fallbackShare(`${shareText}\n\n${mobileURL}`);
           }
         }
       } else {
-        fallbackShare(shareText);
+        // Fallback with full text including URL
+        fallbackShare(`${shareText}\n\n${mobileURL}`);
       }
     }
   });
