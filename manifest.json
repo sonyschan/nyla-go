@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NYLA Go",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "Your AI agent for payments and community",
   "author": "@h2crypto_eth",
   "homepage_url": "https://github.com/sonyschan/nyla-go",

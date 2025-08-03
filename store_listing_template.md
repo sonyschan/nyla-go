@@ -5,7 +5,7 @@
 - **Summary**: Simplify NYLA cryptocurrency transfers on X.com with QR codes
 - **Category**: Productivity
 - **Language**: English
-- **Version**: 0.5.0
+- **Version**: 1.8.2
 
 ## Store Description
 

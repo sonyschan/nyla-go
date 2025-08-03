@@ -264,7 +264,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.8.1
+- **Latest Release**: v1.8.2
 - **Features**: Extension-PWA feature alignment, shared data structures, enhanced community navigation, dynamic footer generation, unified cross-platform experience
 
 ### Key Files Structure
