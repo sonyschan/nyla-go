@@ -108,7 +108,7 @@ input::placeholder {
 
 .token-select-container select {
   flex: 1;
-  border-radius: 12px;
+  border-radius: 12px 0 0 12px;
 }
 
 /* Blockchain Group */
@@ -549,13 +549,14 @@ input::placeholder {
   background: transparent;
   border: 1px solid #333333;
   border-left: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 12px 12px 0;
   padding: 0 8px;
   cursor: pointer;
   font-size: 12px;
   color: #FF6B35;
   transition: all 0.2s ease;
   min-width: 28px;
+  height: auto;
 }
 
 .manage-tokens-btn:hover {
