@@ -100,6 +100,7 @@
                   <option value="USDC">USDC</option>
                   <option value="USDT">USDT</option>
                 </select>
+                <button type="button" class="manage-tokens-btn" id="sendManageTokensBtn" title="Manage Custom Tokens">📝</button>
               </div>
             </div>
             <div class="error" id="sendAmountError"></div>
@@ -171,6 +172,7 @@
                 <option value="USDC">USDC</option>
                 <option value="USDT">USDT</option>
               </select>
+              <button type="button" class="manage-tokens-btn" id="receiveManageTokensBtn" title="Manage Custom Tokens">📝</button>
             </div>
           </div>
           <div class="error" id="receiveAmountError"></div>
@@ -218,6 +220,7 @@
                   <option value="USDC">USDC</option>
                   <option value="USDT">USDT</option>
                 </select>
+                <button type="button" class="manage-tokens-btn" id="swapFromManageTokensBtn" title="Manage Custom Tokens">📝</button>
               </div>
             </div>
             <div class="error" id="swapFromTokenError"></div>
@@ -238,6 +241,7 @@
                 <option value="USDC">USDC</option>
                 <option value="USDT">USDT</option>
               </select>
+              <button type="button" class="manage-tokens-btn" id="swapToManageTokensBtn" title="Manage Custom Tokens">📝</button>
             </div>
             <div class="error" id="swapToTokenError"></div>
           </div>
@@ -355,7 +359,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v1.7.3
+        NYLA Go v1.8.0
       </div>
       <div class="links" id="footerLinks">
         <!-- Footer links will be dynamically generated from shared data source -->
@@ -379,6 +383,34 @@
       </div>
     </div>
     
+  </div>
+  
+  <!-- Custom Token Management Modal -->
+  <div class="modal-overlay" id="modalOverlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Manage Custom Tokens</h2>
+        <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="add-token-section">
+          <h3>Add Custom Token</h3>
+          <div class="add-token-form">
+            <input type="text" id="newTokenInput" placeholder="Enter token symbol (e.g., BTC)" maxlength="10" />
+            <button type="button" id="addTokenBtn" class="add-btn">Add Token</button>
+          </div>
+          <div class="error" id="tokenError"></div>
+        </div>
+        
+        <div class="custom-tokens-section">
+          <h3>Custom Tokens</h3>
+          <div class="custom-tokens-list" id="customTokensList">
+            <div class="no-custom-tokens" id="noCustomTokens">No custom tokens added yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   
   <!-- Scripts -->

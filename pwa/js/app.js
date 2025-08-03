@@ -35,6 +35,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const statusDiv = document.getElementById('status');
   const versionText = document.getElementById('versionText');
   
+  // Custom Token Management Elements
+  const modalOverlay = document.getElementById('modalOverlay');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const newTokenInput = document.getElementById('newTokenInput');
+  const addTokenBtn = document.getElementById('addTokenBtn');
+  const customTokensList = document.getElementById('customTokensList');
+  const noCustomTokens = document.getElementById('noCustomTokens');
+  const tokenError = document.getElementById('tokenError');
+  
+  // Custom Token Management Buttons
+  const sendManageTokensBtn = document.getElementById('sendManageTokensBtn');
+  const receiveManageTokensBtn = document.getElementById('receiveManageTokensBtn');
+  const swapFromManageTokensBtn = document.getElementById('swapFromManageTokensBtn');
+  const swapToManageTokensBtn = document.getElementById('swapToManageTokensBtn');
+  
   // Tab Elements
   const tabButtons = document.querySelectorAll('.tab-button');
   const swapTab = document.getElementById('swapTab');
@@ -46,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.7.3';
+  let APP_VERSION = '1.8.0';
+
+  // Default tokens (same as Extension)
+  const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
+  
+  // Custom token management state
+  let currentManageTokensSelect = null;
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -133,6 +154,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (savedUsername) {
       receiveUsernameInput.value = savedUsername;
     }
+    
+    // Load custom tokens and update dropdowns
+    updateAllTokenDropdowns();
     
     // Update version text dynamically
     updateVersionText();
@@ -357,6 +381,211 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // === CUSTOM TOKEN MANAGEMENT FUNCTIONS ===
+  
+  // Get custom tokens from localStorage
+  function getCustomTokens() {
+    try {
+      const stored = localStorage.getItem('nylaGoCustomTokens');
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.error('NYLA PWA: Error loading custom tokens:', error);
+      return [];
+    }
+  }
+
+  // Save custom tokens to localStorage
+  function saveCustomTokens(tokens) {
+    try {
+      localStorage.setItem('nylaGoCustomTokens', JSON.stringify(tokens));
+      console.log('NYLA PWA: Custom tokens saved:', tokens);
+    } catch (error) {
+      console.error('NYLA PWA: Error saving custom tokens:', error);
+      showTokenError('Failed to save custom tokens');
+    }
+  }
+
+  // Validate token symbol
+  function validateTokenSymbol(symbol) {
+    if (!symbol || symbol.trim().length === 0) {
+      return 'Token symbol cannot be empty';
+    }
+    
+    const trimmedSymbol = symbol.trim().toUpperCase();
+    
+    if (trimmedSymbol.length > 10) {
+      return 'Token symbol cannot exceed 10 characters';
+    }
+    
+    if (!/^[A-Z0-9]+$/.test(trimmedSymbol)) {
+      return 'Token symbol can only contain letters and numbers';
+    }
+    
+    // Check if token already exists (default or custom)
+    const customTokens = getCustomTokens();
+    const allTokens = [...defaultTokens, ...customTokens];
+    
+    if (allTokens.includes(trimmedSymbol)) {
+      return 'Token already exists in the list';
+    }
+    
+    return null; // Valid
+  }
+
+  // Add new custom token
+  function addCustomToken() {
+    const symbol = newTokenInput.value.trim().toUpperCase();
+    
+    // Clear previous error
+    clearTokenError();
+    
+    // Validate token
+    const validationError = validateTokenSymbol(symbol);
+    if (validationError) {
+      showTokenError(validationError);
+      return;
+    }
+    
+    // Add to custom tokens
+    const customTokens = getCustomTokens();
+    customTokens.push(symbol);
+    customTokens.sort(); // Keep alphabetical order
+    saveCustomTokens(customTokens);
+    
+    // Update all token dropdowns
+    updateAllTokenDropdowns();
+    
+    // Clear input and update display
+    newTokenInput.value = '';
+    updateCustomTokensList();
+    
+    // Show success feedback
+    showStatus(`Token ${symbol} added successfully!`, 'success');
+    setTimeout(hideStatus, 2000);
+  }
+
+  // Remove custom token
+  function removeCustomToken(symbol) {
+    const customTokens = getCustomTokens();
+    const updatedTokens = customTokens.filter(token => token !== symbol);
+    saveCustomTokens(updatedTokens);
+    
+    // Update all token dropdowns
+    updateAllTokenDropdowns();
+    
+    // Update display
+    updateCustomTokensList();
+    
+    // Show feedback
+    showStatus(`Token ${symbol} removed`, 'success');
+    setTimeout(hideStatus, 2000);
+  }
+
+  // Update all token dropdown options
+  function updateAllTokenDropdowns() {
+    const customTokens = getCustomTokens();
+    const allTokens = [...defaultTokens, ...customTokens];
+    
+    // Update all token selects
+    const tokenSelects = [sendToken, receiveToken, swapFromToken, swapToToken];
+    
+    tokenSelects.forEach(select => {
+      if (select) {
+        const currentValue = select.value;
+        
+        // Clear existing options
+        select.innerHTML = '';
+        
+        // Add all tokens as options
+        allTokens.forEach(token => {
+          const option = document.createElement('option');
+          option.value = token;
+          option.textContent = token;
+          select.appendChild(option);
+        });
+        
+        // Restore previous selection if still valid
+        if (allTokens.includes(currentValue)) {
+          select.value = currentValue;
+        } else {
+          select.value = 'NYLA'; // Default fallback
+        }
+      }
+    });
+    
+    // Trigger update events for any active tab
+    if (receiveTab && receiveTab.style.display !== 'none') {
+      generateReceiveQRCode();
+    }
+    if (sendTab && sendTab.style.display !== 'none') {
+      generateSendCommand();
+    }
+    if (swapTab && swapTab.style.display !== 'none') {
+      generateSwapCommand();
+    }
+  }
+
+  // Update custom tokens list display
+  function updateCustomTokensList() {
+    const customTokens = getCustomTokens();
+    
+    if (customTokens.length === 0) {
+      customTokensList.innerHTML = '<div class="no-custom-tokens" id="noCustomTokens">No custom tokens added yet.</div>';
+    } else {
+      customTokensList.innerHTML = customTokens.map(token => `
+        <div class="custom-token-item">
+          <span class="token-symbol">${token}</span>
+          <button type="button" class="remove-token-btn" onclick="removeCustomToken('${token}')">Remove</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Show/hide token error messages
+  function showTokenError(message) {
+    if (tokenError) {
+      tokenError.textContent = message;
+      tokenError.style.display = 'block';
+    }
+  }
+
+  function clearTokenError() {
+    if (tokenError) {
+      tokenError.textContent = '';
+      tokenError.style.display = 'none';
+    }
+  }
+
+  // Open custom tokens modal
+  function openCustomTokensModal(selectElement) {
+    currentManageTokensSelect = selectElement;
+    updateCustomTokensList();
+    clearTokenError();
+    
+    if (modalOverlay) {
+      modalOverlay.style.display = 'flex';
+      
+      // Focus the input after modal opens
+      setTimeout(() => {
+        if (newTokenInput) {
+          newTokenInput.focus();
+        }
+      }, 100);
+    }
+  }
+
+  // Close custom tokens modal
+  function closeCustomTokensModal() {
+    if (modalOverlay) {
+      modalOverlay.style.display = 'none';
+    }
+    currentManageTokensSelect = null;
+    clearTokenError();
+  }
+
+  // Make removeCustomToken globally available for onclick handlers
+  window.removeCustomToken = removeCustomToken;
+
   // Function to generate raid section dynamically
   function generateRaidSection() {
     const raidCategoriesContainer = document.getElementById('raidCategories');
@@ -448,6 +677,63 @@ document.addEventListener('DOMContentLoaded', function() {
   
   sendBlockchainRadios.forEach(radio => {
     if (radio) radio.addEventListener('change', generateSendCommand);
+  });
+
+  // === CUSTOM TOKEN MANAGEMENT EVENT LISTENERS ===
+  
+  // Custom token management button event listeners
+  if (sendManageTokensBtn) {
+    sendManageTokensBtn.addEventListener('click', () => openCustomTokensModal(sendToken));
+  }
+  
+  if (receiveManageTokensBtn) {
+    receiveManageTokensBtn.addEventListener('click', () => openCustomTokensModal(receiveToken));
+  }
+  
+  if (swapFromManageTokensBtn) {
+    swapFromManageTokensBtn.addEventListener('click', () => openCustomTokensModal(swapFromToken));
+  }
+  
+  if (swapToManageTokensBtn) {
+    swapToManageTokensBtn.addEventListener('click', () => openCustomTokensModal(swapToToken));
+  }
+
+  // Modal event listeners
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', closeCustomTokensModal);
+  }
+
+  if (addTokenBtn) {
+    addTokenBtn.addEventListener('click', addCustomToken);
+  }
+
+  if (newTokenInput) {
+    // Allow Enter key to add token
+    newTokenInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomToken();
+      }
+    });
+    
+    // Clear error on input
+    newTokenInput.addEventListener('input', clearTokenError);
+  }
+
+  // Close modal when clicking overlay
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        closeCustomTokensModal();
+      }
+    });
+  }
+
+  // Close modal with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay && modalOverlay.style.display === 'flex') {
+      closeCustomTokensModal();
+    }
   });
 
   // Tab switching functionality

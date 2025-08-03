@@ -3,7 +3,7 @@
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
 ![NYLA Go](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
-![Version](https://img.shields.io/badge/Version-1.7.3-orange)
+![Version](https://img.shields.io/badge/Version-1.8.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Security](https://img.shields.io/badge/Security-Verified-brightgreen?logo=shield)
 ![Open Source](https://img.shields.io/badge/Source-Open-blue?logo=github)
@@ -23,7 +23,7 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 - **🔄 Tabbed Interface** - Send, Receive, and Raid tabs for organized functionality
 - **💾 Form Memory** - Remembers your inputs for convenience and speed
 - **🔗 Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
-- **🪙 Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom tokens
+- **🪙 Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom token management
 - **👥 Community Features** - Access NYLA Core and Community Raiders lists for engagement
 - **📱 Cross-Platform** - Available as both Chrome extension and Progressive Web App
 
@@ -61,6 +61,7 @@ Experience NYLA Go directly in your mobile browser with our PWA:
 
 - **📱 Mobile Optimized** - Install directly to your home screen
 - **🔄 Auto-Updates** - Always get the latest features automatically  
+- **📝 Custom Token Management** - Add and manage your favorite tokens with localStorage persistence
 - **🎯 Raid Lists** - Access NYLA Core and Community Raiders with X.com deeplinks
 - **💾 Offline Ready** - Works even without internet connection
 
@@ -93,7 +94,7 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 ### Method 2: Install from ZIP File (Current)
 1. **Download the Extension**
    - Go to [Releases](https://github.com/sonyschan/nyla-go/releases)
-   - Download `nyla-go-v1.7.3.zip`
+   - Download `nyla-go-v1.8.0.zip`
 
 2. **Extract the ZIP File**
    - Unzip the downloaded file to a folder on your computer
