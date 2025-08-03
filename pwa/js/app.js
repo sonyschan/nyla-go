@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.8.1';
+  let APP_VERSION = '1.8.2';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
@@ -214,20 +214,20 @@ document.addEventListener('DOMContentLoaded', function() {
   function addNYLAGoSignature(command) {
     if (!command || command.trim() === '') {
       console.error('NYLA PWA: Empty command passed to signature function!');
-      return 'ERROR: Empty command - please fill in recipient, amount, and token fields\n\nSent via NYLAGo';
+      return 'ERROR: Empty command - please fill in recipient, amount, and token fields\n\nSent via #NYLAGo';
     }
     // Check if signature already exists to prevent double-signature
-    if (command.includes('Sent via NYLAGo')) {
+    if (command.includes('Sent via #NYLAGo')) {
       return command;
     }
-    return `${command}\n\nSent via NYLAGo`;
+    return `${command}\n\nSent via #NYLAGo`;
   }
 
   // Generate X.com mobile URL for QR codes
   function generateXMobileURL(command) {
     const commandWithSignature = addNYLAGoSignature(command);
     const encodedCommand = encodeURIComponent(commandWithSignature);
-    return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+    return `https://x.com/intent/post?text=${encodedCommand}`;
   }
 
   // Update QR instruction text based on token

@@ -611,12 +611,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.7.3';
+          appVersionElement.textContent = 'NYLA Go v1.8.2';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.7.3';
+        appVersionElement.textContent = 'NYLA Go v1.8.2';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL encode the command text
     const encodedCommand = encodeURIComponent(commandWithSignature);
     // Generate X.com compose URL with pre-filled text
-    return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+    return `https://x.com/intent/post?text=${encodedCommand}`;
   }
   
   function updateQRCode(command) {
@@ -957,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (command && !swapCommandPreview.classList.contains('empty')) {
         const commandWithSignature = addNYLAGoSignatureForURL(command);
         const encodedCommand = encodeURIComponent(commandWithSignature);
-        const xUrl = `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+        const xUrl = `https://x.com/intent/post?text=${encodedCommand}`;
         chrome.tabs.create({ url: xUrl });
         showStatus('Opening X.com with swap command...', 'success');
         setTimeout(hideStatus, 2000);
@@ -1063,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function generateReceiveXMobileURL(command) {
     const commandWithSignature = addNYLAGoSignatureForURL(command);
     const encodedCommand = encodeURIComponent(commandWithSignature);
-    return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+    return `https://x.com/intent/post?text=${encodedCommand}`;
   }
 
   // Receive QR Code generation  
@@ -1248,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function generateXComposeURL(command) {
     const commandWithSignature = addNYLAGoSignatureForURL(command);
     const encodedCommand = encodeURIComponent(commandWithSignature);
-    const finalURL = `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+    const finalURL = `https://x.com/intent/post?text=${encodedCommand}`;
     console.log('NYLA Extension: Final fallback URL:', finalURL);
     return finalURL;
   }
