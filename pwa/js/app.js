@@ -73,15 +73,21 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('NYLA GO PWA: Starting application');
   
   // Generate footer from shared data
-  generateFooter();
-  
-  // Generate footer from shared data
   function generateFooter() {
     const footerLinks = document.getElementById('footerLinks');
-    if (!footerLinks || !window.NYLA_FOOTER_DATA) {
-      console.log('NYLA PWA: Footer generation failed - missing elements or data');
+    if (!footerLinks) {
+      console.log('NYLA PWA: Footer generation failed - footerLinks element not found');
       return;
     }
+    
+    if (!window.NYLA_FOOTER_DATA) {
+      console.log('NYLA PWA: Footer generation failed - NYLA_FOOTER_DATA not available, using fallback');
+      // Fallback footer content
+      footerLinks.innerHTML = '<a href="https://x.com/h2crypto_eth" target="_blank">Feedback</a> | <span class="donate-link" id="donateLink">Donate</span>';
+      addFooterEventListeners();
+      return;
+    }
+    
     console.log('NYLA PWA: Generating footer with shared data');
     
     // Clear existing content
@@ -157,6 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load custom tokens and update dropdowns
     updateAllTokenDropdowns();
+    
+    // Generate footer from shared data
+    generateFooter();
     
     // Update version text dynamically
     updateVersionText();
