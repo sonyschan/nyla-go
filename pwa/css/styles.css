@@ -51,17 +51,17 @@ body {
 /* Main Content */
 .main-content {
   flex: 1;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 }
 
 /* Form Styling */
 .form-group {
-  margin-bottom: 4px;
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
   color: #ffffff;
   font-weight: 500;
   font-size: 14px;
@@ -115,7 +115,7 @@ input::placeholder {
 .blockchain-group {
   display: flex;
   gap: 20px;
-  margin-top: 4px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 
@@ -148,8 +148,8 @@ input::placeholder {
   background: rgba(26, 26, 26, 0.8);
   border: 1px solid #333333;
   border-radius: 8px;
-  padding: 10px;
-  margin: 4px 0;
+  padding: 15px;
+  margin: 15px 0;
   font-family: 'SF Mono', Monaco, 'Consolas', monospace;
   font-size: 14px;
   color: #ffffff;
@@ -168,7 +168,7 @@ input::placeholder {
 /* Swap Arrow */
 .swap-arrow {
   text-align: center;
-  margin: 4px 0;
+  margin: 15px 0;
   position: relative;
 }
 
@@ -196,8 +196,8 @@ input::placeholder {
 /* Receive QR Container */
 .receive-qr-container {
   text-align: center;
-  margin-bottom: 8px;
-  padding: 10px;
+  margin-bottom: 20px;
+  padding: 20px;
   background: rgba(26, 26, 26, 0.4);
   border: 1px solid #333333;
   border-radius: 16px;
@@ -205,7 +205,7 @@ input::placeholder {
 }
 
 .receive-qr-code {
-  margin-bottom: 6px;
+  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -222,11 +222,11 @@ input::placeholder {
 }
 
 .receive-qr-container .qr-instructions {
-  margin-top: 6px;
+  margin-top: 15px;
 }
 
 .receive-qr-container .qr-instructions p {
-  margin: 4px 0;
+  margin: 8px 0;
   color: #ffffff;
   font-size: 14px;
 }
@@ -242,7 +242,7 @@ input::placeholder {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: 25px;
 }
 
 .refresh-button, .share-button {
@@ -312,7 +312,11 @@ input::placeholder {
   color: #ef4444;
   font-size: 12px;
   margin-top: 4px;
-  min-height: 16px;
+  display: none; /* Hide by default */
+}
+
+.error:not(:empty) {
+  display: block; /* Only show when has content */
 }
 
 /* Footer */
