@@ -592,12 +592,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.7.1';
+          appVersionElement.textContent = 'NYLA Go v1.7.2';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.7.1';
+        appVersionElement.textContent = 'NYLA Go v1.7.2';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -607,12 +607,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Form validation and command generation
   function validateAndUpdateCommand() {
     if (!recipientInput || !amountInput || !tokenSelect) {
+      console.log('NYLA Extension: Form elements not found for validation');
       return;
     }
     
     const recipient = recipientInput.value.trim();
     const amount = amountInput.value.trim();
     const token = tokenSelect.value;
+    
+    console.log('NYLA Extension: Validating command with:', { recipient, amount, token });
     
     // Get selected blockchain
     const blockchainRadio = document.querySelector('input[name="blockchain"]:checked');
@@ -689,8 +692,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // QR Code Functions
   function generateXMobileURL(command) {
+    // Add signature to command (linebreak for URL)
+    const commandWithSignature = addNYLAGoSignatureForURL(command);
     // URL encode the command text
-    const encodedCommand = encodeURIComponent(command);
+    const encodedCommand = encodeURIComponent(commandWithSignature);
     // Generate X.com compose URL with pre-filled text
     return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
   }
@@ -710,8 +715,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Generate the mobile URL
     const mobileURL = generateXMobileURL(command);
-    console.log('NYLA QR: Generated URL:', mobileURL);
-    console.log('NYLA QR: URL length:', mobileURL.length);
     
     try {
       // Use SimpleQR class for proper QR generation
@@ -926,8 +929,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!swapCommandPreview) return;
       const command = swapCommandPreview.textContent;
       if (command && !swapCommandPreview.classList.contains('empty')) {
-        const encodedCommand = encodeURIComponent(command);
-        const xUrl = `https://x.com/compose/post?text=${encodedCommand}`;
+        const commandWithSignature = addNYLAGoSignatureForURL(command);
+        const encodedCommand = encodeURIComponent(commandWithSignature);
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodedCommand}`;
         chrome.tabs.create({ url: xUrl });
         showStatus('Opening X.com with swap command...', 'success');
         setTimeout(hideStatus, 2000);
@@ -1029,10 +1033,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Raid list item click handlers are now added dynamically in generateRaidSection()
 
-  // Generate X.com mobile URL for QR codes
-  function generateXMobileURL(command) {
-    const encodedCommand = encodeURIComponent(command);
-    return `https://x.com/compose/post?text=${encodedCommand}`;
+  // Generate X.com mobile URL for QR codes (Receive tab)
+  function generateReceiveXMobileURL(command) {
+    const commandWithSignature = addNYLAGoSignatureForURL(command);
+    const encodedCommand = encodeURIComponent(commandWithSignature);
+    return `https://twitter.com/intent/tweet?text=${encodedCommand}`;
   }
 
   // Receive QR Code generation  
@@ -1069,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Generate mobile URL
-    const mobileURL = generateXMobileURL(command);
+    const mobileURL = generateReceiveXMobileURL(command);
     
     // Clear existing QR code
     receiveQrCode.innerHTML = '';
@@ -1179,17 +1184,68 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Generate X.com compose URL for fallback
+  // Add NYLA Go signature to commands (for content script injection - uses dash)
+  function addNYLAGoSignatureForTextbox(command) {
+    console.log('NYLA Extension: addNYLAGoSignatureForTextbox called with:', command);
+    if (!command || command.trim() === '') {
+      console.error('NYLA Extension: Empty command passed to signature function!');
+      return 'ERROR: Empty command - please fill in recipient, amount, and token fields — Sent via #NYLAGo';
+    }
+    // Check if signature already exists to prevent double-signature
+    if (command.includes('Sent via #NYLAGo')) {
+      console.log('NYLA Extension: Signature already exists, returning as-is');
+      return command;
+    }
+    const result = `${command} — Sent via #NYLAGo`;
+    console.log('NYLA Extension: Added dash signature for textbox, result:', result);
+    return result;
+  }
+
+  // Add NYLA Go signature to commands (for URLs - uses linebreaks)
+  function addNYLAGoSignatureForURL(command) {
+    console.log('NYLA Extension: addNYLAGoSignatureForURL called with:', command);
+    if (!command || command.trim() === '') {
+      console.error('NYLA Extension: Empty command passed to URL signature function!');
+      return 'ERROR: Empty command - please fill in recipient, amount, and token fields\n\nSent via #NYLAGo';
+    }
+    // Check if signature already exists to prevent double-signature
+    if (command.includes('Sent via #NYLAGo')) {
+      console.log('NYLA Extension: URL signature already exists, returning as-is');
+      return command;
+    }
+    const result = `${command}\n\nSent via #NYLAGo`;
+    console.log('NYLA Extension: Added linebreak signature for URL, result:', result);
+    return result;
+  }
+
+  // Generate X.com compose URL for fallback (uses linebreak signature)
   function generateXComposeURL(command) {
-    const encodedCommand = encodeURIComponent(command);
-    return `https://x.com/compose/post?text=${encodedCommand}`;
+    const commandWithSignature = addNYLAGoSignatureForURL(command);
+    const encodedCommand = encodeURIComponent(commandWithSignature);
+    const finalURL = `https://twitter.com/intent/tweet?text=${encodedCommand}`;
+    console.log('NYLA Extension: Final fallback URL:', finalURL);
+    return finalURL;
   }
 
   // Handle send button click
   if (sendButton) {
     sendButton.addEventListener('click', async function() {
       if (!commandPreview) return;
+      
+      // Ensure we have a valid command by running validation first
+      validateAndUpdateCommand();
+      
       const command = commandPreview.textContent;
+      console.log('NYLA Extension Send: Command from preview:', command);
+      console.log('NYLA Extension Send: Preview has empty class:', commandPreview.classList.contains('empty'));
+      
+      // Check if command is placeholder text or empty
+      if (!command || command.includes('Fill in the fields') || commandPreview.classList.contains('empty')) {
+        console.error('NYLA Extension Send: Invalid command detected');
+        showStatus('Please fill in all required fields first', 'error');
+        setTimeout(hideStatus, 3000);
+        return;
+      }
     
     try {
       // Check if we're on X.com
@@ -1198,7 +1254,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!tab.url.includes('x.com') && !tab.url.includes('twitter.com')) {
         // Not on X.com - use fallback to open new window
         console.log('NYLA Extension: Not on X.com, using fallback to open new window');
+        console.log('NYLA Extension: Original command being passed:', command);
         const composeURL = generateXComposeURL(command);
+        console.log('NYLA Extension: Generated compose URL:', composeURL);
         window.open(composeURL, '_blank');
         showStatus('Opening X.com with your command...', 'success');
         
@@ -1210,11 +1268,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      // Try to send command to content script
+      // Try to send command to content script (use dash signature for textbox)
       try {
+        const commandWithSignature = addNYLAGoSignatureForTextbox(command);
         const response = await chrome.tabs.sendMessage(tab.id, {
           action: 'insertCommand',
-          command: command
+          command: commandWithSignature
         });
         
         if (response.success) {
