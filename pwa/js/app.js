@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.8.0';
+  let APP_VERSION = '1.8.1';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
