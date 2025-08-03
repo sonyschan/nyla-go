@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '1.7.2';
+  let APP_VERSION = '1.7.3';
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -291,13 +291,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const fromToken = swapFromToken.value || 'SOL';
     const toToken = swapToToken.value || 'NYLA';
     
+    // Get selected blockchain
+    const swapBlockchainRadios = document.querySelectorAll('input[name="swapBlockchain"]');
+    let blockchain = 'Solana'; // default
+    swapBlockchainRadios.forEach(radio => {
+      if (radio.checked) {
+        blockchain = radio.value;
+      }
+    });
+    
     if (fromToken === toToken) {
       swapCommandPreview.textContent = 'Please select different tokens for swap';
       swapCommandPreview.classList.add('empty');
       return;
     }
     
-    const command = `Hey @AgentNyla swap ${amount} ${fromToken} to ${toToken}`;
+    let command;
+    if (blockchain === 'Solana') {
+      // Default blockchain (Solana) - no blockchain suffix needed
+      command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken}`;
+    } else {
+      // Non-default blockchains (Ethereum, Algorand) - add blockchain suffix
+      command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken} ${blockchain}`;
+    }
+    
     swapCommandPreview.textContent = command;
     swapCommandPreview.classList.remove('empty');
   }
@@ -417,6 +434,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (swapAmount) swapAmount.addEventListener('input', generateSwapCommand);
   if (swapFromToken) swapFromToken.addEventListener('change', generateSwapCommand);
   if (swapToToken) swapToToken.addEventListener('change', generateSwapCommand);
+  
+  // Swap blockchain radio button event listeners
+  const swapBlockchainRadios = document.querySelectorAll('input[name="swapBlockchain"]');
+  swapBlockchainRadios.forEach(radio => {
+    if (radio) radio.addEventListener('change', generateSwapCommand);
+  });
   
   // Event Listeners - Send Tab
   if (sendRecipient) sendRecipient.addEventListener('input', generateSendCommand);

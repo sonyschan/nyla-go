@@ -284,6 +284,11 @@
       margin-bottom: 30px;
     }
     
+    .add-token-section {
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
     .add-token-section h3, .custom-tokens-section h3 {
       margin: 0 0 16px 0;
       color: #ffffff;
@@ -340,6 +345,10 @@
       background: linear-gradient(135deg, #FF5722, #E53E3E);
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+    
+    .add-btn:not(:hover) {
+      box-shadow: none;
     }
     
     .custom-tokens-list {
@@ -415,6 +424,11 @@
       background: rgba(255, 107, 107, 0.1);
       border: 1px solid rgba(255, 107, 107, 0.3);
       border-radius: 8px;
+      display: none; /* Hide by default */
+    }
+    
+    .modal .error:not(:empty) {
+      display: block; /* Only show when has content */
     }
     
     /* Header Layout Styles */
@@ -729,14 +743,23 @@
       margin-top: 10px;
       border-top: 1px solid #333333;
       background: #000000;
+      padding: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     
     .app-version {
       text-align: center;
-      padding: 8px 20px 4px;
+      padding: 8px 0 4px 0;
       font-size: 11px;
       color: #777777;
       font-weight: 600;
+      margin: 0;
+      width: 100%;
     }
     
     .developer-credit {
@@ -744,6 +767,18 @@
       padding: 4px 20px 16px;
       font-size: 12px;
       color: #777777;
+    }
+    
+    .footer-links {
+      text-align: center;
+      padding: 4px 0 8px 0;
+      min-height: 0;
+      margin: 0;
+      width: 100%;
+    }
+    
+    .footer-links:empty {
+      display: none;
     }
     
     .footer-links a, .footer-links .donate-link {
@@ -1208,6 +1243,24 @@
           <button type="button" class="manage-tokens-btn" id="swapManageTokensBtn2" title="Manage Custom Tokens">📝</button>
         </div>
         <div class="error" id="swapToTokenError"></div>
+      </div>
+      
+      <div class="form-group">
+        <label>Blockchain</label>
+        <div class="blockchain-group">
+          <div class="blockchain-option">
+            <input type="radio" id="swapSolana" name="swapBlockchain" value="Solana" checked />
+            <label for="swapSolana">Solana</label>
+          </div>
+          <div class="blockchain-option">
+            <input type="radio" id="swapEthereum" name="swapBlockchain" value="Ethereum" />
+            <label for="swapEthereum">Ethereum</label>
+          </div>
+          <div class="blockchain-option">
+            <input type="radio" id="swapAlgorand" name="swapBlockchain" value="Algorand" />
+            <label for="swapAlgorand">Algorand</label>
+          </div>
+        </div>
       </div>
       
       <div class="form-group">

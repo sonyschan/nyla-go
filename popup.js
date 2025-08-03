@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Token management elements
   const manageTokensBtn = document.getElementById('manageTokensBtn');
+  const receiveManageTokensBtn = document.getElementById('receiveManageTokensBtn');
+  const swapManageTokensBtn = document.getElementById('swapManageTokensBtn');
+  const swapManageTokensBtn2 = document.getElementById('swapManageTokensBtn2');
   const modalOverlay = document.getElementById('modalOverlay');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const newTokenInput = document.getElementById('newTokenInput');
@@ -52,6 +55,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const swapToTokenSelect = document.getElementById('swapToToken');
   const swapCommandPreview = document.getElementById('swapCommandPreview');
   const swapButton = document.getElementById('swapButton');
+  
+  // Swap blockchain radio buttons
+  const swapBlockchainRadios = document.querySelectorAll('input[name="swapBlockchain"]');
 
   // Receive elements
   const receiveUsernameInput = document.getElementById('receiveUsername');
@@ -518,6 +524,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modalOverlay) {
       modalOverlay.style.display = 'flex';
     }
+    // Clear any previous errors when opening modal
+    if (tokenError) {
+      tokenError.textContent = '';
+    }
     if (newTokenInput) {
       newTokenInput.focus();
     }
@@ -538,6 +548,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Event Listeners for Token Management
   if (manageTokensBtn) {
     manageTokensBtn.addEventListener('click', openModal);
+  }
+  if (receiveManageTokensBtn) {
+    receiveManageTokensBtn.addEventListener('click', openModal);
+  }
+  if (swapManageTokensBtn) {
+    swapManageTokensBtn.addEventListener('click', openModal);
+  }
+  if (swapManageTokensBtn2) {
+    swapManageTokensBtn2.addEventListener('click', openModal);
   }
   if (closeModalBtn) {
     closeModalBtn.addEventListener('click', closeModal);
@@ -592,12 +611,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v1.7.2';
+          appVersionElement.textContent = 'NYLA Go v1.7.3';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v1.7.2';
+        appVersionElement.textContent = 'NYLA Go v1.7.3';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -922,6 +941,13 @@ document.addEventListener('DOMContentLoaded', function() {
       updateSwapCommand();
     });
   }
+  
+  // Swap blockchain radio button event listeners
+  swapBlockchainRadios.forEach(radio => {
+    if (radio) {
+      radio.addEventListener('change', updateSwapCommand);
+    }
+  });
   
   // Swap button event listener
   if (swapButton) {
@@ -1709,8 +1735,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const fromToken = swapFromTokenSelect.value;
     const toToken = swapToTokenSelect.value;
     
+    // Get selected blockchain
+    let blockchain = 'Solana'; // default
+    swapBlockchainRadios.forEach(radio => {
+      if (radio.checked) {
+        blockchain = radio.value;
+      }
+    });
+    
     if (amount && fromToken && toToken && amount > 0) {
-      const command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken}`;
+      let command;
+      if (blockchain === 'Solana') {
+        // Default blockchain (Solana) - no blockchain suffix needed
+        command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken}`;
+      } else {
+        // Non-default blockchains (Ethereum, Algorand) - add blockchain suffix
+        command = `Hey @AgentNyla swap ${amount} $${fromToken} for $${toToken} ${blockchain}`;
+      }
+      
       swapCommandPreview.textContent = command;
       swapCommandPreview.classList.remove('empty');
       if (swapButton) {
