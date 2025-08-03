@@ -243,6 +243,24 @@
           </div>
           
           <div class="form-group">
+            <label>Blockchain</label>
+            <div class="blockchain-group">
+              <div class="blockchain-option">
+                <input type="radio" id="swapSolana" name="swapBlockchain" value="Solana" checked />
+                <label for="swapSolana">Solana</label>
+              </div>
+              <div class="blockchain-option">
+                <input type="radio" id="swapEthereum" name="swapBlockchain" value="Ethereum" />
+                <label for="swapEthereum">Ethereum</label>
+              </div>
+              <div class="blockchain-option">
+                <input type="radio" id="swapAlgorand" name="swapBlockchain" value="Algorand" />
+                <label for="swapAlgorand">Algorand</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
             <label>Command Preview</label>
             <div class="command-preview" id="swapCommandPreview">
               Fill in the tokens above to see the swap command
@@ -337,7 +355,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v1.7.2
+        NYLA Go v1.7.3
       </div>
       <div class="links" id="footerLinks">
         <!-- Footer links will be dynamically generated from shared data source -->
