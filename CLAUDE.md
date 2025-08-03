@@ -163,12 +163,12 @@ Chrome Web Store will **reject packages with multiple manifest.json files**. Our
 
 ### 📦 **Create Extension-Only Package:**
 ```bash
-# CRITICAL: Don't forget nylago-data.js file!
+# NOTE: nylago-data.js is for development only - not needed for release packaging
 # Create extension package directory
 mkdir -p extension-package
 
-# Copy ONLY extension files (exclude PWA directory)
-cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png nylago-data.js extension-package/
+# Copy ONLY extension files (exclude PWA directory) 
+cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png extension-package/
 cp -r icons extension-package/
 
 # Create Chrome Store ZIP package - IMPORTANT: Create directly in releases directory to avoid path issues
@@ -229,7 +229,7 @@ find . -name "*v${VERSION}*.zip" -type f
 - ✅ `popup.html` & `popup.js` 
 - ✅ `content.js`
 - ✅ `qr-simple.js`
-- ✅ `nylago-data.js` ⚠️ **CRITICAL: Don't forget this file!**
+- ⚠️ `nylago-data.js` - **Development only** (not included in release packages)
 - ✅ `icons/` directory (all icon files)
 - ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
 - ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
@@ -264,7 +264,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.8.2
+- **Latest Release**: v1.8.3
 - **Features**: Extension-PWA feature alignment, shared data structures, enhanced community navigation, dynamic footer generation, unified cross-platform experience
 
 ### Key Files Structure
