@@ -649,7 +649,7 @@ class NYLAAssistantUIV2 {
         console.log('NYLA UI V2: Timeout detected, providing timeout-specific response');
         errorResponse = {
           answer: { 
-            text: "I'm taking longer than usual to respond - let me give you a quick answer while I continue learning! 🤔\n\nThe LLM is still initializing in the background. You can see the progress in the browser console, or I can answer using my built-in knowledge base right away!", 
+            text: "I'm taking longer than usual to respond - let me give you a quick answer while I continue learning! 🤔\n\nThe LLM is still initializing in the background. You can see the progress in the browser console (F12), or add ?debug=true to the URL for detailed logs. I can answer using my built-in knowledge base right away!", 
             sentiment: 'helpful' 
           },
           followUps: [
