@@ -45,7 +45,7 @@ class NYLAAssistantUI {
     if (tabNavigation) {
       // Create NYLA tab button
       const nylaButton = document.createElement('button');
-      nylaButton.className = 'tab-button';
+      nylaButton.className = 'tab-button active';
       nylaButton.setAttribute('data-tab', 'nyla');
       nylaButton.innerHTML = '🤖 NYLA';
       
@@ -57,7 +57,7 @@ class NYLAAssistantUI {
     const mainContent = document.querySelector('.main-content');
     if (mainContent) {
       const nylaTabHTML = `
-        <div class="tab-content" id="nylaTab" data-section-title="🤖 NYLA AI Assistant">
+        <div class="tab-content active" id="nylaTab" data-section-title="🤖 NYLA AI Assistant">
           <!-- Chat Container -->
           <div class="nyla-chat-container">
             <!-- Messages Display -->
@@ -97,6 +97,13 @@ class NYLAAssistantUI {
       
       // Insert NYLA tab content as first tab content
       mainContent.insertAdjacentHTML('afterbegin', nylaTabHTML);
+      
+      // Hide other tabs initially since NYLA is active
+      const otherTabs = mainContent.querySelectorAll('.tab-content:not(#nylaTab)');
+      otherTabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.display = 'none';
+      });
     }
   }
 
