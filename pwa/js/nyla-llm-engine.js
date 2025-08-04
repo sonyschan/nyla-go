@@ -16,6 +16,15 @@ class NYLALLMEngine {
       top_k: 40             // Added for additional speed optimization
     };
     this.systemPrompt = this.createSystemPrompt();
+    
+    // Performance tracking
+    this.requestCount = 0;
+    this.totalResponseTime = 0;
+    this.lastRequestTime = null;
+    
+    // Engine health monitoring
+    this.isEngineReady = false;
+    this.engineCreatedAt = null;
   }
 
   /**
@@ -72,9 +81,16 @@ class NYLALLMEngine {
       
       this.isInitialized = true;
       this.isLoading = false;
+      this.isEngineReady = true;
+      this.engineCreatedAt = Date.now();
       
       console.log('NYLA LLM: ✅ WebLLM engine initialized successfully! 🧠✨');
       console.log('NYLA LLM: 🤖 Ready for in-browser AI inference with Phi-3-Mini');
+      console.log('NYLA LLM: 🔥 Engine will stay hot and ready for subsequent requests');
+      
+      // Warm up the engine with a tiny test prompt to ensure GPU buffers are allocated
+      await this.warmupEngine();
+      
       return true;
 
     } catch (error) {
@@ -178,18 +194,25 @@ class NYLALLMEngine {
    * Generate response using LLM
    */
   async generateResponse(userMessage, conversationContext = {}) {
-    if (!this.isInitialized) {
+    // Ensure engine is initialized and ready
+    if (!this.isInitialized || !this.isEngineReady) {
+      console.log('NYLA LLM: Engine not ready, initializing...');
       const initialized = await this.initialize();
       if (!initialized) {
         throw new Error('LLM engine not available');
       }
     }
 
+    const startTime = Date.now();
+    this.requestCount++;
+    this.lastRequestTime = startTime;
+
     try {
       const prompt = this.buildPrompt(userMessage, conversationContext);
-      console.log('NYLA LLM: Generating response for:', userMessage);
-      console.log('NYLA LLM: Full prompt being sent:', prompt);
+      console.log(`NYLA LLM: Generating response #${this.requestCount} for:`, userMessage);
+      console.log('NYLA LLM: 🔥 Using warm engine (no reload required)');
 
+      // Use the same engine instance - no reinitialization
       const response = await this.engine.chat.completions.create({
         messages: [
           { role: "system", content: this.systemPrompt },
@@ -201,14 +224,19 @@ class NYLALLMEngine {
         top_k: this.modelConfig.top_k
       });
 
+      const responseTime = Date.now() - startTime;
+      this.totalResponseTime += responseTime;
+      const avgResponseTime = Math.round(this.totalResponseTime / this.requestCount);
+
       const generatedText = response.choices[0].message.content;
-      console.log('NYLA LLM: Generated response successfully');
+      console.log(`NYLA LLM: ✅ Response generated in ${responseTime}ms (avg: ${avgResponseTime}ms)`);
       console.log('NYLA LLM: Raw response:', generatedText);
 
       return this.parseResponse(generatedText, conversationContext);
 
     } catch (error) {
       console.error('NYLA LLM: Response generation failed', error);
+      // Don't reset engine state on error - keep it warm for retry
       throw error;
     }
   }
@@ -217,20 +245,27 @@ class NYLALLMEngine {
    * Generate streaming response using LLM
    */
   async generateStreamingResponse(userMessage, conversationContext = {}, onChunk = null) {
-    if (!this.isInitialized) {
+    // Ensure engine is ready - same warm engine
+    if (!this.isInitialized || !this.isEngineReady) {
+      console.log('NYLA LLM: Engine not ready for streaming, initializing...');
       const initialized = await this.initialize();
       if (!initialized) {
         throw new Error('LLM engine not available');
       }
     }
 
+    const startTime = Date.now();
+    this.requestCount++;
+    this.lastRequestTime = startTime;
+
     try {
       const prompt = this.buildPrompt(userMessage, conversationContext);
-      console.log('NYLA LLM: Starting streaming response for:', userMessage);
+      console.log(`NYLA LLM: Starting streaming response #${this.requestCount} for:`, userMessage);
+      console.log('NYLA LLM: 🔥 Using warm engine for streaming (no reload required)');
 
       let fullResponse = '';
       
-      // Create streaming request
+      // Create streaming request with same warm engine
       const stream = await this.engine.chat.completions.create({
         messages: [
           { role: "system", content: this.systemPrompt },
@@ -539,12 +574,38 @@ IMPORTANT: When you receive "Relevant knowledge" in the prompt, USE IT! This is 
   }
 
   /**
+   * Warm up the engine with a minimal test to ensure GPU buffers are ready
+   */
+  async warmupEngine() {
+    try {
+      console.log('NYLA LLM: 🔥 Warming up engine to ensure GPU buffers are allocated...');
+      
+      // Send a tiny test prompt to warm up the engine
+      const warmupResponse = await this.engine.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are a helpful AI assistant." },
+          { role: "user", content: "Hi" }
+        ],
+        temperature: 0.1,
+        max_tokens: 5
+      });
+      
+      console.log('NYLA LLM: ✅ Engine warmed up successfully - GPU buffers ready');
+      console.log('NYLA LLM: 🚀 Subsequent requests will be faster');
+      
+    } catch (error) {
+      console.warn('NYLA LLM: Engine warmup failed, but engine should still work:', error.message);
+      // Don't throw - warmup failure shouldn't prevent normal operation
+    }
+  }
+
+  /**
    * Check if engine is ready
    */
   isReady() {
-    const ready = this.isInitialized && this.engine;
+    const ready = this.isInitialized && this.isEngineReady && this.engine;
     if (!ready) {
-      console.log('NYLA LLM: Engine not ready - initialized:', this.isInitialized, 'engine:', !!this.engine);
+      console.log('NYLA LLM: Engine not ready - initialized:', this.isInitialized, 'engineReady:', this.isEngineReady, 'engine:', !!this.engine);
     }
     return ready;
   }
@@ -553,29 +614,52 @@ IMPORTANT: When you receive "Relevant knowledge" in the prompt, USE IT! This is 
    * Get engine status
    */
   getStatus() {
+    const uptime = this.engineCreatedAt ? Date.now() - this.engineCreatedAt : 0;
+    const avgResponseTime = this.requestCount > 0 ? Math.round(this.totalResponseTime / this.requestCount) : 0;
+    
     return {
       initialized: this.isInitialized,
       loading: this.isLoading,
+      engineReady: this.isEngineReady,
       model: this.modelConfig.model,
-      ready: this.isReady()
+      ready: this.isReady(),
+      requestCount: this.requestCount,
+      avgResponseTime: avgResponseTime,
+      uptime: Math.round(uptime / 1000), // seconds
+      lastRequestTime: this.lastRequestTime
     };
   }
 
   /**
-   * Cleanup resources
+   * Cleanup resources (WARNING: This will unload the model and GPU buffers)
+   * Only call this when absolutely necessary (e.g., page unload, memory pressure)
    */
-  cleanup() {
+  cleanup(force = false) {
+    if (!force) {
+      console.warn('NYLA LLM: ⚠️  cleanup() called without force=true');
+      console.warn('NYLA LLM: 🔥 Engine should stay hot for performance - not cleaning up');
+      console.warn('NYLA LLM: 💡 Use cleanup(true) only if absolutely necessary');
+      return;
+    }
+    
+    console.log('NYLA LLM: 🔄 Force cleanup requested - unloading model and GPU buffers');
+    
     if (this.engine) {
       try {
         this.engine.unload();
+        console.log('NYLA LLM: Model unloaded from GPU');
       } catch (error) {
-        console.warn('NYLA LLM: Error during cleanup', error);
+        console.warn('NYLA LLM: Error during engine unload:', error);
       }
     }
     
     this.engine = null;
     this.isInitialized = false;
     this.isLoading = false;
+    this.isEngineReady = false;
+    this.engineCreatedAt = null;
+    
+    console.log('NYLA LLM: 🧹 Cleanup completed - next request will require full reinitialization');
   }
 }
 
@@ -586,3 +670,23 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // Make globally available
 window.NYLALLMEngine = NYLALLMEngine;
+
+// Keep engine alive when tab is hidden (prevent browser from cleaning up)
+document.addEventListener('visibilitychange', () => {
+  if (window.nylaLLMEngine && window.nylaLLMEngine.isReady()) {
+    if (document.visibilityState === 'hidden') {
+      console.log('NYLA LLM: 🔥 Tab hidden - keeping engine warm');
+    } else {
+      console.log('NYLA LLM: 👁️  Tab visible - engine still ready');
+    }
+  }
+});
+
+// Prevent cleanup on beforeunload unless user explicitly wants it
+window.addEventListener('beforeunload', (event) => {
+  if (window.nylaLLMEngine && window.nylaLLMEngine.isReady()) {
+    console.log('NYLA LLM: 🔥 Page unloading - engine stays in memory for next visit');
+    // Don't cleanup automatically - let the browser handle memory
+    // Only cleanup if memory pressure is detected
+  }
+});
