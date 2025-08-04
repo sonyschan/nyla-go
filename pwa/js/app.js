@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Tab Elements
   const tabButtons = document.querySelectorAll('.tab-button');
+  const nylaTab = document.getElementById('nylaTab');
   const swapTab = document.getElementById('swapTab');
   const receiveTab = document.getElementById('receiveTab');
   const sendTab = document.getElementById('sendTab');
@@ -752,6 +753,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Remove active class from all tabs and buttons
       tabButtons.forEach(btn => btn.classList.remove('active'));
+      if (nylaTab) nylaTab.classList.remove('active');
       if (swapTab) swapTab.classList.remove('active');
       if (receiveTab) receiveTab.classList.remove('active');
       if (sendTab) sendTab.classList.remove('active');
@@ -759,6 +761,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (appTab) appTab.classList.remove('active');
       
       // Hide all tab content
+      if (nylaTab) nylaTab.style.display = 'none';
       if (swapTab) swapTab.style.display = 'none';
       if (receiveTab) receiveTab.style.display = 'none';
       if (sendTab) sendTab.style.display = 'none';
@@ -768,7 +771,16 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show selected tab
       this.classList.add('active');
       
-      if (tabName === 'swap') {
+      if (tabName === 'nyla') {
+        if (nylaTab) {
+          nylaTab.classList.add('active');
+          nylaTab.style.display = 'block';
+          // Notify NYLA assistant that tab is activated
+          if (window.nylaAssistant) {
+            window.nylaAssistant.onTabActivated();
+          }
+        }
+      } else if (tabName === 'swap') {
         if (swapTab) {
           swapTab.classList.add('active');
           swapTab.style.display = 'block';

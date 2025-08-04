@@ -234,12 +234,13 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// Make globally available for tab switching integration
+window.nylaAssistant = nylaAssistant;
+window.initializeNYLAAssistant = initializeNYLAAssistant;
+window.getNYLAAssistant = getNYLAAssistant;
+
 // Development helpers (only in development mode)
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-  window.nylaAssistant = nylaAssistant;
-  window.initializeNYLAAssistant = initializeNYLAAssistant;
-  window.getNYLAAssistant = getNYLAAssistant;
-  
   console.log('NYLA Assistant: Development helpers available');
   console.log('- window.nylaAssistant');
   console.log('- window.initializeNYLAAssistant()');
