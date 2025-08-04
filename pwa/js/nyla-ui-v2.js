@@ -984,8 +984,6 @@ class NYLAAssistantUIV2 {
    * Enhanced tab activation
    */
   onTabActivated() {
-    super.onTabActivated();
-    
     // Update timezone and feature indicators
     this.updateTimezoneDisplay();
     this.updateFeatureIndicators();
@@ -1188,21 +1186,6 @@ class NYLAAssistantUIV2 {
 
     // Animate buttons in
     this.animateQuestionsIn();
-  }
-
-  /**
-   * Enhanced stats update
-   */
-  updateStats() {
-    super.updateStats();
-    
-    // Update timezone display periodically
-    this.updateTimezoneDisplay();
-    
-    // Show knowledge progress if available
-    if (this.conversation.getKnowledgeStats) {
-      this.updateKnowledgeProgress();
-    }
   }
 
   /**
