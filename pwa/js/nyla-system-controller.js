@@ -17,6 +17,16 @@ class NYLASystemController {
       return;
     }
 
+    // Check if iOS device - disable NYLA tab due to WebGPU limitations
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    if (isIOS) {
+      console.log('NYLA System: iOS detected - NYLA tab disabled (WebGPU not supported)');
+      this.showIOSMessage();
+      return;
+    }
+
     this.initializationAttempts++;
     console.log(`NYLA System: === V2 Initialization attempt ${this.initializationAttempts} ===`);
     console.log('NYLA System: Checking dependencies...');
@@ -135,6 +145,42 @@ class NYLASystemController {
               </div>
             </details>
             <button onclick="location.reload()" class="nyla-retry-btn" style="margin-top: 16px;">🔄 Retry</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  /**
+   * Show iOS-specific message explaining why NYLA is disabled
+   */
+  showIOSMessage() {
+    const nylaTab = document.getElementById('nylaTab');
+    if (nylaTab) {
+      nylaTab.innerHTML = `
+        <div class="nyla-ios-container">
+          <div class="nyla-ios-message">
+            <h3>🍎 NYLA on iOS</h3>
+            <p>NYLA AI assistant is currently unavailable on iOS devices.</p>
+            <div class="ios-explanation">
+              <p><strong>Why?</strong></p>
+              <ul style="margin: 8px 0; padding-left: 20px; text-align: left;">
+                <li>NYLA requires WebGPU for AI processing</li>
+                <li>iOS Safari doesn't yet support WebGPU</li>
+                <li>CPU-only processing would be too slow</li>
+              </ul>
+            </div>
+            <div class="ios-alternatives">
+              <p><strong>You can still:</strong></p>
+              <ul style="margin: 8px 0; padding-left: 20px; text-align: left;">
+                <li>✅ Create transfer commands (Send tab)</li>
+                <li>✅ Generate QR codes (Receive tab)</li>
+                <li>✅ Access community features (Raid tab)</li>
+              </ul>
+            </div>
+            <p style="margin-top: 16px; font-size: 14px; color: #888;">
+              NYLA will be available on iOS when WebGPU support arrives! 🚀
+            </p>
           </div>
         </div>
       `;

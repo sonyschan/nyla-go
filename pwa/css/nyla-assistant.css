@@ -1380,3 +1380,76 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* iOS-specific NYLA message styling */
+.nyla-ios-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 20px;
+}
+
+.nyla-ios-message {
+  max-width: 500px;
+  text-align: center;
+  background: rgba(42, 42, 42, 0.8);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  color: #EEEEEE;
+}
+
+.nyla-ios-message h3 {
+  margin: 0 0 16px 0;
+  color: #FF6B35;
+  font-size: 20px;
+}
+
+.nyla-ios-message p {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.ios-explanation,
+.ios-alternatives {
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(255, 107, 53, 0.1);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.ios-explanation p,
+.ios-alternatives p {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #FF6B35;
+}
+
+.ios-explanation ul,
+.ios-alternatives ul {
+  margin: 8px 0;
+  color: #CCCCCC;
+}
+
+.ios-explanation li,
+.ios-alternatives li {
+  margin: 4px 0;
+}
+
+@media (max-width: 480px) {
+  .nyla-ios-container {
+    padding: 16px;
+    min-height: 250px;
+  }
+  
+  .nyla-ios-message {
+    padding: 20px;
+  }
+  
+  .ios-explanation,
+  .ios-alternatives {
+    padding: 12px;
+  }
+}
