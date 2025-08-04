@@ -148,13 +148,13 @@ echo "❌ If any version is different, UPDATE IT before release!"
 2. ✅ **Update version tag** (manifest.json + pwa/js/app.js + popup.js + CLAUDE.md)
 3. ✅ **Update README** for new release tag (version badge + download links)  
 4. ✅ **Test version display** - Load extension and PWA to verify displayed versions
-5. ✅ **Create Chrome Store package** - Extension-only ZIP without PWA files
-6. ✅ **Move release files to /releases directory** - Organize all release artifacts
-7. ✅ **Create git tags and GitHub releases** with proper changelog
-8. ✅ **Redo VirusTotal** & send new verify link
-9. ✅ **Update privacy and security documents** for any new features/changes
+5. ✅ **Create git tags and GitHub releases** with proper changelog
+6. ✅ **Update privacy and security documents** for any new features/changes
+7. 🔧 **Create Chrome Store package** - Manual process (see Chrome Store Packaging section below)
 
 ## 🏪 Chrome Store Packaging
+
+**Note**: Chrome Store package creation is handled manually and is not part of the automated release process.
 
 ### ⚠️ **CRITICAL: Multiple Manifest Issue**
 Chrome Web Store will **reject packages with multiple manifest.json files**. Our project has:
