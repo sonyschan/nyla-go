@@ -264,8 +264,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.0.0
-- **Features**: Major UX enhancement with optimized default tabs, PWA defaults to Receive tab, Extension defaults to Send tab, enhanced LLM parsing with memory safety
+- **Latest Release**: v2.0.3
+- **Features**: Enhanced Android support, production deployment fixes, improved LLM logging visibility, service worker asset caching, Chrome Store compliance
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
