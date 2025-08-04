@@ -5,7 +5,9 @@
 
 class NYLAKnowledgeBase {
   constructor() {
-    this.sources = {
+    // External URLs preserved for development reference only
+    // No longer used for runtime fetching - all content is static
+    this.externalSources = {
       about: 'https://www.agentnyla.com/about',
       lore: 'https://www.loreagentnyla.com/',
       xIntegration: 'https://www.agentnyla.com/integrations/x',
@@ -22,135 +24,218 @@ class NYLAKnowledgeBase {
         social: 'https://x.com/btcberries', 
         art: 'https://x.com/Noir0883'
       },
-      stickersPath: '/design/stickers'
+      stickersPath: 'design/stickers'
     };
     
     this.knowledgeBase = {};
     this.lastUpdated = {};
-    this.webFetcher = new NYLAWebFetcher();
+    // WebFetcher preserved for potential development use but not initialized by default
+    this.webFetcher = null;
   }
 
   /**
-   * Initialize knowledge base from localStorage or fetch fresh data
+   * Initialize knowledge base with static content only
+   * No runtime fetching - uses pre-built static knowledge base
    */
   async initialize() {
     try {
-      // Load existing knowledge base from localStorage
-      const stored = localStorage.getItem('nyla_knowledge_base');
-      const storedTimestamps = localStorage.getItem('nyla_kb_timestamps');
+      console.log('NYLA KB: === Initializing Knowledge Base (Static Mode) ===');
       
-      if (stored && storedTimestamps) {
-        this.knowledgeBase = JSON.parse(stored);
-        this.lastUpdated = JSON.parse(storedTimestamps);
-        console.log('NYLA KB: Loaded from localStorage');
-      }
-      
-      // Check if we need updates (older than 24 hours)
-      const needsUpdate = this.checkForUpdates();
-      if (needsUpdate) {
-        console.log('NYLA KB: Fetching updates...');
-        await this.fetchAllSources();
-      }
+      // Use static knowledge base instead of fetching external URLs
+      console.log('NYLA KB: Loading static knowledge base...');
+      this.knowledgeBase = this.createStaticKnowledgeBase();
+      this.lastUpdated = { static: Date.now() };
+      console.log('NYLA KB: ✅ Static knowledge base loaded');
       
       // Always ensure we have sticker data
+      console.log('NYLA KB: Loading stickers...');
       await this.loadStickers();
+      console.log('NYLA KB: ✅ Stickers loaded');
       
+      console.log('NYLA KB: ✅ Knowledge base initialized (static mode)');
       return this.knowledgeBase;
     } catch (error) {
-      console.error('NYLA KB: Initialization failed', error);
-      // Return basic knowledge base even if fetching fails
+      console.error('NYLA KB: ❌ Initialization failed:', error);
+      console.error('NYLA KB: Error stack:', error.stack);
+      console.log('NYLA KB: Creating fallback knowledge base...');
+      // Return basic knowledge base even if static loading fails
       return this.createFallbackKnowledgeBase();
     }
   }
 
   /**
-   * Check if knowledge base needs updating (24 hour threshold)
+   * Create comprehensive static knowledge base
+   * Contains all NYLA documentation without external fetching
+   */
+  createStaticKnowledgeBase() {
+    return {
+      about: {
+        content: {
+          description: 'NYLA is an AI agent designed for cryptocurrency transfers and community building on social platforms.',
+          features: [
+            'Send tokens across multiple blockchains (Solana, Ethereum, Algorand)',
+            'Generate QR codes for easy payments and receiving',
+            'Social media integration with X (Twitter) for public transfers',
+            'Community-driven engagement and interactions',
+            'Progressive Web App (PWA) and Chrome Extension versions',
+            'Multi-chain support with low fees'
+          ],
+          keyBenefits: [
+            'Simplified crypto transfers - as easy as sending a tweet',
+            'Social payment commands for community interaction',
+            'Multi-chain support without switching wallets',
+            'QR code generation for mobile-friendly payments',
+            'No additional fees - only network transaction costs'
+          ],
+          useCases: [
+            'Send tokens to X (Twitter) usernames',
+            'Generate QR codes for in-person payments',
+            'Community giveaways and airdrops',
+            'Cross-chain token transfers',
+            'Social commerce and tipping'
+          ]
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      lore: {
+        content: {
+          story: 'NYLA emerged from the vision of making cryptocurrency as accessible as social media.',
+          background: 'Born from the intersection of blockchain technology and social interaction, NYLA bridges the gap between complex crypto operations and everyday users.',
+          mission: 'To democratize cryptocurrency transfers by making them as simple as sending a message to a friend.',
+          vision: 'A world where crypto payments are integrated seamlessly into social platforms, enabling global financial inclusion.',
+          values: [
+            'Simplicity over complexity',
+            'Community over isolation', 
+            'Accessibility over exclusivity',
+            'Innovation over tradition'
+          ],
+          journey: {
+            concept: 'Started with the idea that crypto transfers should be social',
+            development: 'Built by a passionate team of developers, designers, and community builders',
+            launch: 'Launched as both PWA and Chrome Extension for maximum accessibility',
+            future: 'Continuously evolving based on community feedback and needs'
+          }
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      xIntegration: {
+        content: {
+          description: 'NYLA integrates seamlessly with X (formerly Twitter) for social crypto transfers.',
+          features: [
+            'Generate transfer commands optimized for X posts',
+            'Share transfer commands with recipient usernames',
+            'QR code sharing for mobile users on X',
+            'Community visibility for transfer commands',
+            'Easy copy-paste commands for X posts'
+          ],
+          howItWorks: [
+            '1. Create transfer command in NYLAGo Send tab',
+            '2. Enter recipient\'s X username (without @)',
+            '3. Specify amount and select blockchain',
+            '4. Click "Send to X.com" to generate shareable command like "Hey @AgentNyla transfer 50 $NYLA @username"',
+            '5. Share the command on X - NYLA detects and executes the transfer'
+          ],
+          benefits: [
+            'Public transfer commands increase trust',
+            'Community can see and verify transfers',
+            'Social proof and engagement',
+            'Easy discovery of NYLA ecosystem'
+          ]
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      commandUsage: {
+        content: {
+          fees: {
+            solana: 'Very low fees (typically under $0.01 per transaction)',
+            ethereum: 'Variable gas fees (depends on network congestion, can range from $5-50+)',
+            algorand: 'Minimal fees (around $0.001 per transaction)'
+          },
+          holderBenefits: [
+            'Reduced transaction fees for $NYLA token holders',
+            'Priority support and community access',
+            'Early access to new features and integrations',
+            'Community governance participation rights',
+            'Exclusive holder-only features and perks'
+          ],
+          commonQuestions: [
+            {
+              q: 'How do I send tokens using NYLA?',
+              a: 'Use the Send tab, enter recipient username, choose amount and token, select blockchain, then click "Send to X.com" to share your transfer command.'
+            },
+            {
+              q: 'What are the transaction fees?',
+              a: 'Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.01, Ethereum: varies with gas, Algorand: ~$0.001.'
+            },
+            {
+              q: 'Is NYLA secure?',
+              a: 'Yes! NYLA generates transfer commands but never handles your private keys. You maintain full control over your assets.'
+            },
+            {
+              q: 'Which blockchains are supported?',
+              a: 'Currently Solana, Ethereum, and Algorand with more chains planned based on community demand.'
+            }
+          ],
+          securityFeatures: [
+            'No private key handling - you control your assets',
+            'Command-based transfers - transparent and verifiable',
+            'Open source components for community review',
+            'No custodial services - fully decentralized'
+          ]
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      staticData: this.staticData,
+      commonQuestions: this.getCommonQuestions(),
+      limitations: this.getLimitations()
+    };
+  }
+  
+  // Legacy methods maintained for potential future development use
+  // These are disabled in production but preserved for development
+  
+  /**
+   * [DEV ONLY] Check if knowledge base needs updating
+   * Disabled in production - no runtime fetching
    */
   checkForUpdates() {
-    const now = Date.now();
-    const updateThreshold = 24 * 60 * 60 * 1000; // 24 hours
-    
-    for (const source of Object.keys(this.sources)) {
-      const lastUpdate = this.lastUpdated[source] || 0;
-      if (now - lastUpdate > updateThreshold) {
-        return true;
-      }
-    }
-    return false;
+    console.log('NYLA KB: Update checking disabled - using static content only');
+    return false; // Never update in production
   }
 
   /**
-   * Fetch all knowledge sources
+   * [DEV ONLY] Fetch all knowledge sources
+   * Disabled in production - call this manually during development only
    */
   async fetchAllSources() {
-    const fetchPromises = Object.entries(this.sources).map(([key, url]) => 
-      this.fetchAndParseSource(key, url)
-    );
-    
-    try {
-      await Promise.allSettled(fetchPromises);
-      this.saveToLocalStorage();
-      console.log('NYLA KB: All sources updated');
-    } catch (error) {
-      console.error('NYLA KB: Batch fetch failed', error);
-    }
+    console.warn('NYLA KB: External fetching disabled in production. Use development script if content updates needed.');
+    return Promise.resolve();
   }
 
   /**
-   * Fetch and parse individual source
+   * [DEV ONLY] Fetch and parse individual source  
+   * Preserved for potential development use
    */
   async fetchAndParseSource(sourceKey, url) {
-    try {
-      console.log(`NYLA KB: Fetching ${sourceKey} from ${url}`);
-      
-      // Use WebFetch tool for cross-domain requests
-      const response = await this.fetchWithCORS(url);
-      const content = await this.parseContent(sourceKey, response);
-      
-      this.knowledgeBase[sourceKey] = {
-        content,
-        url,
-        lastFetched: Date.now(),
-        status: 'success'
-      };
-      
-      this.lastUpdated[sourceKey] = Date.now();
-      
-    } catch (error) {
-      console.error(`NYLA KB: Failed to fetch ${sourceKey}`, error);
-      
-      // Keep existing data if available, mark as stale
-      if (this.knowledgeBase[sourceKey]) {
-        this.knowledgeBase[sourceKey].status = 'stale';
-      } else {
-        this.knowledgeBase[sourceKey] = {
-          content: null,
-          url,
-          lastFetched: Date.now(),
-          status: 'failed',
-          error: error.message
-        };
-      }
-    }
+    console.warn(`NYLA KB: Skipping fetch for ${sourceKey} - static mode enabled`);
+    return Promise.resolve();
   }
 
   /**
-   * Fetch with CORS handling (fallback method)
+   * [DEV ONLY] Fetch with CORS handling
+   * Preserved for potential development use
    */
   async fetchWithCORS(url) {
-    try {
-      // Try direct fetch first
-      const response = await fetch(url);
-      if (response.ok) {
-        return await response.text();
-      }
-    } catch (error) {
-      console.log('NYLA KB: Direct fetch failed, trying fallback methods');
-    }
-    
-    // Note: In a real implementation, you might use a CORS proxy
-    // For now, we'll simulate with a placeholder
-    throw new Error(`CORS blocked or network error for ${url}`);
+    console.warn('NYLA KB: CORS fetching disabled - static mode enabled');
+    throw new Error('External fetching disabled in production mode');
   }
 
   /**
@@ -211,20 +296,20 @@ class NYLAKnowledgeBase {
     try {
       // Get list of sticker files from design/stickers directory
       const stickerFiles = [
-        '4BC0jtdv.jpg', '6KOnZCiV.jpg', 'DjU_F-A6.jpg', 'Uhe9-Mcn.jpg',
-        'Yw9aQazP.jpg', 'ZtM3Lp25.jpg', 'j17SpWhM.jpg', 'xwve12Jz.jpg'
+        'agree.jpg', 'feelgood.jpg', 'goodnight.jpg', 'knockknock.jpg',
+        'questioning.jpg', 'sad.jpg', 'shock.jpg', 'yessir.jpg'
       ];
       
-      // Map filenames to sentiments (these would need to be manually mapped)
+      // Map filenames to sentiments (mapped to actual file names)
       const stickerMap = {
-        'Yw9aQazP.jpg': { sentiment: 'happy', emotion: 'joy' },
-        '6KOnZCiV.jpg': { sentiment: 'helpful', emotion: 'support' },
-        'DjU_F-A6.jpg': { sentiment: 'confused', emotion: 'question' },
-        'j17SpWhM.jpg': { sentiment: 'excited', emotion: 'celebration' },
-        'Uhe9-Mcn.jpg': { sentiment: 'sorry', emotion: 'apologetic' },
-        'ZtM3Lp25.jpg': { sentiment: 'thinking', emotion: 'contemplative' },
-        '4BC0jtdv.jpg': { sentiment: 'confident', emotion: 'assured' },
-        'xwve12Jz.jpg': { sentiment: 'friendly', emotion: 'welcoming' }
+        'feelgood.jpg': { sentiment: 'happy', emotion: 'joy' },
+        'agree.jpg': { sentiment: 'helpful', emotion: 'support' },
+        'questioning.jpg': { sentiment: 'confused', emotion: 'question' },
+        'yessir.jpg': { sentiment: 'excited', emotion: 'celebration' },
+        'sad.jpg': { sentiment: 'sorry', emotion: 'apologetic' },
+        'knockknock.jpg': { sentiment: 'thinking', emotion: 'contemplative' },
+        'shock.jpg': { sentiment: 'confident', emotion: 'assured' },
+        'goodnight.jpg': { sentiment: 'friendly', emotion: 'welcoming' }
       };
       
       this.knowledgeBase.stickers = {
@@ -241,22 +326,12 @@ class NYLAKnowledgeBase {
   }
 
   /**
-   * Create fallback knowledge base for offline/error scenarios
+   * Create fallback knowledge base for error scenarios
+   * Uses same static content as main knowledge base
    */
   createFallbackKnowledgeBase() {
-    return {
-      about: {
-        content: {
-          description: 'NYLA is an AI agent for cryptocurrency transfers and community building',
-          features: ['Transfer tokens', 'Generate QR codes', 'Multi-blockchain support'],
-          supportedBlockchains: ['Solana', 'Ethereum', 'Algorand']
-        },
-        status: 'fallback'
-      },
-      staticData: this.staticData,
-      commonQuestions: this.getCommonQuestions(),
-      limitations: this.getLimitations()
-    };
+    console.log('NYLA KB: Using fallback mode - loading static knowledge base');
+    return this.createStaticKnowledgeBase();
   }
 
   /**
@@ -407,3 +482,6 @@ class NYLAKnowledgeBase {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = NYLAKnowledgeBase;
 }
+
+// Make globally available
+window.NYLAKnowledgeBase = NYLAKnowledgeBase;

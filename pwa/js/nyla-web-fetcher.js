@@ -281,3 +281,6 @@ class NYLAWebFetcher {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = NYLAWebFetcher;
 }
+
+// Make globally available
+window.NYLAWebFetcher = NYLAWebFetcher;
