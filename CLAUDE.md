@@ -12,6 +12,13 @@ This file contains important information for Claude to remember across sessions.
   - [ ] **Extension**: Load extension → Check bottom shows "NYLA Go v[X.X.X]"
   - [ ] **PWA**: Visit https://sonyschan.github.io/nyla-go/ → Check footer shows "NYLA Go v[X.X.X]"
   - [ ] **Both must match the intended release version exactly**
+- [ ] **Asset File Verification** - **CRITICAL**: Ensure all new assets are committed to git:
+  - [ ] **Check /pwa directory**: All new JS files, images, and assets added to git
+  - [ ] **Check /icons directory**: All icon files added to git  
+  - [ ] **Check /app directory**: All app-related files added to git
+  - [ ] **Check /design directory**: All design assets and stickers added to git
+  - [ ] **Verify with git status**: No untracked files that should be in production
+  - [ ] **PWA Assets**: Especially critical - missing PWA files cause 404s in production
 
 ### 🏷️ **Version Management**
 
@@ -264,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.0.3
-- **Features**: Enhanced Android support, production deployment fixes, improved LLM logging visibility, service worker asset caching, Chrome Store compliance
+- **Latest Release**: v2.0.4
+- **Features**: Fixed PWA asset deployment issues, added missing NYLA system JS files, improved production asset verification, enhanced release checklist for asset management
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
