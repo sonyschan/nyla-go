@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.0.4
-- **Features**: Fixed PWA asset deployment issues, added missing NYLA system JS files, improved production asset verification, enhanced release checklist for asset management
+- **Latest Release**: v2.0.5
+- **Features**: Complete PWA asset deployment fixes, service worker cache optimization, resolved all console 404 errors, comprehensive asset verification and tracking
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
