@@ -1,6 +1,6 @@
 // NYLA GO PWA - Service Worker
 
-const CACHE_NAME = 'nyla-go-pwa-v1.8.3';
+const CACHE_NAME = 'nyla-go-pwa-v2.0.0';
 const urlsToCache = [
   '/nyla-go/',
   '/nyla-go/index.html',
@@ -30,11 +30,34 @@ self.addEventListener('install', function(event) {
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('NYLA GO PWA: Caching app shell');
-        return cache.addAll(urlsToCache);
+        
+        // Try to cache each URL individually to handle 404s gracefully
+        // Filter out non-http URLs to prevent chrome-extension scheme errors
+        const validUrls = urlsToCache.filter(url => {
+          const isValidScheme = url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/');
+          if (!isValidScheme) {
+            console.warn('NYLA GO PWA: Skipping invalid URL scheme:', url);
+          }
+          return isValidScheme;
+        });
+        
+        const cachePromises = validUrls.map(url => {
+          return cache.add(url).catch(error => {
+            console.warn('NYLA GO PWA: Failed to cache:', url, error.message);
+            // Don't reject the promise, just log and continue
+            return Promise.resolve();
+          });
+        });
+        
+        return Promise.all(cachePromises);
       })
       .then(function() {
+        console.log('NYLA GO PWA: App shell caching completed (some items may have failed)');
         // Skip waiting to activate immediately
         return self.skipWaiting();
+      })
+      .catch(function(error) {
+        console.error('NYLA GO PWA: Service worker install failed:', error);
       })
   );
 });
@@ -67,6 +90,12 @@ self.addEventListener('fetch', function(event) {
     return;
   }
   
+  // Skip non-http/https requests (chrome-extension, etc.)
+  if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
+    console.log('NYLA GO PWA: Skipping non-http request:', event.request.url.substring(0, 50));
+    return;
+  }
+  
   // Skip external QR generation APIs
   if (event.request.url.includes('api.qrserver.com') || 
       event.request.url.includes('chart.googleapis.com')) {
@@ -90,13 +119,19 @@ self.addEventListener('fetch', function(event) {
             return response;
           }
           
-          // Clone the response for caching
+          // Clone the response for caching (only for http/https URLs)
           const responseToCache = response.clone();
           
-          caches.open(CACHE_NAME)
-            .then(function(cache) {
-              cache.put(event.request, responseToCache);
-            });
+          // Only cache http/https requests, not chrome-extension or other schemes
+          if (event.request.url.startsWith('http://') || event.request.url.startsWith('https://')) {
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(event.request, responseToCache);
+              })
+              .catch(function(error) {
+                console.warn('NYLA GO PWA: Failed to cache response:', error.message);
+              });
+          }
           
           return response;
         }).catch(function() {

@@ -264,8 +264,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v1.8.3
-- **Features**: Extension-PWA feature alignment, shared data structures, enhanced community navigation, dynamic footer generation, unified cross-platform experience
+- **Latest Release**: v2.0.0
+- **Features**: Major UX enhancement with optimized default tabs, PWA defaults to Receive tab, Extension defaults to Send tab, enhanced LLM parsing with memory safety
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
