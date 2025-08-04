@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "NYLA Go",
-  "version": "2.0.0",
-  "description": "Your AI agent for payments and community",
+  "name": "NYLA Go - Transfer Assistant",
+  "version": "2.0.1",
+  "description": "Generate cryptocurrency transfer commands for X.com (Twitter). Create QR codes for easy payments. Supports Solana, Ethereum, and Algorand.",
   "author": "@h2crypto_eth",
   "homepage_url": "https://github.com/sonyschan/nyla-go",
   "action": {
@@ -28,10 +28,7 @@
   ],
   "host_permissions": [
     "https://x.com/*",
-    "https://twitter.com/*",
-    "https://api.qrserver.com/*",
-    "https://chart.googleapis.com/*",
-    "https://ipfs.io/*"
+    "https://twitter.com/*"
   ],
   "content_scripts": [
     {
