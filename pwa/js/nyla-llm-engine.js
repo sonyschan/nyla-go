@@ -9,7 +9,7 @@ class NYLALLMEngine {
     this.isInitialized = false;
     this.isLoading = false;
     this.modelConfig = {
-      model: "Phi-3-mini-4k-instruct-q4f16_1-MLC",
+      model: "Phi-3-mini-4k-instruct-q4f32_1-MLC", // More efficient Q4 quantization
       temperature: 0.3,      // Reduced from 0.7 for faster generation
       max_tokens: 200,       // Reduced from 512 for 50%+ speed boost
       top_p: 0.7,           // Reduced from 0.9 for faster sampling
@@ -30,6 +30,13 @@ class NYLALLMEngine {
     try {
       console.log('NYLA LLM: Initializing WebLLM engine...');
       console.log('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
+      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (Q4 quantized for efficiency)`);
+      
+      // Check WebGPU support first
+      if (!navigator.gpu) {
+        throw new Error('WebGPU not supported - required for in-browser AI inference');
+      }
+      console.log('NYLA LLM: ✅ WebGPU detected');
       
       // Load WebLLM dynamically
       if (!window.webllm) {
@@ -46,16 +53,28 @@ class NYLALLMEngine {
       }
 
       // Initialize the engine
-      console.log('NYLA LLM: Creating engine instance...');
+      console.log('NYLA LLM: Creating MLCEngine instance for in-browser inference...');
       this.engine = new window.webllm.MLCEngine();
       
-      console.log('NYLA LLM: Loading Phi-3-Mini model (this may take a few minutes on first load)...');
-      await this.engine.reload(this.modelConfig.model);
+      console.log(`NYLA LLM: Loading ${this.modelConfig.model} model...`);
+      console.log('NYLA LLM: ⏳ This may take 1-3 minutes on first load (model downloads & compiles)');
+      console.log('NYLA LLM: 🔄 Subsequent loads will be much faster (cached)');
+      
+      // Initialize model with progress callback
+      await this.engine.reload(this.modelConfig.model, {
+        // Progress callback for model loading
+        initProgressCallback: (progress) => {
+          if (progress.progress) {
+            console.log(`NYLA LLM: Loading progress: ${Math.round(progress.progress * 100)}%`);
+          }
+        }
+      });
       
       this.isInitialized = true;
       this.isLoading = false;
       
-      console.log('NYLA LLM: Engine initialized successfully! 🧠✨');
+      console.log('NYLA LLM: ✅ WebLLM engine initialized successfully! 🧠✨');
+      console.log('NYLA LLM: 🤖 Ready for in-browser AI inference with Phi-3-Mini');
       return true;
 
     } catch (error) {
@@ -80,8 +99,8 @@ class NYLALLMEngine {
     try {
       console.log('NYLA LLM: Loading WebLLM via dynamic import...');
       
-      // Use dynamic import - this should work better with ES modules
-      const webllmModule = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.63/lib/index.js');
+      // Use dynamic import - latest WebLLM version for better performance
+      const webllmModule = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@latest/lib/index.js');
       
       console.log('NYLA LLM: WebLLM module loaded successfully');
       console.log('NYLA LLM: Available exports:', Object.keys(webllmModule));
