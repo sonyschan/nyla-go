@@ -611,12 +611,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('NYLA: Version updated to', manifestData.version);
         } else {
           // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v2.1.5';
+          appVersionElement.textContent = 'NYLA Go v2.1.6';
           console.log('NYLA: Using fallback version 0.7.5');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v2.1.5';
+        appVersionElement.textContent = 'NYLA Go v2.1.6';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
