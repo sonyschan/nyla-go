@@ -1,0 +1,25 @@
+{
+  "name": "nyla-go-tests",
+  "version": "1.8.1",
+  "description": "Functional tests for NYLA Go Extension and PWA",
+  "scripts": {
+    "test": "playwright test",
+    "test:pwa": "playwright test tests/pwa/",
+    "test:extension": "playwright test tests/extension/",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:puppeteer": "node tests/puppeteer/run-puppeteer-tests.js",
+    "test:performance": "node tests/performance/performance-comparison.js",
+    "demo:performance": "node tests/performance/mock-performance-demo.js",
+    "serve:pwa": "cd pwa && python3 -m http.server 3000",
+    "install:browsers": "playwright install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "puppeteer": "^21.0.0"
+  },
+  "keywords": ["nyla", "crypto", "testing", "e2e", "playwright"],
+  "author": "NYLA Go Team",
+  "license": "MIT"
+}

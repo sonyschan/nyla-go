@@ -24,7 +24,15 @@
       "Bash(echo:*)",
       "Bash(RELEASE_VERSION=\"1.1.0\")",
       "Bash(RELEASE_VERSION=\"1.2.0\")",
-      "Bash(RELEASE_VERSION=\"1.3.3\")"
+      "Bash(RELEASE_VERSION=\"1.3.3\")",
+      "WebFetch(domain:www.agentnyla.com)",
+      "WebFetch(domain:gyazo.com)",
+      "Bash(find:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)",
+      "Bash(git fetch:*)",
+      "WebFetch(domain:mlc.ai)",
+      "WebFetch(domain:x.com)"
     ],
     "deny": []
   }

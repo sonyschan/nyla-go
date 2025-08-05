@@ -54,6 +54,9 @@ class NYLASystemController {
     if (success) {
       this.isInitialized = true;
       console.log('NYLA System: ✅ V2 system initialized successfully');
+      
+      // Start preloading WebLLM engine in background for faster first response
+      this.preloadLLMEngine();
     } else if (this.initializationAttempts < this.maxAttempts) {
       console.log('NYLA System: Retrying initialization...');
       setTimeout(() => this.initialize(), 1000);
@@ -152,6 +155,31 @@ class NYLASystemController {
   }
 
   /**
+   * Preload WebLLM engine in background for faster first response
+   */
+  async preloadLLMEngine() {
+    try {
+      console.log('NYLA System: 🚀 Starting WebLLM preload in background...');
+      console.log('NYLA System: 💡 Users can continue using PWA while engine loads');
+      
+      // Get the LLM engine from the assistant and start preloading
+      if (this.assistant && this.assistant.conversationManager && this.assistant.conversationManager.llmEngine) {
+        // Start preload without awaiting - let it run in background
+        this.assistant.conversationManager.llmEngine.preloadInitialize().then(() => {
+          console.log('NYLA System: ✅ WebLLM preload completed - first click will be fast!');
+        }).catch((error) => {
+          console.log('NYLA System: ⚠️ WebLLM preload failed (fallback will still work):', error.message);
+        });
+      } else {
+        console.log('NYLA System: ⚠️ Cannot preload - LLM engine not available');
+      }
+    } catch (error) {
+      console.warn('NYLA System: Preload failed:', error.message);
+      // Don't throw - preload failure shouldn't break the system
+    }
+  }
+
+  /**
    * Show iOS-specific message explaining why NYLA is disabled
    */
   showIOSMessage() {
@@ -191,12 +219,19 @@ class NYLASystemController {
    * Get system status
    */
   getStatus() {
-    return {
+    const status = {
       initialized: this.isInitialized,
       version: 'V2',
       assistant: !!this.assistant,
       attempts: this.initializationAttempts
     };
+    
+    // Add LLM engine status if available
+    if (this.assistant && this.assistant.conversationManager && this.assistant.conversationManager.llmEngine) {
+      status.llmEngine = this.assistant.conversationManager.llmEngine.getStatus();
+    }
+    
+    return status;
   }
 
   /**
