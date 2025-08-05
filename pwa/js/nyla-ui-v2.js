@@ -380,11 +380,49 @@ class NYLAAssistantUIV2 {
     const progressBar = document.getElementById('llmProgressBar');
     const progressText = document.getElementById('llmProgressText');
     
-    if (!progressBar || !progressText) return;
+    console.log('NYLA UI V2: Looking for progress elements:', {
+      progressBar: !!progressBar,
+      progressText: !!progressText,
+      progressBarId: progressBar?.id,
+      progressTextId: progressText?.id
+    });
+    
+    if (!progressBar || !progressText) {
+      console.error('NYLA UI V2: Progress elements not found, cannot monitor loading');
+      // Fallback: show welcome message after delay
+      setTimeout(async () => {
+        if (!this.isWelcomeMessageShown) {
+          console.log('NYLA UI V2: Fallback - showing welcome message after progress elements not found');
+          this.isWelcomeMessageShown = true;
+          console.log('NYLA UI V2: Clearing loading screen and showing welcome');
+          console.log('NYLA UI V2: messagesContainer exists:', !!this.elements.messagesContainer);
+          if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.classList.remove('loading-screen-active');
+            this.elements.messagesContainer.innerHTML = '';
+            console.log('NYLA UI V2: Loading screen cleared');
+          }
+          await this.showEnhancedWelcomeMessage();
+        }
+      }, 5000);
+      return;
+    }
     
     // Check LLM status every 500ms
+    console.log('NYLA UI V2: Starting LLM status monitoring...');
+    let checkCount = 0;
     this.loadingInterval = setInterval(async () => {
+      checkCount++;
       const status = this.conversation.llmEngine.getStatus();
+      
+      // Log every 10th check (every 5 seconds) to avoid spam
+      if (checkCount % 10 === 0) {
+        console.log(`NYLA UI V2: Status check #${checkCount}:`, {
+          initialized: status.initialized,
+          warmedUp: status.warmedUp,
+          loading: status.loading,
+          ready: status.ready
+        });
+      }
       
       if (status.initialized && status.warmedUp && !this.isWelcomeMessageShown) {
         // LLM is fully ready (warmed up)!
@@ -396,9 +434,12 @@ class NYLAAssistantUIV2 {
         
         // Wait a moment then show welcome
         setTimeout(async () => {
+          console.log('NYLA UI V2: Clearing loading screen and showing welcome');
+          console.log('NYLA UI V2: messagesContainer exists:', !!this.elements.messagesContainer);
           if (this.elements.messagesContainer) {
             this.elements.messagesContainer.classList.remove('loading-screen-active');
             this.elements.messagesContainer.innerHTML = '';
+            console.log('NYLA UI V2: Loading screen cleared');
           }
           await this.showEnhancedWelcomeMessage();
         }, 1000);
@@ -406,6 +447,9 @@ class NYLAAssistantUIV2 {
         // Initialized but still warming up
         progressBar.style.width = '95%';
         progressText.textContent = '🔥 Warming up GPU buffers...';
+        if (checkCount % 10 === 0) {
+          console.log('NYLA UI V2: LLM initialized, warming up GPU buffers');
+        }
       } else if (status.loading) {
         // Still loading - update progress
         progressText.textContent = '🔄 Loading language model...';
@@ -414,20 +458,41 @@ class NYLAAssistantUIV2 {
         if (currentWidth < 90) {
           progressBar.style.width = (currentWidth + 5) + '%';
         }
+        if (checkCount % 10 === 0) {
+          console.log('NYLA UI V2: LLM still loading, progress:', currentWidth + '%');
+        }
       } else if (!this.isWelcomeMessageShown) {
         // Failed or not started - only handle once
-        clearInterval(this.loadingInterval);
-        this.loadingInterval = null;
-        this.isWelcomeMessageShown = true;
-        progressText.textContent = '⚠️ Using rule-based responses';
-        // Clear loading screen and show welcome
-        setTimeout(async () => {
-          if (this.elements.messagesContainer) {
-            this.elements.messagesContainer.classList.remove('loading-screen-active');
-            this.elements.messagesContainer.innerHTML = '';
-          }
-          await this.showEnhancedWelcomeMessage();
-        }, 1000);
+        if (checkCount % 10 === 0) {
+          console.log('NYLA UI V2: LLM not ready, status:', status);
+        }
+        
+        // Show helpful status based on what we know
+        if (!status.initialized && !status.loading) {
+          progressText.textContent = '🔄 Starting AI engine...';
+        } else if (!status.initialized && status.loading) {
+          progressText.textContent = '🔄 Loading language model...';
+        } else {
+          progressText.textContent = '⚠️ Preparing responses...';
+        }
+        
+        // After 30 seconds (60 checks), show fallback
+        if (checkCount >= 60) {
+          clearInterval(this.loadingInterval);
+          this.loadingInterval = null;
+          this.isWelcomeMessageShown = true;
+          progressText.textContent = '✅ Ready for conversations!';
+          console.log('NYLA UI V2: 30-second fallback triggered, showing welcome');
+          
+          // Clear loading screen and show welcome
+          setTimeout(async () => {
+            if (this.elements.messagesContainer) {
+              this.elements.messagesContainer.classList.remove('loading-screen-active');
+              this.elements.messagesContainer.innerHTML = '';
+            }
+            await this.showEnhancedWelcomeMessage();
+          }, 1000);
+        }
       }
     }, 500);
     
@@ -482,7 +547,9 @@ class NYLAAssistantUIV2 {
       confidence: 0.95
     };
 
+    console.log('NYLA UI V2: Displaying welcome message:', welcomeMessage);
     await this.displayMessage(welcomeMessage, 'nyla');
+    console.log('NYLA UI V2: Welcome message displayed successfully');
     
     // Update timezone display
     this.updateTimezoneDisplay();
@@ -1416,7 +1483,8 @@ class NYLAAssistantUIV2 {
     
     // Check if development mode is enabled
     const urlParams = new URLSearchParams(window.location.search);
-    const isDevelopmentMode = urlParams.get('dev') === 'true' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isDevelopmentMode = !isMobile && (urlParams.get('dev') === 'true' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     
     // Now populate the chat container with V2 structure (no header for cleaner exploration)
     console.log('NYLA UI V2: Populating chat container with V2 structure...');
