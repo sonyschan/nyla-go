@@ -55,9 +55,19 @@ class NYLAAssistantUIV2 {
       this.setupEnhancedEventListeners();
       console.log('NYLA UI V2: ✅ Enhanced event listeners set up');
       
-      console.log('NYLA UI V2: Step 4 - Showing enhanced welcome message...');
-      await this.showEnhancedWelcomeMessage();
-      console.log('NYLA UI V2: ✅ Enhanced welcome message shown');
+      // Check if LLM is still loading and show loading screen
+      const llmStatus = this.conversation.llmEngine.getStatus();
+      if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {
+        console.log('NYLA UI V2: Step 4 - WebLLM still loading/warming up, showing loading screen...');
+        console.log('NYLA UI V2: LLM Status - initialized:', llmStatus.initialized, 'warmedUp:', llmStatus.warmedUp, 'loading:', llmStatus.loading);
+        await this.showLLMLoadingScreen();
+      } else if (llmStatus.initialized && llmStatus.warmedUp) {
+        console.log('NYLA UI V2: Step 4 - WebLLM fully ready (warmed up), showing welcome message...');
+        await this.showEnhancedWelcomeMessage();
+      } else {
+        console.log('NYLA UI V2: Step 4 - WebLLM not initialized, starting with rule-based...');
+        await this.showEnhancedWelcomeMessage();
+      }
       
       console.log('NYLA UI V2: Step 5 - Initializing feature indicators...');
       this.initializeFeatureIndicators();
@@ -297,6 +307,102 @@ class NYLAAssistantUIV2 {
   }
 
   /**
+   * Show WebLLM loading screen
+   */
+  async showLLMLoadingScreen() {
+    // Clear any existing content
+    if (this.elements.messagesContainer) {
+      this.elements.messagesContainer.innerHTML = '';
+    }
+    if (this.elements.questionsContainer) {
+      this.elements.questionsContainer.innerHTML = '';
+    }
+    
+    // Create loading message
+    const loadingMessage = document.createElement('div');
+    loadingMessage.className = 'nyla-llm-loading';
+    loadingMessage.innerHTML = `
+      <div class="llm-loading-content">
+        <div class="nyla-avatar loading">
+          <img src="./icons/NYLA.png" alt="NYLA" style="width: 80px; height: 80px; border-radius: 50%;">
+        </div>
+        <h3>🚀 Initializing NYLA AI Engine<span class="loading-dots"></span></h3>
+        <p class="loading-status">Loading language model for NYLA responses</p>
+        <div class="loading-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="llmProgressBar"></div>
+          </div>
+          <p class="progress-text" id="llmProgressText">Preparing WebLLM<span class="loading-dots"></span></p>
+        </div>
+        <p class="loading-info">⏱️ First-time loading may take 1-3 minutes as the model downloads</p>
+        <p class="loading-tip">💡 Subsequent visits will be much faster!</p>
+      </div>
+    `;
+    
+    if (this.elements.messagesContainer) {
+      this.elements.messagesContainer.appendChild(loadingMessage);
+    }
+    
+    // Set up progress monitoring
+    this.monitorLLMProgress();
+  }
+  
+  /**
+   * Monitor WebLLM loading progress
+   */
+  async monitorLLMProgress() {
+    const progressBar = document.getElementById('llmProgressBar');
+    const progressText = document.getElementById('llmProgressText');
+    
+    if (!progressBar || !progressText) return;
+    
+    // Check LLM status every 500ms
+    const checkInterval = setInterval(async () => {
+      const status = this.conversation.llmEngine.getStatus();
+      
+      if (status.initialized && status.warmedUp) {
+        // LLM is fully ready (warmed up)!
+        clearInterval(checkInterval);
+        progressBar.style.width = '100%';
+        progressText.innerHTML = '✅ AI Engine Ready - GPU Buffers Warmed Up!';
+        
+        // Wait a moment then show welcome
+        setTimeout(async () => {
+          if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.innerHTML = '';
+          }
+          await this.showEnhancedWelcomeMessage();
+        }, 1000);
+      } else if (status.initialized && !status.warmedUp) {
+        // Initialized but still warming up
+        progressBar.style.width = '95%';
+        progressText.innerHTML = '🔥 Warming up GPU buffers<span class="loading-dots"></span>';
+      } else if (status.loading) {
+        // Still loading - update progress
+        progressText.innerHTML = '🔄 Loading language model<span class="loading-dots"></span>';
+        // Animate progress bar
+        const currentWidth = parseInt(progressBar.style.width) || 0;
+        if (currentWidth < 90) {
+          progressBar.style.width = (currentWidth + 5) + '%';
+        }
+      } else {
+        // Failed or not started
+        clearInterval(checkInterval);
+        progressText.textContent = '⚠️ Using rule-based responses';
+        await this.showEnhancedWelcomeMessage();
+      }
+    }, 500);
+    
+    // Timeout after 5 minutes
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (!this.conversation.llmEngine.getStatus().initialized) {
+        progressText.textContent = '⏱️ Loading taking longer than expected...';
+      }
+    }, 300000);
+  }
+  
+  /**
    * Show enhanced welcome message with timezone info
    */
   async showEnhancedWelcomeMessage() {
@@ -397,7 +503,7 @@ class NYLAAssistantUIV2 {
     
     try {
       // Process with streaming callback
-      const response = await this.conversation.processWithLLM(questionId, questionText, topic, onStreamChunk);
+      const response = await this.conversation.processWithLLM(questionId, questionText, onStreamChunk);
       
       console.log('NYLA UI V2: ✅ Streaming response completed');
       
@@ -545,7 +651,6 @@ class NYLAAssistantUIV2 {
 
     const questionId = button.getAttribute('data-question-id');
     const questionText = button.textContent;
-    const topic = button.getAttribute('data-topic');
     const action = button.getAttribute('data-action');
 
     // Handle special actions
@@ -584,14 +689,9 @@ class NYLAAssistantUIV2 {
     this.showTyping();
 
     try {
-      // Process the question (no more streaming for LLM)
-      const questionPromise = this.conversation.processQuestion(questionId, questionText, topic);
-      const uiTimeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('UI timeout after 60 seconds')), 60000);
-      });
-      
-      console.log('NYLA UI V2: Processing question (UI timeout: 60s)...');
-      const response = await Promise.race([questionPromise, uiTimeoutPromise]);
+      // Process the question - let conversation manager handle timeouts
+      console.log('NYLA UI V2: Processing question...');
+      const response = await this.conversation.processQuestion(questionId, questionText);
       
       // Hide typing indicator
       this.hideTyping();
@@ -653,9 +753,9 @@ class NYLAAssistantUIV2 {
             sentiment: 'helpful' 
           },
           followUps: [
-            { id: 'what-is-nyla', text: 'What is NYLA?', topic: 'nyla' },
-            { id: 'how-to-use', text: 'How do I use NYLA transfers?', topic: 'transfers' },
-            { id: 'blockchain-info', text: 'Which blockchains are supported?', topic: 'blockchain' }
+            { id: 'what-is-nyla', text: 'What is NYLA?' },
+            { id: 'how-to-use', text: 'How do I use NYLA transfers?' },
+            { id: 'blockchain-info', text: 'Which blockchains are supported?' }
           ]
         };
       } else {
@@ -984,6 +1084,15 @@ class NYLAAssistantUIV2 {
    * Enhanced tab activation
    */
   onTabActivated() {
+    // Check if LLM is loading/warming up and show loading screen if needed
+    const llmStatus = this.conversation.llmEngine.getStatus();
+    if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {
+      // Show loading screen if LLM is still loading or warming up
+      console.log('NYLA UI V2: Tab activated but LLM not fully ready, showing loading screen');
+      this.showLLMLoadingScreen();
+      return;
+    }
+    
     // Update timezone and feature indicators
     this.updateTimezoneDisplay();
     this.updateFeatureIndicators();
@@ -1146,7 +1255,6 @@ class NYLAAssistantUIV2 {
       const button = document.createElement('button');
       button.className = 'nyla-question-btn';
       button.setAttribute('data-question-id', question.id);
-      button.setAttribute('data-topic', question.topic);
       button.textContent = question.text;
       
       if (question.action) {
@@ -1247,12 +1355,54 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: Chat container already exists, proceeding with enhancement');
     }
     
+    // Save any existing messages before replacing content
+    const existingMessages = chatContainer.querySelector('.nyla-messages');
+    const preservedMessages = existingMessages ? existingMessages.innerHTML : '';
+    
+    // Check if development mode is enabled
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDevelopmentMode = urlParams.get('dev') === 'true' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
     // Now populate the chat container with V2 structure (no header for cleaner exploration)
     console.log('NYLA UI V2: Populating chat container with V2 structure...');
     chatContainer.innerHTML = `
+      <!-- Development Mode Input (only in dev mode) -->
+      ${isDevelopmentMode ? `
+        <div class="nyla-dev-input-container" style="
+          background: #2a2a2a; 
+          border: 1px solid #444; 
+          border-radius: 8px; 
+          padding: 12px; 
+          margin-bottom: 16px;
+          border-left: 4px solid #FF6B35;
+        ">
+          <div style="color: #FF6B35; font-size: 12px; font-weight: 500; margin-bottom: 8px;">
+            🔧 DEVELOPMENT MODE - Test LLM Responses
+          </div>
+          <input 
+            type="text" 
+            id="nylaDevInput" 
+            placeholder="Type question to test LLM performance (press Enter to send)"
+            style="
+              width: 100%; 
+              background: #1a1a1a; 
+              border: 1px solid #555; 
+              border-radius: 4px; 
+              padding: 8px 12px; 
+              color: white; 
+              font-size: 14px;
+              font-family: 'Roboto', sans-serif;
+            "
+          />
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">
+            Direct input for testing LLM response time and quality
+          </div>
+        </div>
+      ` : ''}
+      
       <!-- Chat Messages Container -->
       <div class="nyla-messages" id="nylaMessages">
-        <!-- Messages will be dynamically added here -->
+        ${preservedMessages}
       </div>
       
       <!-- Typing Indicator -->
@@ -1317,6 +1467,33 @@ class NYLAAssistantUIV2 {
       `;
       existingTab.insertAdjacentHTML('beforeend', infoPanelHTML);
       console.log('NYLA UI V2: ✅ Info panel added (knowledge stats only)');
+    }
+    
+    // Set up development input event listener if in development mode
+    const devInput = document.getElementById('nylaDevInput');
+    if (devInput) {
+      devInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+          const question = e.target.value.trim();
+          console.log('NYLA Dev: Testing question:', question);
+          
+          // Process the question through the conversation system
+          if (this.conversation && this.conversation.processQuestion) {
+            this.conversation.processQuestion(question, 'general')
+              .then(() => {
+                console.log('NYLA Dev: Question processed successfully');
+              })
+              .catch(error => {
+                console.error('NYLA Dev: Question processing failed:', error);
+              });
+          }
+          
+          // Clear the input
+          e.target.value = '';
+        }
+      });
+      
+      console.log('NYLA UI V2: ✅ Development input event listener added');
     }
   }
 

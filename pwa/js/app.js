@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '2.0.5';
+  let APP_VERSION = '2.1.0';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
@@ -173,6 +173,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Generate raid section from shared data
     generateRaidSection();
+    
+    // Load Roboto font for NYLA conversation
+    loadRobotoFont();
+    
+    // Start WebLLM preload in background for faster NYLA responses
+    // This happens after splash screen, so users can use other tabs while engine loads
+    if (window.nylaSystemController) {
+      console.log('PWA: 🚀 Starting WebLLM preload for faster NYLA responses...');
+      setTimeout(() => {
+        window.nylaSystemController.preloadLLMEngine();
+      }, 500); // Small delay to let UI finish initializing
+    }
     
     setTimeout(() => {
       generateReceiveQRCode();
@@ -1885,4 +1897,53 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   console.log('NYLA GO PWA: Application initialized successfully');
+
+  // Font loading function
+  function loadRobotoFont() {
+    console.log('PWA: Loading Roboto font for NYLA conversation...');
+    
+    // Use Font Loading API if available
+    if ('fonts' in document) {
+      const robotoRegular = new FontFace('Roboto', 'url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2)', {
+        weight: '400',
+        style: 'normal',
+        display: 'swap'
+      });
+      
+      const robotoMedium = new FontFace('Roboto', 'url(https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2)', {
+        weight: '500',
+        style: 'normal',
+        display: 'swap'
+      });
+      
+      Promise.all([
+        robotoRegular.load(),
+        robotoMedium.load()
+      ]).then(function(fonts) {
+        fonts.forEach(function(font) {
+          document.fonts.add(font);
+        });
+        console.log('PWA: ✅ Roboto fonts loaded successfully');
+        
+        // Force font update on NYLA elements
+        updateNYLAFontDisplay();
+      }).catch(function(error) {
+        console.warn('PWA: ⚠️ Roboto font loading failed, using fallback:', error);
+      });
+    } else {
+      console.log('PWA: Font Loading API not available, relying on CSS');
+    }
+  }
+
+  // Force font update on NYLA elements
+  function updateNYLAFontDisplay() {
+    // Add a slight delay to ensure DOM is ready
+    setTimeout(() => {
+      const nylaElements = document.querySelectorAll('.nyla-chat-container, .nyla-chat-container *');
+      nylaElements.forEach(element => {
+        element.style.fontFamily = "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      });
+      console.log('PWA: ✅ Roboto font applied to', nylaElements.length, 'NYLA elements');
+    }, 100);
+  }
 });
