@@ -179,11 +179,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Start WebLLM preload in background for faster NYLA responses
     // This happens after splash screen, so users can use other tabs while engine loads
-    if (window.nylaSystemController) {
+    if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
       console.log('PWA: 🚀 Starting WebLLM preload for faster NYLA responses...');
       setTimeout(() => {
-        window.nylaSystemController.preloadLLMEngine();
+        try {
+          window.nylaSystemController.preloadLLMEngine();
+        } catch (error) {
+          console.warn('PWA: Failed to preload LLM engine:', error.message);
+        }
       }, 500); // Small delay to let UI finish initializing
+    } else {
+      console.warn('PWA: System controller or preloadLLMEngine method not available yet');
+      // Retry after a longer delay to allow system controller to fully initialize
+      setTimeout(() => {
+        if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+          console.log('PWA: 🚀 Retrying WebLLM preload...');
+          try {
+            window.nylaSystemController.preloadLLMEngine();
+          } catch (error) {
+            console.warn('PWA: Retry failed to preload LLM engine:', error.message);
+          }
+        } else {
+          console.warn('PWA: System controller still not ready after retry - skipping LLM preload');
+        }
+      }, 2000); // Longer delay for retry
     }
     
     setTimeout(() => {
