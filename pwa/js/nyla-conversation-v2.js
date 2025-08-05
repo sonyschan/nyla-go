@@ -378,9 +378,36 @@ class NYLAConversationManagerV2 {
         followUpCount: llmResponse.followUpSuggestions ? llmResponse.followUpSuggestions.length : 0
       });
     } catch (error) {
-      console.warn('NYLA Conversation V2: LLM timeout (30s) or error, falling back to rules:', error.message);
-      // Fallback to rule-based system
-      return await this.processWithEnhancedRules(questionId, questionText, identifiedTopics);
+      console.warn('NYLA Conversation V2: LLM timeout (30s) or error:', error.message);
+      
+      // Generate debug information instead of falling back to rules
+      const llmStatus = this.llmEngine.getStatus();
+      const debugInfo = {
+        text: `🔧 LLM Debug Information:\n\n` +
+              `LLM model: ${llmStatus.model || 'Unknown'}\n` +
+              `LLM initialized: ${llmStatus.initialized}\n` +
+              `LLM loading: ${llmStatus.loading}\n` +
+              `LLM ready: ${llmStatus.ready}\n` +
+              `LLM warmedUp: ${llmStatus.warmedUp}\n\n` +
+              `Error: ${error.message}\n\n` +
+              `This debug information helps identify LLM issues on your device. ` +
+              `Please share this information if you need support.`,
+        sentiment: 'informative',
+        confidence: 1.0,
+        isDebugInfo: true
+      };
+      
+      // Return debug response instead of fallback
+      return {
+        answer: debugInfo,
+        followUps: [
+          { id: 'retry-llm', text: '🔄 Try again' },
+          { id: 'what-is-nyla', text: 'What is NYLA?' },
+          { id: 'how-to-use', text: 'How do I use NYLA transfers?' }
+        ],
+        isLLMGenerated: false,
+        isDebugResponse: true
+      };
     }
     
     // Process personal care if suggested by LLM (simplified)

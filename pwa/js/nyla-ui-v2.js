@@ -869,16 +869,29 @@ class NYLAAssistantUIV2 {
       
       let errorResponse;
       if (error.message.includes('timeout')) {
-        console.log('NYLA UI V2: Timeout detected, providing timeout-specific response');
+        console.log('NYLA UI V2: Timeout detected, providing debug information');
+        
+        // Get LLM status for debugging
+        const llmStatus = this.conversation.llmEngine.getStatus();
+        
         errorResponse = {
           answer: { 
-            text: "I'm taking longer than usual to respond - let me give you a quick answer while I continue learning! 🤔\n\nThe LLM is still initializing in the background. You can see the progress in the browser console (F12), or add ?debug=true to the URL for detailed logs. I can answer using my built-in knowledge base right away!", 
-            sentiment: 'helpful' 
+            text: `🔧 LLM Debug Information:\n\n` +
+                  `LLM model: ${llmStatus.model || 'Unknown'}\n` +
+                  `LLM initialized: ${llmStatus.initialized}\n` +
+                  `LLM loading: ${llmStatus.loading}\n` +
+                  `LLM ready: ${llmStatus.ready}\n` +
+                  `LLM warmedUp: ${llmStatus.warmedUp}\n\n` +
+                  `Error: ${error.message}\n\n` +
+                  `This debug information helps identify LLM issues on your device. ` +
+                  `Please share this information if you need support.`,
+            sentiment: 'informative',
+            isDebugInfo: true
           },
           followUps: [
+            { id: 'retry-llm', text: '🔄 Try again' },
             { id: 'what-is-nyla', text: 'What is NYLA?' },
-            { id: 'how-to-use', text: 'How do I use NYLA transfers?' },
-            { id: 'blockchain-info', text: 'Which blockchains are supported?' }
+            { id: 'how-to-use', text: 'How do I use NYLA transfers?' }
           ]
         };
       } else {
