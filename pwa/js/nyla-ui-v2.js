@@ -480,17 +480,22 @@ class NYLAAssistantUIV2 {
         if (checkCount >= 60) {
           clearInterval(this.loadingInterval);
           this.loadingInterval = null;
-          this.isWelcomeMessageShown = true;
+          // Don't set isWelcomeMessageShown = true here - let showEnhancedWelcomeMessage handle it
           progressText.textContent = '✅ Ready for conversations!';
           console.log('NYLA UI V2: 30-second fallback triggered, showing welcome');
           
           // Clear loading screen and show welcome
           setTimeout(async () => {
+            console.log('NYLA UI V2: Android fallback - clearing loading screen and showing welcome');
+            console.log('NYLA UI V2: messagesContainer exists:', !!this.elements.messagesContainer);
+            console.log('NYLA UI V2: isWelcomeMessageShown before:', this.isWelcomeMessageShown);
             if (this.elements.messagesContainer) {
               this.elements.messagesContainer.classList.remove('loading-screen-active');
               this.elements.messagesContainer.innerHTML = '';
+              console.log('NYLA UI V2: Loading screen cleared for Android fallback');
             }
             await this.showEnhancedWelcomeMessage();
+            console.log('NYLA UI V2: Android fallback welcome message complete');
           }, 1000);
         }
       }
@@ -504,7 +509,7 @@ class NYLAAssistantUIV2 {
       }
       if (!this.conversation.llmEngine.getStatus().initialized && !this.isWelcomeMessageShown) {
         progressText.textContent = '⏱️ Loading taking longer than expected...';
-        this.isWelcomeMessageShown = true;
+        // Don't set isWelcomeMessageShown = true here - let showEnhancedWelcomeMessage handle it
         // Clear loading screen properly
         if (this.elements.messagesContainer) {
           this.elements.messagesContainer.classList.remove('loading-screen-active');
