@@ -20,6 +20,18 @@ class NYLAConversationManagerV2 {
       userResponses: {}
     };
 
+    // Dynamic topic identification system (replaces v1 hardcoded topics)
+    this.topicKeywords = {
+      'nylagoCore': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
+      'supportedBlockchains': ['blockchain', 'chain', 'solana', 'ethereum', 'algorand', 'supported', 'which blockchain', 'what blockchain', 'network', 'fees', 'cost', 'cheap', 'expensive'],
+      'platformLimitations': ['telegram', 'platform', 'support', 'twitter', 'x.com', 'social media', 'where can', 'which platform'],
+      'raidFeature': ['raid', 'community', 'engage', 'engagement', 'three dots', '...', 'social', 'like', 'retweet', 'comment'],
+      'qrCodes': ['qr', 'qr code', 'code', 'scan', 'payment', 'mobile', 'phone', 'share'],
+      'nylaCommands': ['command', 'swap', 'transfer command', 'how to use', 'usage', 'syntax'],
+      'about': ['about', 'what is', 'features', 'benefits', 'description', 'overview', 'introduction'],
+      'stickers': ['sticker', 'emoji', 'reaction', 'fun', 'cute', 'image']
+    };
+
     // Knowledge tracking and engagement
     this.knowledgeTracker = null;
     this.engagementState = {
@@ -31,6 +43,40 @@ class NYLAConversationManagerV2 {
     // Initialize from storage
     this.loadFromStorage();
     this.initializeTimezone();
+  }
+
+  /**
+   * Dynamically identify relevant knowledge base keys from user input
+   * Replaces v1 hardcoded topic system with intelligent keyword matching
+   */
+  identifyRelevantKnowledgeKeys(userInput) {
+    const inputLower = userInput.toLowerCase();
+    const keywordScores = {};
+    
+    // Score each knowledge base key based on keyword matches
+    for (const [knowledgeKey, keywords] of Object.entries(this.topicKeywords)) {
+      let score = 0;
+      
+      for (const keyword of keywords) {
+        if (inputLower.includes(keyword.toLowerCase())) {
+          // Longer keywords get higher scores (more specific matches)
+          score += keyword.length;
+        }
+      }
+      
+      if (score > 0) {
+        keywordScores[knowledgeKey] = score;
+      }
+    }
+    
+    // Sort by score (highest first) and return top matches
+    const sortedKeys = Object.entries(keywordScores)
+      .sort(([,a], [,b]) => b - a)
+      .map(([key]) => key);
+    
+    console.log('NYLA Conversation V2: Identified topics:', sortedKeys.slice(0, 3));
+    
+    return sortedKeys.slice(0, 3); // Return top 3 most relevant keys
   }
 
   /**
@@ -128,10 +174,15 @@ class NYLAConversationManagerV2 {
 
   /**
    * Process user question with LLM enhancement
+   * V2: Uses dynamic topic identification instead of hardcoded topics
    */
-  async processQuestion(questionId, questionText, topic) {
+  async processQuestion(questionId, questionText) {
     try {
       console.log('NYLA Conversation V2: Processing question with LLM');
+      
+      // Identify relevant topics once and reuse throughout the process
+      const identifiedTopics = this.identifyRelevantKnowledgeKeys(questionText);
+      const primaryTopic = identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
       
       // Check if NYLA is on work break (only if knowledge tracker is available)
       if (this.knowledgeTracker) {
@@ -149,7 +200,9 @@ class NYLAConversationManagerV2 {
       // Update user profile
       this.userProfile.totalConversations++;
       this.userProfile.localTime = this.getLocalTime();
-      this.trackUserInterest(topic);
+      
+      // Track user interest using pre-identified topics
+      this.trackUserInterest(primaryTopic);
 
       let response;
       
@@ -157,27 +210,35 @@ class NYLAConversationManagerV2 {
       const llmStatus = this.llmEngine.getStatus();
       console.log('NYLA Conversation V2: LLM Status:', llmStatus);
       
-      const shouldUseLLM = this.shouldUseLLM(questionId, questionText, topic);
+      const shouldUseLLM = this.shouldUseLLM(questionId, questionText);
       console.log('NYLA Conversation V2: Should use LLM:', shouldUseLLM, 'for question:', questionId);
       
-      if (shouldUseLLM && llmStatus.initialized && !llmStatus.loading) {
+      if (shouldUseLLM && llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp) {
         console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
         console.log('NYLA Conversation V2: LLM Status Details:', llmStatus);
-        response = await this.processWithLLM(questionId, questionText, topic);
+        response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
       } else {
         console.log('NYLA Conversation V2: ⚠️ Using rule-based system');
         console.log('NYLA Conversation V2: Why not LLM?', {
           shouldUseLLM,
           llmInitialized: llmStatus.initialized,
           llmLoading: llmStatus.loading,
-          llmReady: llmStatus.ready
+          llmReady: llmStatus.ready,
+          llmWarmedUp: llmStatus.warmedUp
         });
-        response = await this.processWithEnhancedRules(questionId, questionText, topic);
+        
+        // Special handling when engine is initializing but not warmed up
+        if (llmStatus.initialized && !llmStatus.warmedUp) {
+          console.log('NYLA Conversation V2: 🔥 LLM engine warming up GPU buffers...');
+        }
+        
+        response = await this.processWithEnhancedRules(questionId, questionText, identifiedTopics);
       }
       
       // Track knowledge exposure (only if knowledge tracker is available)
       if (this.knowledgeTracker) {
-        this.knowledgeTracker.trackKnowledgeFromConversation(questionId, questionText, topic, response.answer);
+        // Use pre-identified topics
+        this.knowledgeTracker.trackKnowledgeFromConversation(questionId, questionText, primaryTopic, response.answer);
         
         // Check for engagement opportunity BEFORE generating follow-ups
         const shouldEngage = this.knowledgeTracker.shouldShowEngagementPrompt(this.isPersonalCareActive());
@@ -210,7 +271,7 @@ class NYLAConversationManagerV2 {
    * Determine if question should use LLM or rules (hybrid approach)
    * TEMPORARILY DISABLED: Always use LLM to test speed improvements
    */
-  shouldUseLLM(questionId, questionText, topic) {
+  shouldUseLLM(questionId, questionText) {
     // TEMPORARILY: Always use LLM to test optimizations and knowledge base access
     return true;
     
@@ -224,9 +285,8 @@ class NYLAConversationManagerV2 {
       'change-topic'
     ];
     
-    const ruleBasedTopics = ['transfers', 'blockchain', 'nyla'];
-    
-    if (ruleBasedQuestions.includes(questionId) || ruleBasedTopics.includes(topic)) {
+    // Note: V2 removed hardcoded topic checks, now uses dynamic identification
+    if (ruleBasedQuestions.includes(questionId)) {
       return false;
     }
     
@@ -238,39 +298,77 @@ class NYLAConversationManagerV2 {
   }
 
   /**
-   * Process question using LLM (non-streaming for JSON responses)
+   * Process question using LLM (supports streaming for UI)
+   * Now uses dynamic topic identification instead of hardcoded topics
    */
-  async processWithLLM(questionId, questionText, topic) {
+  async processWithLLM(questionId, questionText, identifiedTopics, streamCallback = null) {
+    // Use pre-identified topics from processQuestion method
+    const relevantKeys = identifiedTopics || this.identifyRelevantKnowledgeKeys(questionText);
+    
+    // Use searchKnowledge to find relevant information for all identified keys
+    let knowledgeContext = null;
+    if (this.kb && this.kb.searchKnowledge) {
+      const searchResults = [];
+      
+      // Search using the identified keys as search terms
+      for (const key of relevantKeys) {
+        const keywordSearch = this.topicKeywords[key]?.join(' ') || key;
+        const result = this.kb.searchKnowledge(keywordSearch);
+        if (result && result.length > 0) {
+          searchResults.push(...result);
+        }
+      }
+      
+      // Also search using the original question text
+      const directSearch = this.kb.searchKnowledge(questionText);
+      if (directSearch && directSearch.length > 0) {
+        searchResults.push(...directSearch);
+      }
+      
+      // Combine and deduplicate results
+      const uniqueResults = searchResults.filter((result, index, self) => 
+        index === self.findIndex(r => r.source === result.source)
+      );
+      
+      if (uniqueResults.length > 0) {
+        knowledgeContext = {
+          searchResults: uniqueResults,
+          relevantKeys: relevantKeys,
+          searchTerms: questionText
+        };
+      }
+    }
+    
     const conversationContext = {
       timezone: this.userProfile.timezone,
       localTime: this.userProfile.localTime,
       conversationHistory: this.conversationHistory.slice(-3), // Reduced from 5 to 3 for speed
       userProfile: this.userProfile,
-      knowledgeContext: this.kb.getKnowledge(topic) || this.kb.searchKnowledge(questionText)
+      knowledgeContext: knowledgeContext
     };
 
-    console.log('NYLA Conversation V2: Generating LLM response (timeout: 60s)...');
+    console.log('NYLA Conversation V2: Generating LLM response (timeout: 30s)...');
     console.log('NYLA Conversation V2: Question:', questionText);
-    console.log('NYLA Conversation V2: Topic:', topic);
+    console.log('NYLA Conversation V2: Relevant knowledge keys:', relevantKeys);
     console.log('NYLA Conversation V2: Knowledge retrieved:', conversationContext.knowledgeContext);
     console.log('NYLA Conversation V2: Context provided to LLM:', {
       hasKnowledge: !!conversationContext.knowledgeContext,
       historyLength: conversationContext.conversationHistory.length,
-      knowledgeKeys: conversationContext.knowledgeContext ? Object.keys(conversationContext.knowledgeContext) : []
+      searchResultCount: conversationContext.knowledgeContext?.searchResults?.length || 0,
+      relevantKeys: relevantKeys
     });
     
-    // Set timeout to 60 seconds for LLM processing
+    // Set timeout to 30 seconds for LLM processing
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('LLM response timeout after 60 seconds')), 60000);
+      setTimeout(() => reject(new Error('LLM response timeout after 30 seconds')), 30000);
     });
     
     let llmResponse;
     try {
-      // Use non-streaming response for clean JSON output
-      const llmPromise = this.llmEngine.generateResponse(
-        questionText, 
-        conversationContext
-      );
+      // Use streaming or non-streaming based on whether callback is provided
+      const llmPromise = streamCallback 
+        ? this.llmEngine.generateStreamingResponse(questionText, conversationContext, streamCallback)
+        : this.llmEngine.generateResponse(questionText, conversationContext);
       
       llmResponse = await Promise.race([llmPromise, timeoutPromise]);
       console.log('NYLA Conversation V2: ✅ LLM response completed');
@@ -280,9 +378,9 @@ class NYLAConversationManagerV2 {
         followUpCount: llmResponse.followUpSuggestions ? llmResponse.followUpSuggestions.length : 0
       });
     } catch (error) {
-      console.warn('NYLA Conversation V2: LLM timeout (60s) or error, falling back to rules:', error.message);
+      console.warn('NYLA Conversation V2: LLM timeout (30s) or error, falling back to rules:', error.message);
       // Fallback to rule-based system
-      return await this.processWithEnhancedRules(questionId, questionText, topic);
+      return await this.processWithEnhancedRules(questionId, questionText, identifiedTopics);
     }
     
     // Process personal care if suggested by LLM (simplified)
@@ -291,14 +389,19 @@ class NYLAConversationManagerV2 {
       this.trackPersonalCareQuestion(llmResponse.personalCare.type);
     }
 
-    // Generate follow-up questions
-    const followUps = this.generateIntelligentFollowUps(llmResponse, topic, questionText);
+    // Use pre-identified topics from processQuestion method
+    const primaryTopic = identifiedTopics && identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
+    
+    // Debug LLM response before generating followups
+    console.log('NYLA Conversation V2: LLM followup suggestions before generateIntelligentFollowUps:', llmResponse.followUpSuggestions);
+    
+    const followUps = this.generateIntelligentFollowUps(llmResponse, primaryTopic, questionText);
     
     // Select appropriate sticker
     const sticker = this.selectIntelligentSticker(llmResponse.sentiment, llmResponse.text, questionText);
 
-    // Save conversation
-    this.saveConversation(questionText, llmResponse, topic);
+    // Save conversation with primary identified topic
+    this.saveConversation(questionText, llmResponse, primaryTopic);
 
     return {
       answer: {
@@ -316,9 +419,9 @@ class NYLAConversationManagerV2 {
   /**
    * Process with enhanced rule-based system (fallback)
    */
-  async processWithEnhancedRules(questionId, questionText, topic) {
-    // Enhanced version of original rule-based system
-    const answer = await this.generateEnhancedAnswer(questionId, questionText, topic);
+  async processWithEnhancedRules(questionId, questionText, identifiedTopics) {
+    // Enhanced version of original rule-based system (V2 updated)
+    const answer = await this.generateEnhancedAnswer(questionId, questionText, identifiedTopics);
     
     // Add personal care check with timezone awareness (20% probability)
     const personalCareCheck = this.generatePersonalCareCheck();
@@ -327,10 +430,13 @@ class NYLAConversationManagerV2 {
       this.trackPersonalCareQuestion(personalCareCheck.type);
     }
 
-    const followUps = this.generateContextualFollowUps(answer, topic, questionText, answer.isChangeTopicResponse);
+    // Use pre-identified topics from processQuestion method
+    const primaryTopic = identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
+    
+    const followUps = this.generateContextualFollowUps(answer, primaryTopic, questionText, answer.isChangeTopicResponse);
     const sticker = this.selectSticker(answer.sentiment);
 
-    this.saveConversation(questionText, answer, topic);
+    this.saveConversation(questionText, answer, primaryTopic);
 
     return {
       answer,
@@ -586,8 +692,16 @@ class NYLAConversationManagerV2 {
   generateIntelligentFollowUps(llmResponse, topic, originalQuestion, isChangeTopicResponse = false) {
     let followUps = [];
     
+    // Debug LLM followup suggestions at start of method
+    console.log('NYLA Conversation V2: generateIntelligentFollowUps received:', {
+      hasFollowUps: !!llmResponse.followUpSuggestions,
+      followUpCount: llmResponse.followUpSuggestions ? llmResponse.followUpSuggestions.length : 0,
+      followUps: llmResponse.followUpSuggestions
+    });
+    
     // Use LLM suggestions if available
     if (llmResponse.followUpSuggestions && llmResponse.followUpSuggestions.length > 0) {
+      console.log('NYLA Conversation V2: ✅ Using LLM followup suggestions');
       followUps = llmResponse.followUpSuggestions.map((suggestion, index) => {
         // Handle both old format (strings) and new format (objects)
         let followUp;
@@ -619,7 +733,8 @@ class NYLAConversationManagerV2 {
         return followUp;
       });
     } else {
-      // Fallback to contextual generation
+      console.log('NYLA Conversation V2: ⚠️ No LLM followups available, using contextual generation');
+      // Fallback to contextual generation (topic parameter passed from calling method)
       followUps = this.generateContextualFollowUps({ sentiment: llmResponse.sentiment }, topic, originalQuestion);
     }
 
@@ -694,7 +809,6 @@ class NYLAConversationManagerV2 {
     followUps.push({
       id: 'change-topic',
       text: '🔄 Change topic',
-      topic: 'general',
       action: 'changeTopic',
       context: 'topic switch'
     });
@@ -706,7 +820,7 @@ class NYLAConversationManagerV2 {
    * Enhanced sticker selection with LLM context
    */
   selectIntelligentSticker(sentiment, responseText, originalQuestion) {
-    const stickers = this.kb.getKnowledge('stickers');
+    const stickers = this.kb && this.kb.getKnowledge ? this.kb.getKnowledge('stickers') : null;
     if (!stickers || !stickers.sentimentMap) {
       return null;
     }
@@ -746,12 +860,39 @@ class NYLAConversationManagerV2 {
 
   /**
    * Enhanced answer generation (fallback method)
+   * Updated to use V2 dynamic topic identification
    */
-  async generateEnhancedAnswer(questionId, questionText, topic) {
+  async generateEnhancedAnswer(questionId, questionText, identifiedTopics) {
     // This is an enhanced version of the original generateAnswer method
     // with better context awareness and timezone considerations
     
-    const knowledge = this.kb.getKnowledge(topic) || this.kb.searchKnowledge(questionText);
+    // Use pre-identified topics from processQuestion method
+    const relevantKeys = identifiedTopics;
+    let knowledge = null;
+    
+    if (this.kb && this.kb.searchKnowledge) {
+      const searchResults = [];
+      
+      // Search using identified keys
+      for (const key of relevantKeys) {
+        const keywordSearch = this.topicKeywords[key]?.join(' ') || key;
+        const result = this.kb.searchKnowledge(keywordSearch);
+        if (result && result.length > 0) {
+          searchResults.push(...result);
+        }
+      }
+      
+      // Also search using the original question
+      const directSearch = this.kb.searchKnowledge(questionText);
+      if (directSearch && directSearch.length > 0) {
+        searchResults.push(...directSearch);
+      }
+      
+      // Use first result for compatibility with legacy code
+      if (searchResults.length > 0) {
+        knowledge = searchResults[0].data;
+      }
+    }
     
     switch (questionId) {
       case 'what-is-nyla':
@@ -1000,10 +1141,10 @@ class NYLAConversationManagerV2 {
     }
 
     return [
-      { id: 'what-is-nyla', text: 'What is NYLA?', topic: 'about' },
-      { id: 'how-to-send', text: 'How do I send tokens?', topic: 'transfers' },
-      { id: 'how-to-receive', text: 'How do I receive payments?', topic: 'transfers' },
-      { id: 'supported-blockchains', text: 'What blockchains are supported?', topic: 'features' }
+      { id: 'what-is-nyla', text: 'What is NYLA?' },
+      { id: 'how-to-send', text: 'How do I send tokens?' },
+      { id: 'how-to-receive', text: 'How do I receive payments?' },
+      { id: 'supported-blockchains', text: 'What blockchains are supported?' }
     ];
   }
 
@@ -1015,47 +1156,47 @@ class NYLAConversationManagerV2 {
     const questionText = originalQuestion?.toLowerCase() || '';
     
     // For "What is NYLA?" responses - provide exploration options mentioned in the response
-    if (questionText.includes('what is nyla') || topic === 'nyla') {
+    if (questionText.includes('what is nyla') || topic === 'nylagoCore' || topic === 'about') {
       contextualFollowUps = [
-        { id: 'try-send-tab', text: '💸 Try the Send tab', topic: 'transfers', context: 'hands-on practice' },
-        { id: 'explore-receive', text: '💰 Explore Receive payments', topic: 'transfers', context: 'hands-on practice' },
-        { id: 'check-community', text: '🎯 Check out Raids & Apps', topic: 'community', context: 'community features' },
-        { id: 'learn-blockchains', text: '⛓️ Which blockchains are supported?', topic: 'blockchain', context: 'technical details' }
+        { id: 'try-send-tab', text: '💸 Try the Send tab', context: 'hands-on practice' },
+        { id: 'explore-receive', text: '💰 Explore Receive payments', context: 'hands-on practice' },
+        { id: 'check-community', text: '🎯 Check out Raids & Apps', context: 'community features' },
+        { id: 'learn-blockchains', text: '⛓️ Which blockchains are supported?', context: 'technical details' }
       ];
     }
     // For transfer-related responses
-    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'transfers') {
+    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'nylagoCore' || topic === 'nylaCommands') {
       contextualFollowUps = [
-        { id: 'try-send-now', text: '💸 Try sending now', topic: 'transfers', context: 'hands-on practice' },
-        { id: 'qr-code-help', text: '📱 How do QR codes work?', topic: 'qr-codes', context: 'technical details' },
-        { id: 'blockchain-choice', text: '⛓️ Which blockchain should I use?', topic: 'blockchain', context: 'decision help' },
-        { id: 'fees-info', text: '💰 What about fees?', topic: 'fees', context: 'cost information' }
+        { id: 'try-send-now', text: '💸 Try sending now', context: 'hands-on practice' },
+        { id: 'qr-code-help', text: '📱 How do QR codes work?', context: 'technical details' },
+        { id: 'blockchain-choice', text: '⛓️ Which blockchain should I use?', context: 'decision help' },
+        { id: 'fees-info', text: '💰 What about fees?', context: 'cost information' }
       ];
     }
     // For community/feature responses
-    else if (responseText.includes('community') || responseText.includes('raid') || responseText.includes('app') || topic === 'community') {
+    else if (responseText.includes('community') || responseText.includes('raid') || responseText.includes('app') || topic === 'raidFeature') {
       contextualFollowUps = [
-        { id: 'join-raid', text: '🎯 How do I join a raid?', topic: 'raids', context: 'participation guide' },
-        { id: 'community-apps', text: '🚀 Show me community apps', topic: 'apps', context: 'app exploration' },
-        { id: 'get-started-transfer', text: '💸 Get started with transfers', topic: 'transfers', context: 'basic tutorial' },
-        { id: 'social-features', text: '📱 Social media integration', topic: 'social-features', context: 'social features' }
+        { id: 'join-raid', text: '🎯 How do I join a raid?', context: 'participation guide' },
+        { id: 'community-apps', text: '🚀 Show me community apps', context: 'app exploration' },
+        { id: 'get-started-transfer', text: '💸 Get started with transfers', context: 'basic tutorial' },
+        { id: 'social-features', text: '📱 Social media integration', context: 'social features' }
       ];
     }
     // For blockchain/technical responses
-    else if (responseText.includes('blockchain') || responseText.includes('solana') || responseText.includes('ethereum') || topic === 'blockchain') {
+    else if (responseText.includes('blockchain') || responseText.includes('solana') || responseText.includes('ethereum') || topic === 'supportedBlockchains') {
       contextualFollowUps = [
-        { id: 'try-solana', text: '🟢 Try Solana transfers', topic: 'solana', context: 'hands-on practice' },
-        { id: 'try-ethereum', text: '🔷 Try Ethereum transfers', topic: 'ethereum', context: 'hands-on practice' },
-        { id: 'blockchain-compare', text: '⚖️ Compare blockchains', topic: 'blockchain', context: 'comparison guide' },
-        { id: 'gas-fees', text: '⛽ Understanding fees', topic: 'fees', context: 'cost education' }
+        { id: 'try-solana', text: '🟢 Try Solana transfers', context: 'hands-on practice' },
+        { id: 'try-ethereum', text: '🔷 Try Ethereum transfers', context: 'hands-on practice' },
+        { id: 'blockchain-compare', text: '⚖️ Compare blockchains', context: 'comparison guide' },
+        { id: 'gas-fees', text: '⛽ Understanding fees', context: 'cost education' }
       ];
     }
     // Generic fallback (should rarely be used)
     else {
       contextualFollowUps = [
-        { id: 'what-is-nyla', text: '🧠 What is NYLA?', topic: 'nyla', context: 'basic introduction' },
-        { id: 'how-to-transfer', text: '💸 How do I make transfers?', topic: 'transfers', context: 'tutorial' },
-        { id: 'explore-features', text: '🚀 Explore NYLAGo features', topic: 'features', context: 'feature overview' }
+        { id: 'what-is-nyla', text: '🧠 What is NYLA?', context: 'basic introduction' },
+        { id: 'how-to-transfer', text: '💸 How do I make transfers?', context: 'tutorial' },
+        { id: 'explore-features', text: '🚀 Explore NYLAGo features', context: 'feature overview' }
       ];
     }
     
@@ -1064,7 +1205,6 @@ class NYLAConversationManagerV2 {
       contextualFollowUps.push({ 
         id: 'change-topic', 
         text: '🔄 Ask about something else', 
-        topic: 'general', 
         action: 'changeTopic',
         context: 'topic switch'
       });
@@ -1153,7 +1293,6 @@ class NYLAConversationManagerV2 {
     return engagement.actions.map((action, index) => ({
       id: `engagement-${engagement.category}-${index}`,
       text: action.text,
-      topic: 'engagement',
       action: 'handleEngagement',
       engagementAction: action.action,
       engagementType: action.type,
@@ -1274,7 +1413,6 @@ class NYLAConversationManagerV2 {
       followUps: [{
         id: 'check-nyla-back',
         text: 'Are you back yet? 👀',
-        topic: 'work-status',
         action: 'checkWorkStatus'
       }],
       workBreak: true,
@@ -1359,35 +1497,34 @@ class NYLAConversationManagerV2 {
   generateTabSpecificQuestions(targetTab) {
     const tabQuestions = {
       send: [
-        { id: 'send-steps', text: 'What are the steps to send tokens?', topic: 'transfers', context: 'tutorial' },
-        { id: 'blockchain-choice', text: 'Which blockchain should I choose?', topic: 'blockchain', context: 'decision help' },
-        { id: 'send-fees', text: 'How much do send transactions cost?', topic: 'fees', context: 'cost information' },
-        { id: 'social-sharing', text: 'How does social sharing work?', topic: 'social-features', context: 'viral features' }
+        { id: 'send-steps', text: 'What are the steps to send tokens?', context: 'tutorial' },
+        { id: 'blockchain-choice', text: 'Which blockchain should I choose?', context: 'decision help' },
+        { id: 'send-fees', text: 'How much do send transactions cost?', context: 'cost information' },
+        { id: 'social-sharing', text: 'How does social sharing work?', context: 'viral features' }
       ],
       receive: [
-        { id: 'qr-generation', text: 'How do QR codes work?', topic: 'qr-codes', context: 'technical details' },
-        { id: 'payment-requests', text: 'How do I create payment requests?', topic: 'transfers', context: 'tutorial' },
-        { id: 'receive-fees', text: 'Are there fees for receiving?', topic: 'fees', context: 'cost information' },
-        { id: 'sharing-requests', text: 'How do I share payment requests?', topic: 'sharing', context: 'distribution' }
+        { id: 'qr-generation', text: 'How do QR codes work?', context: 'technical details' },
+        { id: 'payment-requests', text: 'How do I create payment requests?', context: 'tutorial' },
+        { id: 'receive-fees', text: 'Are there fees for receiving?', context: 'cost information' },
+        { id: 'sharing-requests', text: 'How do I share payment requests?', context: 'distribution' }
       ],
       raid: [
-        { id: 'what-are-raids', text: 'What are community raids?', topic: 'raids', context: 'explanation' },
-        { id: 'join-raids', text: 'How do I join a raid?', topic: 'raids', context: 'participation' },
-        { id: 'raid-rewards', text: 'What rewards do raids offer?', topic: 'rewards', context: 'incentives' },
-        { id: 'community-apps', text: 'What community apps are available?', topic: 'apps', context: 'features' }
+        { id: 'what-are-raids', text: 'What are community raids?', context: 'explanation' },
+        { id: 'join-raids', text: 'How do I join a raid?', context: 'participation' },
+        { id: 'raid-rewards', text: 'What rewards do raids offer?', context: 'incentives' },
+        { id: 'community-apps', text: 'What community apps are available?', context: 'features' }
       ]
     };
     
     const questions = tabQuestions[targetTab] || [
-      { id: 'what-is-nyla', text: 'What is NYLA?', topic: 'nyla', context: 'basic introduction' },
-      { id: 'how-transfers-work', text: 'How do transfers work?', topic: 'transfers', context: 'tutorial' }
+      { id: 'what-is-nyla', text: 'What is NYLA?', context: 'basic introduction' },
+      { id: 'how-transfers-work', text: 'How do transfers work?', context: 'tutorial' }
     ];
     
     // Add Change Topic option
     questions.push({ 
       id: 'change-topic', 
       text: '🔄 Ask about something else', 
-      topic: 'general', 
       action: 'changeTopic',
       context: 'topic switch'
     });
