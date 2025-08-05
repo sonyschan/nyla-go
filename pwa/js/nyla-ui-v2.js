@@ -34,6 +34,10 @@ class NYLAAssistantUIV2 {
     this.elements.timezoneDisplay = null;
     this.elements.statusIndicator = null;
     this.elements.featureIndicators = null;
+    
+    // Loading state management
+    this.isWelcomeMessageShown = false;
+    this.loadingInterval = null;
   }
 
   /**
@@ -63,10 +67,14 @@ class NYLAAssistantUIV2 {
         await this.showLLMLoadingScreen();
       } else if (llmStatus.initialized && llmStatus.warmedUp) {
         console.log('NYLA UI V2: Step 4 - WebLLM fully ready (warmed up), showing welcome message...');
-        await this.showEnhancedWelcomeMessage();
+        if (!this.isWelcomeMessageShown) {
+          await this.showEnhancedWelcomeMessage();
+        }
       } else {
         console.log('NYLA UI V2: Step 4 - WebLLM not initialized, starting with rule-based...');
-        await this.showEnhancedWelcomeMessage();
+        if (!this.isWelcomeMessageShown) {
+          await this.showEnhancedWelcomeMessage();
+        }
       }
       
       console.log('NYLA UI V2: Step 5 - Initializing feature indicators...');
@@ -133,7 +141,7 @@ class NYLAAssistantUIV2 {
             <img src="./icons/NYLA.png" alt="NYLA">
           </div>
           <p>NYLA is starting up...</p>
-          <div class="nyla-loading-spinner"></div>
+          <div class="nyla-loading-dots"></div>
         </div>
       `;
       
@@ -307,9 +315,22 @@ class NYLAAssistantUIV2 {
   }
 
   /**
+   * Reset loading state (useful for tab switches or reinitialization)
+   */
+  resetLoadingState() {
+    this.isWelcomeMessageShown = false;
+    if (this.loadingInterval) {
+      clearInterval(this.loadingInterval);
+      this.loadingInterval = null;
+    }
+  }
+  
+  /**
    * Show WebLLM loading screen
    */
   async showLLMLoadingScreen() {
+    // Reset loading state when showing loading screen
+    this.resetLoadingState();
     // Clear any existing content
     if (this.elements.messagesContainer) {
       this.elements.messagesContainer.innerHTML = '';
@@ -395,9 +416,14 @@ class NYLAAssistantUIV2 {
     
     // Timeout after 5 minutes
     setTimeout(() => {
-      clearInterval(checkInterval);
-      if (!this.conversation.llmEngine.getStatus().initialized) {
+      if (this.loadingInterval) {
+        clearInterval(this.loadingInterval);
+        this.loadingInterval = null;
+      }
+      if (!this.conversation.llmEngine.getStatus().initialized && !this.isWelcomeMessageShown) {
         progressText.textContent = '⏱️ Loading taking longer than expected...';
+        this.isWelcomeMessageShown = true;
+        this.showEnhancedWelcomeMessage();
       }
     }, 300000);
   }
@@ -406,6 +432,12 @@ class NYLAAssistantUIV2 {
    * Show enhanced welcome message with timezone info
    */
   async showEnhancedWelcomeMessage() {
+    // Prevent duplicate welcome messages
+    if (this.isWelcomeMessageShown) {
+      console.log('NYLA UI V2: Welcome message already shown, skipping duplicate');
+      return;
+    }
+    this.isWelcomeMessageShown = true;
     const userTimezone = this.conversation.userProfile?.timezone || 'UTC';
     const localTime = this.conversation.userProfile?.localTime || new Date().toLocaleString();
     const hour = new Date(localTime).getHours();
@@ -1344,7 +1376,7 @@ class NYLAAssistantUIV2 {
             <img src="./icons/NYLA.png" alt="NYLA">
           </div>
           <p>NYLA is starting up...</p>
-          <div class="nyla-loading-spinner"></div>
+          <div class="nyla-loading-dots"></div>
         </div>
       `;
       

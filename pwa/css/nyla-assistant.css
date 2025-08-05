@@ -736,12 +736,37 @@
   align-items: center;
   min-height: 400px;
   padding: 20px;
+  overflow: hidden; /* Hide scrollbars */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .llm-loading-content {
   text-align: center;
   max-width: 500px;
   width: 100%;
+  overflow: hidden; /* Hide scrollbars on content */
+  /* Hide scrollbars on all browsers */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbars on WebKit browsers (Chrome, Safari, Edge) */
+.llm-loading-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-specific: Ensure no scrollbars on Android/iOS */
+@media screen and (max-width: 768px) {
+  .nyla-llm-loading {
+    overflow: hidden !important;
+    height: 100vh; /* Use full viewport height */
+    min-height: auto;
+  }
+  
+  .nyla-llm-loading .llm-loading-content {
+    overflow: hidden !important;
+    max-height: 90vh; /* Prevent content overflow */
+  }
 }
 
 /* Loading animation for NYLA avatar */
@@ -1519,19 +1544,7 @@
   color: #BBBBBB;
 }
 
-.nyla-loading-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(255, 107, 53, 0.3);
-  border-top: 3px solid #FF6B35;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+/* Spinner removed - using loading dots instead */
 
 /* iOS-specific NYLA message styling */
 .nyla-ios-container {
