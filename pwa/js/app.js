@@ -183,7 +183,14 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('PWA: 🚀 Starting WebLLM preload for faster NYLA responses...');
       setTimeout(() => {
         try {
-          window.nylaSystemController.preloadLLMEngine();
+          // Double-check the method still exists before calling
+          if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+            window.nylaSystemController.preloadLLMEngine();
+          } else {
+            console.warn('PWA: preloadLLMEngine method no longer available in setTimeout callback');
+            console.warn('PWA: System controller exists:', !!window.nylaSystemController);
+            console.warn('PWA: Method type:', typeof window.nylaSystemController?.preloadLLMEngine);
+          }
         } catch (error) {
           console.warn('PWA: Failed to preload LLM engine:', error.message);
         }
@@ -195,12 +202,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
           console.log('PWA: 🚀 Retrying WebLLM preload...');
           try {
-            window.nylaSystemController.preloadLLMEngine();
+            // Triple-check before calling in retry
+            if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+              window.nylaSystemController.preloadLLMEngine();
+            } else {
+              console.warn('PWA: Method disappeared during retry execution');
+            }
           } catch (error) {
             console.warn('PWA: Retry failed to preload LLM engine:', error.message);
           }
         } else {
           console.warn('PWA: System controller still not ready after retry - skipping LLM preload');
+          console.warn('PWA: System controller exists:', !!window.nylaSystemController);
+          console.warn('PWA: Method type:', typeof window.nylaSystemController?.preloadLLMEngine);
         }
       }, 2000); // Longer delay for retry
     }
