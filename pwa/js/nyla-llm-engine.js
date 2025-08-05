@@ -370,6 +370,9 @@ class NYLALLMEngine {
       
       console.log(`⏱️ Streaming inference took ${(streamTime / 1000).toFixed(2)}s`);
       console.log(`NYLA LLM: ✅ Streaming response completed in ${totalTime}ms`);
+      console.log('NYLA LLM: Final streaming response length:', fullResponse.length);
+      console.log('NYLA LLM: Final streaming response preview:', fullResponse.substring(0, 200) + '...');
+      console.log('NYLA LLM: Final streaming response end:', '...' + fullResponse.substring(Math.max(0, fullResponse.length - 200)));
       
       return this.parseResponse(fullResponse, conversationContext);
 
@@ -625,15 +628,22 @@ class NYLALLMEngine {
       // Clean up the text - remove any markdown code blocks
       let cleanText = generatedText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
       
+      console.log('NYLA LLM: Attempting to parse response of length:', generatedText.length);
+      console.log('NYLA LLM: Clean text preview:', cleanText.substring(0, 300) + '...');
+      console.log('NYLA LLM: Clean text end:', '...' + cleanText.substring(Math.max(0, cleanText.length - 300)));
+      
       // Memory-safe JSON extraction using iterative approach
       const jsonObject = this.extractJsonSafely(cleanText);
       if (jsonObject) {
         try {
           console.log('NYLA LLM: Successfully parsed JSON response');
+          console.log('NYLA LLM: JSON followUpSuggestions:', jsonObject.followUpSuggestions);
           return this.validateResponse(jsonObject, context);
         } catch (parseError) {
           console.warn('NYLA LLM: JSON validation failed:', parseError.message);
         }
+      } else {
+        console.warn('NYLA LLM: extractJsonSafely returned null - JSON extraction failed');
       }
       
       // If no valid JSON found, extract text content
@@ -641,22 +651,48 @@ class NYLALLMEngine {
       
       // Try to extract text field even from incomplete JSON
       const textMatch = cleanText.match(/"text"\s*:\s*"([^"]*)/);
+      let extractedText = null;
+      let extractedFollowUps = [];
+      
       if (textMatch && textMatch[1]) {
         // Clean up any escape sequences
-        let extractedText = textMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
+        extractedText = textMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
         
         // If text seems cut off, add ellipsis
         if (!extractedText.endsWith('.') && !extractedText.endsWith('!') && !extractedText.endsWith('?')) {
           extractedText += '...';
         }
-        
-        console.log('NYLA LLM: Extracted partial text from incomplete response');
+      }
+      
+      // Try to extract followUpSuggestions even from partial JSON
+      const followUpPattern = /"followUpSuggestions"\s*:\s*\[([\s\S]*?)\]/;
+      const followUpMatch = cleanText.match(followUpPattern);
+      if (followUpMatch && followUpMatch[1]) {
+        try {
+          // Extract individual follow-up suggestions from the array
+          const followUpContent = followUpMatch[1];
+          const suggestionPattern = /"([^"]+)"/g;
+          let match;
+          while ((match = suggestionPattern.exec(followUpContent)) !== null) {
+            if (match[1] && match[1].length > 0) {
+              extractedFollowUps.push(match[1]);
+            }
+          }
+          console.log('NYLA LLM: Extracted partial followUps from incomplete JSON:', extractedFollowUps);
+        } catch (followUpError) {
+          console.warn('NYLA LLM: Failed to extract followUps from partial JSON:', followUpError.message);
+        }
+      }
+      
+      // If we found some content, return it
+      if (extractedText) {
+        console.log('NYLA LLM: Extracted partial content from incomplete response');
         return {
           text: extractedText,
           sentiment: 'helpful',
           confidence: 0.7,
           personalCare: { shouldAsk: false },
-          followUpSuggestions: this.generateDefaultFollowUps(context),
+          followUpSuggestions: extractedFollowUps.length > 0 ? extractedFollowUps : this.generateDefaultFollowUps(context),
           contextRelevant: true
         };
       }
