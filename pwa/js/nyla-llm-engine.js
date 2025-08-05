@@ -8,8 +8,11 @@ class NYLALLMEngine {
     this.engine = null;
     this.isInitialized = false;
     this.isLoading = false;
+    
+    // Detect device type and select appropriate model
+    this.deviceInfo = this.detectDevice();
     this.modelConfig = {
-      model: "Phi-3-mini-4k-instruct-q4f16_1-MLC", // Optimized for M2 chip performance
+      model: this.selectModel(),
       temperature: 0.5,      // Reduced for more focused responses
       max_tokens: 300,       // Increased to allow complete JSON with followup suggestions
       top_p: 0.8,           // Reduced for more focused responses
@@ -26,6 +29,66 @@ class NYLALLMEngine {
     this.isEngineReady = false;
     this.isEngineWarmedUp = false;
     this.engineCreatedAt = null;
+  }
+
+  /**
+   * Detect device type and capabilities
+   */
+  detectDevice() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isAndroid = userAgent.includes('android');
+    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    
+    // Check if running as PWA
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                  window.navigator.standalone === true ||
+                  document.referrer.includes('android-app://');
+    
+    // Check if mobile browser (not extension)
+    const isMobilePWA = isMobile && (isPWA || !window.chrome?.runtime);
+    
+    // Debug logging
+    console.log('🔍 NYLA LLM: Device Detection Debug:');
+    console.log('  - userAgent:', userAgent);
+    console.log('  - isAndroid:', isAndroid);
+    console.log('  - isIOS:', isIOS);
+    console.log('  - isMobile:', isMobile);
+    console.log('  - isPWA (display-mode):', window.matchMedia('(display-mode: standalone)').matches);
+    console.log('  - isPWA (navigator.standalone):', window.navigator.standalone);
+    console.log('  - isPWA (referrer):', document.referrer.includes('android-app://'));
+    console.log('  - isPWA (combined):', isPWA);
+    console.log('  - chrome.runtime exists:', !!window.chrome?.runtime);
+    console.log('  - isMobilePWA (final):', isMobilePWA);
+    
+    return {
+      isAndroid,
+      isIOS,
+      isMobile,
+      isPWA,
+      isMobilePWA,
+      userAgent
+    };
+  }
+
+  /**
+   * Select appropriate model based on device capabilities
+   */
+  selectModel() {
+    console.log('🎯 NYLA LLM: Model Selection Debug:');
+    console.log('  - deviceInfo.isMobilePWA:', this.deviceInfo.isMobilePWA);
+    console.log('  - deviceInfo.isMobile:', this.deviceInfo.isMobile);
+    console.log('  - deviceInfo.isPWA:', this.deviceInfo.isPWA);
+    console.log('  - deviceInfo.isAndroid:', this.deviceInfo.isAndroid);
+    
+    if (this.deviceInfo.isMobilePWA) {
+      console.log('✅ NYLA LLM: Mobile PWA detected - using f32 model for better compatibility');
+      return "Phi-3-mini-4k-instruct-q4f32_1-MLC"; // f32 model for mobile compatibility
+    } else {
+      console.log('❌ NYLA LLM: Not mobile PWA - using f16 model for optimal performance');
+      console.log('  - Reason: isMobilePWA = ' + this.deviceInfo.isMobilePWA);
+      return "Phi-3-mini-4k-instruct-q4f16_1-MLC"; // f16 model for desktop performance
+    }
   }
 
   /**
@@ -66,13 +129,24 @@ class NYLALLMEngine {
         };
       }
       
-      // Check for Android-specific f16 extension issue
-      if (isAndroid) {
+      // Check for Android-specific f16 extension issue (only if using f16 model)
+      if (isAndroid && this.modelConfig.model.includes('f16')) {
         try {
           const device = await adapter.requestDevice();
           
-          // Test if device supports basic shader creation (this will catch f16 extension errors)
+          // Set up error event listener to catch uncaptured WebGPU errors
+          let webgpuError = null;
+          const errorHandler = (event) => {
+            console.warn('NYLA LLM: Captured WebGPU uncaptured error:', event.error);
+            webgpuError = event.error;
+          };
+          
+          device.addEventListener('uncapturederror', errorHandler);
+          
+          // Test if device supports f16 extension (this will catch the actual f16 extension errors)  
           const testShader = `
+            enable f16;
+            
             @vertex fn vs_main() -> @builtin(position) vec4<f32> {
               return vec4<f32>(0.0, 0.0, 0.0, 1.0);
             }
@@ -82,7 +156,36 @@ class NYLALLMEngine {
           `;
           
           const shaderModule = device.createShaderModule({ code: testShader });
+          
+          // Wait a bit for any async WebGPU errors to be triggered
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Clean up
+          device.removeEventListener('uncapturederror', errorHandler);
           device.destroy();
+          
+          // Check if we caught any WebGPU errors
+          if (webgpuError) {
+            const errorMessage = webgpuError.message || webgpuError.toString();
+            console.warn('NYLA LLM: Android WebGPU uncaptured error detected:', errorMessage);
+            
+            if (errorMessage.includes('f16')) {
+              return {
+                supported: false,
+                reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using rule-based responses instead.`
+              };
+            } else if (errorMessage.includes('WGSL') || errorMessage.includes('shader')) {
+              return {
+                supported: false,
+                reason: `Android WebGPU shader compilation failed: ${errorMessage}. This indicates WebGPU compatibility issues on this device.`
+              };
+            } else {
+              return {
+                supported: false,
+                reason: `Android WebGPU compatibility issue: ${errorMessage}. Using rule-based responses.`
+              };
+            }
+          }
           
           console.log('NYLA LLM: ✅ Android WebGPU compatibility test passed');
           return { supported: true };
@@ -139,6 +242,26 @@ class NYLALLMEngine {
 
     this.isLoading = true;
     
+    // Set up global WebGPU error handler to catch f16 extension errors during WebLLM initialization
+    let webllmInitError = null;
+    const globalWebGPUErrorHandler = (event) => {
+      const error = event.error;
+      if (error && error.message && error.message.includes('f16')) {
+        console.warn('NYLA LLM: Global WebGPU f16 extension error detected during WebLLM init:', error.message);
+        webllmInitError = error;
+      }
+    };
+    
+    // Add global error listener
+    if (navigator.gpu) {
+      window.addEventListener('unhandledrejection', (event) => {
+        if (event.reason && event.reason.message && event.reason.message.includes('f16')) {
+          console.warn('NYLA LLM: Unhandled f16 extension error during WebLLM init:', event.reason.message);
+          webllmInitError = event.reason;
+        }
+      });
+    }
+    
     if (isPreload) {
       console.log('NYLA LLM: 🔄 Background preload - users can continue using PWA while this loads');
     }
@@ -146,7 +269,8 @@ class NYLALLMEngine {
     try {
       console.log('NYLA LLM: Initializing WebLLM engine...');
       console.log('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
-      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (Phi-3-Mini q4f16_1 optimized for M2 chip)`);
+      console.log('NYLA LLM: Device detection:', this.deviceInfo);
+      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (${this.modelConfig.model.includes('f16') ? 'f16 precision for desktop' : 'f32 precision for mobile compatibility'})`);
       
       // Enhanced WebGPU compatibility check
       const compatibilityResult = await this.checkWebGPUCompatibility();
@@ -186,6 +310,11 @@ class NYLALLMEngine {
           }
         }
       });
+      
+      // Check if we caught any f16 extension errors during WebLLM initialization
+      if (webllmInitError) {
+        throw new Error(`WebLLM f16 extension error: ${webllmInitError.message}`);
+      }
       
       this.isInitialized = true;
       this.isLoading = false;
