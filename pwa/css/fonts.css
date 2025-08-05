@@ -1,0 +1,81 @@
+/* Roboto Font Definitions */
+
+/* Roboto Light - 300 */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2') format('woff2');
+}
+
+/* Roboto Regular - 400 */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2') format('woff2');
+}
+
+/* Roboto Medium - 500 */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2') format('woff2');
+}
+
+/* Roboto Bold - 700 */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2') format('woff2');
+}
+
+/* Force Roboto for NYLA conversation elements */
+.nyla-chat-container,
+.nyla-chat-container * {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Specific elements to ensure Roboto is applied */
+.nyla-messages,
+.message-content,
+.nyla-question-btn,
+.message-sender,
+.message-time,
+.nyla-typing-indicator,
+.typing-text,
+.loading-status,
+.progress-text,
+.loading-info,
+.loading-tip {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Set 16px font size for better readability */
+.message-content,
+.nyla-question-btn {
+  font-size: 16px !important;
+}
+
+/* Different font weights for different elements */
+.message-content {
+  font-weight: 400; /* Regular for message text */
+}
+
+.nyla-question-btn {
+  font-weight: 500; /* Medium for buttons */
+}
+
+.message-sender {
+  font-weight: 500; /* Medium for sender names */
+}
+
+.message-time {
+  font-weight: 300; /* Light for timestamps */
+}

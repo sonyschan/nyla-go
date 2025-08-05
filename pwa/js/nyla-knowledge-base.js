@@ -69,6 +69,91 @@ class NYLAKnowledgeBase {
    */
   createStaticKnowledgeBase() {
     return {
+      // Core NYLAGo Purpose and How It Works
+      nylagoCore: {
+        content: {
+          primaryPurpose: 'NYLAGo is a user interface that helps create NYLA transfer commands for cryptocurrency transfers on X.com',
+          howItWorks: {
+            overview: 'NYLAGo generates commands → User posts on X.com → NYLA system executes transfers',
+            sendTab: 'User fills form with recipient and amount → NYLAGo generates command → Creates X.com post → User shares it',
+            receiveTab: 'User sets amount → NYLAGo creates QR code → Others scan to get payment link',
+            raidTab: 'Community engagement with NYLA-related X.com posts. Access via "..." button on bottom-right of screen',
+            important: 'The transfer is NOT done by NYLAGo - it\'s done by NYLA when command is posted on X.com'
+          },
+          exampleFlow: {
+            step1: 'User wants to send 100 NYLA to @friend',
+            step2: 'NYLAGo creates command: "Hey @AgentNyla transfer 100 $NYLA @friend"',
+            step3: 'User posts this on X.com',
+            step4: 'NYLA detects the X.com post and executes the transfer'
+          }
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // Supported Blockchains - CRITICAL: Only these 3!
+      supportedBlockchains: {
+        content: {
+          supported: {
+            solana: { name: 'Solana', description: 'Fastest and cheapest' },
+            ethereum: { name: 'Ethereum', description: 'Most popular' },
+            algorand: { name: 'Algorand', description: 'Eco-friendly' }
+          },
+          notSupported: ['Base', 'Polygon', 'Arbitrum', 'Optimism', 'BSC', 'any other chains'],
+          summary: 'NYLA supports 3 blockchains: Solana (fastest and cheapest), Ethereum (most popular), Algorand (eco-friendly). Choose based on your priorities!'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // Platform Limitations
+      platformLimitations: {
+        content: {
+          supported: 'NYLAGo currently ONLY supports X.com transfer commands',
+          notSupported: 'Telegram transfer commands are NOT yet supported by NYLAGo',
+          explanation: 'If users ask about Telegram transfers, explain that NYLAGo focuses on X.com integration',
+          note: 'NYLA system may support Telegram separately, but NYLAGo interface does not generate Telegram commands'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // Raid Feature Details
+      raidFeature: {
+        content: {
+          purpose: 'Community engagement with NYLA-related X.com posts to create positive vibes',
+          content: 'Features posts from the NYLA team, community members, or anyone mentioning $NYLA',
+          access: 'Click the "..." (three dots) button on the bottom-right of the screen',
+          important: 'NOT for creating raids or attacks - it\'s for SUPPORTING and ENGAGING with NYLA content',
+          actions: 'Users can like, retweet, and comment on featured posts directly from NYLAGo'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // QR Code Functionality
+      qrCodes: {
+        content: {
+          purpose: 'Convert X.com payment links into scannable QR codes',
+          benefits: 'Make it easy to share payment requests',
+          usage: 'Anyone can scan and pay through their phone'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // NYLA Commands
+      nylaCommands: {
+        content: {
+          mainCommands: ['Transfer', 'Swap'],
+          description: 'The most used NYLA commands are Transfer and Swap. You can easily find these 2 features in NYLAGo to transfer or swap tokens.',
+          transferCommand: 'Transfer tokens between users',
+          swapCommand: 'Swap between different cryptocurrencies'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
       about: {
         content: {
           description: 'NYLA is an AI agent designed for cryptocurrency transfers and community building on social platforms.',
@@ -409,7 +494,18 @@ class NYLAKnowledgeBase {
     for (const [source, data] of Object.entries(this.knowledgeBase)) {
       if (data.content && typeof data.content === 'object') {
         const content = JSON.stringify(data.content).toLowerCase();
-        if (content.includes(queryLower)) {
+        
+        // Split query into individual terms and check each
+        const queryTerms = queryLower.split(' ');
+        let matches = 0;
+        
+        for (const term of queryTerms) {
+          if (term.length > 2 && content.includes(term)) { // Only check terms longer than 2 chars
+            matches++;
+          }
+        }
+        
+        if (matches > 0 || content.includes(queryLower)) {
           results.push({
             source,
             data: data.content,

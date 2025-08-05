@@ -29,6 +29,99 @@ class NYLALLMEngine {
   }
 
   /**
+   * Check WebGPU compatibility including device-specific issues
+   */
+  async checkWebGPUCompatibility() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isAndroid = userAgent.includes('android');
+    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    
+    // Basic WebGPU support check
+    if (!navigator.gpu) {
+      if (isAndroid) {
+        return {
+          supported: false,
+          reason: 'Android WebGPU not available - Chrome for Android with WebGPU flag required. LLM will use rule-based responses.'
+        };
+      } else if (isMobile) {
+        return {
+          supported: false,
+          reason: 'Mobile WebGPU not supported - LLM requires WebGPU for inference. Using rule-based responses.'
+        };
+      } else {
+        return {
+          supported: false,
+          reason: 'WebGPU not supported - required for in-browser AI inference. Try Chrome/Edge with WebGPU enabled.'
+        };
+      }
+    }
+    
+    try {
+      // Try to get a WebGPU adapter to test actual compatibility
+      const adapter = await navigator.gpu.requestAdapter();
+      if (!adapter) {
+        return {
+          supported: false,
+          reason: 'WebGPU adapter not available - GPU may not support required features. Using rule-based responses.'
+        };
+      }
+      
+      // Check for Android-specific f16 extension issue
+      if (isAndroid) {
+        try {
+          const device = await adapter.requestDevice();
+          
+          // Test if device supports basic shader creation (this will catch f16 extension errors)
+          const testShader = `
+            @vertex fn vs_main() -> @builtin(position) vec4<f32> {
+              return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+            }
+            @fragment fn fs_main() -> @location(0) vec4<f32> {
+              return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+            }
+          `;
+          
+          const shaderModule = device.createShaderModule({ code: testShader });
+          device.destroy();
+          
+          console.log('NYLA LLM: ✅ Android WebGPU compatibility test passed');
+          return { supported: true };
+          
+        } catch (shaderError) {
+          console.warn('NYLA LLM: Android WebGPU shader compatibility failed:', shaderError.message);
+          
+          // Provide specific error message for f16 extension issue
+          if (shaderError.message.includes('f16')) {
+            return {
+              supported: false,
+              reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using rule-based responses instead.`
+            };
+          } else if (shaderError.message.includes('WGSL') || shaderError.message.includes('shader')) {
+            return {
+              supported: false,
+              reason: `Android WebGPU shader compilation failed: ${shaderError.message}. This indicates WebGPU compatibility issues on this device.`
+            };
+          } else {
+            return {
+              supported: false,
+              reason: `Android WebGPU compatibility issue: ${shaderError.message}. Using rule-based responses.`
+            };
+          }
+        }
+      }
+      
+      return { supported: true };
+      
+    } catch (error) {
+      console.warn('NYLA LLM: WebGPU compatibility test failed:', error.message);
+      return {
+        supported: false,
+        reason: `WebGPU compatibility issue - ${error.message}. Using rule-based responses.`
+      };
+    }
+  }
+
+  /**
    * Preload and initialize WebLLM engine in background
    * Call this when PWA starts to avoid first-click delay
    */
@@ -55,19 +148,10 @@ class NYLALLMEngine {
       console.log('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
       console.log(`NYLA LLM: Model: ${this.modelConfig.model} (Phi-3-Mini q4f16_1 optimized for M2 chip)`);
       
-      // Check WebGPU support first
-      if (!navigator.gpu) {
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isAndroid = userAgent.includes('android');
-        const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-        
-        if (isAndroid) {
-          throw new Error('WebGPU not supported on Android - LLM requires WebGPU for inference');
-        } else if (isMobile) {
-          throw new Error('WebGPU not supported on this mobile device - LLM requires WebGPU for inference');
-        } else {
-          throw new Error('WebGPU not supported - required for in-browser AI inference. Try Chrome/Edge with WebGPU enabled.');
-        }
+      // Enhanced WebGPU compatibility check
+      const compatibilityResult = await this.checkWebGPUCompatibility();
+      if (!compatibilityResult.supported) {
+        throw new Error(compatibilityResult.reason);
       }
       console.log('NYLA LLM: ✅ WebGPU detected');
       
@@ -395,7 +479,7 @@ class NYLALLMEngine {
     { 
       "text": "<300 chars>", 
       "sentiment": "helpful|excited|friendly", 
-      "followUpSuggestions": [
+      "follow up suggestions": [
         { "text": "Short question?", "topic": "topic" }
       ] 
     }. Keep followUps brief. If beyond knowledge, say: "I need to study more."`
