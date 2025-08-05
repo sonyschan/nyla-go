@@ -141,7 +141,6 @@ class NYLAAssistantUIV2 {
             <img src="./icons/NYLA.png" alt="NYLA">
           </div>
           <p>NYLA is starting up...</p>
-          <div class="nyla-loading-dots"></div>
         </div>
       `;
       
@@ -323,6 +322,10 @@ class NYLAAssistantUIV2 {
       clearInterval(this.loadingInterval);
       this.loadingInterval = null;
     }
+    // Remove loading screen class from messages container
+    if (this.elements.messagesContainer) {
+      this.elements.messagesContainer.classList.remove('loading-screen-active');
+    }
   }
   
   /**
@@ -347,13 +350,13 @@ class NYLAAssistantUIV2 {
         <div class="nyla-avatar loading">
           <img src="./icons/NYLA.png" alt="NYLA" style="width: 80px; height: 80px; border-radius: 50%;">
         </div>
-        <h3>🚀 Initializing NYLA AI Engine<span class="loading-dots"></span></h3>
+        <h3>🚀 Initializing NYLA AI Engine...</h3>
         <p class="loading-status">Loading language model for NYLA responses</p>
         <div class="loading-progress">
           <div class="progress-bar">
             <div class="progress-fill" id="llmProgressBar"></div>
           </div>
-          <p class="progress-text" id="llmProgressText">Preparing WebLLM<span class="loading-dots"></span></p>
+          <p class="progress-text" id="llmProgressText">Preparing WebLLM...</p>
         </div>
         <p class="loading-info">⏱️ First-time loading may take 1-3 minutes as the model downloads</p>
         <p class="loading-tip">💡 Subsequent visits will be much faster!</p>
@@ -361,6 +364,8 @@ class NYLAAssistantUIV2 {
     `;
     
     if (this.elements.messagesContainer) {
+      // Add class to hide scrollbars on parent container
+      this.elements.messagesContainer.classList.add('loading-screen-active');
       this.elements.messagesContainer.appendChild(loadingMessage);
     }
     
@@ -378,18 +383,21 @@ class NYLAAssistantUIV2 {
     if (!progressBar || !progressText) return;
     
     // Check LLM status every 500ms
-    const checkInterval = setInterval(async () => {
+    this.loadingInterval = setInterval(async () => {
       const status = this.conversation.llmEngine.getStatus();
       
-      if (status.initialized && status.warmedUp) {
+      if (status.initialized && status.warmedUp && !this.isWelcomeMessageShown) {
         // LLM is fully ready (warmed up)!
-        clearInterval(checkInterval);
+        console.log('NYLA UI V2: LLM fully ready, clearing interval and showing welcome');
+        clearInterval(this.loadingInterval);
+        this.loadingInterval = null;
         progressBar.style.width = '100%';
         progressText.innerHTML = '✅ AI Engine Ready - GPU Buffers Warmed Up!';
         
         // Wait a moment then show welcome
         setTimeout(async () => {
           if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.classList.remove('loading-screen-active');
             this.elements.messagesContainer.innerHTML = '';
           }
           await this.showEnhancedWelcomeMessage();
@@ -397,24 +405,33 @@ class NYLAAssistantUIV2 {
       } else if (status.initialized && !status.warmedUp) {
         // Initialized but still warming up
         progressBar.style.width = '95%';
-        progressText.innerHTML = '🔥 Warming up GPU buffers<span class="loading-dots"></span>';
+        progressText.textContent = '🔥 Warming up GPU buffers...';
       } else if (status.loading) {
         // Still loading - update progress
-        progressText.innerHTML = '🔄 Loading language model<span class="loading-dots"></span>';
+        progressText.textContent = '🔄 Loading language model...';
         // Animate progress bar
         const currentWidth = parseInt(progressBar.style.width) || 0;
         if (currentWidth < 90) {
           progressBar.style.width = (currentWidth + 5) + '%';
         }
-      } else {
-        // Failed or not started
-        clearInterval(checkInterval);
+      } else if (!this.isWelcomeMessageShown) {
+        // Failed or not started - only handle once
+        clearInterval(this.loadingInterval);
+        this.loadingInterval = null;
+        this.isWelcomeMessageShown = true;
         progressText.textContent = '⚠️ Using rule-based responses';
-        await this.showEnhancedWelcomeMessage();
+        // Clear loading screen and show welcome
+        setTimeout(async () => {
+          if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.classList.remove('loading-screen-active');
+            this.elements.messagesContainer.innerHTML = '';
+          }
+          await this.showEnhancedWelcomeMessage();
+        }, 1000);
       }
     }, 500);
     
-    // Timeout after 5 minutes
+    // Timeout after 10 minutes (increased for Android devices)
     setTimeout(() => {
       if (this.loadingInterval) {
         clearInterval(this.loadingInterval);
@@ -423,21 +440,28 @@ class NYLAAssistantUIV2 {
       if (!this.conversation.llmEngine.getStatus().initialized && !this.isWelcomeMessageShown) {
         progressText.textContent = '⏱️ Loading taking longer than expected...';
         this.isWelcomeMessageShown = true;
+        // Clear loading screen properly
+        if (this.elements.messagesContainer) {
+          this.elements.messagesContainer.classList.remove('loading-screen-active');
+          this.elements.messagesContainer.innerHTML = '';
+        }
         this.showEnhancedWelcomeMessage();
       }
-    }, 300000);
+    }, 600000); // 10 minutes for Android devices
   }
   
   /**
    * Show enhanced welcome message with timezone info
    */
   async showEnhancedWelcomeMessage() {
+    console.log('NYLA UI V2: showEnhancedWelcomeMessage called, isWelcomeMessageShown:', this.isWelcomeMessageShown);
     // Prevent duplicate welcome messages
     if (this.isWelcomeMessageShown) {
       console.log('NYLA UI V2: Welcome message already shown, skipping duplicate');
       return;
     }
     this.isWelcomeMessageShown = true;
+    console.log('NYLA UI V2: Showing welcome message...');
     const userTimezone = this.conversation.userProfile?.timezone || 'UTC';
     const localTime = this.conversation.userProfile?.localTime || new Date().toLocaleString();
     const hour = new Date(localTime).getHours();
@@ -1376,7 +1400,6 @@ class NYLAAssistantUIV2 {
             <img src="./icons/NYLA.png" alt="NYLA">
           </div>
           <p>NYLA is starting up...</p>
-          <div class="nyla-loading-dots"></div>
         </div>
       `;
       
