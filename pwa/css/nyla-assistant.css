@@ -812,8 +812,10 @@
 @media screen and (max-width: 768px) {
   .nyla-llm-loading {
     overflow: hidden !important;
-    height: 100vh; /* Use full viewport height */
-    min-height: auto;
+    height: auto; /* Auto height for mobile */
+    min-height: 350px; /* Minimum height for mobile */
+    max-height: calc(100vh - 100px); /* Prevent overflow on mobile */
+    padding: 16px; /* Reduce padding on mobile */
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
   }
@@ -826,15 +828,98 @@
   
   .nyla-llm-loading .llm-loading-content {
     overflow: hidden !important;
-    max-height: 90vh; /* Prevent content overflow */
+    max-height: none; /* Remove height restriction */
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+    padding: 16px; /* Add padding for mobile */
   }
   
   .nyla-llm-loading .llm-loading-content::-webkit-scrollbar {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+  }
+  
+  /* Mobile-specific loading content sizing */
+  .llm-loading-content h3 {
+    font-size: 20px;
+    margin: 16px 0 8px;
+  }
+  
+  .llm-loading-content .nyla-avatar.loading img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loading-status {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  
+  .loading-progress {
+    margin: 16px 0;
+  }
+  
+  .progress-bar {
+    height: 16px;
+  }
+  
+  .progress-text {
+    font-size: 13px;
+    margin: 8px 0;
+  }
+  
+  .loading-info,
+  .loading-tip {
+    font-size: 13px;
+    margin: 8px 0;
+  }
+}
+
+/* Extra small mobile devices - specific loading screen fixes */
+@media screen and (max-width: 480px) {
+  .nyla-llm-loading {
+    min-height: 300px;
+    padding: 12px;
+  }
+  
+  .nyla-llm-loading .llm-loading-content {
+    padding: 12px;
+  }
+  
+  .llm-loading-content h3 {
+    font-size: 18px;
+    margin: 12px 0 6px;
+  }
+  
+  .llm-loading-content .nyla-avatar.loading img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .loading-status {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .loading-progress {
+    margin: 12px 0;
+  }
+  
+  .progress-bar {
+    height: 14px;
+  }
+  
+  .progress-text {
+    font-size: 12px;
+    margin: 6px 0;
+  }
+  
+  .loading-info,
+  .loading-tip {
+    font-size: 12px;
+    margin: 6px 0;
+    line-height: 1.4;
   }
 }
 
