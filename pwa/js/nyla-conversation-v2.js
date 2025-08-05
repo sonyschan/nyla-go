@@ -213,18 +213,38 @@ class NYLAConversationManagerV2 {
       const shouldUseLLM = this.shouldUseLLM(questionId, questionText);
       console.log('NYLA Conversation V2: Should use LLM:', shouldUseLLM, 'for question:', questionId);
       
-      if (shouldUseLLM && llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp) {
-        console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
-        console.log('NYLA Conversation V2: LLM Status Details:', llmStatus);
+      // Enhanced condition checking with detailed logging
+      const llmConditionCheck = {
+        shouldUseLLM: shouldUseLLM,
+        llmInitialized: llmStatus.initialized,
+        llmNotLoading: !llmStatus.loading,
+        llmWarmedUp: llmStatus.warmedUp,
+        overallCondition: shouldUseLLM && llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp
+      };
+      
+      console.log('NYLA Conversation V2: 🔍 LLM Condition Check:', llmConditionCheck);
+      console.log('NYLA Conversation V2: 📊 Full LLM Status:', llmStatus);
+      
+      // Check for Android debugging - try LLM even if not fully warmed up
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const shouldForceDebug = isMobile && shouldUseLLM && llmStatus.initialized && !llmStatus.loading;
+      
+      if (llmConditionCheck.overallCondition || shouldForceDebug) {
+        if (shouldForceDebug) {
+          console.log('NYLA Conversation V2: 🔧 ANDROID DEBUG: Forcing LLM attempt even if not warmed up');
+        } else {
+          console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
+        }
         response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
       } else {
-        console.log('NYLA Conversation V2: ⚠️ Using rule-based system');
-        console.log('NYLA Conversation V2: Why not LLM?', {
-          shouldUseLLM,
-          llmInitialized: llmStatus.initialized,
-          llmLoading: llmStatus.loading,
-          llmReady: llmStatus.ready,
-          llmWarmedUp: llmStatus.warmedUp
+        console.log('NYLA Conversation V2: ⚠️ Using rule-based system - LLM conditions not met');
+        console.log('NYLA Conversation V2: 🚨 FAILING CONDITIONS:', {
+          'shouldUseLLM (always true)': shouldUseLLM ? '✅' : '❌',
+          'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
+          'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
+          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌',
+          'isMobile': isMobile ? '✅' : '❌',
+          'shouldForceDebug': shouldForceDebug ? '✅' : '❌'
         });
         
         // Special handling when engine is initializing but not warmed up
@@ -302,6 +322,22 @@ class NYLAConversationManagerV2 {
    * Now uses dynamic topic identification instead of hardcoded topics
    */
   async processWithLLM(questionId, questionText, identifiedTopics, streamCallback = null) {
+    console.log('🚀 NYLA Conversation V2: === processWithLLM CALLED ===');
+    console.log('NYLA Conversation V2: LLM processing started for:', questionText);
+    console.log('NYLA Conversation V2: QuestionId:', questionId);
+    console.log('NYLA Conversation V2: Identified topics:', identifiedTopics);
+    console.log('NYLA Conversation V2: Has stream callback:', !!streamCallback);
+    
+    // Check LLM engine status before proceeding
+    const llmStatus = this.llmEngine.getStatus();
+    console.log('NYLA Conversation V2: LLM Engine Status at start:', {
+      initialized: llmStatus.initialized,
+      loading: llmStatus.loading,
+      ready: llmStatus.ready,
+      warmedUp: llmStatus.warmedUp,
+      model: llmStatus.model
+    });
+    
     // Use pre-identified topics from processQuestion method
     const relevantKeys = identifiedTopics || this.identifyRelevantKnowledgeKeys(questionText);
     
