@@ -90,7 +90,8 @@ class NYLAKnowledgeTracker {
     // Check for concept keywords
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
-      'multi-blockchain': ['blockchain', 'solana', 'ethereum', 'algorand', 'multi-chain'],
+      'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
@@ -161,7 +162,8 @@ class NYLAKnowledgeTracker {
   calculateTotalKeywords() {
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
-      'multi-blockchain': ['blockchain', 'solana', 'ethereum', 'algorand', 'multi-chain'],
+      'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
@@ -537,7 +539,8 @@ class NYLAKnowledgeTracker {
     // Add all concept keywords
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
-      'multi-blockchain': ['blockchain', 'solana', 'ethereum', 'algorand', 'multi-chain'],
+      'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
