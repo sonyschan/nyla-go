@@ -31,7 +31,7 @@ class NYLAKnowledgeTracker {
       concepts: [
         'crypto-transfers', 'multi-blockchain', 'payment-requests', 'qr-generation',
         'community-building', 'social-viral', 'token-economics', 'defi-integration',
-        'user-experience', 'mobile-first', 'web3-adoption', 'cross-chain'
+        'user-experience', 'mobile-first', 'web3-adoption'
       ],
       features: [
         'send-tokens', 'receive-payments', 'generate-qr', 'scan-qr', 'share-request',
@@ -91,7 +91,7 @@ class NYLAKnowledgeTracker {
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
       'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
-      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
@@ -101,7 +101,7 @@ class NYLAKnowledgeTracker {
       'user-experience': ['easy', 'simple', 'user', 'experience', 'interface'],
       'mobile-first': ['mobile', 'phone', 'app', 'pwa', 'responsive'],
       'web3-adoption': ['web3', 'adoption', 'mainstream', 'accessible'],
-      'cross-chain': ['cross-chain', 'bridge', 'bridging', 'interoperability', 'cross-blockchain', 'chain-to-chain']
+      'nyla-lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul']
     };
     
     for (const [concept, keywords] of Object.entries(conceptMappings)) {
@@ -134,7 +134,7 @@ class NYLAKnowledgeTracker {
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
       'custom-tokens': ['custom', 'add token', 'manage'],
-      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team', 'shax_btc', 'btcberries', 'chiefz_sol', 'h2crypto_eth', 'co-founder']
     };
     
     for (const [feature, keywords] of Object.entries(featureMappings)) {
@@ -164,7 +164,7 @@ class NYLAKnowledgeTracker {
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
       'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
-      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
@@ -174,7 +174,7 @@ class NYLAKnowledgeTracker {
       'user-experience': ['easy', 'simple', 'user', 'experience', 'interface'],
       'mobile-first': ['mobile', 'phone', 'app', 'pwa', 'responsive'],
       'web3-adoption': ['web3', 'adoption', 'mainstream', 'accessible'],
-      'cross-chain': ['cross-chain', 'bridge', 'bridging', 'interoperability', 'cross-blockchain', 'chain-to-chain']
+      'nyla-lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul']
     };
     
     const featureMappings = {
@@ -191,7 +191,7 @@ class NYLAKnowledgeTracker {
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
       'custom-tokens': ['custom', 'add token', 'manage'],
-      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team', 'shax_btc', 'btcberries', 'chiefz_sol', 'h2crypto_eth', 'co-founder']
     };
     
     // Collect all unique keywords
@@ -245,6 +245,9 @@ class NYLAKnowledgeTracker {
    * Check if user should receive engagement prompt
    */
   shouldShowEngagementPrompt(isGreetingActive = false) {
+    // DISABLED FOR DEVELOPMENT - Always return false to prevent work breaks
+    return false;
+    
     // Don't show if greeting is active
     if (isGreetingActive) return false;
     
@@ -257,10 +260,10 @@ class NYLAKnowledgeTracker {
     
     let probability = 0;
     
-    if (percentage >= 66) {
-      probability = 0.5; // 50% for 66%+ knowledge
-    } else if (percentage >= 33) {
-      probability = 0.33; // 33% for 33-65% knowledge
+    if (percentage >= 50) {
+      probability = 0.2; // 20% for 50%+ knowledge
+    } else if (percentage >= 30) {
+      probability = 0.1; // 10% for 30-50% knowledge
     }
     
     if (probability > 0 && Math.random() < probability) {
@@ -409,7 +412,7 @@ class NYLAKnowledgeTracker {
         knowledgeContext: {
           percentage,
           breakdown,
-          trigger: percentage >= 66 ? '66%+ knowledge' : '33%+ knowledge'
+          trigger: percentage >= 50 ? '50%+ knowledge' : '30%+ knowledge'
         }
       };
     }
@@ -423,7 +426,7 @@ class NYLAKnowledgeTracker {
       knowledgeContext: {
         percentage,
         breakdown,
-        trigger: percentage >= 66 ? '66%+ knowledge' : '33%+ knowledge'
+        trigger: percentage >= 50 ? '50%+ knowledge' : '30%+ knowledge'
       }
     };
   }
@@ -465,6 +468,10 @@ class NYLAKnowledgeTracker {
    * Check if NYLA is on work break
    */
   checkNYLAWorkStatus() {
+    // DISABLED FOR DEVELOPMENT - Clear any existing work breaks and always return not working
+    localStorage.removeItem('nyla_work_break');
+    return { isWorking: false };
+    
     const workBreak = localStorage.getItem('nyla_work_break');
     if (!workBreak) return { isWorking: false };
     
@@ -542,7 +549,7 @@ class NYLAKnowledgeTracker {
     const conceptMappings = {
       'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
       'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
-      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated', 'no-bridging'],
+      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated'],
       'payment-requests': ['request', 'receive', 'payment', 'invoice'],
       'qr-generation': ['qr', 'code', 'scan', 'generate'],
       'community-building': ['community', 'together', 'ecosystem', 'social'],
@@ -552,7 +559,7 @@ class NYLAKnowledgeTracker {
       'user-experience': ['easy', 'simple', 'user', 'experience', 'interface'],
       'mobile-first': ['mobile', 'phone', 'app', 'pwa', 'responsive'],
       'web3-adoption': ['web3', 'adoption', 'mainstream', 'accessible'],
-      'cross-chain': ['cross-chain', 'bridge', 'bridging', 'interoperability', 'cross-blockchain', 'chain-to-chain']
+      'nyla-lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul']
     };
     
     const featureMappings = {
@@ -569,7 +576,7 @@ class NYLAKnowledgeTracker {
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
       'custom-tokens': ['custom', 'add token', 'manage'],
-      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team', 'shax_btc', 'btcberries', 'chiefz_sol', 'h2crypto_eth', 'co-founder']
     };
     
     // Collect all unique keywords
@@ -604,8 +611,6 @@ class NYLAKnowledgeTracker {
       // Blockchain diversity
       'algorand': "What are the benefits of using Algorand blockchain?",
       'multi-chain': "How does multi-chain functionality work?",
-      'bridge': "What cross-chain bridging features are available?",
-      'interoperability': "How does NYLA handle blockchain interoperability?",
       
       // Advanced features  
       'invoice': "Can I create invoice-style payment requests?",
@@ -643,14 +648,31 @@ class NYLAKnowledgeTracker {
       'founder': "Who founded NYLA?",
       'developer': "Who are the developers of NYLAGo?",
       'creator': "Who created NYLA?",
-      'built': "Who built NYLAGo?"
+      'built': "Who built NYLAGo?",
+      
+      // NYLA Lore and Culture
+      'lore': "What's the story behind NYLA?",
+      'story': "Tell me NYLA's origin story",
+      'background': "What's NYLA's background and history?",
+      'journey': "What has NYLA's development journey been like?",
+      'mission': "What is NYLA's mission?",
+      'vision': "What's NYLA's vision for the future?",
+      'values': "What values does NYLA stand for?",
+      'culture': "What's the culture like in NYLA community?",
+      'spiritual': "What's the spiritual meaning behind NYLA?",
+      'meaning': "What's the deeper meaning of NYLA?",
+      'purpose': "What's NYLA's ultimate purpose?",
+      'philosophy': "What philosophy drives NYLA?",
+      'origin': "How did NYLA originally start?",
+      'inspiration': "What was the inspiration behind NYLA?",
+      'soul': "What's the soul of the NYLA project?"
     };
     
     const targetedQuestions = [];
     
     // Prioritize unmapped keywords by importance
     const priorityKeywords = unmappedKeywords.filter(keyword => 
-      ['algorand', 'defi', 'telegram', 'pwa', 'economics', 'mainstream', 'bridge', 'custom', 'team', 'founder', 'developer', 'creator', 'built'].includes(keyword)
+      ['algorand', 'defi', 'telegram', 'pwa', 'economics', 'mainstream', 'custom', 'team', 'founder', 'developer', 'creator', 'built', 'lore', 'story', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy'].includes(keyword)
     );
     
     const keywordsToTarget = priorityKeywords.length > 0 ? priorityKeywords : unmappedKeywords.slice(0, 8);

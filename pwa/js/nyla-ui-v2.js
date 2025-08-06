@@ -125,7 +125,7 @@ class NYLAAssistantUIV2 {
         nylaTab = document.createElement('div');
         nylaTab.id = 'nylaTab';
         nylaTab.className = 'tab-content';
-        nylaTab.setAttribute('data-section-title', '🤖 NYLA AI Assistant');
+        nylaTab.setAttribute('data-section-title', '❤️ NYLA AI Assistant');
         
         // Find tab content area and add it
         const mainContent = document.querySelector('.main-content') || document.body;
@@ -218,6 +218,8 @@ class NYLAAssistantUIV2 {
     this.elements.typingIndicator = document.getElementById('nylaTyping');
     this.elements.stickerContainer = document.getElementById('nylaStickerContainer');
     this.elements.sticker = document.getElementById('nylaSticker');
+    this.elements.userInputContainer = document.getElementById('nylaUserInputContainer');
+    this.elements.userInput = document.getElementById('nylaUserInput');
     this.elements.conversationCount = document.getElementById('conversationCount');
     
     // Log binding results for debugging
@@ -1433,6 +1435,9 @@ class NYLAAssistantUIV2 {
       this.elements.questionsContainer.appendChild(button);
     });
 
+    // Enable buttons after displaying new questions
+    this.enableQuestionButtons();
+
     // Animate buttons in
     this.animateQuestionsIn();
   }
@@ -1499,15 +1504,15 @@ class NYLAAssistantUIV2 {
     const existingMessages = chatContainer.querySelector('.nyla-messages');
     const preservedMessages = existingMessages ? existingMessages.innerHTML : '';
     
-    // Check if development mode is enabled
+    // Check if debug mode is enabled
     const urlParams = new URLSearchParams(window.location.search);
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const isDevelopmentMode = !isMobile && (urlParams.get('dev') === 'true' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    const isDevelopmentMode = !isMobile && urlParams.get('debug') === 'true';
     
     // Now populate the chat container with V2 structure (no header for cleaner exploration)
     console.log('NYLA UI V2: Populating chat container with V2 structure...');
     chatContainer.innerHTML = `
-      <!-- Development Mode Input (only in dev mode) -->
+      <!-- Debug Mode Input (only when ?debug=true) -->
       ${isDevelopmentMode ? `
         <div class="nyla-dev-input-container" style="
           background: #2a2a2a; 
@@ -1518,7 +1523,7 @@ class NYLAAssistantUIV2 {
           border-left: 4px solid #FF6B35;
         ">
           <div style="color: #FF6B35; font-size: 12px; font-weight: 500; margin-bottom: 8px;">
-            🔧 DEVELOPMENT MODE - Test LLM Responses
+            🔧 DEBUG MODE - Test LLM Responses
           </div>
           <input 
             type="text" 
@@ -1561,6 +1566,31 @@ class NYLAAssistantUIV2 {
         <!-- Question buttons will be dynamically added here -->
       </div>
       
+      <!-- User Comment Box (50%+ knowledge only) -->
+      <div class="nyla-user-input-container" id="nylaUserInputContainer" style="display: none;">
+        <div class="user-input-header" style="color: #FF6B35; font-size: 14px; font-weight: 500; margin-bottom: 8px;">
+          💬 Free Talk - Ask me anything!
+        </div>
+        <input 
+          type="text" 
+          id="nylaUserInput" 
+          placeholder="You've unlocked free talk! Ask me anything about NYLA..."
+          style="
+            width: 100%; 
+            background: #1a1a1a; 
+            border: 1px solid #555; 
+            border-radius: 4px; 
+            padding: 8px 12px; 
+            color: white; 
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            border-left: 3px solid #FF6B35;
+          "
+        />
+        <div style="font-size: 12px; color: #888; margin-top: 4px;">
+          Press Enter to send your message directly to NYLA
+        </div>
+      </div>
       
       <!-- Sticker Display -->
       <div class="nyla-sticker-container" id="nylaStickerContainer" style="display: none;">
@@ -1602,7 +1632,7 @@ class NYLAAssistantUIV2 {
       const infoPanelHTML = `
         <div class="nyla-info-panel" id="nylaInfoPanel">
           <div class="nyla-stats">
-            <span class="stats-text" id="knowledgeStats" style="display: none;">0% NYLA knowledge gained</span>
+            <span class="stats-text" id="knowledgeStats" style="display: block; color: #FF6B35;">Checking NYLA knowledge gained..</span>
           </div>
         </div>
       `;
@@ -1610,7 +1640,7 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: ✅ Info panel added (knowledge stats only)');
     }
     
-    // Set up development input event listener if in development mode
+    // Set up debug input event listener if in debug mode
     const devInput = document.getElementById('nylaDevInput');
     if (devInput) {
       devInput.addEventListener('keypress', (e) => {
@@ -1618,14 +1648,45 @@ class NYLAAssistantUIV2 {
           const question = e.target.value.trim();
           console.log('NYLA Dev: Testing question:', question);
           
+          // Add the user's question to the conversation UI
+          this.addUserMessage(question);
+          
+          // Show typing indicator
+          this.showTyping();
+          
           // Process the question through the conversation system
           if (this.conversation && this.conversation.processQuestion) {
-            this.conversation.processQuestion(question, 'general')
-              .then(() => {
-                console.log('NYLA Dev: Question processed successfully');
+            this.conversation.processQuestion('dev-input', question)
+              .then(async (response) => {
+                console.log('NYLA Dev: Question processed successfully', response);
+                
+                // Hide typing indicator
+                this.hideTyping();
+                
+                // Display NYLA's response
+                if (response && response.answer) {
+                  await this.displayMessage(response.answer, 'nyla');
+                  
+                  // Show sticker if available
+                  if (response.sticker) {
+                    this.showSticker(response.sticker);
+                  }
+                  
+                  // Display follow-up questions
+                  if (response.followUps && response.followUps.length > 0) {
+                    this.displayQuestions(response.followUps);
+                  }
+                }
               })
-              .catch(error => {
+              .catch(async error => {
                 console.error('NYLA Dev: Question processing failed:', error);
+                this.hideTyping();
+                
+                // Show error message
+                await this.displayMessage({ 
+                  text: "Sorry, I encountered an error processing your question. Please try again.", 
+                  sentiment: 'sorry' 
+                }, 'nyla');
               });
           }
           
@@ -1634,7 +1695,65 @@ class NYLAAssistantUIV2 {
         }
       });
       
-      console.log('NYLA UI V2: ✅ Development input event listener added');
+      console.log('NYLA UI V2: ✅ Debug input event listener added');
+    }
+    
+    // Set up user input event listener for free talk (50%+ knowledge users)
+    const userInput = document.getElementById('nylaUserInput');
+    if (userInput) {
+      userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+          const question = e.target.value.trim();
+          console.log('NYLA User Input: Free talk question:', question);
+          
+          // Add the user's question to the conversation UI
+          this.addUserMessage(question);
+          
+          // Show typing indicator
+          this.showTyping();
+          
+          // Process the question through the conversation system
+          if (this.conversation && this.conversation.processQuestion) {
+            this.conversation.processQuestion('user-free-talk', question)
+              .then(async (response) => {
+                console.log('NYLA User Input: Question processed successfully', response);
+                
+                // Hide typing indicator
+                this.hideTyping();
+                
+                // Display NYLA's response
+                if (response && response.answer) {
+                  await this.displayMessage(response.answer, 'nyla');
+                  
+                  // Show sticker if available
+                  if (response.sticker) {
+                    this.showSticker(response.sticker);
+                  }
+                  
+                  // Display follow-up questions
+                  if (response.followUps && response.followUps.length > 0) {
+                    this.displayQuestions(response.followUps);
+                  }
+                }
+              })
+              .catch(async error => {
+                console.error('NYLA User Input: Question processing failed:', error);
+                this.hideTyping();
+                
+                // Show error message
+                await this.displayMessage({ 
+                  text: "Sorry, I encountered an error processing your question. Please try again.", 
+                  sentiment: 'sorry' 
+                }, 'nyla');
+              });
+          }
+          
+          // Clear the input
+          e.target.value = '';
+        }
+      });
+      
+      console.log('NYLA UI V2: ✅ User input event listener added');
     }
   }
 
@@ -1647,15 +1766,39 @@ class NYLAAssistantUIV2 {
     const stats = this.conversation.getKnowledgeStats();
     const knowledgeStatsEl = document.getElementById('knowledgeStats');
     
-    // Only show knowledge percentage if there's meaningful progress
-    if (knowledgeStatsEl && stats && stats.percentage > 0) {
-      knowledgeStatsEl.textContent = `${stats.percentage}% NYLA knowledge gained`;
+    // Always show knowledge percentage, even if it's 0%
+    if (knowledgeStatsEl && stats && typeof stats.percentage === 'number') {
+      let displayText = `${stats.percentage}% NYLA knowledge gained`;
+      
+      // Add unlock indicator for users below 50%
+      if (stats.percentage < 50) {
+        displayText += ' [Free talk unlock at 50%]';
+      }
+      
+      knowledgeStatsEl.textContent = displayText;
       knowledgeStatsEl.style.display = 'block';
       knowledgeStatsEl.style.color = '#FF6B35';
+      
+      // Show/hide user input box based on knowledge level
+      const userInputContainer = document.getElementById('nylaUserInputContainer');
+      if (userInputContainer) {
+        if (stats.percentage >= 50) {
+          userInputContainer.style.display = 'block';
+        } else {
+          userInputContainer.style.display = 'none';
+        }
+      }
     }
   }
 
   // ===== BASE UI METHODS (previously inherited from V1) =====
+
+  /**
+   * Add user message to the conversation UI
+   */
+  addUserMessage(text) {
+    this.displayMessage({ text }, 'user');
+  }
 
   /**
    * Display a message in the chat
@@ -1669,11 +1812,18 @@ class NYLAAssistantUIV2 {
       throw new Error('Messages container not initialized - UI structure may be incomplete');
     }
     
+    // Ensure message has text property
+    if (!message || typeof message.text === 'undefined') {
+      console.warn('NYLA UI V2: Message missing text property:', message);
+      message = { text: '' };
+    }
+    
     const messageElement = document.createElement('div');
     messageElement.className = `nyla-message nyla-message-${sender}`;
     
     const avatar = sender === 'nyla' ? '<img src="icons/NYLA.png" alt="NYLA" class="nyla-avatar-img">' : '👤';
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const messageText = String(message.text || '');
     
     messageElement.innerHTML = `
       <div class="message-header">
@@ -1681,8 +1831,8 @@ class NYLAAssistantUIV2 {
         <span class="message-sender">${sender === 'nyla' ? 'NYLA' : 'You'}</span>
         <span class="message-time">${timestamp}</span>
       </div>
-      <div class="message-content" data-text="${message.text}">
-        ${sender === 'nyla' ? '' : this.formatMessageText(message.text)}
+      <div class="message-content" data-text="${messageText.replace(/"/g, '&quot;')}">
+        ${sender === 'nyla' ? '' : this.formatMessageText(messageText)}
       </div>
     `;
 
@@ -1690,7 +1840,7 @@ class NYLAAssistantUIV2 {
 
     // Typing effect for NYLA messages
     if (sender === 'nyla') {
-      await this.typeMessage(messageElement.querySelector('.message-content'), message.text);
+      await this.typeMessage(messageElement.querySelector('.message-content'), messageText);
     }
 
     // Scroll to bottom
@@ -1704,7 +1854,17 @@ class NYLAAssistantUIV2 {
     this.isTyping = true;
     element.innerHTML = '';
     
-    const formattedText = this.formatMessageText(text);
+    // Handle undefined or null text
+    if (!text) {
+      console.warn('NYLA UI V2: typeMessage called with undefined/null text');
+      this.isTyping = false;
+      return;
+    }
+    
+    // Convert to string to ensure we can call string methods
+    const textString = String(text);
+    
+    const formattedText = this.formatMessageText(textString);
     
     // Create a temporary element to get plain text for typing
     const tempDiv = document.createElement('div');
@@ -1736,12 +1896,19 @@ class NYLAAssistantUIV2 {
    * Format message text with basic markdown-like formatting
    */
   formatMessageText(text) {
-    return text
+    // Handle undefined or null text
+    if (!text) {
+      return '';
+    }
+    
+    // Ensure text is a string
+    const textString = String(text);
+    
+    return textString
       .replace(/\n/g, '<br>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/• /g, '<span class="bullet">•</span> ')
-      .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+      .replace(/• /g, '<span class="bullet">•</span> ');
   }
 
   /**
@@ -1804,25 +1971,53 @@ class NYLAAssistantUIV2 {
   }
 
   /**
-   * Disable question buttons during processing
+   * Disable question buttons with shadow overlay
    */
   disableQuestionButtons() {
     const buttons = this.elements.questionsContainer.querySelectorAll('.nyla-question-btn');
     buttons.forEach(button => {
       button.disabled = true;
       button.classList.add('disabled');
+      
+      // Add shadow overlay effect
+      button.style.position = 'relative';
+      button.style.zIndex = '1';
+      
+      // Ensure the shadow overlay is visible
+      button.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.6)';
+      
+      // Add a subtle animation to indicate processing
+      button.style.transition = 'all 0.3s ease';
+      button.style.transform = 'scale(0.98)';
     });
+    
+    // Add a container-level overlay effect
+    if (this.elements.questionsContainer) {
+      this.elements.questionsContainer.classList.add('processing');
+    }
   }
 
   /**
-   * Enable question buttons
+   * Enable question buttons and remove shadow overlay
    */
   enableQuestionButtons() {
     const buttons = this.elements.questionsContainer.querySelectorAll('.nyla-question-btn');
     buttons.forEach(button => {
       button.disabled = false;
       button.classList.remove('disabled');
+      
+      // Remove shadow overlay effect
+      button.style.position = '';
+      button.style.zIndex = '';
+      button.style.boxShadow = '';
+      button.style.transform = '';
+      button.style.transition = '';
     });
+    
+    // Remove container-level overlay effect
+    if (this.elements.questionsContainer) {
+      this.elements.questionsContainer.classList.remove('processing');
+    }
   }
 
   /**

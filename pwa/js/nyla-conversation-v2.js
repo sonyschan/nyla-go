@@ -39,6 +39,7 @@ class NYLAConversationManagerV2 {
       'nylaCommands': ['command', 'swap', 'transfer command', 'how to use', 'usage', 'syntax'],
       'about': ['about', 'what is', 'features', 'benefits', 'description', 'overview', 'introduction'],
       'team': ['team', 'founder', 'developer', 'creator', 'who made', 'who built', 'who created', 'behind', 'dev team', 'development team'],
+      'lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul'],
       'stickers': ['sticker', 'emoji', 'reaction', 'fun', 'cute', 'image']
     };
 
@@ -301,9 +302,25 @@ class NYLAConversationManagerV2 {
           // First send NYLA's farewell message
           const farewellMessage = engagement.message;
           
-          // Send farewell as NYLA's message first (only if UI is available)
+          // Send farewell as NYLA's message with delay and typing indicator
           if (this.ui && this.ui.displayMessage) {
-            await this.ui.displayMessage(farewellMessage, 'nyla');
+            // Add delay before showing engagement prompt (1-3 seconds)
+            const delayMs = 1000 + Math.random() * 2000; // 1-3 second random delay
+            
+            // Show typing indicator
+            if (this.ui.showTyping) {
+              this.ui.showTyping();
+            }
+            
+            // Wait for the delay
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            
+            // Hide typing indicator and display message
+            if (this.ui.hideTyping) {
+              this.ui.hideTyping();
+            }
+            
+            await this.ui.displayMessage({ text: farewellMessage }, 'nyla');
           } else {
             console.warn('NYLA Conversation V2: UI not available for engagement farewell message');
           }
@@ -322,7 +339,7 @@ class NYLAConversationManagerV2 {
           
           // Display the engagement options
           setTimeout(() => {
-            this.ui.displayFollowUpQuestions(engagementResponse.followUps, engagementResponse);
+            this.ui.displayQuestions(engagementResponse.followUps, engagementResponse);
           }, 1000); // Small delay to let farewell message be read
           
           // Return the original response without engagement modifications

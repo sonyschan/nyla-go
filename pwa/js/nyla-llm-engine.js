@@ -672,12 +672,18 @@ class NYLALLMEngine {
   createSystemPrompt() {
     return `You are NYLA, AI for NYLAGo. NYLAGo is a tool that generates NYLA transfer commands for X.com (formerly Twitter). 
     
+    CRITICAL: PLAIN TEXT ONLY
+    - You MUST output only plain text - NO HTML, NO tags, NO markup whatsoever
+    - Do NOT write <a>, <div>, <span>, <br>, or any other HTML tags
+    - Do NOT write href= or any HTML attributes
+    - Just write regular text with @ symbols for team mentions
+    
     IMPORTANT CONSTRAINTS:
     - Answer ONLY the specific question asked
     - Use ONLY information from the "Knowledge" section
-    - Do NOT add examples, scenarios, or fictional user cases
-    - Do NOT elaborate beyond what was asked
+    - Do NOT add fictional scenarios or made-up information
     - Keep responses factual and concise
+    - ALWAYS mention specific names when discussing team members (e.g., @shax_btc, @btcberries, @Noir0883)
     
     CRITICAL: For "other features" or "what else" questions:
     - Pick only ONE different feature/capability to highlight
@@ -686,9 +692,14 @@ class NYLALLMEngine {
     - Examples: Focus on just QR codes OR just community raids OR just blockchain selection
     
     IMPORTANT for transfer/send questions:
-    - Always explain: "Use the 'Send' in NYLAGo"
-    - Steps: Fill recipient & amount → Generate command → Post on X.com
-    - NYLAGo creates commands, X.com executes transfers
+    - Always explain: "Use the 'Send' tab in NYLAGo to create commands for NYLA"
+    - Steps: Fill recipient & amount in NYLAGo → Generate command → Post on X.com → NYLA executes transfer
+    - NYLAGo creates commands, NYLA executes the actual transfers
+    
+    IMPORTANT for team/founder questions:
+    - ALWAYS mention specific team member names with @ symbols
+    - NYLA Team: @shax_btc (NYLA founder), @btcberries (NYLA co-founder), @ChiefZ_SOL (NYLA dev), @Noir0883 (NYLA designer)
+    - Use the exact @ format for team member names
     
     IMPORTANT for security/safety questions:
     - Use "securityFeatures" section from Knowledge if available
@@ -696,25 +707,38 @@ class NYLALLMEngine {
     - Address concerns about cryptocurrency transactions and X.com integration
     
     Key features:
-    - Send: Create transfer commands (fill form → generate → post)
-    - Receive: Create QR codes for payment requests
-    - Raid: Community engagement (access via "..." button)
+    - Send: NYLA transfers (NYLAGo creates commands → NYLA executes)
+    - Receive: NYLA QR codes for payment requests
+    - Raid: Community engagement (access via "..." button in NYLAGo)
+    
+    IMPORTANT DISTINCTION:
+    - NYLA = The AI that performs transfers, swaps, and blockchain operations
+    - NYLAGo = The interface tool that helps users create commands for NYLA
+    - When discussing features: Say "NYLA transfers" not "NYLAGo transfers"
+    
+    CRITICAL LIMITATION:
+    - NYLA does NOT support cross-chain bridging or transfers between different blockchains
+    - Each blockchain (Solana, Ethereum, Algorand) operates independently
+    - Transfers only work within the SAME blockchain network
     
     RESPONSE FORMAT - Use only "Knowledge" section. Respond in JSON: 
     { 
-      "text": "<200 chars MAX - DIRECT ANSWER ONLY - Stay under 200 characters to avoid truncation>", 
+      "text": "<250 chars MAX - PLAIN TEXT ONLY - NO HTML tags - Use @ for team mentions>", 
       "sentiment": "helpful|excited|friendly", 
       "followUpSuggestions": [] 
     }
     
     STRICT RULES:
+    - NEVER WRITE HTML: No <a>, <div>, <span>, <br>, href=, or ANY HTML tags
+    - PLAIN TEXT ONLY: Just write normal text with @ symbols
     - Do NOT generate followUpSuggestions. Return empty array [].
     - Do NOT add hypothetical examples like "User wants to send X to Y"
     - Do NOT create fictional scenarios or use cases
     - If beyond knowledge: "I need to study more."
-    - Answer exactly what was asked, nothing more
+    - When asked about team: ALWAYS include specific names (@shax_btc, @btcberries, @ChiefZ_SOL, @Noir0883)
     - For "what else" questions: Pick ONE feature only, not a comprehensive list
-    - Focus on being helpful rather than complete - one good answer is better than a truncated list`
+    - CRITICAL: For features, say "NYLA transfers" not "NYLAGo transfers" - NYLA does the operations
+    - Focus on being helpful and specific - include names when relevant`
   }
 
   /**
@@ -1164,11 +1188,11 @@ class NYLALLMEngine {
       }
       
       // If we found some content, return it
-      if (extractedText) {
-        console.log('NYLA LLM: Extracted partial content from incomplete response');
+      if (extractedText && extractedText.trim().length > 0) {
+        console.log('NYLA LLM: Extracted partial content from incomplete response:', extractedText);
         // Create response object that will get proper follow-ups in validateResponse
         const partialResponse = {
-          text: extractedText,
+          text: extractedText.trim(),
           sentiment: 'helpful',
           confidence: 0.7,
           personalCare: { shouldAsk: false },
@@ -1594,11 +1618,37 @@ class NYLALLMEngine {
   }
 
   /**
+   * Strip HTML tags from text to ensure plain text output
+   */
+  stripHtmlTags(text) {
+    if (!text) return text;
+    
+    // Remove HTML tags but preserve the content inside
+    const stripped = text.replace(/<[^>]*>/g, '');
+    
+    // Log if HTML was found and stripped
+    if (stripped !== text) {
+      console.warn('NYLA LLM: Stripped HTML tags from response:', text.substring(0, 100) + '...');
+    }
+    
+    return stripped;
+  }
+
+  /**
    * Validate and normalize response
    */
   validateResponse(response, context, userMessage) {
-    // Ensure required fields
-    response.text = response.text || "I'm here to help with NYLA and cryptocurrency questions!";
+    // Ensure required fields with robust text validation
+    if (!response.text || typeof response.text !== 'string' || response.text.trim().length === 0) {
+      console.warn('NYLA LLM: Invalid or empty response text, using fallback');
+      response.text = "I'm here to help with NYLA and cryptocurrency questions!";
+    } else {
+      // Clean up the text - remove extra whitespace and ensure it's a string
+      response.text = response.text.trim();
+      
+      // The LLM should only generate plain text with @ mentions
+    }
+    
     response.sentiment = response.sentiment || 'helpful';
     response.confidence = Math.min(Math.max(response.confidence || 0.7, 0), 1);
     // Personal care disabled for now
@@ -1606,7 +1656,7 @@ class NYLALLMEngine {
     response.followUpSuggestions = response.followUpSuggestions || [];
 
     // Enforce 300 character limit for faster generation
-    if (response.text.length > 300) {
+    if (response.text && response.text.length > 300) {
       console.log(`NYLA LLM: Response too long (${response.text.length} chars), truncating to 300...`);
       // Find last complete sentence within 300 chars
       const truncated = response.text.substring(0, 297);
@@ -1615,14 +1665,21 @@ class NYLALLMEngine {
       const lastQuestion = truncated.lastIndexOf('?');
       const lastPunctuation = Math.max(lastSentence, lastExclamation, lastQuestion);
       
-      if (lastPunctuation > 200) {
-        // Cut at last sentence if it's reasonable
+      if (lastPunctuation > 100) {
+        // Cut at last sentence if it's reasonable (lowered from 200 to 100)
         response.text = response.text.substring(0, lastPunctuation + 1);
       } else {
         // Just truncate and add ellipsis
         response.text = truncated + '...';
       }
       console.log(`NYLA LLM: Truncated to ${response.text.length} characters`);
+      console.log(`NYLA LLM: Final truncated text: "${response.text}"`);
+    }
+
+    // Additional safety check for empty response after truncation
+    if (!response.text || response.text.trim().length === 0) {
+      console.warn('NYLA LLM: Response text is empty after processing, using fallback');
+      response.text = "I'm here to help with NYLA! What would you like to know?";
     }
 
     // Always use improved follow-up generation (ignore LLM suggestions)
