@@ -679,6 +679,12 @@ class NYLALLMEngine {
     - Do NOT elaborate beyond what was asked
     - Keep responses factual and concise
     
+    CRITICAL: For "other features" or "what else" questions:
+    - Pick only ONE different feature/capability to highlight
+    - Do NOT list all features - focus on just one
+    - Keep it brief and specific to avoid response truncation
+    - Examples: Focus on just QR codes OR just community raids OR just blockchain selection
+    
     IMPORTANT for transfer/send questions:
     - Always explain: "Use the 'Send' in NYLAGo"
     - Steps: Fill recipient & amount → Generate command → Post on X.com
@@ -696,7 +702,7 @@ class NYLALLMEngine {
     
     RESPONSE FORMAT - Use only "Knowledge" section. Respond in JSON: 
     { 
-      "text": "<300 chars - DIRECT ANSWER ONLY>", 
+      "text": "<200 chars MAX - DIRECT ANSWER ONLY - Stay under 200 characters to avoid truncation>", 
       "sentiment": "helpful|excited|friendly", 
       "followUpSuggestions": [] 
     }
@@ -706,7 +712,9 @@ class NYLALLMEngine {
     - Do NOT add hypothetical examples like "User wants to send X to Y"
     - Do NOT create fictional scenarios or use cases
     - If beyond knowledge: "I need to study more."
-    - Answer exactly what was asked, nothing more`
+    - Answer exactly what was asked, nothing more
+    - For "what else" questions: Pick ONE feature only, not a comprehensive list
+    - Focus on being helpful rather than complete - one good answer is better than a truncated list`
   }
 
   /**
