@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '2.1.8';
+  let APP_VERSION = '2.1.9';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
@@ -177,10 +177,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load Roboto font for NYLA conversation
     loadRobotoFont();
     
-    // Start WebLLM preload in background for faster NYLA responses
+    // Start WebLLM preload in background for faster NYLA responses (desktop only)
     // This happens after splash screen, so users can use other tabs while engine loads
-    if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
-      console.log('PWA: 🚀 Starting WebLLM preload for faster NYLA responses...');
+    const isLikelyMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isLikelyMobile) {
+      console.log('PWA: 📱 Mobile device detected - skipping WebLLM preload to save resources');
+      console.log('PWA: NYLA assistant will be disabled on mobile devices');
+    } else if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+      console.log('PWA: 🖥️ Desktop device detected - starting WebLLM preload for faster NYLA responses...');
       setTimeout(() => {
         try {
           // Double-check the method still exists before calling
@@ -197,9 +202,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 500); // Small delay to let UI finish initializing
     } else {
       console.warn('PWA: System controller or preloadLLMEngine method not available yet');
-      // Retry after a longer delay to allow system controller to fully initialize
+      // Retry after a longer delay to allow system controller to fully initialize (desktop only)
       setTimeout(() => {
-        if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+        if (!isLikelyMobile && window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
           console.log('PWA: 🚀 Retrying WebLLM preload...');
           try {
             // Triple-check before calling in retry
@@ -796,6 +801,15 @@ document.addEventListener('DOMContentLoaded', function() {
     button.addEventListener('click', function() {
       const tabName = this.dataset.tab;
       
+      // Check if this is the NYLA tab on mobile - prevent activation
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (tabName === 'nyla' && isMobile) {
+        console.log('NYLA GO PWA: NYLA tab disabled on mobile devices');
+        showStatus('NYLA assistant is temporarily disabled on mobile devices', 'info');
+        setTimeout(hideStatus, 3000);
+        return; // Exit early, don't switch to NYLA tab
+      }
+      
       // Remove active class from all tabs and buttons
       tabButtons.forEach(btn => btn.classList.remove('active'));
       if (nylaTab) nylaTab.classList.remove('active');
@@ -1361,13 +1375,71 @@ document.addEventListener('DOMContentLoaded', function() {
   // Device Detection and Layout Management
   function initializeDeviceDetection() {
     const DeviceDetector = {
-      isDesktop: () => window.innerWidth >= 1024 && window.innerHeight >= 768,
-      hasTouchSupport: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0,
-      isLikelyMobile: () => /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+      isDesktop() {
+        // Priority check: if it's clearly mobile, always return false
+        if (this.isLikelyMobile()) {
+          return false;
+        }
+        
+        // Enhanced desktop detection with user agent check
+        const hasDesktopDimensions = window.innerWidth >= 1024 && window.innerHeight >= 768;
+        const hasDesktopUserAgent = this.isDesktopUserAgent();
+        const hasLimitedTouchSupport = !this.hasTouchSupport() || this.isDesktopWithTouch();
+        
+        // True desktop: good dimensions + desktop UA + limited/no touch
+        return hasDesktopDimensions && hasDesktopUserAgent && hasLimitedTouchSupport;
+      },
+      
+      isDesktopUserAgent() {
+        const userAgent = navigator.userAgent.toLowerCase();
+        
+        // Definitely mobile/tablet patterns
+        if (/android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent)) {
+          return false;
+        }
+        
+        // Desktop OS patterns
+        const desktopPatterns = [
+          /windows nt/,           // Windows
+          /macintosh|mac os x/,   // macOS
+          /linux/,                // Linux
+          /x11/,                  // Unix/Linux
+          /cros/                  // Chrome OS
+        ];
+        
+        return desktopPatterns.some(pattern => pattern.test(userAgent));
+      },
+      
+      isDesktopWithTouch() {
+        // Surface, touchscreen laptops, etc. - still desktop but with touch
+        const userAgent = navigator.userAgent.toLowerCase();
+        return /windows nt.*touch/i.test(userAgent) || 
+               /macintosh.*touch/i.test(userAgent) ||
+               (this.isDesktopUserAgent() && navigator.maxTouchPoints <= 10); // Limit touch points for desktop
+      },
+      
+      hasTouchSupport() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      },
+      
+      isLikelyMobile() {
+        return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      },
       
       updateLayout() {
         const body = document.body;
-        const isDesktop = this.isDesktop() && !this.hasTouchSupport;
+        const isDesktop = this.isDesktop(); // Enhanced detection already includes touch logic
+        
+        // Debug logging for enhanced detection
+        console.log('NYLA GO PWA: Enhanced Device Detection:');
+        console.log('  - Screen dimensions:', `${window.innerWidth}x${window.innerHeight}`);
+        console.log('  - User Agent:', navigator.userAgent);
+        console.log('  - Desktop dimensions:', window.innerWidth >= 1024 && window.innerHeight >= 768);
+        console.log('  - Desktop user agent:', this.isDesktopUserAgent());
+        console.log('  - Touch support:', this.hasTouchSupport());
+        console.log('  - Desktop with touch:', this.isDesktopWithTouch());
+        console.log('  - Final desktop decision:', isDesktop);
+        console.log('  - Mobile pattern match:', this.isLikelyMobile());
         
         // Remove existing classes
         body.classList.remove('desktop-mode', 'mobile-mode');
@@ -1389,40 +1461,26 @@ document.addEventListener('DOMContentLoaded', function() {
       
       updateTabBehavior(isDesktop) {
         const tabContents = document.querySelectorAll('.tab-content');
-        const tabButtons = document.querySelectorAll('.tab-button');
         
-        if (isDesktop) {
-          // Desktop: Show all sections simultaneously
-          tabContents.forEach(content => {
-            content.style.display = 'block';
-          });
-          
-          // Update active tab styling for desktop sidebar
-          tabButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-              e.preventDefault();
-              const targetId = button.dataset.tab + 'Tab';
-              const targetSection = document.getElementById(targetId);
-              if (targetSection) {
-                targetSection.scrollIntoView({ 
-                  behavior: 'smooth', 
-                  block: 'start' 
-                });
-              }
-            });
-          });
-        } else {
-          // Mobile: Traditional tab switching
-          const activeTab = document.querySelector('.tab-content.active');
-          tabContents.forEach(content => {
-            content.style.display = content === activeTab ? 'block' : 'none';
-          });
-        }
+        // Both desktop and mobile now use traditional tab switching
+        // Desktop gets sidebar navigation, mobile gets horizontal tabs
+        console.log(`NYLA GO PWA: ${isDesktop ? 'Desktop' : 'Mobile'} mode - using traditional tab switching`);
+        const activeTab = document.querySelector('.tab-content.active');
+        tabContents.forEach(content => {
+          content.style.display = content === activeTab ? 'block' : 'none';
+        });
       },
       
       enableDesktopFeatures() {
         // Add keyboard navigation
         this.addKeyboardNavigation();
+        
+        // Show NYLA tab button on desktop devices
+        const nylaTabButton = document.querySelector('[data-tab="nyla"]');
+        if (nylaTabButton) {
+          nylaTabButton.style.display = 'block';
+          console.log('NYLA GO PWA: NYLA tab button shown on desktop');
+        }
         
         // Enhanced hover states are handled by CSS
         console.log('NYLA GO PWA: Desktop features enabled');
@@ -1433,6 +1491,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!this.isDesktop()) {
           initializeMobileGestures();
         }
+        
+        // Hide NYLA tab button on mobile devices
+        const nylaTabButton = document.querySelector('[data-tab="nyla"]');
+        if (nylaTabButton) {
+          nylaTabButton.style.display = 'none';
+          console.log('NYLA GO PWA: NYLA tab button hidden on mobile');
+        }
+        
         console.log('NYLA GO PWA: Mobile features enabled');
       },
       
@@ -1545,8 +1611,12 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       
       setupInitialState() {
-        // Find currently active tab
-        this.elements.tabButtons.forEach((button, index) => {
+        // Find currently active tab among visible tabs only
+        const visibleTabButtons = Array.from(this.elements.tabButtons).filter(button => {
+          return window.getComputedStyle(button).display !== 'none';
+        });
+        
+        visibleTabButtons.forEach((button, index) => {
           if (button.classList.contains('active')) {
             this.state.currentTab = index;
           }
@@ -1759,7 +1829,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       switchToTab(tabIndex) {
         this.state.currentTab = tabIndex;
-        const targetButton = this.elements.tabButtons[tabIndex];
+        
+        // Get visible tab buttons only (exclude hidden NYLA tab on mobile)
+        const visibleTabButtons = Array.from(this.elements.tabButtons).filter(button => {
+          return window.getComputedStyle(button).display !== 'none';
+        });
+        
+        const targetButton = visibleTabButtons[tabIndex];
         if (targetButton) {
           targetButton.click();
         }

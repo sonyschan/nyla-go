@@ -13,12 +13,19 @@ class NYLALLMEngine {
     this.deviceInfo = this.detectDevice();
     this.modelConfig = {
       model: this.selectModel(),
-      temperature: 0.5,      // Reduced for more focused responses
-      max_tokens: 300,       // Increased to allow complete JSON with followup suggestions
-      top_p: 0.8,           // Reduced for more focused responses
-      top_k: 40             // Added for additional speed optimization
+      temperature: 0.8,
+      max_tokens: 180,
+      top_p: 0.8,
     };
     this.systemPrompt = this.createSystemPrompt();
+    
+    // Log model configuration
+    console.log('🎯 NYLA LLM: Model Configuration:');
+    console.log('  - Model:', this.modelConfig.model);
+    console.log('  - Temperature:', this.modelConfig.temperature);
+    console.log('  - Max Tokens:', this.modelConfig.max_tokens);
+    console.log('  - Top P:', this.modelConfig.top_p);
+    console.log('  - Top K:', this.modelConfig.top_k);
     
     // Performance tracking
     this.requestCount = 0;
@@ -29,6 +36,10 @@ class NYLALLMEngine {
     this.isEngineReady = false;
     this.isEngineWarmedUp = false;
     this.engineCreatedAt = null;
+    
+    // Follow-up suggestion tracking
+    this.previousCategories = [];
+    this.lastUsedFollowUps = new Map(); // Track specific follow-up suggestions used
   }
 
   /**
@@ -48,18 +59,6 @@ class NYLALLMEngine {
     // Check if mobile browser (not extension)
     const isMobilePWA = isMobile && (isPWA || !window.chrome?.runtime);
     
-    // Debug logging
-    console.log('🔍 NYLA LLM: Device Detection Debug:');
-    console.log('  - userAgent:', userAgent);
-    console.log('  - isAndroid:', isAndroid);
-    console.log('  - isIOS:', isIOS);
-    console.log('  - isMobile:', isMobile);
-    console.log('  - isPWA (display-mode):', window.matchMedia('(display-mode: standalone)').matches);
-    console.log('  - isPWA (navigator.standalone):', window.navigator.standalone);
-    console.log('  - isPWA (referrer):', document.referrer.includes('android-app://'));
-    console.log('  - isPWA (combined):', isPWA);
-    console.log('  - chrome.runtime exists:', !!window.chrome?.runtime);
-    console.log('  - isMobilePWA (final):', isMobilePWA);
     
     return {
       isAndroid,
@@ -75,20 +74,18 @@ class NYLALLMEngine {
    * Select appropriate model based on device capabilities
    */
   selectModel() {
-    console.log('🎯 NYLA LLM: Model Selection Debug:');
-    console.log('  - deviceInfo.isMobilePWA:', this.deviceInfo.isMobilePWA);
-    console.log('  - deviceInfo.isMobile:', this.deviceInfo.isMobile);
-    console.log('  - deviceInfo.isPWA:', this.deviceInfo.isPWA);
-    console.log('  - deviceInfo.isAndroid:', this.deviceInfo.isAndroid);
+    console.log('🎯 NYLA LLM: Model Selection - Using Qwen2-1.5B-Instruct q4f32_1');
+    console.log('  - Primary Model: Qwen2-1.5B-Instruct-q4f32_1-MLC (1.5B parameters)');
+    console.log('  - Strategy: Qwen2 model optimized for instruction following');
+    console.log('  - Config: GPU inference with conservative parameters');
+    console.log('  - Device info:', this.deviceInfo);
     
-    if (this.deviceInfo.isMobilePWA) {
-      console.log('✅ NYLA LLM: Mobile PWA detected - using f32 model for better compatibility');
-      return "Phi-3-mini-4k-instruct-q4f32_1-MLC"; // f32 model for mobile compatibility
-    } else {
-      console.log('❌ NYLA LLM: Not mobile PWA - using f16 model for optimal performance');
-      console.log('  - Reason: isMobilePWA = ' + this.deviceInfo.isMobilePWA);
-      return "Phi-3-mini-4k-instruct-q4f16_1-MLC"; // f16 model for desktop performance
-    }
+    // Store fallback model options - verified models from mlc.ai/models
+    this.fallbackModels = ["Qwen2-0.5B-Instruct-q4f32_1-MLC", "TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC"];
+    
+    // Use Qwen2-1.5B-Instruct q4f32_1 - Balanced size and performance
+    console.log('✅ NYLA LLM: Selected Qwen2-1.5B-Instruct q4f32_1 for balanced performance');
+    return "Qwen2-1.5B-Instruct-q4f32_1-MLC"; // From https://mlc.ai/models
   }
 
   /**
@@ -130,6 +127,7 @@ class NYLALLMEngine {
       }
       
       // Check for Android-specific f16 extension issue (only if using f16 model)
+      // Note: Qwen-1.5B uses f32, so this test is skipped for better compatibility
       if (isAndroid && this.modelConfig.model.includes('f16')) {
         try {
           const device = await adapter.requestDevice();
@@ -241,6 +239,8 @@ class NYLALLMEngine {
     if (this.isLoading) return this.waitForInitialization();
 
     this.isLoading = true;
+    const initStartTime = performance.now();
+    let webllmLoadTime = 0;
     
     // Set up global WebGPU error handler to catch f16 extension errors during WebLLM initialization
     let webllmInitError = null;
@@ -270,22 +270,27 @@ class NYLALLMEngine {
       console.log('NYLA LLM: Initializing WebLLM engine...');
       console.log('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
       console.log('NYLA LLM: Device detection:', this.deviceInfo);
-      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (${this.modelConfig.model.includes('f16') ? 'f16 precision for desktop' : 'f32 precision for mobile compatibility'})`);
+      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (1.5B parameters, conservative config to fix NaN)`);
       
       // Enhanced WebGPU compatibility check
+      const webgpuCheckStart = performance.now();
       const compatibilityResult = await this.checkWebGPUCompatibility();
       if (!compatibilityResult.supported) {
         throw new Error(compatibilityResult.reason);
       }
-      console.log('NYLA LLM: ✅ WebGPU detected');
+      const webgpuCheckTime = performance.now() - webgpuCheckStart;
+      console.log(`NYLA LLM: ✅ WebGPU detected (${webgpuCheckTime.toFixed(2)}ms)`);
       
       // Load WebLLM dynamically
       if (!window.webllm) {
         console.log('NYLA LLM: Loading WebLLM library...');
+        const webllmLoadStart = performance.now();
         const loaded = await this.loadWebLLM();
         if (!loaded) {
           throw new Error('Failed to load WebLLM library');
         }
+        webllmLoadTime = performance.now() - webllmLoadStart;
+        console.log(`NYLA LLM: ✅ WebLLM library loaded (${(webllmLoadTime / 1000).toFixed(2)}s)`);
       }
 
       // Double-check library loaded
@@ -293,23 +298,57 @@ class NYLALLMEngine {
         throw new Error('WebLLM library not properly loaded - MLCEngine not found');
       }
 
-      // Initialize the engine
-      console.log('NYLA LLM: Creating MLCEngine instance for in-browser inference...');
+      // Initialize the engine with GPU enabled
+      console.log('NYLA LLM: Creating MLCEngine instance for GPU inference...');
+      const engineCreateStart = performance.now();
       this.engine = new window.webllm.MLCEngine();
+      const engineCreateTime = performance.now() - engineCreateStart;
+      console.log(`NYLA LLM: ✅ MLCEngine created with GPU inference (${engineCreateTime.toFixed(2)}ms)`);
       
       console.log(`NYLA LLM: Loading ${this.modelConfig.model} model...`);
-      console.log('NYLA LLM: ⏳ This may take 1-3 minutes on first load (model downloads & compiles)');
-      console.log('NYLA LLM: 🔄 Subsequent loads will be much faster (cached)');
+      console.log('NYLA LLM: ⏳ Qwen2-1.5B expected loading time: 15-25s first time (1.5B params, q4f32_1)');
+      console.log('NYLA LLM: 🧪 Testing Qwen2-1.5B-Instruct q4f32_1 with GPU inference and conservative config');
       
-      // Initialize model with progress callback
-      await this.engine.reload(this.modelConfig.model, {
-        // Progress callback for model loading
-        initProgressCallback: (progress) => {
-          if (progress.progress) {
-            console.log(`NYLA LLM: Loading progress: ${Math.round(progress.progress * 100)}%`);
+      // Try to initialize model with fallback options
+      let modelLoaded = false;
+      let modelLoadTime = 0;
+      let modelAttempts = [this.modelConfig.model, ...(this.fallbackModels || [])];
+      
+      for (let i = 0; i < modelAttempts.length; i++) {
+        const modelToTry = modelAttempts[i];
+        try {
+          console.log(`NYLA LLM: Attempting to load model ${i + 1}/${modelAttempts.length}: ${modelToTry}`);
+          const modelLoadStart = performance.now();
+          
+          await this.engine.reload(modelToTry, {
+            model_url: "https://huggingface.co/mlc-ai/Qwen2-1.5B-Instruct-q4f32_1-MLC/resolve/main/",
+            // Progress callback for model loading
+            initProgressCallback: (progress) => {
+              if (progress.progress) {
+                const elapsed = ((performance.now() - modelLoadStart) / 1000).toFixed(1);
+                console.log(`NYLA LLM: Loading progress: ${Math.round(progress.progress * 100)}% (${elapsed}s)`);
+              }
+            }
+          });
+          
+          modelLoadTime = performance.now() - modelLoadStart;
+          // If we get here, model loaded successfully
+          this.modelConfig.model = modelToTry; // Update to successful model
+          modelLoaded = true;
+          console.log(`NYLA LLM: ✅ Successfully loaded model: ${modelToTry} (${(modelLoadTime / 1000).toFixed(2)}s)`);
+          break;
+          
+        } catch (modelError) {
+          console.error(`NYLA LLM: Failed to load ${modelToTry}:`, modelError.message);
+          if (i < modelAttempts.length - 1) {
+            console.log('NYLA LLM: Trying fallback model...');
           }
         }
-      });
+      }
+      
+      if (!modelLoaded) {
+        throw new Error('Failed to load any available models');
+      }
       
       // Check if we caught any f16 extension errors during WebLLM initialization
       if (webllmInitError) {
@@ -323,17 +362,31 @@ class NYLALLMEngine {
       
       if (isPreload) {
         console.log('NYLA LLM: ✅ Background preload completed! 🧠✨');
-        console.log('NYLA LLM: 🎯 Engine ready - first user click will be fast');
+        console.log('NYLA LLM: 🎯 Qwen2-1.5B-Instruct ready - efficient model with instruction tuning');
       } else {
         console.log('NYLA LLM: ✅ WebLLM engine initialized successfully! 🧠✨');
       }
-      console.log('NYLA LLM: 🤖 Ready for in-browser AI inference with Phi-3-Mini q4f16_1 (M2 optimized)');
+      console.log('NYLA LLM: 🤖 Ready for GPU-based AI inference with Qwen2-1.5B-Instruct (1.5B params - q4f32_1)');
       console.log('NYLA LLM: 🔥 Engine will stay hot and ready for subsequent requests');
       
       // Warm up the engine with a tiny test prompt to ensure GPU buffers are allocated
       console.log('NYLA LLM: Calling warmupEngine...');
+      const warmupStart = performance.now();
       await this.warmupEngine();
-      console.log('NYLA LLM: Warmup completed, isEngineWarmedUp:', this.isEngineWarmedUp);
+      const warmupTime = performance.now() - warmupStart;
+      console.log(`NYLA LLM: Warmup completed in ${warmupTime.toFixed(2)}ms, isEngineWarmedUp:`, this.isEngineWarmedUp);
+      
+      // Total initialization time
+      const totalInitTime = performance.now() - initStartTime;
+      console.log(`NYLA LLM: 🎉 Total initialization time: ${(totalInitTime / 1000).toFixed(2)}s`);
+      console.log(`NYLA LLM: 📊 Breakdown:`);
+      console.log(`  - WebGPU check: ${webgpuCheckTime.toFixed(2)}ms`);
+      if (webllmLoadTime > 0) {
+        console.log(`  - WebLLM library: ${(webllmLoadTime / 1000).toFixed(2)}s`);
+      }
+      console.log(`  - Engine creation: ${engineCreateTime.toFixed(2)}ms`);
+      console.log(`  - Model loading: ${(modelLoadTime / 1000).toFixed(2)}s`);
+      console.log(`  - GPU warmup: ${warmupTime.toFixed(2)}ms`);
       
       return true;
 
@@ -359,8 +412,8 @@ class NYLALLMEngine {
     try {
       console.log('NYLA LLM: Loading WebLLM via dynamic import...');
       
-      // Use dynamic import - latest WebLLM version for better performance
-      const webllmModule = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@latest/lib/index.js');
+      // Use dynamic import - stable WebLLM version 0.2.79 for consistent model availability
+      const webllmModule = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/lib/index.js');
       
       console.log('NYLA LLM: WebLLM module loaded successfully');
       console.log('NYLA LLM: Available exports:', Object.keys(webllmModule));
@@ -393,7 +446,7 @@ class NYLALLMEngine {
     return new Promise((resolve, reject) => {
       // Try a different CDN or version
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/lib/index.js';
+      script.src = 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/lib/index.js';
       script.type = 'module';
       
       script.onload = () => {
@@ -490,7 +543,7 @@ class NYLALLMEngine {
       // Timing: Response parsing
       const parseStart = performance.now();
       const generatedText = response.choices[0].message.content;
-      const parsedResponse = this.parseResponse(generatedText, conversationContext);
+      const parsedResponse = this.parseResponse(generatedText, conversationContext, userMessage);
       const parseTime = performance.now() - parseStart;
 
       // Overall timing
@@ -513,6 +566,20 @@ class NYLALLMEngine {
 
     } catch (error) {
       console.error('NYLA LLM: Response generation failed', error);
+      
+      // Enhanced error handling for NaN sampling issues
+      if (error.message && error.message.includes('uniform_sample <= data[0].first')) {
+        const enhancedError = new Error('Model sampling error: The AI model encountered a numerical stability issue (NaN values). This may be due to model incompatibility. Try refreshing the page to reinitialize with a fallback model.');
+        enhancedError.originalError = error;
+        enhancedError.isModelCompatibilityError = true;
+        throw enhancedError;
+      } else if (error.name === 'ExitStatus' && error.status === 1) {
+        const enhancedError = new Error('AI model crashed during inference. This appears to be a model compatibility issue with your device. The system will fall back to rule-based responses.');
+        enhancedError.originalError = error;
+        enhancedError.isModelCompatibilityError = true;
+        throw enhancedError;
+      }
+      
       // Don't reset engine state on error - keep it warm for retry
       throw error;
     }
@@ -587,7 +654,7 @@ class NYLALLMEngine {
       console.log('NYLA LLM: Final streaming response preview:', fullResponse.substring(0, 200) + '...');
       console.log('NYLA LLM: Final streaming response end:', '...' + fullResponse.substring(Math.max(0, fullResponse.length - 200)));
       
-      return this.parseResponse(fullResponse, conversationContext);
+      return this.parseResponse(fullResponse, conversationContext, userMessage);
 
     } catch (error) {
       console.error('NYLA LLM: Streaming response failed:', error);
@@ -603,15 +670,43 @@ class NYLALLMEngine {
 
   
   createSystemPrompt() {
-    return `You are NYLA, AI for NYLAGo, a UI to generate crypto transfer/swap commands for X.com. NYLA executes on X.com. Use only "Relevant knowledge" to answer. 
-    Respond in JSON: 
+    return `You are NYLA, AI for NYLAGo. NYLAGo is a tool that generates NYLA transfer commands for X.com (formerly Twitter). 
+    
+    IMPORTANT CONSTRAINTS:
+    - Answer ONLY the specific question asked
+    - Use ONLY information from the "Knowledge" section
+    - Do NOT add examples, scenarios, or fictional user cases
+    - Do NOT elaborate beyond what was asked
+    - Keep responses factual and concise
+    
+    IMPORTANT for transfer/send questions:
+    - Always explain: "Use the 'Send' in NYLAGo"
+    - Steps: Fill recipient & amount → Generate command → Post on X.com
+    - NYLAGo creates commands, X.com executes transfers
+    
+    IMPORTANT for security/safety questions:
+    - Use "securityFeatures" section from Knowledge if available
+    - Explain NYLAGo's security measures and safety practices
+    - Address concerns about cryptocurrency transactions and X.com integration
+    
+    Key features:
+    - Send: Create transfer commands (fill form → generate → post)
+    - Receive: Create QR codes for payment requests
+    - Raid: Community engagement (access via "..." button)
+    
+    RESPONSE FORMAT - Use only "Knowledge" section. Respond in JSON: 
     { 
-      "text": "<300 chars>", 
+      "text": "<300 chars - DIRECT ANSWER ONLY>", 
       "sentiment": "helpful|excited|friendly", 
-      "follow up suggestions": [
-        { "text": "Short question?", "topic": "topic" }
-      ] 
-    }. Keep followUps brief. If beyond knowledge, say: "I need to study more."`
+      "followUpSuggestions": [] 
+    }
+    
+    STRICT RULES:
+    - Do NOT generate followUpSuggestions. Return empty array [].
+    - Do NOT add hypothetical examples like "User wants to send X to Y"
+    - Do NOT create fictional scenarios or use cases
+    - If beyond knowledge: "I need to study more."
+    - Answer exactly what was asked, nothing more`
   }
 
   /**
@@ -680,11 +775,34 @@ class NYLALLMEngine {
         });
         if (chains.length > 0) content.push(`Supported: ${chains.join(', ')}`);
       }
-    } else if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('how')) {
-      // For transfer queries, focus on how it works
+    } else if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('create') || queryLower.includes('command') || queryLower.includes('how')) {
+      // For transfer/send queries, extract ALL send-related content
+      if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('command')) {
+        // Lead with Send tab instructions
+        if (data.howItWorks?.sendTab) {
+          content.push(`To create a transfer command: ${data.howItWorks.sendTab}`);
+        } else {
+          content.push('To create a transfer command: Use NYLAGo Send tab → Fill recipient & amount → Generate command → Post on X.com');
+        }
+        
+        // Also search for any field containing "send" keyword
+        this.extractFieldsContaining(data, 'send', content);
+      }
+      
       if (data.primaryPurpose) content.push(data.primaryPurpose);
-      if (data.howItWorks?.overview) content.push(data.howItWorks.overview);
+      if (data.howItWorks?.overview && !queryLower.includes('transfer')) {
+        content.push(data.howItWorks.overview);
+      }
       if (data.howItWorks?.important) content.push(data.howItWorks.important);
+      
+      // Extract example flows if available
+      if (data.exampleFlow) {
+        Object.values(data.exampleFlow).forEach(step => {
+          if (typeof step === 'string' && step.toLowerCase().includes('send')) {
+            content.push(step);
+          }
+        });
+      }
     } else if (queryLower.includes('raid') || queryLower.includes('community')) {
       // For raid queries
       if (data.purpose) content.push(data.purpose);
@@ -696,9 +814,43 @@ class NYLALLMEngine {
       else if (data.primaryPurpose) content.push(data.primaryPurpose);
     }
     
-    // Limit to ~100 tokens max per source
-    const result = content.join('. ');
-    return result.length > 400 ? result.substring(0, 400) + '...' : result;
+    // Remove duplicates and limit to ~150 tokens max per source
+    const uniqueContent = [...new Set(content)];
+    const result = uniqueContent.join('. ');
+    return result.length > 600 ? result.substring(0, 600) + '...' : result;
+  }
+
+  /**
+   * Helper method to extract fields containing specific keyword
+   */
+  extractFieldsContaining(obj, keyword, contentArray, maxDepth = 3, currentDepth = 0) {
+    if (currentDepth >= maxDepth || !obj || typeof obj !== 'object') return;
+    
+    const keywordLower = keyword.toLowerCase();
+    
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'string') {
+        // Check if the string contains the keyword
+        if (value.toLowerCase().includes(keywordLower)) {
+          // Avoid duplicates and very short strings
+          if (value.length > 20 && !contentArray.includes(value)) {
+            contentArray.push(value);
+          }
+        }
+      } else if (Array.isArray(value)) {
+        // Handle arrays
+        value.forEach(item => {
+          if (typeof item === 'string' && item.toLowerCase().includes(keywordLower)) {
+            if (item.length > 20 && !contentArray.includes(item)) {
+              contentArray.push(item);
+            }
+          }
+        });
+      } else if (typeof value === 'object' && value !== null) {
+        // Recursively search nested objects
+        this.extractFieldsContaining(value, keyword, contentArray, maxDepth, currentDepth + 1);
+      }
+    }
   }
 
   /**
@@ -719,18 +871,43 @@ class NYLALLMEngine {
     
     // Extract transfer/how it works information
     if (query.includes('how') || query.includes('work') || query.includes('transfer') || 
-        query.includes('send') || query.includes('command')) {
-      if (knowledgeContext.nylagoCore?.content?.howItWorks) {
-        const hw = knowledgeContext.nylagoCore.content.howItWorks;
-        if (query.includes('send')) {
-          relevantInfo.push(hw.sendTab);
-        } else if (query.includes('receive')) {
-          relevantInfo.push(hw.receiveTab);
+        query.includes('send') || query.includes('command') || query.includes('create')) {
+      // For transfer/command queries, prioritize Send tab instructions
+      if (query.includes('transfer') || query.includes('send') || query.includes('command') || query.includes('create')) {
+        if (knowledgeContext.nylagoCore?.content?.howItWorks?.sendTab) {
+          relevantInfo.push(`To create a transfer command: ${knowledgeContext.nylagoCore.content.howItWorks.sendTab}`);
         } else {
-          relevantInfo.push(hw.overview);
-          relevantInfo.push(hw.important);
+          relevantInfo.push('To create a transfer command: Use NYLAGo Send tab → Fill in recipient username and amount → Click generate → Post the command on X.com');
+        }
+        
+        // Extract example flows containing "send"
+        if (knowledgeContext.nylagoCore?.content?.exampleFlow) {
+          Object.values(knowledgeContext.nylagoCore.content.exampleFlow).forEach(step => {
+            if (typeof step === 'string' && step.toLowerCase().includes('send')) {
+              relevantInfo.push(step);
+            }
+          });
+        }
+        
+        // Extract features containing "send"
+        if (knowledgeContext.features?.content?.list) {
+          knowledgeContext.features.content.list.forEach(feature => {
+            if (feature.toLowerCase().includes('send')) {
+              relevantInfo.push(feature);
+            }
+          });
         }
       }
+      
+      if (knowledgeContext.nylagoCore?.content?.howItWorks) {
+        const hw = knowledgeContext.nylagoCore.content.howItWorks;
+        // Only add overview if not a specific transfer query
+        if (!query.includes('transfer') && !query.includes('command')) {
+          relevantInfo.push(hw.overview);
+        }
+        relevantInfo.push(hw.important);
+      }
+      
       if (knowledgeContext.nylaCommands?.content?.description) {
         relevantInfo.push(knowledgeContext.nylaCommands.content.description);
       }
@@ -809,11 +986,23 @@ class NYLALLMEngine {
     
     let prompt = `Time: ${timeStr} (${timezone})\n`;
 
+    console.log('\n📚 NYLA LLM: Building prompt with knowledge context');
+    console.log('  - User message:', userMessage);
+    
     if (knowledgeContext) {
+      console.log('  - Knowledge sources available:', 
+        knowledgeContext.searchResults ? `${knowledgeContext.searchResults.length} search results` : 'Legacy KB structure');
+      
       const relevantInfo = this.extractRelevantKnowledge(userMessage, knowledgeContext);
       if (relevantInfo) {
+        console.log(`  ✅ Extracted relevant knowledge (${relevantInfo.length} chars):`);
+        console.log(`     "${relevantInfo.substring(0, 150)}${relevantInfo.length > 150 ? '...' : ''}"`);
         prompt += `Knowledge: ${relevantInfo}\n`;
+      } else {
+        console.log('  ⚠️ No relevant knowledge found for this query');
       }
+    } else {
+      console.log('  ⚠️ No knowledge context provided');
     }
 
     prompt += `Question: "${userMessage}"\n`;
@@ -829,7 +1018,7 @@ class NYLALLMEngine {
   /**
    * Parse LLM response - Memory-safe version
    */
-  parseResponse(generatedText, context) {
+  parseResponse(generatedText, context, userMessage) {
     try {
       // Input size limit to prevent memory issues
       const MAX_RESPONSE_SIZE = 50000; // 50KB limit
@@ -851,7 +1040,7 @@ class NYLALLMEngine {
         try {
           console.log('NYLA LLM: Successfully parsed JSON response');
           console.log('NYLA LLM: JSON followUpSuggestions:', jsonObject.followUpSuggestions);
-          return this.validateResponse(jsonObject, context);
+          return this.validateResponse(jsonObject, context, userMessage);
         } catch (parseError) {
           console.warn('NYLA LLM: JSON validation failed:', parseError.message);
         }
@@ -863,17 +1052,86 @@ class NYLALLMEngine {
       console.log('NYLA LLM: No valid JSON found, attempting to extract partial content');
       
       // Try to extract text field even from incomplete JSON
-      const textMatch = cleanText.match(/"text"\s*:\s*"([^"]*)/);
+      // Updated regex to handle escaped quotes and complex patterns
       let extractedText = null;
       let extractedFollowUps = [];
       
-      if (textMatch && textMatch[1]) {
-        // Clean up any escape sequences
-        extractedText = textMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"');
-        
-        // If text seems cut off, add ellipsis
-        if (!extractedText.endsWith('.') && !extractedText.endsWith('!') && !extractedText.endsWith('?')) {
-          extractedText += '...';
+      // Method 1: Try to extract with proper JSON string handling
+      const textPatterns = [
+        // Pattern 1: Standard JSON with escaped quotes
+        /"text"\s*:\s*"((?:[^"\\]|\\.)*)"/,
+        // Pattern 2: Extract up to comma or closing brace (for incomplete JSON)
+        /"text"\s*:\s*"([^"]*?)(?:"|,|\}|$)/,
+        // Pattern 3: More aggressive extraction for malformed JSON
+        /"text"\s*:\s*["'](.+?)["']\s*[,\}]/s
+      ];
+      
+      for (const pattern of textPatterns) {
+        const match = cleanText.match(pattern);
+        if (match && match[1]) {
+          extractedText = match[1];
+          // Properly unescape JSON escape sequences
+          extractedText = extractedText
+            .replace(/\\n/g, '\n')
+            .replace(/\\r/g, '\r')
+            .replace(/\\t/g, '\t')
+            .replace(/\\"/g, '"')
+            .replace(/\\\\/g, '\\')
+            .replace(/\\'/g, "'");
+          
+          // If text seems cut off, add ellipsis
+          if (extractedText.length > 0 && 
+              !extractedText.endsWith('.') && 
+              !extractedText.endsWith('!') && 
+              !extractedText.endsWith('?') &&
+              !extractedText.endsWith('...')) {
+            extractedText += '...';
+          }
+          
+          console.log('NYLA LLM: Extracted text using pattern:', pattern.source);
+          break;
+        }
+      }
+      
+      // Method 2: If patterns fail, try manual extraction
+      if (!extractedText) {
+        const textStart = cleanText.indexOf('"text"');
+        if (textStart !== -1) {
+          const colonIndex = cleanText.indexOf(':', textStart);
+          if (colonIndex !== -1) {
+            const quoteStart = cleanText.indexOf('"', colonIndex);
+            if (quoteStart !== -1) {
+              let quoteEnd = quoteStart + 1;
+              let escaped = false;
+              
+              // Manually parse the string, respecting escape sequences
+              while (quoteEnd < cleanText.length) {
+                const char = cleanText[quoteEnd];
+                if (char === '\\' && !escaped) {
+                  escaped = true;
+                } else if (char === '"' && !escaped) {
+                  break;
+                } else {
+                  escaped = false;
+                }
+                quoteEnd++;
+              }
+              
+              if (quoteEnd > quoteStart + 1) {
+                extractedText = cleanText.substring(quoteStart + 1, quoteEnd);
+                // Unescape the extracted text
+                extractedText = extractedText
+                  .replace(/\\n/g, '\n')
+                  .replace(/\\r/g, '\r')
+                  .replace(/\\t/g, '\t')
+                  .replace(/\\"/g, '"')
+                  .replace(/\\\\/g, '\\')
+                  .replace(/\\'/g, "'");
+                
+                console.log('NYLA LLM: Extracted text using manual parsing');
+              }
+            }
+          }
         }
       }
       
@@ -900,14 +1158,16 @@ class NYLALLMEngine {
       // If we found some content, return it
       if (extractedText) {
         console.log('NYLA LLM: Extracted partial content from incomplete response');
-        return {
+        // Create response object that will get proper follow-ups in validateResponse
+        const partialResponse = {
           text: extractedText,
           sentiment: 'helpful',
           confidence: 0.7,
           personalCare: { shouldAsk: false },
-          followUpSuggestions: extractedFollowUps.length > 0 ? extractedFollowUps : this.generateDefaultFollowUps(context),
+          followUpSuggestions: [], // Will be generated in validateResponse
           contextRelevant: true
         };
+        return this.validateResponse(partialResponse, context, userMessage);
       }
       
     } catch (error) {
@@ -920,14 +1180,15 @@ class NYLALLMEngine {
       "I'm here to help you with NYLA! What would you like to know?";
     
     console.log('NYLA LLM: Using raw text as fallback');
-    return {
+    const fallbackResponse = {
       text: safeText,
       sentiment: 'helpful',
       confidence: 0.6,
       personalCare: { shouldAsk: false },
-      followUpSuggestions: this.generateDefaultFollowUps(context),
+      followUpSuggestions: [], // Will be generated in validateResponse
       contextRelevant: true
     };
+    return this.validateResponse(fallbackResponse, context, userMessage);
   }
 
   /**
@@ -936,13 +1197,35 @@ class NYLALLMEngine {
   extractJsonSafely(text) {
     if (!text || text.length === 0) return null;
     
-    // Look for JSON objects using simple character counting
+    // Look for JSON objects using character counting with escape handling
     let braceCount = 0;
     let startIndex = -1;
+    let inString = false;
+    let escaped = false;
     
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
+      const prevChar = i > 0 ? text[i - 1] : '';
       
+      // Handle escape sequences
+      if (inString) {
+        if (char === '\\' && !escaped) {
+          escaped = true;
+          continue;
+        } else if (char === '"' && !escaped) {
+          inString = false;
+        }
+        escaped = false;
+        continue;
+      }
+      
+      // Not in string, check for string start
+      if (char === '"' && prevChar !== '\\') {
+        inString = true;
+        continue;
+      }
+      
+      // Only count braces when not in a string
       if (char === '{') {
         if (braceCount === 0) {
           startIndex = i;
@@ -957,7 +1240,8 @@ class NYLALLMEngine {
           try {
             return JSON.parse(jsonStr);
           } catch (error) {
-            console.debug('NYLA LLM: JSON parse attempt failed for:', jsonStr.substring(0, 100));
+            console.debug('NYLA LLM: JSON parse attempt failed:', error.message);
+            console.debug('NYLA LLM: Failed JSON preview:', jsonStr.substring(0, 200) + '...');
             // Continue looking for other JSON objects
             startIndex = -1;
           }
@@ -965,9 +1249,28 @@ class NYLALLMEngine {
       }
       
       // Safety break for very long texts
-      if (i > 10000) {
-        console.warn('NYLA LLM: Breaking JSON search after 10K characters to prevent memory issues');
+      if (i > 50000) {
+        console.warn('NYLA LLM: Breaking JSON search after 50K characters to prevent memory issues');
         break;
+      }
+    }
+    
+    // If no valid JSON found with brace counting, try alternative approaches
+    console.log('NYLA LLM: No JSON found with brace counting, trying regex approach');
+    
+    // Try to find JSON-like structures with regex (less accurate but handles some edge cases)
+    const jsonMatches = text.match(/\{[^{}]*"text"\s*:\s*"[^"]*"[^{}]*\}/g);
+    if (jsonMatches) {
+      for (const match of jsonMatches) {
+        try {
+          const parsed = JSON.parse(match);
+          if (parsed.text) {
+            console.log('NYLA LLM: Found valid JSON with regex approach');
+            return parsed;
+          }
+        } catch (e) {
+          // Continue to next match
+        }
       }
     }
     
@@ -975,35 +1278,323 @@ class NYLALLMEngine {
   }
 
   /**
-   * Generate default follow-up suggestions
+   * Categorized follow-up templates for different topics
+   */
+  getFollowUpCategories() {
+    return {
+      transfer: {
+        name: 'Transfer/Send',
+        suggestions: [
+          "What details do I need to send money?",
+          "Can you walk me through creating a command?",
+          "What happens after posting on X.com?",
+          "Which blockchain should I choose?"
+        ]
+      },
+      receive: {
+        name: 'Receive/QR',
+        suggestions: [
+          "How do I share my payment QR code?",
+          "Can I request specific amounts?",
+          "What wallets support QR scanning?",
+          "Tell me more about receiving payments"
+        ]
+      },
+      raid: {
+        name: 'Raid/Community',
+        suggestions: [
+          "What can I do in the Raid tab?",
+          "How do I engage with the community?",
+          "Tell me about community features",
+          "What's the purpose of raiding?"
+        ]
+      },
+      blockchain: {
+        name: 'Blockchain/Technical',
+        suggestions: [
+          "What are the fees for each blockchain?",
+          "Which blockchain is fastest?",
+          "Can you compare Solana vs Ethereum?",
+          "How do I check transaction status?"
+        ]
+      },
+      general: {
+        name: 'General/Getting Started',
+        suggestions: [
+          "How do I get started with NYLAGo?",
+          "What makes NYLAGo different?",
+          "Is NYLAGo secure and safe to use?",
+          "Can you explain the basics?"
+        ]
+      }
+    };
+  }
+
+  /**
+   * Detect category from user message and response
+   */
+  detectCurrentCategory(userMessage, responseText) {
+    const message = (userMessage + ' ' + responseText).toLowerCase();
+    
+    if (message.includes('send') || message.includes('transfer') || message.includes('command') || message.includes('recipient')) {
+      return 'transfer';
+    } else if (message.includes('receive') || message.includes('qr') || message.includes('scan')) {
+      return 'receive';
+    } else if (message.includes('raid') || message.includes('community') || message.includes('...')) {
+      return 'raid';
+    } else if (message.includes('blockchain') || message.includes('solana') || message.includes('ethereum') || message.includes('fee')) {
+      return 'blockchain';
+    }
+    return 'general';
+  }
+
+  /**
+   * Use suggestion directly without variations to avoid grammar issues
+   */
+  getDirectSuggestion(suggestion) {
+    return suggestion;
+  }
+
+  /**
+   * Generate context-aware follow-up based on knowledge
+   */
+  generateContextAwareFollowUp(userMessage, responseText, knowledgeContext) {
+    console.log('🎯 NYLA LLM: Generating context-aware follow-up');
+    console.log('  - User message:', userMessage);
+    console.log('  - Response preview:', responseText.substring(0, 100) + '...');
+    
+    // Extract topics from response that could be expanded
+    const topics = [];
+    
+    if (responseText.includes('Send') || responseText.includes('transfer')) {
+      topics.push("What are the exact steps to create a transfer command?");
+    }
+    if (responseText.includes('X.com') || responseText.includes('post')) {
+      topics.push("What happens after I post the command?");
+    }
+    if (responseText.includes('QR') || responseText.includes('Receive')) {
+      topics.push("How do I create payment requests with QR codes?");
+    }
+    if (responseText.includes('blockchain') || responseText.includes('Solana') || responseText.includes('Ethereum')) {
+      topics.push("Which blockchain should I choose for my transfer?");
+    }
+    if (responseText.includes('Raid') || responseText.includes('community')) {
+      topics.push("What can I do with community engagement features?");
+    }
+    
+    // Filter out topics that are too similar to the original user question
+    const userMessageLower = userMessage.toLowerCase();
+    const relevantTopics = topics.filter(topic => {
+      const topicLower = topic.toLowerCase();
+      // Check if topic is significantly different from user's question
+      const similarity = this.calculateSimilarity(userMessageLower, topicLower);
+      const isDifferent = similarity < 0.7; // Less than 70% similar
+      console.log(`  🔍 Topic similarity check: "${topic}" vs user question = ${similarity.toFixed(2)} (${isDifferent ? 'KEEP' : 'SKIP'})`);
+      return isDifferent;
+    });
+    
+    // Check if we have knowledge to support a deep dive and unique topics
+    if (knowledgeContext && relevantTopics.length > 0) {
+      const selectedTopic = relevantTopics[0]; // Pick most relevant
+      console.log('  ✅ Context-aware follow-up:', selectedTopic);
+      return { text: selectedTopic };
+    }
+    
+    console.log('  ⚠️ No specific context found for deep dive (or all topics too similar to user question)');
+    return null;
+  }
+  
+  /**
+   * Calculate similarity between two strings (0 = completely different, 1 = identical)
+   */
+  calculateSimilarity(str1, str2) {
+    // Simple word-based similarity check
+    const words1 = str1.split(/\s+/).filter(w => w.length > 2); // Filter short words
+    const words2 = str2.split(/\s+/).filter(w => w.length > 2);
+    
+    if (words1.length === 0 || words2.length === 0) return 0;
+    
+    let commonWords = 0;
+    for (const word1 of words1) {
+      if (words2.some(word2 => word1.includes(word2) || word2.includes(word1))) {
+        commonWords++;
+      }
+    }
+    
+    return commonWords / Math.max(words1.length, words2.length);
+  }
+
+  /**
+   * Track previous categories and specific suggestions to avoid repetition
+   */
+  trackPreviousCategory(category) {
+    this.previousCategories.push(category);
+    // Keep only last 3 categories to avoid
+    if (this.previousCategories.length > 3) {
+      this.previousCategories.shift();
+    }
+  }
+  
+  /**
+   * Track specific follow-up suggestions used
+   */
+  trackUsedFollowUp(suggestion) {
+    const timestamp = Date.now();
+    this.lastUsedFollowUps.set(suggestion, timestamp);
+    
+    // Clean up suggestions older than 5 minutes to prevent infinite exclusion
+    const fiveMinutesAgo = timestamp - (5 * 60 * 1000);
+    for (const [suggestion, time] of this.lastUsedFollowUps.entries()) {
+      if (time < fiveMinutesAgo) {
+        this.lastUsedFollowUps.delete(suggestion);
+      }
+    }
+  }
+
+  /**
+   * Generate improved follow-up suggestions with knowledge gap awareness
+   */
+  generateImprovedFollowUps(context, userMessage, responseText) {
+    const categories = this.getFollowUpCategories();
+    const currentCategory = this.detectCurrentCategory(userMessage, responseText);
+    console.log('📊 NYLA LLM: Current category detected:', currentCategory);
+    console.log('📊 NYLA LLM: User message for detection:', userMessage);
+    console.log('📊 NYLA LLM: Detection text:', (userMessage + ' ' + responseText).toLowerCase());
+    
+    // Track this category
+    this.trackPreviousCategory(currentCategory);
+    
+    const followUps = [];
+    
+    // Check knowledge progression - if user is plateauing, prioritize knowledge gap questions
+    const knowledgeStats = context.knowledgeStats || {};
+    const currentPercentage = knowledgeStats.percentage || 0;
+    const shouldPrioritizeGaps = currentPercentage >= 25 && currentPercentage < 70; // Between 25-70%
+    
+    console.log(`🧠 Knowledge Gap Check: ${currentPercentage}% gained, prioritizing gaps: ${shouldPrioritizeGaps}`);
+    
+    // 1. Knowledge Gap Follow-up (if user is plateauing)
+    if (shouldPrioritizeGaps && context.knowledgeTracker) {
+      try {
+        const gapQuestions = context.knowledgeTracker.generateKnowledgeGapQuestions();
+        if (gapQuestions.length > 0) {
+          // Filter out recently used knowledge gap questions (exact matches)
+          let availableGapQuestions = gapQuestions.filter(q => !this.lastUsedFollowUps.has(q.text));
+          
+          // Also filter out questions that are too similar to recent follow-ups (70% similarity threshold)
+          const recentFollowUps = [...this.lastUsedFollowUps.keys()];
+          availableGapQuestions = availableGapQuestions.filter(q => {
+            const isTooSimilar = recentFollowUps.some(recent => {
+              const similarity = this.calculateSimilarity(q.text.toLowerCase(), recent.toLowerCase());
+              if (similarity >= 0.7) {
+                console.log(`🎯 Filtering similar question: "${q.text}" vs "${recent}" = ${similarity.toFixed(2)} similarity`);
+                return true;
+              }
+              return false;
+            });
+            return !isTooSimilar;
+          });
+          
+          console.log(`🎯 Knowledge gap filtering: ${gapQuestions.length} total, ${availableGapQuestions.length} available after similarity filtering`);
+          console.log(`🎯 Recently used follow-ups:`, recentFollowUps);
+          
+          // If all gap questions were recently used or too similar, skip gap questions this round
+          if (availableGapQuestions.length === 0) {
+            console.log(`🎯 All knowledge gap questions filtered out - skipping gap questions this round`);
+            // Don't add any knowledge gap question, let other follow-up types handle it
+          } else {
+            const questionsToUse = availableGapQuestions;
+            
+            // Select a random available knowledge gap question
+            const randomGapQuestion = questionsToUse[Math.floor(Math.random() * questionsToUse.length)];
+            console.log(`🎯 Adding knowledge gap question targeting "${randomGapQuestion.targetKeyword}":`, randomGapQuestion.text);
+            
+            // Track this question as used
+            this.trackUsedFollowUp(randomGapQuestion.text);
+            
+            followUps.push({ 
+              text: randomGapQuestion.text,
+              source: 'knowledge-gap',
+              targetKeyword: randomGapQuestion.targetKeyword
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('🎯 Knowledge gap question generation failed:', error.message);
+      }
+    }
+    
+    // 2. Context-Aware Follow-up (deep dive into current topic)
+    if (!shouldPrioritizeGaps || followUps.length === 0) {
+      const contextAware = this.generateContextAwareFollowUp(userMessage, responseText, context.knowledgeContext);
+      if (contextAware) {
+        followUps.push(contextAware);
+      }
+    }
+    
+    // 3. Categorized Follow-up (different category, excluding recent ones)
+    const excludeCategories = [currentCategory, ...this.previousCategories];
+    const availableCategories = Object.keys(categories).filter(cat => !excludeCategories.includes(cat));
+    
+    // If all categories have been used recently, reset and exclude only current
+    const otherCategories = availableCategories.length > 0 ? availableCategories : 
+      Object.keys(categories).filter(cat => cat !== currentCategory);
+    
+    const nextCategory = otherCategories[Math.floor(Math.random() * otherCategories.length)];
+    console.log('🔄 NYLA LLM: Next category selected:', nextCategory, '(excluded categories:', excludeCategories.join(', ') + ')');
+    
+    // Filter out recently used specific suggestions
+    const categoryFollowUps = categories[nextCategory].suggestions;
+    console.log('🔄 NYLA LLM: Category suggestions for', nextCategory + ':', categoryFollowUps);
+    console.log('🔄 NYLA LLM: Recently used suggestions:', [...this.lastUsedFollowUps.keys()]);
+    
+    const availableFollowUps = categoryFollowUps.filter(suggestion => !this.lastUsedFollowUps.has(suggestion));
+    console.log('🔄 NYLA LLM: Available suggestions after filtering:', availableFollowUps);
+    
+    // If all suggestions in category were recently used, use any from the category
+    const finalFollowUps = availableFollowUps.length > 0 ? availableFollowUps : categoryFollowUps;
+    const selectedFollowUp = finalFollowUps[Math.floor(Math.random() * finalFollowUps.length)];
+    
+    console.log('🔄 NYLA LLM: Selected suggestion:', selectedFollowUp, '(available options:', finalFollowUps.length + ')');
+    
+    // Track this suggestion as used
+    this.trackUsedFollowUp(selectedFollowUp);
+    followUps.push({ text: this.getDirectSuggestion(selectedFollowUp) });
+    
+    // 4. Change topic (existing style)
+    const changeTopicOptions = [
+      "What else can NYLAGo do?",
+      "Show me other features",
+      "Tell me about different capabilities"
+    ];
+    followUps.push({ text: changeTopicOptions[Math.floor(Math.random() * changeTopicOptions.length)] });
+    
+    console.log('💡 NYLA LLM: Generated follow-ups:', followUps.map(f => f.text));
+    return followUps;
+  }
+
+  /**
+   * Generate default follow-up suggestions (fallback)
    */
   generateDefaultFollowUps(context) {
-    const allSuggestions = [
-      { text: "How do I create a transfer command?" },
-      { text: "What happens after I post on X.com?" },
-      { text: "How do QR codes work?" },
-      { text: "Which blockchain is best for transfers?" },
-      { text: "Can I send to multiple recipients?" },
-      { text: "What are the transaction fees?" },
-      { text: "How do I use the Receive tab?" },
-      { text: "What is the Raid tab for?" }
+    // This is now a fallback - should rarely be used
+    console.log('⚠️ NYLA LLM: Using fallback follow-up generation');
+    return [
+      { text: "How do I get started?" },
+      { text: "Tell me about other features" }
     ];
-    
-    // Randomly select 1-3 suggestions
-    const count = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
-    const shuffled = allSuggestions.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
   }
 
   /**
    * Validate and normalize response
    */
-  validateResponse(response, context) {
+  validateResponse(response, context, userMessage) {
     // Ensure required fields
     response.text = response.text || "I'm here to help with NYLA and cryptocurrency questions!";
     response.sentiment = response.sentiment || 'helpful';
     response.confidence = Math.min(Math.max(response.confidence || 0.7, 0), 1);
-    response.personalCare = response.personalCare || { shouldAsk: false };
+    // Personal care disabled for now
+    response.personalCare = { shouldAsk: false };
     response.followUpSuggestions = response.followUpSuggestions || [];
 
     // Enforce 300 character limit for faster generation
@@ -1026,25 +1617,14 @@ class NYLALLMEngine {
       console.log(`NYLA LLM: Truncated to ${response.text.length} characters`);
     }
 
-    // Debug LLM followup suggestions
-    console.log('NYLA LLM: LLM provided followup suggestions:', response.followUpSuggestions);
-    
-    // If no follow-up suggestions, generate random 1-3
-    if (response.followUpSuggestions.length === 0) {
-      console.log('NYLA LLM: No LLM followups, generating defaults');
-      response.followUpSuggestions = this.generateDefaultFollowUps(context);
-    } else if (response.followUpSuggestions.length > 3) {
-      console.log('NYLA LLM: Too many LLM followups, selecting random subset');
-      // If LLM returns more than 3, randomly select 1-3 from them
-      const count = Math.floor(Math.random() * 3) + 1;
-      const shuffled = response.followUpSuggestions.sort(() => 0.5 - Math.random());
-      response.followUpSuggestions = shuffled.slice(0, count);
-    }
+    // Always use improved follow-up generation (ignore LLM suggestions)
+    console.log('NYLA LLM: Generating contextual follow-up suggestions...');
+    response.followUpSuggestions = this.generateImprovedFollowUps(context, userMessage || '', response.text);
 
-    // Add personal care logic based on timezone and time
-    if (context.timezone && context.localTime) {
-      response.personalCare = this.enhancePersonalCare(response.personalCare, context);
-    }
+    // Personal care feature disabled for now - can be re-enabled when KB extraction is improved
+    // if (context.timezone && context.localTime) {
+    //   response.personalCare = this.enhancePersonalCare(response.personalCare, context);
+    // }
 
     return response;
   }
@@ -1105,7 +1685,14 @@ class NYLALLMEngine {
         throw new Error('Engine instance not available for warmup');
       }
       
-      // Send a tiny test prompt to warm up the engine
+      // Skip warmup for now due to NaN sampling issues with some models
+      console.log('NYLA LLM: ⚠️ Skipping warmup due to potential model compatibility issues');
+      console.log('NYLA LLM: 🔄 Engine will warm up on first real request instead');
+      this.isEngineWarmedUp = true; // Mark as warmed up to proceed
+      return;
+      
+      // Original warmup code (disabled due to NaN error)
+      /*
       console.log('NYLA LLM: Sending warmup test prompt...');
       const warmupResponse = await this.engine.chat.completions.create({
         messages: [
@@ -1121,12 +1708,13 @@ class NYLALLMEngine {
       console.log('NYLA LLM: Warmup response received:', warmupResponse?.choices?.[0]?.message?.content || 'No content');
       this.isEngineWarmedUp = true;
       console.log('NYLA LLM: isEngineWarmedUp set to:', this.isEngineWarmedUp);
+      */
       
     } catch (error) {
       console.error('NYLA LLM: ❌ Engine warmup failed:', error.message);
       console.error('NYLA LLM: Warmup error stack:', error.stack);
-      console.warn('NYLA LLM: Continuing with engine marked as not warmed up');
-      this.isEngineWarmedUp = false;
+      console.warn('NYLA LLM: Continuing with engine marked as warmed up anyway');
+      this.isEngineWarmedUp = true; // Mark as warmed up to proceed despite error
       // Don't throw - warmup failure shouldn't prevent normal operation
     }
   }

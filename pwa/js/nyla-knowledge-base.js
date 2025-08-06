@@ -5,6 +5,14 @@
 
 class NYLAKnowledgeBase {
   constructor() {
+    // Check if mobile device - prevent initialization on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    this.isMobile = isMobile;
+    
+    if (isMobile) {
+      console.log('NYLA KB: Mobile device detected - knowledge base will use minimal mode');
+    }
+    
     // External URLs preserved for development reference only
     // No longer used for runtime fetching - all content is static
     this.externalSources = {
@@ -39,6 +47,14 @@ class NYLAKnowledgeBase {
    */
   async initialize() {
     try {
+      if (this.isMobile) {
+        console.log('NYLA KB: Mobile device - using minimal knowledge base');
+        this.knowledgeBase = this.createMinimalKnowledgeBase();
+        this.lastUpdated = { static: Date.now() };
+        console.log('NYLA KB: ✅ Minimal knowledge base loaded for mobile');
+        return this.knowledgeBase;
+      }
+      
       console.log('NYLA KB: === Initializing Knowledge Base (Static Mode) ===');
       
       // Use static knowledge base instead of fetching external URLs
@@ -74,15 +90,15 @@ class NYLAKnowledgeBase {
         content: {
           primaryPurpose: 'NYLAGo is a user interface that helps create NYLA transfer commands for cryptocurrency transfers on X.com',
           howItWorks: {
-            overview: 'NYLAGo generates commands → User posts on X.com → NYLA system executes transfers',
-            sendTab: 'User fills form with recipient and amount → NYLAGo generates command → Creates X.com post → User shares it',
-            receiveTab: 'User sets amount → NYLAGo creates QR code → Others scan to get payment link',
-            raidTab: 'Community engagement with NYLA-related X.com posts. Access via "..." button on bottom-right of screen',
+            overview: 'NYLAGo generates commands, user posts on X.com, NYLA system executes transfers',
+            sendTab: 'User fills form with recipient and amount, NYLAGo generates command, creates X.com post, user shares it',
+            receiveTab: 'User sets amount, NYLAGo creates QR code, others scan to get payment link',
+            raidTab: 'Community engagement with NYLA-related X.com posts. Access via three dots button on bottom-right of screen',
             important: 'The transfer is NOT done by NYLAGo - it\'s done by NYLA when command is posted on X.com'
           },
           exampleFlow: {
             step1: 'User wants to send 100 NYLA to @friend',
-            step2: 'NYLAGo creates command: "Hey @AgentNyla transfer 100 $NYLA @friend"',
+            step2: 'NYLAGo creates command like: Hey @AgentNyla transfer 100 $NYLA @friend',
             step3: 'User posts this on X.com',
             step4: 'NYLA detects the X.com post and executes the transfer'
           }
@@ -100,19 +116,77 @@ class NYLAKnowledgeBase {
             algorand: { name: 'Algorand', description: 'Eco-friendly' }
           },
           notSupported: ['Base', 'Polygon', 'Arbitrum', 'Optimism', 'BSC', 'any other chains'],
-          summary: 'NYLA supports 3 blockchains: Solana (fastest and cheapest), Ethereum (most popular), Algorand (eco-friendly). Choose based on your priorities!'
+          summary: 'NYLA supports 3 blockchains: Solana (fastest and cheapest), Ethereum (most popular), Algorand (eco-friendly). Choose based on your priorities!',
+          bridgingLimitation: {
+            critical: 'NYLA does NOT support cross-chain bridging between blockchains',
+            definition: 'Bridge/Bridging = Token transfer action across different blockchains (e.g., Solana to Algorand, Ethereum to Solana)',
+            supportedOperations: {
+              sameChain: 'NYLA supports transfers and swaps on the SAME blockchain only',
+              examples: ['Solana to Solana transfers', 'Ethereum to Ethereum swaps', 'Algorand to Algorand operations']
+            },
+            notSupported: {
+              bridging: 'NYLA does NOT support bridging between different blockchains',
+              examples: ['Ethereum to Solana', 'Solana to Algorand', 'Algorand to Ethereum', 'Any cross-chain transfers']
+            },
+            keyMessage: 'Each blockchain operates independently in NYLA - no cross-chain bridging features available'
+          }
         },
         lastFetched: Date.now(),
         status: 'static'
       },
       
-      // Platform Limitations
+      // CRITICAL: Cross-Chain Bridging Information
+      crossChainBridging: {
+        content: {
+          definition: {
+            what: 'Bridge/Bridging is the process of transferring tokens between different blockchains',
+            examples: 'Moving tokens from Solana to Algorand, Ethereum to Solana, or any cross-chain transfer'
+          },
+          nylaSupport: {
+            sameChainOnly: 'NYLA ONLY supports transfers and swaps within the SAME blockchain',
+            supportedOperations: [
+              'Solana to Solana transfers (✅ Supported)',
+              'Ethereum to Ethereum swaps (✅ Supported)', 
+              'Algorand to Algorand operations (✅ Supported)'
+            ]
+          },
+          nylaBridgingPolicy: {
+            notSupported: 'NYLA does NOT support cross-chain bridging at all',
+            examples: [
+              'Ethereum to Solana (❌ NOT Supported)',
+              'Solana to Algorand (❌ NOT Supported)',
+              'Algorand to Ethereum (❌ NOT Supported)',
+              'Any cross-blockchain transfers (❌ NOT Supported)'
+            ],
+            clarification: 'Users must choose ONE blockchain per transaction - cannot bridge between chains'
+          },
+          importantReminder: {
+            keyMessage: 'NYLA = Same blockchain operations only. No cross-chain bridging features.',
+            userGuidance: 'If you need cross-chain functionality, you must use dedicated bridge protocols outside of NYLA'
+          }
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // Platform Limitations & Telegram Support
       platformLimitations: {
         content: {
-          supported: 'NYLAGo currently ONLY supports X.com transfer commands',
-          notSupported: 'Telegram transfer commands are NOT yet supported by NYLAGo',
-          explanation: 'If users ask about Telegram transfers, explain that NYLAGo focuses on X.com integration',
-          note: 'NYLA system may support Telegram separately, but NYLAGo interface does not generate Telegram commands'
+          nylagoSupported: 'NYLAGo currently ONLY supports X.com transfer command generation',
+          nylagoLimitations: {
+            telegramCommands: 'NYLAGo does NOT generate Telegram transfer commands yet',
+            chatTransfers: 'NYLAGo does NOT support transfers or swaps from the chat window',
+            explanation: 'NYLAGo is a command generator interface focused on X.com integration'
+          },
+          nylaSystemSupport: {
+            telegram: 'NYLA system DOES support Telegram transfers, swaps, and LP operations',
+            platforms: 'NYLA works on both X.com and Telegram independently',
+            clarification: 'NYLA (the AI agent) supports Telegram, but NYLAGo (the interface) focuses on X.com only'
+          },
+          importantDistinction: {
+            nyla: 'NYLA = The AI agent that executes transfers on multiple platforms including Telegram',
+            nylago: 'NYLAGo = The command generator interface that currently only creates X.com commands'
+          }
         },
         lastFetched: Date.now(),
         status: 'static'
@@ -123,7 +197,7 @@ class NYLAKnowledgeBase {
         content: {
           purpose: 'Community engagement with NYLA-related X.com posts to create positive vibes',
           content: 'Features posts from the NYLA team, community members, or anyone mentioning $NYLA',
-          access: 'Click the "..." (three dots) button on the bottom-right of the screen',
+          access: 'Click the three dots button on the bottom-right of the screen',
           important: 'NOT for creating raids or attacks - it\'s for SUPPORTING and ENGAGING with NYLA content',
           actions: 'Users can like, retweet, and comment on featured posts directly from NYLAGo'
         },
@@ -147,8 +221,15 @@ class NYLAKnowledgeBase {
         content: {
           mainCommands: ['Transfer', 'Swap'],
           description: 'The most used NYLA commands are Transfer and Swap. You can easily find these 2 features in NYLAGo to transfer or swap tokens.',
-          transferCommand: 'Transfer tokens between users',
-          swapCommand: 'Swap between different cryptocurrencies'
+          transferCommand: 'Transfer tokens between users on the SAME blockchain only',
+          swapCommand: 'Swap between different cryptocurrencies on the SAME blockchain only',
+          criticalLimitation: 'IMPORTANT: All NYLA operations (transfer/swap) work within the SAME blockchain only - NO cross-chain bridging supported',
+          transactionStatus: {
+            process: 'After users send NYLA commands in X.com, NYLA will comment the transaction result on the post after the blockchain transaction finishes. The whole process usually takes about a minute.',
+            timeline: 'Typically 1 minute from command post to transaction completion comment',
+            feedback: 'NYLA comments on your X.com post with transaction results',
+            tracking: 'Users can check their X.com post for NYLA\'s response to see transaction status'
+          }
         },
         lastFetched: Date.now(),
         status: 'static'
@@ -207,6 +288,29 @@ class NYLAKnowledgeBase {
         status: 'static'
       },
       
+      // Telegram Integration Information
+      telegramIntegration: {
+        content: {
+          nylaSupport: {
+            available: 'NYLA (the AI agent) fully supports Telegram for transfers, swaps, and LP operations',
+            features: ['Transfer tokens between users', 'Swap cryptocurrencies', 'Liquidity pool operations'],
+            access: 'Users can interact with NYLA directly on Telegram for crypto operations'
+          },
+          nylagoLimitations: {
+            commandGeneration: 'NYLAGo does NOT generate Telegram commands yet - only X.com commands',
+            chatInterface: 'NYLAGo does NOT support transfers or swaps from within the chat interface',
+            focus: 'NYLAGo is designed as an X.com command generator, not a Telegram interface'
+          },
+          clarification: {
+            distinction: 'NYLA (AI agent) ≠ NYLAGo (command generator interface)',
+            summary: 'NYLA works on Telegram independently, but NYLAGo focuses on X.com command generation only',
+            futureSupport: 'Telegram command generation may be added to NYLAGo in future updates'
+          }
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
       xIntegration: {
         content: {
           description: 'NYLA integrates seamlessly with X (formerly Twitter) for social crypto transfers.',
@@ -221,8 +325,9 @@ class NYLAKnowledgeBase {
             '1. Create transfer command in NYLAGo Send tab',
             '2. Enter recipient\'s X username (without @)',
             '3. Specify amount and select blockchain',
-            '4. Click "Send to X.com" to generate shareable command like "Hey @AgentNyla transfer 50 $NYLA @username"',
-            '5. Share the command on X - NYLA detects and executes the transfer'
+            '4. Click Send to X.com to generate shareable command like: Hey @AgentNyla transfer 50 $NYLA @username',
+            '5. Share the command on X - NYLA detects and executes the transfer',
+            '6. NYLA comments on your X.com post with transaction results (usually takes about 1 minute)'
           ],
           benefits: [
             'Public transfer commands increase trust',
@@ -252,11 +357,15 @@ class NYLAKnowledgeBase {
           commonQuestions: [
             {
               q: 'How do I send tokens using NYLA?',
-              a: 'Use the Send tab, enter recipient username, choose amount and token, select blockchain, then click "Send to X.com" to share your transfer command.'
+              a: 'Use the Send tab, enter recipient username, choose amount and token, select blockchain, then click Send to X.com to share your transfer command.'
             },
             {
               q: 'What are the transaction fees?',
               a: 'Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.01, Ethereum: varies with gas, Algorand: ~$0.001.'
+            },
+            {
+              q: 'How do I check transaction status?',
+              a: 'After posting your NYLA command on X.com, NYLA will comment on your post with the transaction result. This usually takes about a minute to complete.'
             },
             {
               q: 'Is NYLA secure?',
@@ -420,6 +529,43 @@ class NYLAKnowledgeBase {
   }
 
   /**
+   * Creates a minimal knowledge base for mobile devices
+   * Contains only essential information to reduce memory usage
+   */
+  createMinimalKnowledgeBase() {
+    return {
+      // Essential NYLA information only
+      nylagoCore: {
+        content: {
+          primaryPurpose: 'NYLAGo helps create NYLA transfer commands for X.com',
+          howItWorks: {
+            overview: 'Fill in recipient, amount, and token - generates transfer command',
+            sendTab: 'Create transfer commands to send tokens',
+            receiveTab: 'Generate QR codes for payment requests'
+          }
+        }
+      },
+      // Minimal blockchain info
+      supportedBlockchains: {
+        content: {
+          summary: 'Supports Solana (default), Ethereum, and Algorand networks',
+          supported: {
+            solana: { name: 'Solana', description: 'Fast and low-cost' },
+            ethereum: { name: 'Ethereum', description: 'Most established' },
+            algorand: { name: 'Algorand', description: 'Pure proof-of-stake' }
+          }
+        }
+      },
+      // Basic NYLA commands
+      nylaCommands: {
+        content: {
+          description: 'Hey @AgentNyla transfer [amount] $[token] @[username] [blockchain]'
+        }
+      }
+    };
+  }
+
+  /**
    * Get common questions for the AI to generate buttons
    */
   getCommonQuestions() {
@@ -444,6 +590,7 @@ class NYLAKnowledgeBase {
       ],
       troubleshooting: [
         'Why isn\'t my transfer working?',
+        'How do I check my transaction status?',
         'QR code won\'t scan - help!',
         'How do I update the app?',
         'Extension not loading?'
