@@ -107,29 +107,47 @@ class NYLAKnowledgeBase {
         status: 'static'
       },
       
-      // Supported Blockchains - CRITICAL: Only these 3!
+      // Supported Blockchains - CRITICAL: These are NETWORKS, not FEATURES!
       supportedBlockchains: {
         content: {
-          supported: {
-            solana: { name: 'Solana', description: 'Fastest and cheapest' },
-            ethereum: { name: 'Ethereum', description: 'Most popular' },
-            algorand: { name: 'Algorand', description: 'Eco-friendly' }
+          conceptClarification: {
+            important: 'BLOCKCHAINS are NETWORKS, NOT features. NYLA operates on 3 separate blockchain networks',
+            distinction: 'Blockchain = Network infrastructure. Features = Operations you can do (transfer, swap)',
+            wrongConcept: 'DO NOT say "3 blockchain features" - Say "3 blockchain networks"'
           },
-          notSupported: ['Base', 'Polygon', 'Arbitrum', 'Optimism', 'BSC', 'any other chains'],
-          summary: 'NYLA supports 3 blockchains: Solana (fastest and cheapest), Ethereum (most popular), Algorand (eco-friendly). Choose based on your priorities!',
-          bridgingLimitation: {
-            critical: 'NYLA does NOT support cross-chain bridging between blockchains',
-            definition: 'Bridge/Bridging = Token transfer action across different blockchains (e.g., Solana to Algorand, Ethereum to Solana)',
-            supportedOperations: {
-              sameChain: 'NYLA supports transfers and swaps on the SAME blockchain only',
-              examples: ['Solana to Solana transfers', 'Ethereum to Ethereum swaps', 'Algorand to Algorand operations']
-            },
-            notSupported: {
-              bridging: 'NYLA does NOT support bridging between different blockchains',
-              examples: ['Ethereum to Solana', 'Solana to Algorand', 'Algorand to Ethereum', 'Any cross-chain transfers']
-            },
-            keyMessage: 'Each blockchain operates independently in NYLA - no cross-chain bridging features available'
-          }
+          supportedNetworks: {
+            count: 3,
+            networks: {
+              solana: { 
+                name: 'Solana Network', 
+                description: 'Independent blockchain - fastest and cheapest',
+                operations: 'Transfer and swap tokens WITHIN Solana network only'
+              },
+              ethereum: { 
+                name: 'Ethereum Network', 
+                description: 'Independent blockchain - most popular and established',
+                operations: 'Transfer and swap tokens WITHIN Ethereum network only'
+              },
+              algorand: { 
+                name: 'Algorand Network', 
+                description: 'Independent blockchain - eco-friendly and efficient',
+                operations: 'Transfer and swap tokens WITHIN Algorand network only'
+              }
+            }
+          },
+          operationalModel: {
+            sameNetworkOnly: 'Each blockchain network operates INDEPENDENTLY in NYLA',
+            supportedOperations: 'Transfer and swap tokens WITHIN the same blockchain network',
+            criticalLimitation: 'NO operations BETWEEN different blockchain networks (no bridging)',
+            examples: {
+              solanaOperations: 'Solana wallet A → Solana wallet B (✅ Supported)',
+              ethereumOperations: 'Ethereum wallet A → Ethereum wallet B (✅ Supported)',
+              algorandOperations: 'Algorand wallet A → Algorand wallet B (✅ Supported)',
+              crossChainAttempts: 'Solana → Ethereum, Ethereum → Algorand, any cross-network (❌ NOT Supported)'
+            }
+          },
+          notSupported: ['Base', 'Polygon', 'Arbitrum', 'Optimism', 'BSC', 'any other blockchain networks'],
+          keyMessage: 'NYLA supports 3 separate blockchain NETWORKS, each operating independently with no cross-network bridging'
         },
         lastFetched: Date.now(),
         status: 'static'
@@ -143,12 +161,14 @@ class NYLAKnowledgeBase {
             examples: 'Moving tokens from Solana to Algorand, Ethereum to Solana, or any cross-chain transfer'
           },
           nylaSupport: {
-            sameChainOnly: 'NYLA ONLY supports transfers and swaps within the SAME blockchain',
+            sameNetworkOnly: 'NYLA ONLY supports transfers and swaps within the SAME blockchain network',
+            operationalRule: 'Each blockchain network is completely separate - no connections between them',
             supportedOperations: [
-              'Solana to Solana transfers (✅ Supported)',
-              'Ethereum to Ethereum swaps (✅ Supported)', 
-              'Algorand to Algorand operations (✅ Supported)'
-            ]
+              'Solana Network: wallet-to-wallet transfers and token swaps WITHIN Solana only (✅ Supported)',
+              'Ethereum Network: wallet-to-wallet transfers and token swaps WITHIN Ethereum only (✅ Supported)', 
+              'Algorand Network: wallet-to-wallet transfers and token swaps WITHIN Algorand only (✅ Supported)'
+            ],
+            networkIsolation: 'Think of each blockchain as a separate, isolated ecosystem with no bridges between them'
           },
           nylaBridgingPolicy: {
             notSupported: 'NYLA does NOT support cross-chain bridging at all',
@@ -163,6 +183,40 @@ class NYLAKnowledgeBase {
           importantReminder: {
             keyMessage: 'NYLA = Same blockchain operations only. No cross-chain bridging features.',
             userGuidance: 'If you need cross-chain functionality, you must use dedicated bridge protocols outside of NYLA'
+          }
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
+      // CRITICAL: Features vs Networks Distinction
+      featuresVsNetworks: {
+        content: {
+          criticalDistinction: {
+            networks: 'Blockchain NETWORKS are the infrastructure (Solana, Ethereum, Algorand)',
+            features: 'FEATURES are the operations you can perform (transfer, swap, generate QR codes)',
+            wrongStatement: 'NEVER say "NYLA supports 3 blockchain features"',
+            correctStatement: 'ALWAYS say "NYLA supports 3 blockchain networks" or "NYLA operates on 3 blockchains"'
+          },
+          nylaFeatures: {
+            actualFeatures: [
+              'Transfer tokens (within same network)',
+              'Swap tokens (within same network)', 
+              'Generate QR codes',
+              'Create X.com commands',
+              'Community engagement (raids)'
+            ],
+            notFeatures: ['Solana', 'Ethereum', 'Algorand'] // These are NETWORKS, not features
+          },
+          nylaNetworks: {
+            supportedNetworks: ['Solana network', 'Ethereum network', 'Algorand network'],
+            networkLimitation: 'Each network operates independently - no cross-network operations',
+            featureAvailability: 'Transfer and swap features work WITHIN each network separately'
+          },
+          correctExplanation: {
+            structure: 'NYLA supports [FEATURES] on [NETWORKS]',
+            example: 'NYLA supports transfer and swap features on Solana, Ethereum, and Algorand networks',
+            emphasis: 'Features work within each network independently - no bridging between networks'
           }
         },
         lastFetched: Date.now(),
