@@ -38,6 +38,7 @@ class NYLAConversationManagerV2 {
       'qrCodes': ['qr', 'qr code', 'code', 'scan', 'payment', 'mobile', 'phone', 'share'],
       'nylaCommands': ['command', 'swap', 'transfer command', 'how to use', 'usage', 'syntax'],
       'about': ['about', 'what is', 'features', 'benefits', 'description', 'overview', 'introduction'],
+      'team': ['team', 'founder', 'developer', 'creator', 'who made', 'who built', 'who created', 'behind', 'dev team', 'development team'],
       'stickers': ['sticker', 'emoji', 'reaction', 'fun', 'cute', 'image']
     };
 

@@ -441,6 +441,38 @@ class NYLAKnowledgeBase {
         status: 'static'
       },
       
+      // Team and Development Information
+      team: {
+        content: {
+          overview: 'NYLA is built by a passionate team of developers, designers, and community builders',
+          teamMembers: {
+            development: {
+              lead: 'Core developer and technical lead',
+              contact: this.staticData.team.dev,
+              role: 'Handles smart contracts, backend systems, and core NYLA functionality'
+            },
+            social: {
+              lead: 'Community and social media manager',
+              contact: this.staticData.team.social,
+              role: 'Manages community engagement, social presence, and user feedback'
+            },
+            design: {
+              lead: 'UI/UX designer and visual artist',
+              contact: this.staticData.team.art,
+              role: 'Creates user interface, graphics, stickers, and visual branding'
+            }
+          },
+          philosophy: {
+            mission: 'To democratize cryptocurrency transfers by making them as simple as sending a message to a friend',
+            values: ['Simplicity over complexity', 'Community over isolation', 'Accessibility over exclusivity', 'Innovation over tradition'],
+            approach: 'Community-driven development with continuous feedback and iteration'
+          },
+          contact: 'You can reach the team members through their X.com profiles for questions, feedback, or collaboration'
+        },
+        lastFetched: Date.now(),
+        status: 'static'
+      },
+      
       staticData: this.staticData,
       commonQuestions: this.getCommonQuestions(),
       limitations: this.getLimitations()
