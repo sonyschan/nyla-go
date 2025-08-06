@@ -85,15 +85,71 @@
     margin-bottom: 0;
   }
 
-  /* Show all tab content simultaneously on desktop */
+  /* Desktop tab content styling (but still use tab switching, not all visible) */
   .desktop-mode .tab-content {
-    display: block !important;
-    margin-bottom: 3rem;
+    margin-bottom: 0;
     background: rgba(26, 26, 26, 0.4);
     border: 1px solid #333333;
     border-radius: 16px;
     padding: 2rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  /* Special handling for NYLA tab to match other tabs' padding */
+  /* Remove the padding override - let the standard 2rem padding apply */
+
+  .desktop-mode .tab-content#nylaTab .nyla-chat-container {
+    background: transparent; /* Remove duplicate background */
+    border: none; /* Remove duplicate border */
+    border-radius: 0; /* Remove duplicate border-radius */
+    padding: 0; /* Remove internal padding since parent tab-content has 2rem */
+    margin: 0; /* Remove any margins */
+    height: auto; /* Allow natural height */
+  }
+
+  /* NYLA Tab: Match Receive Tab Layout Exactly */
+  
+  /* Step 1: Make nyla-chat-container behave like receive tab direct children */
+  .desktop-mode .tab-content#nylaTab .nyla-chat-container {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+    flex-direction: column !important;
+  }
+
+  /* Step 2: Make nyla-messages match receive-qr-container but constrain height */
+  .desktop-mode .tab-content#nylaTab .nyla-messages {
+    text-align: left !important; /* Fix: Align NYLA text to left, not center */
+    margin-bottom: 20px !important;
+    padding: 20px !important;
+    background: rgba(26, 26, 26, 0.4) !important;
+    border: 0px solid #333333 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+    /* Height constraints to prevent infinite growing */
+    flex: none !important;
+    overflow-y: auto !important; /* Allow scrolling when content exceeds max-height */
+    min-height: 200px !important; /* Minimum height for desktop */
+    max-height: 400px !important; /* Maximum height to prevent infinite growing */
+    scroll-behavior: smooth !important;
+  }
+
+  /* Step 3: Make other NYLA elements match form-group */
+  .desktop-mode .tab-content#nylaTab .nyla-questions,
+  .desktop-mode .tab-content#nylaTab .nyla-user-input-container,
+  .desktop-mode .tab-content#nylaTab .nyla-dev-input-container,
+  .desktop-mode .tab-content#nylaTab .nyla-info-panel {
+    margin-bottom: 15px !important;
+    padding: 0 !important; /* form-group doesn't have padding */
+    background: transparent !important; /* form-group doesn't have background */
+    border: none !important; /* form-group doesn't have border */
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   .desktop-mode .tab-content:last-child {

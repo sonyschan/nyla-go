@@ -136,7 +136,6 @@ class NYLAKnowledgeBase {
             }
           },
           operationalModel: {
-            sameNetworkOnly: 'Each blockchain network operates INDEPENDENTLY in NYLA',
             supportedOperations: 'Transfer and swap tokens WITHIN the same blockchain network',
             criticalLimitation: 'NO operations BETWEEN different blockchain networks (no bridging)',
             examples: {
@@ -148,42 +147,6 @@ class NYLAKnowledgeBase {
           },
           notSupported: ['Base', 'Polygon', 'Arbitrum', 'Optimism', 'BSC', 'any other blockchain networks'],
           keyMessage: 'NYLA supports 3 separate blockchain NETWORKS, each operating independently with no cross-network bridging'
-        },
-        lastFetched: Date.now(),
-        status: 'static'
-      },
-      
-      // CRITICAL: Cross-Chain Bridging Information
-      crossChainBridging: {
-        content: {
-          definition: {
-            what: 'Bridge/Bridging is the process of transferring tokens between different blockchains',
-            examples: 'Moving tokens from Solana to Algorand, Ethereum to Solana, or any cross-chain transfer'
-          },
-          nylaSupport: {
-            sameNetworkOnly: 'NYLA ONLY supports transfers and swaps within the SAME blockchain network',
-            operationalRule: 'Each blockchain network is completely separate - no connections between them',
-            supportedOperations: [
-              'Solana Network: wallet-to-wallet transfers and token swaps WITHIN Solana only (✅ Supported)',
-              'Ethereum Network: wallet-to-wallet transfers and token swaps WITHIN Ethereum only (✅ Supported)', 
-              'Algorand Network: wallet-to-wallet transfers and token swaps WITHIN Algorand only (✅ Supported)'
-            ],
-            networkIsolation: 'Think of each blockchain as a separate, isolated ecosystem with no bridges between them'
-          },
-          nylaBridgingPolicy: {
-            notSupported: 'NYLA does NOT support cross-chain bridging at all',
-            examples: [
-              'Ethereum to Solana (❌ NOT Supported)',
-              'Solana to Algorand (❌ NOT Supported)',
-              'Algorand to Ethereum (❌ NOT Supported)',
-              'Any cross-blockchain transfers (❌ NOT Supported)'
-            ],
-            clarification: 'Users must choose ONE blockchain per transaction - cannot bridge between chains'
-          },
-          importantReminder: {
-            keyMessage: 'NYLA = Same blockchain operations only. No cross-chain bridging features.',
-            userGuidance: 'If you need cross-chain functionality, you must use dedicated bridge protocols outside of NYLA'
-          }
         },
         lastFetched: Date.now(),
         status: 'static'
@@ -293,7 +256,7 @@ class NYLAKnowledgeBase {
         content: {
           description: 'NYLA is an AI agent designed for cryptocurrency transfers and community building on social platforms.',
           features: [
-            'Send tokens across multiple blockchains (Solana, Ethereum, Algorand)',
+            'Send tokens on multiple blockchains (Solana, Ethereum, Algorand)',
             'Generate QR codes for easy payments and receiving',
             'Social media integration with X (Twitter) for public transfers',
             'Community-driven engagement and interactions',
@@ -301,6 +264,7 @@ class NYLAKnowledgeBase {
             'Multi-chain support with low fees'
           ],
           keyBenefits: [
+            'Your social account is your wallet',
             'Simplified crypto transfers - as easy as sending a tweet',
             'Social payment commands for community interaction',
             'Multi-chain support without switching wallets',
@@ -311,7 +275,7 @@ class NYLAKnowledgeBase {
             'Send tokens to X (Twitter) usernames',
             'Generate QR codes for in-person payments',
             'Community giveaways and airdrops',
-            'Cross-chain token transfers',
+            'Multi-chain token transfers',
             'Social commerce and tipping'
           ]
         },
@@ -445,6 +409,37 @@ class NYLAKnowledgeBase {
       team: {
         content: {
           overview: 'NYLA is built by a passionate team of developers, designers, and community builders',
+          nylaTeam: {
+            founder: {
+              name: '@shax_btc',
+              role: 'NYLA Founder and Architecturer',
+              responsibilities: 'Founded the NYLA project, handles smart contracts, backend systems, and core NYLA functionality',
+              contact: 'https://x.com/shax_btc',
+              project: 'NYLA (AI Agent)'
+            },
+            coFounder: {
+              name: '@btcberries',
+              role: 'NYLA Co-Founder, Social and Marketing Manager', 
+              responsibilities: 'Co-founded NYLA, manages community engagement, social presence, marketing, and user feedback',
+              contact: 'https://x.com/btcberries',
+              project: 'NYLA (AI Agent)'
+            },
+            dev: {
+              name: '@ChiefZ_SOL',
+              role: 'NYLA Lead Developer', 
+              responsibilities: 'Project development',
+              contact: 'https://x.com/ChiefZ_SOL',
+              project: 'NYLA (AI Agent)'
+            },
+            designer: {
+              name: '@Noir0883',
+              role: 'NYLA Visual Designer and Brand Artist',
+              responsibilities: 'Creates visual branding, graphics, stickers, and artistic elements for the NYLA ecosystem',
+              contact: 'https://x.com/Noir0883',
+              specialties: 'Visual design, digital art, and brand identity',
+              project: 'NYLA (AI Agent)'
+            }
+          },
           teamMembers: {
             development: {
               lead: 'Core developer and technical lead',
@@ -462,12 +457,17 @@ class NYLAKnowledgeBase {
               role: 'Creates user interface, graphics, stickers, and visual branding'
             }
           },
+          keyDistinctions: {
+            nylaTeam: 'NYLA Team: @shax_btc (founder), @btcberries (co-founder), @ChiefZ_SOL (Lead dev), @Noir0883 (visual designer)',
+            projectSeparation: 'NYLA = AI agent that executes blockchain operations, NYLAGo = Interface tool for creating commands',
+            collaboration: 'The projects work together - NYLA provides the AI functionality while NYLAGo provides the user interface'
+          },
           philosophy: {
             mission: 'To democratize cryptocurrency transfers by making them as simple as sending a message to a friend',
             values: ['Simplicity over complexity', 'Community over isolation', 'Accessibility over exclusivity', 'Innovation over tradition'],
             approach: 'Community-driven development with continuous feedback and iteration'
           },
-          contact: 'You can reach the team members through their X.com profiles for questions, feedback, or collaboration'
+          contact: 'You can reach the founders and creators through their X.com profiles for questions, feedback, or collaboration'
         },
         lastFetched: Date.now(),
         status: 'static'
