@@ -133,7 +133,8 @@ class NYLAKnowledgeTracker {
       'x-integration': ['x.com', 'twitter', 'post'],
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
-      'custom-tokens': ['custom', 'add token', 'manage']
+      'custom-tokens': ['custom', 'add token', 'manage'],
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
     };
     
     for (const [feature, keywords] of Object.entries(featureMappings)) {
@@ -189,7 +190,8 @@ class NYLAKnowledgeTracker {
       'x-integration': ['x.com', 'twitter', 'post'],
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
-      'custom-tokens': ['custom', 'add token', 'manage']
+      'custom-tokens': ['custom', 'add token', 'manage'],
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
     };
     
     // Collect all unique keywords
@@ -566,7 +568,8 @@ class NYLAKnowledgeTracker {
       'x-integration': ['x.com', 'twitter', 'post'],
       'telegram-integration': ['telegram', 'bot', 'messaging'],
       'multi-token-support': ['token', 'multiple', 'different'],
-      'custom-tokens': ['custom', 'add token', 'manage']
+      'custom-tokens': ['custom', 'add token', 'manage'],
+      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team']
     };
     
     // Collect all unique keywords
@@ -633,14 +636,21 @@ class NYLAKnowledgeTracker {
       'camera': "How does the camera scanning feature work?",
       'interface': "What makes the user interface special?",
       'manage': "How do I manage custom tokens?",
-      'custom': "Can I add custom tokens to NYLAGo?"
+      'custom': "Can I add custom tokens to NYLAGo?",
+      
+      // Team and Development
+      'team': "Who is behind the NYLA project?",
+      'founder': "Who founded NYLA?",
+      'developer': "Who are the developers of NYLAGo?",
+      'creator': "Who created NYLA?",
+      'built': "Who built NYLAGo?"
     };
     
     const targetedQuestions = [];
     
     // Prioritize unmapped keywords by importance
     const priorityKeywords = unmappedKeywords.filter(keyword => 
-      ['algorand', 'defi', 'telegram', 'pwa', 'economics', 'mainstream', 'bridge', 'custom'].includes(keyword)
+      ['algorand', 'defi', 'telegram', 'pwa', 'economics', 'mainstream', 'bridge', 'custom', 'team', 'founder', 'developer', 'creator', 'built'].includes(keyword)
     );
     
     const keywordsToTarget = priorityKeywords.length > 0 ? priorityKeywords : unmappedKeywords.slice(0, 8);
