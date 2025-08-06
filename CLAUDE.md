@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.1.8
-- **Features**: Complete PWA asset deployment fixes, service worker cache optimization, resolved all console 404 errors, comprehensive asset verification and tracking
+- **Latest Release**: v2.1.9
+- **Features**: Enhanced knowledge base with critical bridging information, improved duplicate question detection, fixed engagement system errors, comprehensive special character cleanup, and telegram platform clarifications
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

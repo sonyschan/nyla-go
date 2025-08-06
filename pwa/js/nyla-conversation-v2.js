@@ -6,7 +6,16 @@
 class NYLAConversationManagerV2 {
   constructor(knowledgeBase) {
     this.kb = knowledgeBase;
-    this.llmEngine = new NYLALLMEngine();
+    
+    // Check if mobile device - don't initialize LLM on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      console.log('NYLA Conversation V2: Mobile device detected - skipping LLM engine initialization');
+      this.llmEngine = null; // No LLM engine on mobile
+    } else {
+      console.log('NYLA Conversation V2: Desktop device detected - initializing LLM engine');
+      this.llmEngine = new NYLALLMEngine();
+    }
     
     // Conversation state
     this.conversationHistory = [];
@@ -43,6 +52,14 @@ class NYLAConversationManagerV2 {
     // Initialize from storage
     this.loadFromStorage();
     this.initializeTimezone();
+  }
+
+  /**
+   * Set UI reference for engagement functionality
+   */
+  setUI(ui) {
+    this.ui = ui;
+    console.log('NYLA Conversation V2: UI reference set');
   }
 
   /**
@@ -96,11 +113,15 @@ class NYLAConversationManagerV2 {
         console.warn('NYLA Conversation V2: ⚠️ Knowledge tracker not available, engagement features disabled');
       }
       
-      // Initialize LLM engine in background
-      console.log('NYLA Conversation V2: Initializing LLM engine...');
-      this.llmEngine.initialize().catch(error => {
-        console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to rule-based system:', error);
-      });
+      // Initialize LLM engine in background (desktop only)
+      if (this.llmEngine) {
+        console.log('NYLA Conversation V2: Initializing LLM engine...');
+        this.llmEngine.initialize().catch(error => {
+          console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to rule-based system:', error);
+        });
+      } else {
+        console.log('NYLA Conversation V2: LLM engine disabled (mobile device)');
+      }
 
       console.log('NYLA Conversation V2: ✅ Initialized successfully');
       return true;
@@ -207,7 +228,7 @@ class NYLAConversationManagerV2 {
       let response;
       
       // Hybrid approach: decide between LLM and rules
-      const llmStatus = this.llmEngine.getStatus();
+      const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
       console.log('NYLA Conversation V2: LLM Status:', llmStatus);
       
       const shouldUseLLM = this.shouldUseLLM(questionId, questionText);
@@ -270,12 +291,41 @@ class NYLAConversationManagerV2 {
           // Generate engagement prompt
           const engagement = this.knowledgeTracker.generateEngagementPrompt();
           
-          // Replace follow-ups with engagement actions
-          response.followUps = this.convertEngagementToQuestions(engagement);
-          response.engagementPrompt = engagement;
+          // Add defensive check for engagement
+          if (!engagement || !engagement.message) {
+            console.error('NYLA Conversation V2: Invalid engagement prompt generated');
+            return response;
+          }
+          
+          // First send NYLA's farewell message
+          const farewellMessage = engagement.message;
+          
+          // Send farewell as NYLA's message first (only if UI is available)
+          if (this.ui && this.ui.displayMessage) {
+            await this.ui.displayMessage(farewellMessage, 'nyla');
+          } else {
+            console.warn('NYLA Conversation V2: UI not available for engagement farewell message');
+          }
+          
+          // Then create a separate response with engagement actions
+          const engagementResponse = {
+            text: "", // No additional text needed since farewell was already sent
+            sentiment: "friendly",
+            followUps: this.convertEngagementToQuestions(engagement),
+            engagementPrompt: engagement,
+            isEngagementResponse: true
+          };
           
           this.engagementState.isShowingEngagement = true;
           this.engagementState.currentEngagement = engagement;
+          
+          // Display the engagement options
+          setTimeout(() => {
+            this.ui.displayFollowUpQuestions(engagementResponse.followUps, engagementResponse);
+          }, 1000); // Small delay to let farewell message be read
+          
+          // Return the original response without engagement modifications
+          return response;
         }
       }
       
@@ -329,7 +379,7 @@ class NYLAConversationManagerV2 {
     console.log('NYLA Conversation V2: Has stream callback:', !!streamCallback);
     
     // Check LLM engine status before proceeding
-    const llmStatus = this.llmEngine.getStatus();
+    const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
     console.log('NYLA Conversation V2: LLM Engine Status at start:', {
       initialized: llmStatus.initialized,
       loading: llmStatus.loading,
@@ -380,7 +430,9 @@ class NYLAConversationManagerV2 {
       localTime: this.userProfile.localTime,
       conversationHistory: this.conversationHistory.slice(-3), // Reduced from 5 to 3 for speed
       userProfile: this.userProfile,
-      knowledgeContext: knowledgeContext
+      knowledgeContext: knowledgeContext,
+      knowledgeTracker: this.knowledgeTracker, // For knowledge gap analysis
+      knowledgeStats: this.knowledgeTracker ? this.knowledgeTracker.getKnowledgeBreakdown() : null // For plateau detection
     };
 
     console.log('NYLA Conversation V2: Generating LLM response (timeout: 30s)...');
@@ -401,7 +453,11 @@ class NYLAConversationManagerV2 {
     
     let llmResponse;
     try {
-      // Use streaming or non-streaming based on whether callback is provided
+      // Use streaming or non-streaming based on whether callback is provided (if LLM available)
+      if (!this.llmEngine) {
+        throw new Error('LLM engine not available on mobile devices');
+      }
+      
       const llmPromise = streamCallback 
         ? this.llmEngine.generateStreamingResponse(questionText, conversationContext, streamCallback)
         : this.llmEngine.generateResponse(questionText, conversationContext);
@@ -417,7 +473,7 @@ class NYLAConversationManagerV2 {
       console.warn('NYLA Conversation V2: LLM timeout (30s) or error:', error.message);
       
       // Generate debug information instead of falling back to rules
-      const llmStatus = this.llmEngine.getStatus();
+      const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false, model: 'Not available on mobile' };
       const debugInfo = {
         text: `🔧 LLM Debug Information:\n\n` +
               `LLM model: ${llmStatus.model || 'Unknown'}\n` +
@@ -860,21 +916,13 @@ class NYLAConversationManagerV2 {
   }
 
   /**
-   * Add Change Topic option with proper limit management
+   * Limit follow-ups to 3 for optimal UI layout (Change topic now handled by LLM)
    */
   addChangeTopicOption(followUps) {
-    // If we have 5 or more options, remove the last one to make room
-    if (followUps.length >= 5) {
-      followUps = followUps.slice(0, 3); // Keep only first 3 to make room for Change Topic
+    // Just limit to 3 followUps since LLM now generates change topic suggestions
+    if (followUps.length > 3) {
+      followUps = followUps.slice(0, 3);
     }
-    
-    // Add Change Topic as the last option
-    followUps.push({
-      id: 'change-topic',
-      text: '🔄 Change topic',
-      action: 'changeTopic',
-      context: 'topic switch'
-    });
     
     return followUps;
   }
@@ -1182,7 +1230,7 @@ class NYLAConversationManagerV2 {
       userInterests: this.userProfile.interests,
       timezone: this.userProfile.timezone,
       sessionDuration: Date.now() - this.userProfile.sessionStart,
-      llmEnabled: this.llmEngine.isReady(),
+      llmEnabled: this.llmEngine ? this.llmEngine.isReady() : false,
       personalCareEnabled: this.userProfile.personalCarePreferences.likesPersonalQuestions !== false,
       averageConfidence: this.conversationHistory.length > 0 
         ? this.conversationHistory.reduce((sum, conv) => sum + (conv.confidence || 0.7), 0) / this.conversationHistory.length 
@@ -1353,6 +1401,12 @@ class NYLAConversationManagerV2 {
    * Convert engagement prompt to question format
    */
   convertEngagementToQuestions(engagement) {
+    // Add defensive checks to prevent undefined errors
+    if (!engagement || !engagement.actions || !Array.isArray(engagement.actions)) {
+      console.warn('NYLA Conversation V2: Invalid engagement object:', engagement);
+      return [];
+    }
+
     return engagement.actions.map((action, index) => ({
       id: `engagement-${engagement.category}-${index}`,
       text: action.text,

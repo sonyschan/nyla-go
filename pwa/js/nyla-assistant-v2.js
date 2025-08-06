@@ -71,6 +71,10 @@ class NYLAAssistantV2 {
         throw new Error('NYLAAssistantUIV2 not available');
       }
       this.ui = new NYLAAssistantUIV2(this.conversationManager);
+      
+      // Set UI reference in conversation manager for engagement functionality
+      this.conversationManager.setUI(this.ui);
+      
       console.log('NYLA Assistant V2: Calling ui.initialize()...');
       await this.ui.initialize();
       console.log('NYLA Assistant V2: ✅ UI initialized');

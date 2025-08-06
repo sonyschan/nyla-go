@@ -51,7 +51,7 @@ const NYLA_RAID_DATA = {
           name: 'The Team',
           description: 'Key NYLA project contributors - support their posts',
           url: 'https://x.com/i/lists/1940678457350029559',
-          icon: '→'
+          icon: '->'
         }
       ]
     },
@@ -64,14 +64,14 @@ const NYLA_RAID_DATA = {
           name: 'Active NYLA Raiders',
           description: 'Follow these community members\' engagement patterns',
           url: 'https://x.com/i/lists/1950200431432647034',
-          icon: '→'
+          icon: '->'
         },
         {
           id: 'ticker-mentioned',
           name: '$NYLA ticker mentioned',
           description: 'Engage top/latest X posts around $NYLA',
           url: 'https://x.com/search?q=%24NYLA&src=typed_query&f=live',
-          icon: '→'
+          icon: '->'
         }
       ]
     }
