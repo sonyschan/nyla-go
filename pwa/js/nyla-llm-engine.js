@@ -14,7 +14,7 @@ class NYLALLMEngine {
     this.modelConfig = {
       model: this.selectModel(),
       temperature: 0.8,
-      max_tokens: 180,
+      max_tokens: 300,
       top_p: 0.8,
     };
     this.systemPrompt = this.createSystemPrompt();

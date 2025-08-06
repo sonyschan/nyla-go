@@ -94,7 +94,7 @@ class NYLAKnowledgeBase {
             sendTab: 'User fills form with recipient and amount, NYLAGo generates command, creates X.com post, user shares it',
             receiveTab: 'User sets amount, NYLAGo creates QR code, others scan to get payment link',
             raidTab: 'Community engagement with NYLA-related X.com posts. Access via three dots button on bottom-right of screen',
-            important: 'The transfer is NOT done by NYLAGo - it\'s done by NYLA when command is posted on X.com'
+            important: 'The transfer is NOT done by NYLAGo - it is done by NYLA when command is posted on X.com'
           },
           exampleFlow: {
             step1: 'User wants to send 100 NYLA to @friend',
@@ -198,7 +198,7 @@ class NYLAKnowledgeBase {
           purpose: 'Community engagement with NYLA-related X.com posts to create positive vibes',
           content: 'Features posts from the NYLA team, community members, or anyone mentioning $NYLA',
           access: 'Click the three dots button on the bottom-right of the screen',
-          important: 'NOT for creating raids or attacks - it\'s for SUPPORTING and ENGAGING with NYLA content',
+          important: 'NOT for creating raids or attacks - it is for SUPPORTING and ENGAGING with NYLA content',
           actions: 'Users can like, retweet, and comment on featured posts directly from NYLAGo'
         },
         lastFetched: Date.now(),
@@ -228,7 +228,7 @@ class NYLAKnowledgeBase {
             process: 'After users send NYLA commands in X.com, NYLA will comment the transaction result on the post after the blockchain transaction finishes. The whole process usually takes about a minute.',
             timeline: 'Typically 1 minute from command post to transaction completion comment',
             feedback: 'NYLA comments on your X.com post with transaction results',
-            tracking: 'Users can check their X.com post for NYLA\'s response to see transaction status'
+            tracking: 'Users can check their X.com post for NYLA response to see transaction status'
           }
         },
         lastFetched: Date.now(),
@@ -323,7 +323,7 @@ class NYLAKnowledgeBase {
           ],
           howItWorks: [
             '1. Create transfer command in NYLAGo Send tab',
-            '2. Enter recipient\'s X username (without @)',
+            '2. Enter recipient X username (without @)',
             '3. Specify amount and select blockchain',
             '4. Click Send to X.com to generate shareable command like: Hey @AgentNyla transfer 50 $NYLA @username',
             '5. Share the command on X - NYLA detects and executes the transfer',
@@ -579,19 +579,19 @@ class NYLAKnowledgeBase {
       features: [
         'What can NYLA Go do?',
         'How do I use the Extension?',
-        'What\'s the difference between Extension and PWA?',
+        'What is the difference between Extension and PWA?',
         'How do I scan QR codes?'
       ],
       tokens: [
         'What is $NYLA token?',
         'Where can I buy $NYLA?',
         'What are the holder benefits?',
-        'What\'s the contract address?'
+        'What is the contract address?'
       ],
       troubleshooting: [
-        'Why isn\'t my transfer working?',
+        'Why is my transfer not working?',
         'How do I check my transaction status?',
-        'QR code won\'t scan - help!',
+        'QR code will not scan - help!',
         'How do I update the app?',
         'Extension not loading?'
       ]
