@@ -271,7 +271,7 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.1.9
+- **Latest Release**: v2.1.10
 - **Features**: Enhanced knowledge base with critical bridging information, improved duplicate question detection, fixed engagement system errors, comprehensive special character cleanup, and telegram platform clarifications
 
 ### Key Files Structure
