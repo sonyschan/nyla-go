@@ -1627,17 +1627,31 @@ class NYLAAssistantUIV2 {
       }
     }
     
-    // Add stats/info panel if it doesn't exist (knowledge progress only)
+    // Add stats/info panel if it doesn't exist (knowledge progress and disclaimer)
     if (!existingTab.querySelector('.nyla-info-panel')) {
       const infoPanelHTML = `
         <div class="nyla-info-panel" id="nylaInfoPanel">
           <div class="nyla-stats">
             <span class="stats-text" id="knowledgeStats" style="display: block; color: #FF6B35;">Checking NYLA knowledge gained..</span>
           </div>
+          <div class="nyla-disclaimer" style="
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #cccccc;
+            text-align: center;
+          ">
+            <div style="color: #FF6B35; font-weight: 500; margin-bottom: 4px;">ℹ️ Important Notice</div>
+            NylaGo is a community run application, it does not have access to NYLA CORE. It is a helper application that pre formats commands to Nyla. Nyla still processes and handles requests the same way she would normally.
+          </div>
         </div>
       `;
       existingTab.insertAdjacentHTML('beforeend', infoPanelHTML);
-      console.log('NYLA UI V2: ✅ Info panel added (knowledge stats only)');
+      console.log('NYLA UI V2: ✅ Info panel added (knowledge stats and disclaimer)');
     }
     
     // Set up debug input event listener if in debug mode

@@ -117,21 +117,142 @@ class NYLAKnowledgeBase {
           },
           supportedNetworks: {
             count: 3,
-            networks: {
-              solana: { 
-                name: 'Solana Network', 
-                description: 'Independent blockchain - fastest and cheapest',
-                operations: 'Transfer and swap tokens WITHIN Solana network only'
+            solana: {
+              name: 'Solana Network',
+              description: 'An independent blockchain known for being one of the fastest and lowest-cost networks. It uses a combination of Proof of History and Proof of Stake to achieve high throughput.',
+              operations: 'Supports token transfers and swaps *within* the Solana network only.',
+              baseKnowledge: {
+                consensus: 'Proof of History + Proof of Stake',
+                txSpeed: 'Up to 65,000 transactions per second (theoretical)',
+                avgFee: 'Average transaction fee is around $0.0001 USD',
+                ecosystem: 'Rapidly growing in NFTs, DeFi, and GameFi. Popular wallets include Phantom and Solflare.',
+                nativeToken: 'SOL'
               },
-              ethereum: { 
-                name: 'Ethereum Network', 
-                description: 'Independent blockchain - most popular and established',
-                operations: 'Transfer and swap tokens WITHIN Ethereum network only'
+              community: {
+                summary: 'A passionate and developer-friendly community focused on speed, usability, and innovation.',
+                hangouts: ['X (Solana Foundation)', 'Solana Discord', 'Solana Hacker Houses', 'Buildoooor events']
               },
-              algorand: { 
-                name: 'Algorand Network', 
-                description: 'Independent blockchain - eco-friendly and efficient',
-                operations: 'Transfer and swap tokens WITHIN Algorand network only'
+              ecosystemHighlights: [
+                'Magic Eden (NFT Marketplace)',
+                'Jito (Liquid Staking)',
+                'Marinade Finance (Staking)',
+                'Meteora (Liquidity Layer)',
+                'Pump.fun (Meme Coin Launchpad)',
+                'Jupiter Aggregator (DEX Routing)'
+              ],
+              foundation: {
+                name: 'Solana Foundation',
+                role: 'Supports core protocol development, ecosystem grants, and community events',
+                url: 'https://solana.org'
+              }
+            },
+            ethereum: {
+              name: 'Ethereum Network',
+              description: 'The most well-known blockchain platform, foundational to smart contracts, DeFi, and NFTs.',
+              operations: 'Supports token transfers and swaps *within* the Ethereum network only.',
+              baseKnowledge: {
+                consensus: 'Proof of Stake (since The Merge)',
+                txSpeed: 'Around 15–30 transactions per second (mainnet)',
+                avgFee: 'Highly variable gas fees, typically $5–$50+ USD per transaction',
+                ecosystem: 'Largest DApp ecosystem. Common wallets include MetaMask.',
+                nativeToken: 'ETH'
+              },
+              community: {
+                summary: 'A global, open-source developer community built around decentralization, innovation, and neutrality.',
+                hangouts: ['Ethereum Magicians', 'ETHGlobal hackathons', 'Ethereum StackExchange', 'r/ethereum']
+              },
+              ecosystemHighlights: [
+                'Uniswap (DeFi)',
+                'OpenSea (NFT Marketplace)',
+                'Lido (Liquid Staking)',
+                'Aave (Lending)',
+                'ENS (Ethereum Name Service)',
+                'Arbitrum & Optimism (L2 Scaling)'
+              ],
+              foundation: {
+                name: 'Ethereum Foundation',
+                role: 'Non-profit organization that supports Ethereum protocol research and core development',
+                url: 'https://ethereum.foundation'
+              }
+            },
+            algorand: {
+              name: 'Algorand Network',
+              description: 'An independent blockchain known for its energy efficiency, fast finality, and low-cost transactions, using Pure Proof of Stake. Designed for sustainable and scalable dApps.',
+              operations: 'Supports token transfers, swaps, and smart contracts within the Algorand network only.',
+              baseKnowledge: {
+                consensus: 'Pure Proof of Stake (PPoS) with VRF-based randomness',
+                txSpeed: '~6,000 transactions per second',
+                blockFinality: '~4-5 seconds for transaction finality',
+                avgFee: 'Average transaction fee ~$0.001 USD',
+                sustainability: 'Carbon-negative, <0.0001 kWh per transaction',
+                smartContracts: 'TEAL-based smart contracts, PyTeal for developer-friendly coding',
+                staking: 'Passive staking for ALGO holders with variable APY via governance',
+                ecosystem: 'Focused on ESG, public-sector use cases, DeFi, and NFTs. Supported wallets include Pera Wallet.',
+                nativeToken: 'ALGO',
+                roadmap: 'Targeting >10,000 TPS and cross-chain interoperability via State Proofs',
+                history: 'Launched in 2019 by Turing Award winner Silvio Micali'
+              },
+              community: {
+                summary: 'An active and growing community focused on sustainable blockchain adoption, real-world use cases, inclusive finance, and SocialFi innovation. Strong emphasis on developer and user onboarding through accessible tools like NYLA.',
+                hangouts: [
+                  'Algorand Discord (discord.gg/algorand)',
+                  'AlgoFam on X (#ALGO, #Algorand)',
+                  'r/AlgorandOfficial and r/algorand on Reddit',
+                  'Algorand Forum (forum.algorand.org)',
+                  'Algorand Dev Portal (developer.algorand.org)',
+                  'AlgoHubs (regional meetups)'
+                ],
+                metrics: 'Over 76K Reddit subscribers (r/AlgorandOfficial), 100K+ X followers (@AlgoFoundation), and 1.3M+ monthly active users as of September 2024.',
+                initiatives: [
+                  'NYLA Collaboration: Enables sending $ALGO and ASAs via X and Telegram handles, auto-generating wallets for recipients to onboard new users (e.g., Sydney Sweeney received 6.9 $ALGO via X). Launched July 2025 with Algorand Foundation endorsement.',
+                  'xGov Council: Community-elected governance body formed in 2025, empowering ALGO holders to vote on ecosystem proposals.',
+                  'Algorand Assembly: Bi-monthly community calls discussing ecosystem analytics, projects like NYLA, and events like Decipher.',
+                  'X Spaces: Regular discussions with community members (e.g., Geek.Algo, Fisherman.Algo) and project leads like Navi (NYLA CBDO) to promote collaboration.'
+                ],
+                sentiment: 'Highly positive, with enthusiasm for NYLA’s SocialFi integration as a "Venmo of Web3" and Algorand’s low-fee, eco-friendly infrastructure driving mass adoption.'
+              },
+              ecosystemHighlights: [
+                'NYLA (SocialFi Payments, launched July 2025): Enables sending $ALGO and ASAs via X and Telegram handles, auto-generating wallets for recipients. Supports multichain (Solana, Ethereum, Algorand) and drives mass adoption, e.g., Sydney Sweeney onboarded with 6.9 $ALGO. Endorsed by Algorand Foundation.',
+                'Pera Wallet (Official Wallet): Open-source wallet with NFT tracking, Mastercard integration via Immersve (2025), and Galxe partnership for ALGO/USDC rewards via on-chain quests.',
+                'Folks Finance (DeFi Lending): Highest TVL DeFi protocol on Algorand. Launched xChain for cross-chain operations and xALGO liquid staking in 2025.',
+                'Tinyman (DEX): Decentralized exchange for ASA trading, supporting liquid governance and DeFi liquidity.',
+                'Algofi (Legacy DeFi protocol, ceased 2023): Early DeFi platform, now inactive but foundational for Algorand’s DeFi growth.',
+                'NFDomains (Naming service): Provides user-friendly naming for Algorand wallets and assets.',
+                'Koibanx (GovTech & Tokenized Infrastructure): Powers tokenized infrastructure for Latin American governments, e.g., El Salvador’s blockchain initiatives.',
+                'Hex Trust (Institutional Staking, partnered 2025): Brings institutional-grade staking to Algorand, enhancing network security and participation.',
+                'Zebec HQ (Card & Payroll Tools, integrated 2025): Integrates Algorand for crypto payroll and card services, expanding real-world payment use cases.',
+                'Paycode (Digital Identity & Payments, partnered June 2025): Strengthens digital identity for secure, inclusive payments in Africa (e.g., Afghanistan, Ghana, Zambia).',
+                'Lofty (Real-World Asset Tokenization): Tokenizes real estate for fractional ownership, integrated with CompX for yield optimization.',
+                'World Chess (FIDE Online Arena, partnered 2025): Introduces portable, verifiable credentials for chess players, enhancing fairness and rewards.',
+                'Monko (Meme Coin, 2025): Leading meme coin with creative art and strong community on Telegram/Discord. Highlighted by Algorand Foundation for driving engagement.',
+                'Ballsack (Meme Coin, 2025): Humorous meme coin gaining traction on Vestige and Pera Wallet, part of Algorand’s vibrant meme scene.',
+                'Gonna (Meme Coin, 2025): Lizard-themed meme coin with creative marketing, traded on Tinyman and Vestige, boosting community engagement.',
+                'AlphaArcade (Gaming/Meme Project, 2025): Arcade-style gaming project with meme elements, leveraging Algorand’s low fees for in-game transactions.',
+                'AKITA (Meme Coin/NFT, Ongoing): Community-driven meme coin with Akita Kennel Club NFTs, known for its loyal following and 2023 Meme of the Year contest.',
+                'MOOJ (Meme Coin, 2025): Sustainable meme coin with a growing community, seen as a hidden gem with smart developers.',
+                'Vestige V2 (Marketplace/Analytics, 2025): Upgraded platform for trading and analytics of Algorand assets, supporting meme coins and NFTs.',
+                'CompX (DeFi/RWA, 2025): DeFi platform for yield optimization, integrated with Lofty for real estate tokenization and passive income.',
+                'GORA (Oracle/Utility, Ongoing): Decentralized oracle network providing data feeds for Algorand dApps, enhancing DeFi and application functionality.',
+                'Wormhole NTT Integration (Cross-Chain, July 2025): Enables seamless cross-chain token transfers across 40+ blockchains, led by Folks Finance.'
+              ],
+              foundation: {
+                name: 'Algorand Foundation',
+                role: 'Supports ecosystem growth, education, and decentralized governance (xGovs)',
+                url: 'https://algorand.foundation',
+                resources: [
+                  'Developer Portal: developer.algorand.org',
+                  'Documentation: docs.algorand.org',
+                  'GitHub: github.com/algorand',
+                  'Whitepaper: https://algorand.foundation/algorand-protocol'
+                ]
+              },
+              security: {
+                features: 'Post-quantum secure, VRF-based consensus for tamper-proof randomness',
+                reliability: '100% network uptime since 2019 mainnet launch'
+              },
+              positioning: {
+                usp: 'Eco-friendly, scalable, developer-friendly with no forks and instant finality',
+                competitors: 'Competes with Ethereum, Solana, Cardano with lower fees and faster finality'
               }
             }
           },
@@ -361,8 +482,8 @@ class NYLAKnowledgeBase {
       commandUsage: {
         content: {
           fees: {
-            solana: 'Very low fees (typically under $0.01 per transaction)',
-            ethereum: 'Variable gas fees (depends on network congestion, can range from $5-50+)',
+            solana: 'Extremely low fees (average around $0.0001 per transaction)',
+            ethereum: 'Variable gas fees (depends on network congestion, typically $5-50+ per transaction)',
             algorand: 'Minimal fees (around $0.001 per transaction)'
           },
           holderBenefits: [
@@ -379,7 +500,7 @@ class NYLAKnowledgeBase {
             },
             {
               q: 'What are the transaction fees?',
-              a: 'Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.01, Ethereum: varies with gas, Algorand: ~$0.001.'
+              a: 'Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.0001, Ethereum: $5-$50+ (varies with gas), Algorand: ~$0.001.'
             },
             {
               q: 'How do I check transaction status?',

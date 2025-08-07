@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.1.10
-- **Features**: Enhanced knowledge base with critical bridging information, improved duplicate question detection, fixed engagement system errors, comprehensive special character cleanup, and telegram platform clarifications
+- **Latest Release**: v2.1.11
+- **Features**: Enhanced data persistence with auto-save, backup storage, NYLA tab disclaimer, comprehensive blockchain knowledge base with detailed network information, improved knowledge recovery mechanisms
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
