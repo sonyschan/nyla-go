@@ -44,8 +44,27 @@ class NYLAKnowledgeTracker {
       this.knowledgeUniverse.topics.length + 
       this.knowledgeUniverse.concepts.length + 
       this.knowledgeUniverse.features.length;
+    
+    // Auto-save functionality
+    this.autoSaveInterval = null;
+    this.hasUnsavedChanges = false;
       
     this.loadFromStorage();
+    this.startAutoSave();
+    
+    // Save on page unload
+    window.addEventListener('beforeunload', () => {
+      if (this.hasUnsavedChanges) {
+        this.saveToStorage();
+      }
+    });
+    
+    // Save on visibility change (mobile background)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && this.hasUnsavedChanges) {
+        this.saveToStorage();
+      }
+    });
   }
 
   /**
@@ -74,6 +93,7 @@ class NYLAKnowledgeTracker {
       console.log(`NYLA Knowledge: ${newKeywords} new keyword(s) mapped (${previousMappedKeywords} → ${currentMappedKeywords})`);
       console.log(`NYLA Knowledge: Current percentage: ${percentage.toFixed(2)}% (${currentMappedKeywords}/${this.totalKeywords} keywords)`);
       this.userKnowledge.lastKnowledgeUpdate = Date.now();
+      this.hasUnsavedChanges = true;
       this.saveToStorage();
     }
     
@@ -496,6 +516,24 @@ class NYLAKnowledgeTracker {
   }
 
   /**
+   * Start auto-save timer
+   */
+  startAutoSave() {
+    // Clear existing interval if any
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+    }
+    
+    // Save every 30 seconds if there are changes
+    this.autoSaveInterval = setInterval(() => {
+      if (this.hasUnsavedChanges) {
+        console.log('NYLA Knowledge: Auto-saving progress...');
+        this.saveToStorage();
+      }
+    }, 30000);
+  }
+  
+  /**
    * Save knowledge state to localStorage
    */
   saveToStorage() {
@@ -508,23 +546,139 @@ class NYLAKnowledgeTracker {
         totalExposure: this.userKnowledge.totalExposure,
         lastEngagementPrompt: this.userKnowledge.lastEngagementPrompt,
         engagementHistory: this.userKnowledge.engagementHistory,
-        lastKnowledgeUpdate: this.userKnowledge.lastKnowledgeUpdate
+        lastKnowledgeUpdate: this.userKnowledge.lastKnowledgeUpdate,
+        version: 2,
+        savedAt: Date.now()
       };
       
+      // Primary save
       localStorage.setItem('nyla_knowledge_tracker', JSON.stringify(data));
+      
+      // Create backup with timestamp
+      const backupKey = `nyla_knowledge_backup_${new Date().toISOString().split('T')[0]}`;
+      localStorage.setItem(backupKey, JSON.stringify(data));
+      
+      // Session storage backup (survives refresh but not browser close)
+      sessionStorage.setItem('nyla_knowledge_session', JSON.stringify(data));
+      
+      // Clean old backups
+      this.cleanOldBackups();
+      
+      this.hasUnsavedChanges = false;
+      const percentage = this.getKnowledgePercentage();
+      console.log(`NYLA Knowledge: Saved ${percentage}% progress (${this.userKnowledge.mappedKeywords.size} keywords)`);
     } catch (error) {
       console.error('NYLA Knowledge Tracker: Failed to save to storage', error);
+      
+      // Try session storage as fallback
+      try {
+        const data = {
+          topics: [...this.userKnowledge.topics],
+          concepts: [...this.userKnowledge.concepts],
+          features: [...this.userKnowledge.features],
+          mappedKeywords: [...this.userKnowledge.mappedKeywords],
+          savedAt: Date.now()
+        };
+        sessionStorage.setItem('nyla_knowledge_emergency', JSON.stringify(data));
+        console.warn('NYLA Knowledge: Emergency save to session storage');
+      } catch (e) {
+        console.error('NYLA Knowledge: All storage methods failed');
+      }
     }
   }
 
+  /**
+   * Clean old backup entries
+   */
+  cleanOldBackups() {
+    try {
+      const keys = Object.keys(localStorage);
+      const backupKeys = keys.filter(k => k.startsWith('nyla_knowledge_backup_'));
+      
+      // Sort by date (newest first)
+      backupKeys.sort().reverse();
+      
+      // Keep only last 7 backups
+      if (backupKeys.length > 7) {
+        for (let i = 7; i < backupKeys.length; i++) {
+          localStorage.removeItem(backupKeys[i]);
+          console.log(`Removed old backup: ${backupKeys[i]}`);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to clean old backups:', error);
+    }
+  }
+  
   /**
    * Load knowledge state from localStorage
    */
   loadFromStorage() {
     try {
+      let data = null;
+      let source = '';
+      
+      // Try primary storage first
       const stored = localStorage.getItem('nyla_knowledge_tracker');
       if (stored) {
-        const data = JSON.parse(stored);
+        try {
+          data = JSON.parse(stored);
+          source = 'primary';
+        } catch (e) {
+          console.warn('Primary storage corrupted, trying alternatives...');
+        }
+      }
+      
+      // Try session storage
+      if (!data) {
+        const session = sessionStorage.getItem('nyla_knowledge_session');
+        if (session) {
+          try {
+            data = JSON.parse(session);
+            source = 'session';
+            console.log('Recovered from session storage');
+          } catch (e) {
+            console.warn('Session storage corrupted');
+          }
+        }
+      }
+      
+      // Try emergency session storage
+      if (!data) {
+        const emergency = sessionStorage.getItem('nyla_knowledge_emergency');
+        if (emergency) {
+          try {
+            data = JSON.parse(emergency);
+            source = 'emergency';
+            console.log('Recovered from emergency storage');
+          } catch (e) {
+            console.warn('Emergency storage corrupted');
+          }
+        }
+      }
+      
+      // Try backups
+      if (!data) {
+        const keys = Object.keys(localStorage);
+        const backupKeys = keys.filter(k => k.startsWith('nyla_knowledge_backup_')).sort().reverse();
+        
+        for (const backupKey of backupKeys) {
+          try {
+            const backup = localStorage.getItem(backupKey);
+            if (backup) {
+              data = JSON.parse(backup);
+              source = `backup (${backupKey})`;
+              console.log(`Recovered from ${source}`);
+              break;
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+      }
+      
+      // Load the data
+      if (data) {
         this.userKnowledge.topics = new Set(data.topics || []);
         this.userKnowledge.concepts = new Set(data.concepts || []);
         this.userKnowledge.features = new Set(data.features || []);
@@ -533,6 +687,20 @@ class NYLAKnowledgeTracker {
         this.userKnowledge.lastEngagementPrompt = data.lastEngagementPrompt || null;
         this.userKnowledge.engagementHistory = data.engagementHistory || [];
         this.userKnowledge.lastKnowledgeUpdate = data.lastKnowledgeUpdate || Date.now();
+        
+        const percentage = this.getKnowledgePercentage();
+        console.log(`NYLA Knowledge: Loaded ${percentage}% progress from ${source}`);
+        console.log(`Keywords: ${this.userKnowledge.mappedKeywords.size}/${this.totalKeywords}`);
+        
+        // Check data age
+        if (data.savedAt) {
+          const hoursSinceSave = (Date.now() - data.savedAt) / (1000 * 60 * 60);
+          if (hoursSinceSave > 24) {
+            console.warn(`NYLA Knowledge: Data is ${Math.floor(hoursSinceSave)} hours old`);
+          }
+        }
+      } else {
+        console.log('NYLA Knowledge: Starting fresh (no saved data found)');
       }
     } catch (error) {
       console.error('NYLA Knowledge Tracker: Failed to load from storage', error);
@@ -738,6 +906,34 @@ class NYLAKnowledgeTracker {
     this.saveToStorage();
     
     console.log(`NYLA Knowledge Tracker: Simulated ${this.getKnowledgePercentage()}% knowledge`);
+  }
+  
+  /**
+   * Export knowledge data for debugging
+   */
+  exportKnowledgeData() {
+    const data = {
+      topics: [...this.userKnowledge.topics],
+      concepts: [...this.userKnowledge.concepts],
+      features: [...this.userKnowledge.features],
+      mappedKeywords: [...this.userKnowledge.mappedKeywords],
+      totalExposure: this.userKnowledge.totalExposure,
+      percentage: this.getKnowledgePercentage(),
+      lastUpdate: new Date(this.userKnowledge.lastKnowledgeUpdate).toISOString(),
+      savedAt: new Date().toISOString()
+    };
+    
+    // Create downloadable file
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nyla-knowledge-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    console.log('Knowledge data exported:', data);
+    return data;
   }
 }
 
