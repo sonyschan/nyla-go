@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.1.11
-- **Features**: Enhanced data persistence with auto-save, backup storage, NYLA tab disclaimer, comprehensive blockchain knowledge base with detailed network information, improved knowledge recovery mechanisms
+- **Latest Release**: v2.2.0
+- **Features**: Complete RAG (Retrieval-Augmented Generation) system with vector embeddings, conversation context awareness, production sync for automatic knowledge base updates, enhanced KB version management, and intelligent semantic search capabilities
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

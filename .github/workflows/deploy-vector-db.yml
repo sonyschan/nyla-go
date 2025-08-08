@@ -1,0 +1,176 @@
+name: Deploy Vector Database
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'pwa/js/nyla-knowledge-base.js'
+      - 'nylago-data.js'
+      - 'pwa/js/rag/**'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild even if no changes detected'
+        required: false
+        default: 'false'
+
+jobs:
+  deploy-vector-db:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install
+        # Install additional dependencies if needed
+        
+    - name: Check for knowledge base changes
+      id: check_changes
+      run: |
+        if [ "${{ github.event.inputs.force_rebuild }}" == "true" ]; then
+          echo "force_rebuild=true" >> $GITHUB_OUTPUT
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        else
+          # Check if KB files changed in this push
+          CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
+          echo "Changed files: $CHANGED_FILES"
+          
+          if echo "$CHANGED_FILES" | grep -E "(pwa/js/nyla-knowledge-base\.js|nylago-data\.js)"; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+        fi
+        
+    - name: Generate vector embeddings
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        echo "📦 Generating vector embeddings..."
+        node scripts/deploy-vector-db.js
+        
+    - name: Verify generated files
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        echo "🔍 Verifying generated files..."
+        ls -la pwa/nyla-knowledge-*
+        
+        # Check file sizes (should not be empty)
+        if [ ! -s "pwa/nyla-knowledge-index.json" ]; then
+          echo "❌ Index file is empty or missing"
+          exit 1
+        fi
+        
+        if [ ! -s "pwa/nyla-knowledge-version.json" ]; then
+          echo "❌ Version file is empty or missing"
+          exit 1
+        fi
+        
+        echo "✅ Files verified successfully"
+        
+    - name: Update service worker cache version
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        echo "🔄 Updating service worker cache version..."
+        
+        # Get current version from version file
+        NEW_VERSION=$(node -e "
+          const fs = require('fs');
+          const version = JSON.parse(fs.readFileSync('pwa/nyla-knowledge-version.json', 'utf8'));
+          console.log(version.version);
+        ")
+        
+        # Update service worker cache name to include vector DB version
+        if [ -f "pwa/sw.js" ]; then
+          sed -i "s/CACHE_NAME = .*/CACHE_NAME = 'nyla-go-v${NEW_VERSION}-kb-' + Date.now();/" pwa/sw.js
+          echo "✅ Service worker updated with new cache version"
+        fi
+        
+    - name: Commit generated files
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add generated files
+        git add pwa/nyla-knowledge-*.json*
+        git add pwa/nyla-vector-deployment.json
+        
+        # Update service worker if modified
+        if git diff --staged --quiet pwa/sw.js; then
+          echo "No service worker changes"
+        else
+          git add pwa/sw.js
+        fi
+        
+        # Commit if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "🤖 Auto-generate vector database embeddings
+
+Generated from knowledge base changes in commit ${{ github.sha }}
+
+📊 Deployment info:
+- Vector DB version: $(jq -r '.version' pwa/nyla-knowledge-version.json)
+- Chunks: $(jq -r '.chunkCount' pwa/nyla-knowledge-version.json)  
+- Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+          echo "✅ Changes committed"
+        fi
+        
+    - name: Push changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        
+    - name: Create deployment summary
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        echo "## 🚀 Vector Database Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Version | $(jq -r '.version' pwa/nyla-knowledge-version.json) |" >> $GITHUB_STEP_SUMMARY
+        echo "| Hash | $(jq -r '.hash' pwa/nyla-knowledge-version.json | cut -c1-16)... |" >> $GITHUB_STEP_SUMMARY
+        echo "| Chunks | $(jq -r '.chunkCount' pwa/nyla-knowledge-version.json) |" >> $GITHUB_STEP_SUMMARY
+        echo "| Model | $(jq -r '.embeddingModel' pwa/nyla-knowledge-version.json) |" >> $GITHUB_STEP_SUMMARY
+        echo "| Compressed Size | $(jq -r '.files.compressed.sizeFormatted' pwa/nyla-knowledge-version.json) |" >> $GITHUB_STEP_SUMMARY
+        echo "| Compression | $(jq -r '.files.compressed.compressionRatio' pwa/nyla-knowledge-version.json)% |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📡 Distribution URLs" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version Info**: https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-version.json" >> $GITHUB_STEP_SUMMARY
+        echo "- **Compressed Index**: https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-index.json.gz" >> $GITHUB_STEP_SUMMARY
+        echo "- **Full Index**: https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-index.json" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔄 User Update Process" >> $GITHUB_STEP_SUMMARY
+        echo "Users will be automatically notified of this update and can:" >> $GITHUB_STEP_SUMMARY
+        echo "- Accept automatic download (if auto-update enabled)" >> $GITHUB_STEP_SUMMARY
+        echo "- Manually trigger update via browser console: \`await nylaProductionSync.forceUpdate()\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Continue using local version until next app restart" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Skip deployment message  
+      if: steps.check_changes.outputs.has_changes == 'false'
+      run: |
+        echo "ℹ️ No knowledge base changes detected, skipping vector database deployment"
+        echo "## ⏭️ Vector Database Deployment Skipped" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "No changes were detected in the knowledge base files:" >> $GITHUB_STEP_SUMMARY
+        echo "- \`pwa/js/nyla-knowledge-base.js\`" >> $GITHUB_STEP_SUMMARY
+        echo "- \`nylago-data.js\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "To force a rebuild, trigger this workflow manually with the 'force_rebuild' option." >> $GITHUB_STEP_SUMMARY
