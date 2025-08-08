@@ -65,10 +65,38 @@ class NYLAConversationManagerV2 {
   }
 
   /**
-   * Dynamically identify relevant knowledge base keys from user input
-   * Replaces v1 hardcoded topic system with intelligent keyword matching
+   * Identify relevant knowledge using RAG semantic search (replaces rule-based keyword matching)
+   * Falls back to rule-based matching if RAG is not available
    */
-  identifyRelevantKnowledgeKeys(userInput) {
+  async identifyRelevantKnowledgeKeys(userInput) {
+    // First try RAG-based semantic search if available
+    if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
+      try {
+        console.log('NYLA Conversation V2: Using RAG semantic search for topic identification');
+        
+        // Use RAG pipeline to find semantically similar content
+        const ragResult = await this.ragIntegration.ragPipeline.query(userInput, {
+          topK: 3,
+          minScore: 0.4
+        });
+        
+        // Extract topic categories from RAG results
+        const ragTopics = ragResult.sources.map(source => {
+          // Map source categories back to our topic structure
+          const category = source.metadata?.category || 'general';
+          return category;
+        }).filter((topic, index, self) => self.indexOf(topic) === index); // Remove duplicates
+        
+        console.log('NYLA Conversation V2: RAG identified topics:', ragTopics);
+        return ragTopics.slice(0, 3);
+        
+      } catch (error) {
+        console.warn('NYLA Conversation V2: RAG topic identification failed, falling back to keyword matching:', error);
+      }
+    }
+    
+    // Fallback to rule-based keyword matching (legacy approach)
+    console.log('NYLA Conversation V2: Using rule-based topic identification (fallback)');
     const inputLower = userInput.toLowerCase();
     const keywordScores = {};
     
@@ -93,7 +121,7 @@ class NYLAConversationManagerV2 {
       .sort(([,a], [,b]) => b - a)
       .map(([key]) => key);
     
-    console.log('NYLA Conversation V2: Identified topics:', sortedKeys.slice(0, 3));
+    console.log('NYLA Conversation V2: Rule-based identified topics:', sortedKeys.slice(0, 3));
     
     return sortedKeys.slice(0, 3); // Return top 3 most relevant keys
   }
@@ -203,8 +231,8 @@ class NYLAConversationManagerV2 {
     try {
       console.log('NYLA Conversation V2: Processing question with LLM');
       
-      // Identify relevant topics once and reuse throughout the process
-      const identifiedTopics = this.identifyRelevantKnowledgeKeys(questionText);
+      // Identify relevant topics using semantic search (RAG) or keyword fallback
+      const identifiedTopics = await this.identifyRelevantKnowledgeKeys(questionText);
       const primaryTopic = identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
       
       // Check if NYLA is on work break (only if knowledge tracker is available)
@@ -407,11 +435,47 @@ class NYLAConversationManagerV2 {
     });
     
     // Use pre-identified topics from processQuestion method
-    const relevantKeys = identifiedTopics || this.identifyRelevantKnowledgeKeys(questionText);
+    const relevantKeys = identifiedTopics || await this.identifyRelevantKnowledgeKeys(questionText);
     
-    // Use searchKnowledge to find relevant information for all identified keys
+    // Use RAG-based semantic search to find relevant knowledge
     let knowledgeContext = null;
-    if (this.kb && this.kb.searchKnowledge) {
+    
+    // Try RAG-based semantic search first
+    if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
+      try {
+        console.log('NYLA Conversation V2: Using RAG semantic search for knowledge context');
+        
+        const ragResult = await this.ragIntegration.ragPipeline.query(questionText, {
+          topK: 5,
+          minScore: 0.5
+        });
+        
+        if (ragResult.sources && ragResult.sources.length > 0) {
+          // Convert RAG results to legacy knowledge context format
+          const searchResults = ragResult.sources.map(source => ({
+            source: source.title,
+            data: source.metadata.content || source.text,
+            score: source.score
+          }));
+          
+          knowledgeContext = {
+            searchResults: searchResults,
+            relevantKeys: relevantKeys,
+            searchTerms: questionText,
+            ragResult: ragResult, // Include original RAG result
+            searchMethod: 'rag_semantic'
+          };
+          
+          console.log('NYLA Conversation V2: RAG found', searchResults.length, 'relevant knowledge chunks');
+        }
+      } catch (error) {
+        console.warn('NYLA Conversation V2: RAG knowledge search failed, using fallback:', error);
+      }
+    }
+    
+    // Fallback to legacy keyword search if RAG failed or unavailable
+    if (!knowledgeContext && this.kb && this.kb.searchKnowledge) {
+      console.log('NYLA Conversation V2: Using legacy keyword search for knowledge context');
       const searchResults = [];
       
       // Search using the identified keys as search terms
@@ -438,7 +502,8 @@ class NYLAConversationManagerV2 {
         knowledgeContext = {
           searchResults: uniqueResults,
           relevantKeys: relevantKeys,
-          searchTerms: questionText
+          searchTerms: questionText,
+          searchMethod: 'legacy_keyword'
         };
       }
     }
@@ -558,7 +623,9 @@ class NYLAConversationManagerV2 {
    */
   async processWithEnhancedRules(questionId, questionText, identifiedTopics) {
     // Enhanced version of original rule-based system (V2 updated)
-    const answer = await this.generateEnhancedAnswer(questionId, questionText, identifiedTopics);
+    // Ensure identifiedTopics is awaited if it's a Promise
+    const resolvedTopics = identifiedTopics || await this.identifyRelevantKnowledgeKeys(questionText);
+    const answer = await this.generateEnhancedAnswer(questionId, questionText, resolvedTopics);
     
     // Add personal care check with timezone awareness (20% probability)
     const personalCareCheck = this.generatePersonalCareCheck();
@@ -568,7 +635,7 @@ class NYLAConversationManagerV2 {
     }
 
     // Use pre-identified topics from processQuestion method
-    const primaryTopic = identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
+    const primaryTopic = resolvedTopics.length > 0 ? resolvedTopics[0] : 'general';
     
     const followUps = this.generateContextualFollowUps(answer, primaryTopic, questionText, answer.isChangeTopicResponse);
     const sticker = this.selectSticker(answer.sentiment);
@@ -999,7 +1066,28 @@ class NYLAConversationManagerV2 {
     const relevantKeys = identifiedTopics;
     let knowledge = null;
     
-    if (this.kb && this.kb.searchKnowledge) {
+    // Try RAG-based search first for better knowledge retrieval
+    if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
+      try {
+        console.log('NYLA Conversation V2: Enhanced answer using RAG semantic search');
+        
+        const ragResult = await this.ragIntegration.ragPipeline.query(questionText, {
+          topK: 1,
+          minScore: 0.5
+        });
+        
+        if (ragResult.sources && ragResult.sources.length > 0) {
+          knowledge = ragResult.sources[0].metadata.content || ragResult.sources[0].text;
+          console.log('NYLA Conversation V2: RAG found knowledge for enhanced answer');
+        }
+      } catch (error) {
+        console.warn('NYLA Conversation V2: RAG knowledge search failed in generateEnhancedAnswer:', error);
+      }
+    }
+    
+    // Fallback to legacy keyword search if RAG failed or unavailable
+    if (!knowledge && this.kb && this.kb.searchKnowledge) {
+      console.log('NYLA Conversation V2: Enhanced answer using legacy keyword search');
       const searchResults = [];
       
       // Search using identified keys

@@ -56,6 +56,18 @@ class NYLAAssistantV2 {
         throw new Error('NYLAConversationManagerV2 not available');
       }
       this.conversationManager = new NYLAConversationManagerV2(this.knowledgeBase);
+      
+      // Enhance with RAG capabilities for semantic search (replaces rule-based preprocessing)
+      console.log('NYLA Assistant V2: Step 2a - Enhancing with RAG-based semantic search...');
+      if (typeof enhanceConversationManagerWithRAG !== 'undefined') {
+        this.conversationManager = enhanceConversationManagerWithRAG(this.conversationManager);
+        console.log('NYLA Assistant V2: ✅ RAG integration enabled - all queries will use semantic search');
+        this.features.rag = true;
+      } else {
+        console.warn('NYLA Assistant V2: ⚠️ RAG integration not available, using rule-based fallback');
+        this.features.rag = false;
+      }
+      
       console.log('NYLA Assistant V2: Calling conversationManager.initialize()...');
       await this.conversationManager.initialize();
       console.log('NYLA Assistant V2: ✅ Conversation manager initialized');
