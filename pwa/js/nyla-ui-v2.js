@@ -688,8 +688,10 @@ class NYLAAssistantUIV2 {
     
     // Check if LLM is ready
     const llmStatus = this.conversation.llmEngine.getStatus();
-    if (!llmStatus.initialized || !llmStatus.warmedUp) {
-      console.log('NYLA UI V2: LLM not ready, using simple personalized greeting');
+    console.log('NYLA UI V2: LLM Status for greeting generation:', llmStatus);
+    
+    if (!llmStatus.initialized) {
+      console.log('NYLA UI V2: LLM not initialized, using simple personalized greeting');
       const hour = new Date(greetingContext.localTime).getHours();
       let timeGreeting = '';
       if (hour < 12) {
@@ -700,6 +702,11 @@ class NYLAAssistantUIV2 {
         timeGreeting = 'Good evening!';
       }
       return this.generateSimplePersonalizedGreeting(greetingContext, timeGreeting);
+    }
+    
+    // Allow greeting generation even if not fully warmed up (it can warm up during generation)
+    if (!llmStatus.warmedUp) {
+      console.log('NYLA UI V2: LLM initializing but not warmed up yet, attempting greeting generation with longer timeout');
     }
     
     const hour = new Date(greetingContext.localTime).getHours();
@@ -734,9 +741,12 @@ class NYLAAssistantUIV2 {
       let simplifiedSystemPrompt;
       simplifiedSystemPrompt = this.conversation.llmEngine.createSystemPromptForGreeting();
       
-      // Use the LLM to generate the greeting with a shorter timeout
+      // Use dynamic timeout based on LLM warmup status
+      const timeoutDuration = llmStatus.warmedUp ? 8000 : 15000; // 8s if warmed up, 15s if warming up
+      console.log('NYLA UI V2: Using', timeoutDuration/1000, 'second timeout for greeting generation');
+      
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('LLM greeting generation timeout')), 5000); // Reduced to 5 seconds
+        setTimeout(() => reject(new Error('LLM greeting generation timeout')), timeoutDuration);
       });
       
       // Create a temporary override of the system prompt for greeting generation
@@ -754,10 +764,13 @@ class NYLAAssistantUIV2 {
       });
       
       // Race between LLM response and timeout
+      console.log('NYLA UI V2: Waiting for LLM greeting response...');
       const response = await Promise.race([llmPromise, timeoutPromise]);
       
       // Restore the original system prompt
       this.conversation.llmEngine.systemPrompt = originalSystemPrompt;
+      
+      console.log('NYLA UI V2: LLM greeting response received:', response ? 'Success' : 'Failed');
       
       // Parse the response - the LLM engine returns a validated response object
       if (response && response.text && response.text.trim().length > 0) {
@@ -775,7 +788,32 @@ class NYLAAssistantUIV2 {
       
     } catch (error) {
       console.error('NYLA UI V2: LLM greeting generation failed:', error);
+      
+      // Log specific error types for debugging
+      if (error.message.includes('timeout')) {
+        console.log('NYLA UI V2: Greeting generation timed out - LLM may be warming up or overloaded');
+      } else if (error.message.includes('JSON')) {
+        console.log('NYLA UI V2: JSON parsing error in greeting generation');
+      } else {
+        console.log('NYLA UI V2: Unknown error in greeting generation:', error.message);
+      }
+      
+      // Ensure system prompt is restored even on error
+      if (this.conversation?.llmEngine?.systemPrompt !== originalSystemPrompt) {
+        this.conversation.llmEngine.systemPrompt = originalSystemPrompt;
+        console.log('NYLA UI V2: System prompt restored after error');
+      }
+      
       // Generate a simple personalized greeting as fallback
+      const hour = new Date(greetingContext.localTime).getHours();
+      let timeGreeting = '';
+      if (hour < 12) {
+        timeGreeting = 'Good morning!';
+      } else if (hour < 18) {
+        timeGreeting = 'Good afternoon!';
+      } else {
+        timeGreeting = 'Good evening!';
+      }
       return this.generateSimplePersonalizedGreeting(greetingContext, timeGreeting);
     }
   }
