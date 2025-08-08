@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# NYLA Pre-commit Hook
+# Checks for knowledge base changes and regenerates embeddings if needed
+#
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}🔧 NYLA Pre-commit Hook${NC}"
+
+# Check if Node.js is available
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}❌ Node.js is required for pre-commit checks${NC}"
+    echo -e "${YELLOW}💡 Install Node.js and try again${NC}"
+    exit 1
+fi
+
+# Run the KB change checker
+node scripts/check-kb-changes.js
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo -e "${GREEN}✅ Pre-commit checks passed${NC}"
+else
+    echo -e "${RED}❌ Pre-commit checks failed${NC}"
+    echo -e "${YELLOW}💡 Fix the issues above or use:${NC}"
+    echo -e "${YELLOW}   NYLA_SKIP_EMBEDDINGS=true git commit${NC}"
+    echo -e "${YELLOW}   to skip embedding regeneration${NC}"
+fi
+
+exit $EXIT_CODE
