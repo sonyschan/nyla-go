@@ -60,7 +60,7 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: ✅ Enhanced event listeners set up');
       
       // Check if LLM is still loading and show loading screen
-      const llmStatus = this.conversation.llmEngine.getStatus();
+      const llmStatus = this.conversation.llmEngine ? this.conversation.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
       if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {
         console.log('NYLA UI V2: Step 4 - WebLLM still loading/warming up, showing loading screen...');
         console.log('NYLA UI V2: LLM Status - initialized:', llmStatus.initialized, 'warmedUp:', llmStatus.warmedUp, 'loading:', llmStatus.loading);
@@ -534,26 +534,23 @@ class NYLAAssistantUIV2 {
     }
     this.isWelcomeMessageShown = true;
     console.log('NYLA UI V2: Showing welcome message...');
-    const userTimezone = this.conversation.userProfile?.timezone || 'UTC';
-    const localTime = this.conversation.userProfile?.localTime || new Date().toLocaleString();
-    const hour = new Date(localTime).getHours();
     
-    let timeGreeting = '';
-    if (hour < 12) {
-      timeGreeting = 'Good morning! ☀️';
-    } else if (hour < 18) {
-      timeGreeting = 'Good afternoon! 🌟';
+    // Check user's knowledge percentage
+    const knowledgePercentage = this.getUserKnowledgePercentage();
+    console.log('NYLA UI V2: User knowledge percentage:', knowledgePercentage);
+    
+    let welcomeMessage;
+    
+    if (knowledgePercentage < 10) {
+      // Use existing default greeting for new users
+      console.log('NYLA UI V2: Using default greeting for new user (< 10% knowledge)');
+      welcomeMessage = await this.generateDefaultGreeting();
     } else {
-      timeGreeting = 'Good evening! 🌙';
+      // Generate personalized greeting based on user's knowledge
+      console.log('NYLA UI V2: Generating personalized greeting for experienced user (>= 10% knowledge)');
+      welcomeMessage = await this.generatePersonalizedGreeting();
     }
-
-    const welcomeMessage = {
-      text: `${timeGreeting} I'm NYLA, your enhanced AI assistant! 🚀\n\nI'm here to help with crypto transfers, answer questions about NYLA, and even check in on how you're doing! I can understand your timezone (${userTimezone}) and provide personalized assistance.\n\nWhat interests you most today?`,
-      sentiment: 'friendly',
-      isWelcome: true,
-      confidence: 0.95
-    };
-
+    
     console.log('NYLA UI V2: Displaying welcome message:', welcomeMessage);
     await this.displayMessage(welcomeMessage, 'nyla');
     console.log('NYLA UI V2: Welcome message displayed successfully');
@@ -568,6 +565,252 @@ class NYLAAssistantUIV2 {
     // Update stats and feature indicators
     this.updateStats();
     this.updateFeatureIndicators();
+  }
+
+  /**
+   * Get user's knowledge percentage
+   */
+  getUserKnowledgePercentage() {
+    try {
+      if (!this.conversation || !this.conversation.knowledgeTracker) {
+        console.log('NYLA UI V2: Knowledge tracker not available, returning 0%');
+        return 0;
+      }
+      
+      // Check if the knowledge tracker has the required method
+      if (typeof this.conversation.knowledgeTracker.getKnowledgePercentage !== 'function') {
+        console.log('NYLA UI V2: Knowledge tracker missing getKnowledgePercentage method, returning 0%');
+        return 0;
+      }
+      
+      const percentage = this.conversation.knowledgeTracker.getKnowledgePercentage();
+      console.log('NYLA UI V2: User knowledge percentage:', percentage);
+      return percentage;
+    } catch (error) {
+      console.error('NYLA UI V2: Error getting knowledge percentage:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Generate default greeting for new users
+   */
+  async generateDefaultGreeting() {
+    const userTimezone = this.conversation.userProfile?.timezone || 'UTC';
+    const localTime = this.conversation.userProfile?.localTime || new Date().toLocaleString();
+    const hour = new Date(localTime).getHours();
+    
+    let timeGreeting = '';
+    if (hour < 12) {
+      timeGreeting = 'Good morning!';
+    } else if (hour < 18) {
+      timeGreeting = 'Good afternoon!';
+    } else {
+      timeGreeting = 'Good evening!';
+    }
+
+    return {
+      text: `${timeGreeting} I'm NYLA, your enhanced AI assistant!\n\nI'm here to help with crypto transfers, answer questions about NYLA, and even check in on how you're doing! I can understand your timezone (${userTimezone}) and provide personalized assistance.\n\nWhat interests you most today?`,
+      sentiment: 'friendly',
+      isWelcome: true,
+      confidence: 0.95
+    };
+  }
+
+  /**
+   * Generate personalized greeting based on user's knowledge
+   */
+  async generatePersonalizedGreeting() {
+    // Show typing indicator while generating personalized greeting
+    this.showTyping();
+    
+    try {
+      // Check if knowledge tracker is available
+      if (!this.conversation || !this.conversation.knowledgeTracker) {
+        console.log('NYLA UI V2: Knowledge tracker not available, using default greeting');
+        this.hideTyping();
+        return await this.generateDefaultGreeting();
+      }
+      
+      // Check if the knowledge tracker has the required methods
+      if (typeof this.conversation.knowledgeTracker.getKnowledgeBreakdown !== 'function' ||
+          typeof this.conversation.knowledgeTracker.userKnowledge === 'undefined') {
+        console.log('NYLA UI V2: Knowledge tracker missing required methods, using default greeting');
+        this.hideTyping();
+        return await this.generateDefaultGreeting();
+      }
+      
+      // Get user's knowledge breakdown
+      const knowledgeBreakdown = this.conversation.knowledgeTracker.getKnowledgeBreakdown();
+      const userTopics = Array.from(this.conversation.knowledgeTracker.userKnowledge.topics || []);
+      const userConcepts = Array.from(this.conversation.knowledgeTracker.userKnowledge.concepts || []);
+      const userFeatures = Array.from(this.conversation.knowledgeTracker.userKnowledge.features || []);
+      
+      // Create context for LLM
+      const greetingContext = {
+        knowledgePercentage: knowledgeBreakdown.percentage || 0,
+        userTopics: userTopics,
+        userConcepts: userConcepts,
+        userFeatures: userFeatures,
+        totalExposure: knowledgeBreakdown.totalExposure || 0,
+        timezone: this.conversation.userProfile?.timezone || 'UTC',
+        localTime: this.conversation.userProfile?.localTime || new Date().toLocaleString()
+      };
+      
+      console.log('NYLA UI V2: Generating personalized greeting with context:', greetingContext);
+      
+      // Generate personalized greeting using LLM
+      const personalizedGreeting = await this.generateLLMGreeting(greetingContext);
+      
+      // Hide typing indicator
+      this.hideTyping();
+      
+      return personalizedGreeting;
+      
+    } catch (error) {
+      console.error('NYLA UI V2: Failed to generate personalized greeting:', error);
+      this.hideTyping();
+      
+      // Fallback to default greeting
+      return await this.generateDefaultGreeting();
+    }
+  }
+
+  /**
+   * Generate personalized greeting using LLM
+   */
+  async generateLLMGreeting(greetingContext) {
+    if (!this.conversation.llmEngine) {
+      // Fallback if LLM is not available
+      console.log('NYLA UI V2: LLM engine not available, using default greeting');
+      return await this.generateDefaultGreeting();
+    }
+    
+    // Check if LLM is ready
+    const llmStatus = this.conversation.llmEngine.getStatus();
+    if (!llmStatus.initialized || !llmStatus.warmedUp) {
+      console.log('NYLA UI V2: LLM not ready, using simple personalized greeting');
+      const hour = new Date(greetingContext.localTime).getHours();
+      let timeGreeting = '';
+      if (hour < 12) {
+        timeGreeting = 'Good morning!';
+      } else if (hour < 18) {
+        timeGreeting = 'Good afternoon!';
+      } else {
+        timeGreeting = 'Good evening!';
+      }
+      return this.generateSimplePersonalizedGreeting(greetingContext, timeGreeting);
+    }
+    
+    const hour = new Date(greetingContext.localTime).getHours();
+    let timeGreeting = '';
+    if (hour < 12) {
+      timeGreeting = 'Good morning!';
+    } else if (hour < 18) {
+      timeGreeting = 'Good afternoon!';
+    } else {
+      timeGreeting = 'Good evening!';
+    }
+    
+    // Enhanced prompt for more engaging greeting generation
+    const userTopicsStr = greetingContext.userTopics.slice(0, 2).join(', ') || 'crypto transfers';
+    const userConceptsStr = greetingContext.userConcepts.slice(0, 1).join(', ') || '';
+    const userFeaturesStr = greetingContext.userFeatures.slice(0, 1).join(', ') || '';
+    
+    let contextInfo = '';
+    if (greetingContext.knowledgePercentage > 10) {
+      contextInfo = `User has learned ${greetingContext.knowledgePercentage.toFixed(0)}% of NYLA knowledge. `;
+      if (userTopicsStr) contextInfo += `Interests: ${userTopicsStr}. `;
+      if (userConceptsStr) contextInfo += `Concepts explored: ${userConceptsStr}. `;
+      if (userFeaturesStr) contextInfo += `Features used: ${userFeaturesStr}. `;
+    } else {
+      contextInfo = `New user (${greetingContext.knowledgePercentage.toFixed(0)}% knowledge). `;
+    }
+    
+    const prompt = `Generate an engaging, personalized greeting for a user with this context: ${contextInfo}Start with: "${timeGreeting}". Be warm, mention their progress if >10%, ask an engaging question, and encourage interaction. Keep it conversational and natural.`;
+
+    try {
+      // Get the simplified system prompt for greeting generation
+      let simplifiedSystemPrompt;
+      simplifiedSystemPrompt = this.conversation.llmEngine.createSystemPromptForGreeting();
+      
+      // Use the LLM to generate the greeting with a shorter timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('LLM greeting generation timeout')), 5000); // Reduced to 5 seconds
+      });
+      
+      // Create a temporary override of the system prompt for greeting generation
+      const originalSystemPrompt = this.conversation.llmEngine.systemPrompt;
+      this.conversation.llmEngine.systemPrompt = simplifiedSystemPrompt;
+      
+      const llmPromise = this.conversation.llmEngine.generateResponse(prompt, {
+        knowledgeContext: {
+          searchResults: [],
+          relevantKeys: ['greeting'],
+          searchTerms: 'greeting'
+        },
+        userProfile: this.conversation.userProfile,
+        knowledgeStats: greetingContext
+      });
+      
+      // Race between LLM response and timeout
+      const response = await Promise.race([llmPromise, timeoutPromise]);
+      
+      // Restore the original system prompt
+      this.conversation.llmEngine.systemPrompt = originalSystemPrompt;
+      
+      // Parse the response - the LLM engine returns a validated response object
+      if (response && response.text && response.text.trim().length > 0) {
+        console.log('NYLA UI V2: Successfully generated personalized greeting:', response.text);
+        return {
+          text: response.text,
+          sentiment: response.sentiment || 'friendly',
+          isWelcome: true,
+          confidence: response.confidence || 0.95
+        };
+      } else {
+        console.warn('NYLA UI V2: LLM returned invalid response, using fallback');
+        throw new Error('Invalid LLM response');
+      }
+      
+    } catch (error) {
+      console.error('NYLA UI V2: LLM greeting generation failed:', error);
+      // Generate a simple personalized greeting as fallback
+      return this.generateSimplePersonalizedGreeting(greetingContext, timeGreeting);
+    }
+  }
+
+  /**
+   * Generate a simple personalized greeting without LLM (fallback)
+   */
+  generateSimplePersonalizedGreeting(greetingContext, timeGreeting) {
+    console.log('NYLA UI V2: Generating simple personalized greeting as fallback');
+    
+    const percentage = greetingContext.knowledgePercentage;
+    const topics = greetingContext.userTopics;
+    
+    // Create a simple personalized greeting based on knowledge level
+    let personalizedText = '';
+    
+    if (percentage >= 50) {
+      // Advanced user
+      const topic = topics.length > 0 ? topics[0] : 'NYLA';
+      personalizedText = `${timeGreeting} Welcome back, NYLA expert! You've mastered ${topic} and learned ${percentage}% of everything NYLA has to offer. What would you like to explore today?`;
+    } else if (percentage >= 25) {
+      // Intermediate user
+      const topic = topics.length > 0 ? topics[0] : 'crypto transfers';
+      personalizedText = `${timeGreeting} Great to see you again! You're making excellent progress with ${topic} - you've learned ${percentage}% of NYLA knowledge. Ready to learn more?`;
+    } else {
+      // Beginner user
+      personalizedText = `${timeGreeting} Welcome back! You've learned ${percentage}% of NYLA knowledge so far. I'm excited to help you discover more about crypto transfers and blockchain!`;
+    }
+    
+    return {
+      text: personalizedText,
+      sentiment: 'friendly',
+      isWelcome: true,
+      confidence: 0.9
+    };
   }
 
   /**
