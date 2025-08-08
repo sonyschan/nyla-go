@@ -60,6 +60,11 @@
   animation: messageSlideIn 0.3s ease-out;
 }
 
+/* Consecutive NYLA Messages */
+.nyla-message.consecutive-message {
+  margin-top: -8px; /* Reduce gap between consecutive messages */
+}
+
 @keyframes messageSlideIn {
   from {
     opacity: 0;
@@ -455,6 +460,10 @@
     font-size: 16px;
     padding: 10px 12px;
     margin-left: 32px;
+  }
+  
+  .nyla-message.consecutive-message .message-content {
+    margin-left: 36px; /* Slightly less margin on mobile */
   }
   
   .nyla-message-user .message-content {

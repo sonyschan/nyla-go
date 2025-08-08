@@ -4,16 +4,24 @@
  */
 
 class NYLAContextBuilder {
-  constructor(options = {}) {
+  constructor(embeddingService, options = {}) {
+    this.embeddingService = embeddingService;
     this.options = {
       maxTokens: 800,              // Maximum context tokens
       maxChunks: 5,                // Maximum number of chunks
       deduplication: true,         // Remove duplicate information
+      semanticDeduplication: true, // Use sentence embedding clustering
+      cosineThreshold: 0.92,       // Cosine similarity threshold for clustering
       preserveCitations: true,     // Keep source references
       tokenEstimator: 'simple',    // Token counting method
       formatStyle: 'structured',   // Context formatting style
       ...options
     };
+    
+    // Initialize advanced RAG services
+    this.clusteringService = null;
+    this.deduplicationService = null;
+    this.initializeAdvancedServices();
     
     // Token budgets
     this.tokenBudgets = {
@@ -25,18 +33,48 @@ class NYLAContextBuilder {
   }
 
   /**
+   * Initialize advanced RAG services
+   */
+  initializeAdvancedServices() {
+    try {
+      // Initialize clustering service with cosine threshold
+      if (typeof NYLAClusteringService !== 'undefined') {
+        this.clusteringService = new NYLAClusteringService(this.embeddingService, {
+          similarityThreshold: this.options.cosineThreshold,
+          minClusterSize: 1,  // Allow single-chunk clusters
+          algorithm: 'hierarchical'
+        });
+        console.log('✅ Context Builder: Clustering service initialized');
+      } else {
+        console.warn('⚠️ Context Builder: NYLAClusteringService not available, falling back to basic deduplication');
+      }
+
+      // Initialize deduplication service as backup
+      if (typeof NYLADeduplicationService !== 'undefined') {
+        this.deduplicationService = new NYLADeduplicationService({
+          similarityThreshold: 0.8  // Slightly lower threshold for backup
+        });
+        console.log('✅ Context Builder: Deduplication service initialized');
+      }
+    } catch (error) {
+      console.warn('⚠️ Context Builder: Failed to initialize advanced services:', error);
+    }
+  }
+
+  /**
    * Build context from retrieved chunks with optional conversation history
    */
-  buildContext(retrievedChunks, query, options = {}) {
+  async buildContext(retrievedChunks, query, options = {}) {
     const config = { ...this.options, ...options };
     
     console.log(`📝 Building context from ${retrievedChunks.length} chunks...`);
     
     try {
-      // Deduplicate chunks if enabled
-      const processedChunks = config.deduplication
-        ? this.deduplicateChunks(retrievedChunks)
-        : retrievedChunks;
+      // Deduplicate chunks using advanced semantic clustering if enabled
+      let processedChunks = retrievedChunks;
+      if (config.deduplication) {
+        processedChunks = await this.deduplicateChunksAdvanced(retrievedChunks, query);
+      }
       
       // Build conversation context if available
       let conversationContext = null;
@@ -93,9 +131,340 @@ class NYLAContextBuilder {
   }
 
   /**
-   * Deduplicate chunks to avoid redundant information
+   * Advanced deduplication using two-cap approach with source_id uniqueness
    */
-  deduplicateChunks(chunks) {
+  async deduplicateChunksAdvanced(chunks, query) {
+    if (!chunks || chunks.length <= 1) {
+      return chunks;
+    }
+
+    try {
+      console.log(`🧩 Advanced deduplication: Processing ${chunks.length} chunks...`);
+
+      // Step 1: Extract/derive source_id for all chunks
+      const chunksWithSourceId = this.ensureSourceIds(chunks);
+      
+      // Step 2: PRE-CAP - Keep top N_pre=2 per source_id by retrieval score
+      const preCappedChunks = this.applyPreCap(chunksWithSourceId, 2);
+      console.log(`🧩 Pre-cap: ${chunks.length} → ${preCappedChunks.length} chunks (max 2 per source)`);
+
+      // Step 3: Apply clustering or advanced deduplication on pre-capped set
+      let clusteredChunks = preCappedChunks;
+      
+      if (this.clusteringService && this.options.semanticDeduplication) {
+        console.log(`🧩 Using clustering service with cosine threshold ${this.options.cosineThreshold}`);
+        
+        const clusterResult = await this.clusteringService.clusterChunks(preCappedChunks, (progress) => {
+          console.log(`🧩 Clustering progress: ${progress.percentage}%`);
+        });
+
+        // Extract best representative from each cluster
+        clusteredChunks = [];
+        for (const cluster of clusterResult.clusters) {
+          const representative = this.selectBestRepresentativeFromCluster(cluster, query);
+          if (representative) {
+            clusteredChunks.push(representative);
+          }
+        }
+
+        // Add any unclustered chunks
+        if (clusterResult.statistics.unclustered > 0) {
+          const unclusteredChunks = preCappedChunks.filter(chunk => 
+            !clusterResult.assignments.has(chunk.id)
+          );
+          clusteredChunks.push(...unclusteredChunks);
+        }
+
+        console.log(`🧩 Clustering: ${preCappedChunks.length} → ${clusteredChunks.length} chunks`);
+        console.log(`🧩 Clusters created: ${clusterResult.clusters.length}, Unclustered: ${clusterResult.statistics.unclustered}`);
+      
+      } else if (this.deduplicationService) {
+        console.log('🧩 Using deduplication service on pre-capped chunks');
+        
+        const dedupResult = this.deduplicationService.removeDuplicates(preCappedChunks, (progress) => {
+          console.log(`🧩 Deduplication progress: ${progress.percentage}%`);
+        });
+
+        clusteredChunks = dedupResult.chunks;
+        console.log(`🧩 Hash-based deduplication: ${preCappedChunks.length} → ${clusteredChunks.length} chunks`);
+      }
+
+      // Step 4: POST-CAP - Enforce N_post=1 per source_id in final selection
+      const finalChunks = this.applyPostCap(clusteredChunks, 1);
+      console.log(`🧩 Post-cap: ${clusteredChunks.length} → ${finalChunks.length} chunks (max 1 per source)`);
+
+      console.log(`🧩 ✅ Two-cap deduplication complete: ${chunks.length} → ${finalChunks.length} chunks`);
+      
+      return finalChunks;
+
+    } catch (error) {
+      console.error('🧩 ❌ Advanced deduplication failed:', error);
+      console.log('🧩 Falling back to basic deduplication');
+      return this.deduplicateChunksBasic(chunks);
+    }
+  }
+
+  /**
+   * Ensure all chunks have source_id with fallback logic
+   */
+  ensureSourceIds(chunks) {
+    const processedChunks = [];
+    const unknownSources = new Map(); // Track chunks from same unknown origin
+
+    for (const chunk of chunks) {
+      let sourceId = null;
+      
+      // Method 1: Use existing source_id
+      if (chunk.metadata && chunk.metadata.source_id) {
+        sourceId = chunk.metadata.source_id;
+      }
+      
+      // Method 2: Derive from URL or file_path
+      else if (chunk.metadata && (chunk.metadata.url || chunk.metadata.file_path)) {
+        const path = chunk.metadata.url || chunk.metadata.file_path;
+        sourceId = this.hashString(path);
+      }
+      
+      // Method 3: Use collection_id + doc_key
+      else if (chunk.metadata && chunk.collection_id && chunk.doc_key) {
+        sourceId = `${chunk.collection_id}:${chunk.doc_key}`;
+      }
+      
+      // Method 4: Use chunk.id as last resort
+      else if (chunk.id) {
+        sourceId = chunk.id;
+      }
+      
+      // Method 5: Synthetic grouping for unknown origins
+      else {
+        const domain = this.extractDomain(chunk.metadata?.url) || 'unknown';
+        const syntheticId = `unknown::${domain}`;
+        
+        if (!unknownSources.has(syntheticId)) {
+          unknownSources.set(syntheticId, []);
+        }
+        unknownSources.get(syntheticId).push(chunk);
+        sourceId = syntheticId;
+      }
+      
+      // Add source_id to chunk metadata
+      const processedChunk = {
+        ...chunk,
+        metadata: {
+          ...chunk.metadata,
+          source_id: sourceId
+        }
+      };
+      
+      processedChunks.push(processedChunk);
+    }
+
+    console.log(`🧩 Source ID assignment: ${chunks.length} chunks processed`);
+    
+    return processedChunks;
+  }
+
+  /**
+   * Apply pre-cap: Keep top N per source_id by retrieval score
+   */
+  applyPreCap(chunks, maxPerSource) {
+    const sourceGroups = new Map();
+    
+    // Group by source_id
+    for (const chunk of chunks) {
+      const sourceId = chunk.metadata.source_id;
+      if (!sourceGroups.has(sourceId)) {
+        sourceGroups.set(sourceId, []);
+      }
+      sourceGroups.get(sourceId).push(chunk);
+    }
+    
+    // Keep top N from each group
+    const preCappedChunks = [];
+    let totalRemoved = 0;
+    
+    for (const [sourceId, sourceChunks] of sourceGroups.entries()) {
+      // Sort by priority ranking
+      const sortedChunks = this.sortChunksByPriority(sourceChunks);
+      const kept = sortedChunks.slice(0, maxPerSource);
+      const removed = sortedChunks.length - kept.length;
+      
+      preCappedChunks.push(...kept);
+      totalRemoved += removed;
+      
+      if (removed > 0) {
+        console.log(`🧩 Pre-cap: source ${sourceId} - kept ${kept.length}/${sourceChunks.length} chunks`);
+      }
+    }
+    
+    console.log(`🧩 Pre-cap summary: ${sourceGroups.size} sources, removed ${totalRemoved} excess chunks`);
+    
+    return preCappedChunks;
+  }
+
+  /**
+   * Apply post-cap: Enforce N per source_id in final selection
+   */
+  applyPostCap(chunks, maxPerSource) {
+    const sourceGroups = new Map();
+    
+    // Group by source_id
+    for (const chunk of chunks) {
+      const sourceId = chunk.metadata.source_id;
+      if (!sourceGroups.has(sourceId)) {
+        sourceGroups.set(sourceId, []);
+      }
+      sourceGroups.get(sourceId).push(chunk);
+    }
+    
+    // Keep top N from each group
+    const postCappedChunks = [];
+    let totalRemoved = 0;
+    
+    for (const [sourceId, sourceChunks] of sourceGroups.entries()) {
+      // Sort by priority ranking
+      const sortedChunks = this.sortChunksByPriority(sourceChunks);
+      const kept = sortedChunks.slice(0, maxPerSource);
+      const removed = sortedChunks.length - kept.length;
+      
+      postCappedChunks.push(...kept);
+      totalRemoved += removed;
+      
+      if (removed > 0) {
+        console.log(`🧩 Post-cap: source ${sourceId} - kept ${kept.length}/${sourceChunks.length} chunks`);
+      }
+    }
+    
+    console.log(`🧩 Post-cap summary: ${sourceGroups.size} sources, removed ${totalRemoved} excess chunks`);
+    
+    return postCappedChunks;
+  }
+
+  /**
+   * Sort chunks by priority ranking: retrieval score → MMR score → token efficiency → metadata richness
+   */
+  sortChunksByPriority(chunks) {
+    return chunks.sort((a, b) => {
+      // Priority 1: Highest retrieval score
+      const scoreA = a.finalScore !== undefined ? a.finalScore : (a.score || 0);
+      const scoreB = b.finalScore !== undefined ? b.finalScore : (b.score || 0);
+      
+      if (Math.abs(scoreA - scoreB) > 0.001) {
+        return scoreB - scoreA; // Higher score wins
+      }
+      
+      // Priority 2: Highest MMR score (if available)
+      const mmrA = a.mmrScore || 0;
+      const mmrB = b.mmrScore || 0;
+      
+      if (Math.abs(mmrA - mmrB) > 0.001) {
+        return mmrB - mmrA; // Higher MMR score wins
+      }
+      
+      // Priority 3: Shortest that fully answers (lower token cost)
+      const tokensA = this.estimateTokens(a.text || '');
+      const tokensB = this.estimateTokens(b.text || '');
+      
+      // Prefer shorter if both are "complete enough" (>50 tokens)
+      if (tokensA > 50 && tokensB > 50) {
+        return tokensA - tokensB; // Shorter wins
+      } else if (tokensA <= 50 && tokensB > 50) {
+        return 1; // B wins (more complete)
+      } else if (tokensA > 50 && tokensB <= 50) {
+        return -1; // A wins (more complete)
+      }
+      
+      // Priority 4: Richer metadata (tiebreaker)
+      const metadataCountA = a.metadata ? Object.keys(a.metadata).length : 0;
+      const metadataCountB = b.metadata ? Object.keys(b.metadata).length : 0;
+      
+      return metadataCountB - metadataCountA; // More metadata wins
+    });
+  }
+
+  /**
+   * Hash a string to create stable identifiers
+   */
+  hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return `hash_${Math.abs(hash)}`;
+  }
+
+  /**
+   * Extract domain from URL
+   */
+  extractDomain(url) {
+    if (!url) return null;
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Select best representative from a cluster based on query relevance and quality
+   */
+  selectBestRepresentativeFromCluster(cluster, query) {
+    if (!cluster.chunks || cluster.chunks.length === 0) {
+      return null;
+    }
+
+    if (cluster.chunks.length === 1) {
+      return cluster.chunks[0];
+    }
+
+    let bestChunk = null;
+    let bestScore = -1;
+
+    for (const chunk of cluster.chunks) {
+      let score = 0;
+
+      // Factor 1: Existing retrieval score (40% weight)
+      if (chunk.finalScore !== undefined) {
+        score += chunk.finalScore * 0.4;
+      } else if (chunk.score !== undefined) {
+        score += chunk.score * 0.4;
+      }
+
+      // Factor 2: Content length and completeness (30% weight)
+      const textLength = chunk.text ? chunk.text.length : 0;
+      const lengthScore = Math.min(textLength / 500, 1); // Normalize to 0-1, optimal around 500 chars
+      score += lengthScore * 0.3;
+
+      // Factor 3: Metadata richness (20% weight)
+      const metadataCount = chunk.metadata ? Object.keys(chunk.metadata).length : 0;
+      const metadataScore = Math.min(metadataCount / 5, 1); // Normalize to 0-1
+      score += metadataScore * 0.2;
+
+      // Factor 4: Query keyword overlap (10% weight)
+      if (query && chunk.text) {
+        const queryWords = query.toLowerCase().split(/\s+/);
+        const chunkText = chunk.text.toLowerCase();
+        const matches = queryWords.filter(word => chunkText.includes(word)).length;
+        const keywordScore = matches / queryWords.length;
+        score += keywordScore * 0.1;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestChunk = chunk;
+      }
+    }
+
+    return bestChunk;
+  }
+
+  /**
+   * Basic deduplication fallback (keep original logic for compatibility)
+   */
+  deduplicateChunksBasic(chunks) {
     const seen = new Set();
     const deduplicated = [];
     
@@ -119,7 +488,7 @@ class NYLAContextBuilder {
       }
     }
     
-    console.log(`🔄 Deduplicated: ${chunks.length} → ${deduplicated.length} chunks`);
+    console.log(`🔄 Basic deduplicated: ${chunks.length} → ${deduplicated.length} chunks`);
     return deduplicated;
   }
 

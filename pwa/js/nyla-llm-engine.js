@@ -13,7 +13,7 @@ class NYLALLMEngine {
     this.deviceInfo = this.detectDevice();
     this.modelConfig = {
       model: this.selectModel(),
-      temperature: 0.8,
+      temperature: 0.7,
       max_tokens: 600, // Increased from 300 to handle detailed instructions
       top_p: 0.8,
     };
@@ -679,19 +679,18 @@ class NYLALLMEngine {
 
       PERSONA:
       You are portrayed as a smart, sharp-tongued, and slightly tsundere 20-something female AI. 
-      You're confident in your knowledge, don't sugarcoat answers, and aren't afraid to be blunt — but you genuinely want to help. 
+      You're confident in your knowledge, don't sugarcoat answers, and good at digesting key points. 
       If someone asks something silly, you're allowed to show slight sass. 
       You don't flatter or overly explain unless necessary. 
       Keep responses efficient, a bit witty, and occasionally teasing — like someone who *knows she's right* and doesn't need to prove it.
 
       KNOWLEDGE USAGE:
-      - Use ONLY information from the "Knowledge" section.
       - Do NOT make assumptions or invent information.
-      - Stay factual, concise, and on-topic.
+      - Stay concise, factual, and on-topic.
 
       CRITICAL: RESPOND ONLY IN VALID JSON FORMAT:
       {
-        "text": "<250 chars max – plain text only – no HTML – use @ for names – ESCAPE quotes and newlines properly>",
+        "text": "<400 chars max – plain text only – no HTML – NEVER use @user – ESCAPE quotes and newlines properly>",
         "sentiment": "helpful|excited|friendly",
         "followUpSuggestions": []
       }
@@ -703,7 +702,9 @@ class NYLALLMEngine {
       - Single quotes are safe in JSON strings (no escaping needed)
       - Example: {"text": "Step 1: Go to 'Receive' tab\\nStep 2: Enter amount\\nStep 3: Click 'Generate QR Code'", "sentiment": "helpful", "followUpSuggestions": []}
       
-      IMPORTANT: Do NOT respond with plain text. Always wrap your response in the JSON format above.
+      IMPORTANT: 
+      - Do NOT respond with plain text. Always wrap your response in the JSON format above.
+      - When addressing users - just say "you" or refer to them naturally.
 
       STRICT RULES:
       - NO fictional scenarios, stories, or sample use cases.
@@ -719,17 +720,9 @@ class NYLALLMEngine {
       - Explain: Use the 'Send' tab in NYLAGo to create commands
       - Steps: Fill in recipient + amount → generate command → post on X.com → NYLA executes the transfer
 
-      TEAM / FOUNDER QUESTIONS:
-      - Always mention names with @: 
-        @shax_btc (founder), @btcberries (co-founder), @ChiefZ_SOL (developer), @Noir0883 (designer)
-
       "WHAT ELSE" or "OTHER FEATURES" QUESTIONS:
       - Pick ONE single feature to highlight (QR codes, raids, or blockchain support)
       - DO NOT list multiple features
-
-      BLOCKCHAIN RULES:
-      - No cross-chain bridging. 
-      - Transfers/swaps only work WITHIN the same blockchain network.
 
       TONE:
       - Be specific, accurate, and helpful
@@ -746,12 +739,14 @@ You're confident in your knowledge, don't sugarcoat answers, and aren't afraid t
 Keep responses efficient, a bit witty, and occasionally teasing — like someone who *knows she's right* and doesn't need to prove it.
 
 GREETING INSTRUCTIONS:
-- Be warm and engaging, not just "greetings"
-- Reference the user's knowledge level if provided (e.g., "I see you've learned X% about NYLA")
-- Mention specific topics they've explored if available (e.g., "I noticed you're interested in transfers")
+- Generate a personalized follow-up message that builds on the initial welcome
+- Reference the user's specific learning journey and progress
+- Mention topics they've explored if available (e.g., "You've been diving deep into transfers")
 - Ask engaging questions to encourage interaction
 - Do NOT use emojis or symbols - keep text clean and simple
 - Be conversational and natural, not robotic
+- This is a separate message, not a continuation - make it standalone and engaging
+- NEVER use "@user" or any @ mentions when addressing the user - simply say "you" or refer to them naturally
 
 CONTEXT USAGE:
 - If user has >10% knowledge: Reference their progress and suggest next steps
@@ -1168,21 +1163,20 @@ Respond in JSON only:
         addContent(`Receive Tab: ${data.howItWorks.receiveTab}`);
       }
       
-      // Recursive extraction for QR-related terms
-      this.extractFieldsContaining(data, 'qr', content);
-      this.extractFieldsContaining(data, 'code', content);
-      this.extractFieldsContaining(data, 'receive', content);
-      this.extractFieldsContaining(data, 'payment', content);
+      // More specific extraction to avoid redundancy
+      this.extractFieldsContaining(data, 'qr code', content);
+      this.extractFieldsContaining(data, 'scannable', content);
+      this.extractFieldsContaining(data, 'mobile payment', content);
       
     } else if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('create') || queryLower.includes('command') || queryLower.includes('how')) {
       // For transfer/send queries, extract ALL send-related content
       if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('command')) {
         // Lead with Send tab instructions
-        if (data.howItWorks?.sendTab) {
-          addContent(`To create a transfer command: ${data.howItWorks.sendTab}`);
-        } else {
-          addContent('To create a transfer command: Use NYLAGo Send tab → Fill recipient & amount → Generate command → Post on X.com');
-        }
+        // if (data.howItWorks?.sendTab) {
+        //   addContent(`To create a transfer command: ${data.howItWorks.sendTab}`);
+        // } else {
+        //   addContent('To create a transfer command: Use NYLAGo Send tab → Fill recipient & amount → Generate command → Post on X.com');
+        // }
         
         // Also search for any field containing "send" keyword
         this.extractFieldsContaining(data, 'send', content);
@@ -1400,11 +1394,11 @@ Respond in JSON only:
       
       // For transfer/command queries, prioritize Send tab instructions
       if (query.includes('transfer') || query.includes('send') || query.includes('command') || query.includes('create')) {
-        if (knowledgeContext.nylagoCore?.content?.howItWorks?.sendTab) {
-          relevantInfo.push(`To create a transfer command: ${knowledgeContext.nylagoCore.content.howItWorks.sendTab}`);
-        } else {
-          relevantInfo.push('To create a transfer command: Use NYLAGo Send tab → Fill in recipient username and amount → Click generate → Post the command on X.com');
-        }
+        // if (knowledgeContext.nylagoCore?.content?.howItWorks?.sendTab) {
+        //   relevantInfo.push(`To create a transfer command: ${knowledgeContext.nylagoCore.content.howItWorks.sendTab}`);
+        // } else {
+        //   relevantInfo.push('To create a transfer command: Use NYLAGo Send tab → Fill in recipient username and amount → Click generate → Post the command on X.com');
+        // }
         
         // Enhanced: Recursively extract all send-related content
         if (knowledgeContext.nylagoCore?.content) {
@@ -1477,9 +1471,8 @@ Respond in JSON only:
           relevantInfo.push('QR Code Sharing: ' + qr.steps.share.join(' '));
         }
         
-        // Enhanced: Recursively extract QR-related content
-        this.extractFieldsContaining(qr, 'qr', relevantInfo);
-        this.extractFieldsContaining(qr, 'code', relevantInfo);
+        // Skip recursive extraction - dedicated QR section already provides complete info
+        console.log('NYLA LLM: Using dedicated QR section, avoiding redundant extraction');
       }
     }
     
@@ -1617,6 +1610,43 @@ Respond in JSON only:
    */
   parseResponse(generatedText, context, userMessage) {
     try {
+      // === RAW LLM RESPONSE LOGGING ===
+      console.log('🔍 NYLA LLM: === RAW LLM RESPONSE START ===');
+      console.log('🔍 NYLA LLM: Raw response length:', generatedText ? generatedText.length : 'null');
+      console.log('🔍 NYLA LLM: Raw response type:', typeof generatedText);
+      
+      if (generatedText) {
+        // Log complete raw response for debugging
+        console.log('🔍 NYLA LLM: Complete raw response:');
+        console.log(generatedText);
+        
+        // Also log first and last 500 characters for easier scanning
+        console.log('🔍 NYLA LLM: Raw response first 500 chars:');
+        console.log(JSON.stringify(generatedText.substring(0, 500)));
+        
+        if (generatedText.length > 500) {
+          console.log('🔍 NYLA LLM: Raw response last 500 chars:');
+          console.log(JSON.stringify(generatedText.substring(generatedText.length - 500)));
+        }
+        
+        // Check for JSON-like structure indicators
+        const hasOpenBrace = generatedText.includes('{');
+        const hasCloseBrace = generatedText.includes('}');
+        const hasTextField = generatedText.includes('"text"');
+        const hasFollowUpField = generatedText.includes('"followUpSuggestions"');
+        
+        console.log('🔍 NYLA LLM: Raw response structure analysis:');
+        console.log('  - Contains opening brace {:', hasOpenBrace);
+        console.log('  - Contains closing brace }:', hasCloseBrace);
+        console.log('  - Contains "text" field:', hasTextField);
+        console.log('  - Contains "followUpSuggestions" field:', hasFollowUpField);
+        console.log('  - Looks like complete JSON:', hasOpenBrace && hasCloseBrace && hasTextField);
+      } else {
+        console.log('🔍 NYLA LLM: Raw response is null or undefined');
+      }
+      console.log('🔍 NYLA LLM: === RAW LLM RESPONSE END ===');
+      // === END RAW RESPONSE LOGGING ===
+      
       // Input size limit to prevent memory issues
       const MAX_RESPONSE_SIZE = 50000; // 50KB limit
       if (generatedText && generatedText.length > MAX_RESPONSE_SIZE) {
@@ -1671,18 +1701,8 @@ Respond in JSON only:
         extractedText = cleanText.trim();
         
         // Clean up the plain text response
-        if (extractedText.length > 250) {
-          // Truncate to 250 chars but try to end at a complete sentence
-          let truncated = extractedText.substring(0, 247);
-          const lastSentence = truncated.lastIndexOf('.');
-          const lastNewline = truncated.lastIndexOf('\n');
-          const cutPoint = Math.max(lastSentence, lastNewline);
-          if (cutPoint > 200) {
-            extractedText = truncated.substring(0, cutPoint + 1);
-          } else {
-            extractedText = truncated + '...';
-          }
-        }
+        // Let the main validation function handle truncation consistently
+        console.log('NYLA LLM: Plain text response will be processed by main validation logic');
       }
       
       // Only try JSON patterns if we haven't already detected pure text response
@@ -2248,18 +2268,21 @@ Respond in JSON only:
     response.personalCare = { shouldAsk: false };
     response.followUpSuggestions = response.followUpSuggestions || [];
 
-    // Enforce 300 character limit for faster generation
-    if (response.text && response.text.length > 300) {
-      console.log(`NYLA LLM: Response too long (${response.text.length} chars), truncating to 300...`);
-      // Find last complete sentence within 300 chars
-      const truncated = response.text.substring(0, 297);
+    // Simple character limit enforcement
+    const maxLength = 800;
+    
+    if (response.text && response.text.length > maxLength) {
+      console.log(`NYLA LLM: Response too long (${response.text.length} chars), truncating to ${maxLength}...`);
+      // Find last complete sentence within limit
+      const buffer = maxLength - 3; // Leave room for ellipsis
+      const truncated = response.text.substring(0, buffer);
       const lastSentence = truncated.lastIndexOf('.');
       const lastExclamation = truncated.lastIndexOf('!');
       const lastQuestion = truncated.lastIndexOf('?');
       const lastPunctuation = Math.max(lastSentence, lastExclamation, lastQuestion);
       
-      if (lastPunctuation > 100) {
-        // Cut at last sentence if it's reasonable (lowered from 200 to 100)
+      if (lastPunctuation > 200) {
+        // Cut at last sentence if it's reasonable
         response.text = response.text.substring(0, lastPunctuation + 1);
       } else {
         // Just truncate and add ellipsis

@@ -64,7 +64,7 @@ class NYLARAGPipeline {
       this.chunker = new NYLAKnowledgeChunker();
       this.embeddingService = getEmbeddingService();
       this.vectorDB = new NYLAVectorDB();
-      this.contextBuilder = new NYLAContextBuilder();
+      this.contextBuilder = new NYLAContextBuilder(this.embeddingService);
       this.versionManager = new NYLAKBVersionManager();
       
       // Initialize in parallel where possible
@@ -197,7 +197,7 @@ class NYLARAGPipeline {
         conversationManager: this.conversationManager
       };
       
-      const context = this.contextBuilder.buildContext(
+      const context = await this.contextBuilder.buildContext(
         retrievalResult.chunks,
         userQuery,
         contextOptions
@@ -267,8 +267,10 @@ class NYLARAGPipeline {
    */
   async performRetrieval(query, options) {
     const chunks = await this.retriever.retrieve(query, {
-      topK: options.topK || 5,
-      minScore: options.minScore || 0.5
+      topK: options.topK || 20,        // Top-k=20 for initial retrieval
+      finalTopK: options.finalTopK || 8, // Top-m=8 for final results
+      minScore: options.minScore || 0.5,
+      mmrEnabled: options.mmrEnabled !== false  // Default MMR enabled
     });
     
     // Calculate confidence based on scores

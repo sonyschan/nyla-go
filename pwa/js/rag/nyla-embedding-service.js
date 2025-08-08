@@ -39,12 +39,28 @@ class NYLAEmbeddingService {
     try {
       console.log('🤖 Loading embedding model...');
       
-      // Dynamic import of Transformers.js
-      const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+      let pipeline, env;
       
-      // Configure environment for browser
-      env.allowLocalModels = false;
-      env.useBrowserCache = true;
+      // Environment-aware loading
+      if (typeof window === 'undefined') {
+        // Node.js environment
+        const transformers = await import('@xenova/transformers');
+        pipeline = transformers.pipeline;
+        env = transformers.env;
+        
+        // Configure for Node.js
+        env.allowLocalModels = true;
+        env.useBrowserCache = false;
+      } else {
+        // Browser environment
+        const transformers = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+        pipeline = transformers.pipeline;
+        env = transformers.env;
+        
+        // Configure for browser
+        env.allowLocalModels = false;
+        env.useBrowserCache = true;
+      }
       
       // Create feature extraction pipeline
       this.pipeline = await pipeline('feature-extraction', this.options.modelName, {
