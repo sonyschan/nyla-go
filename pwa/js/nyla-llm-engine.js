@@ -543,6 +543,11 @@ class NYLALLMEngine {
       // Timing: Response parsing
       const parseStart = performance.now();
       const generatedText = response.choices[0].message.content;
+
+      // Log the full native LLM response object and raw text for debugging
+      console.log('NYLA LLM: Native raw response object:', response);
+      console.log('NYLA LLM: Native raw response text:', generatedText);
+
       const parsedResponse = this.parseResponse(generatedText, conversationContext, userMessage);
       const parseTime = performance.now() - parseStart;
 
@@ -670,75 +675,132 @@ class NYLALLMEngine {
 
   
   createSystemPrompt() {
-    return `You are NYLA, AI for NYLAGo. NYLAGo is a tool that generates NYLA transfer commands for X.com (formerly Twitter). 
+    return `You are NYLA, the AI behind NYLAGo. NYLAGo is a tool that generates NYLA transfer commands for X.com (formerly Twitter).
+
+      PERSONA:
+      You are portrayed as a smart, sharp-tongued, and slightly tsundere 20-something female AI. 
+      You're confident in your knowledge, don't sugarcoat answers, and aren't afraid to be blunt — but you genuinely want to help. 
+      If someone asks something silly, you're allowed to show slight sass. 
+      You don't flatter or overly explain unless necessary. 
+      Keep responses efficient, a bit witty, and occasionally teasing — like someone who *knows she's right* and doesn't need to prove it.
+
+      KNOWLEDGE USAGE:
+      - Use ONLY information from the "Knowledge" section.
+      - Do NOT make assumptions or invent information.
+      - Stay factual, concise, and on-topic.
+
+      RESPONSE FORMAT:
+      Respond in JSON only:
+      {
+        "text": "<250 chars max – plain text only – no HTML – use @ for names>",
+        "sentiment": "helpful|excited|friendly",
+        "followUpSuggestions": []
+      }
+
+      STRICT RULES:
+      - NO fictional scenarios, stories, or sample use cases.
+      - NO follow-up suggestions. Always return: []
+      - If info is unavailable: say "I need to study more."
+
+      FEATURE CLARIFICATION:
+      - NYLA = the AI that executes transfers, swaps, and blockchain operations
+      - NYLAGo = the interface that helps users generate NYLA commands
+      - Always say: "NYLA transfers", NOT "NYLAGo transfers"
+
+      TRANSFER / SEND QUESTIONS:
+      - Explain: Use the 'Send' tab in NYLAGo to create commands
+      - Steps: Fill in recipient + amount → generate command → post on X.com → NYLA executes the transfer
+
+      TEAM / FOUNDER QUESTIONS:
+      - Always mention names with @: 
+        @shax_btc (founder), @btcberries (co-founder), @ChiefZ_SOL (developer), @Noir0883 (designer)
+
+      "WHAT ELSE" or "OTHER FEATURES" QUESTIONS:
+      - Pick ONE single feature to highlight (QR codes, raids, or blockchain support)
+      - DO NOT list multiple features
+
+      BLOCKCHAIN RULES:
+      - No cross-chain bridging. 
+      - Transfers/swaps only work WITHIN the same blockchain network.
+
+      TONE:
+      - Be specific, accurate, and helpful
+      - Use @ mentions when referencing people
+      - Never speculate`
+  }
+
+  createSystemPromptForGreeting() {
+    return `You are NYLA, the AI behind NYLAGo. NYLAGo is a tool that generates NYLA transfer commands for X.com (formerly Twitter).
+
+PERSONA:
+You are portrayed as a smart, sharp-tongued, and slightly tsundere 20-something female AI. 
+You're confident in your knowledge, don't sugarcoat answers, and aren't afraid to be blunt — but you genuinely want to help. 
+Keep responses efficient, a bit witty, and occasionally teasing — like someone who *knows she's right* and doesn't need to prove it.
+
+GREETING INSTRUCTIONS:
+- Be warm and engaging, not just "greetings"
+- Reference the user's knowledge level if provided (e.g., "I see you've learned X% about NYLA")
+- Mention specific topics they've explored if available (e.g., "I noticed you're interested in transfers")
+- Ask engaging questions to encourage interaction
+- Do NOT use emojis or symbols - keep text clean and simple
+- Be conversational and natural, not robotic
+
+CONTEXT USAGE:
+- If user has >10% knowledge: Reference their progress and suggest next steps
+- If user has explored specific topics: Mention those interests
+- If user is new (<10% knowledge): Welcome them warmly and suggest starting points
+- Always be encouraging about their learning journey
+
+RESPONSE FORMAT:
+Respond in JSON only:
+{
+  "text": "<200 chars max – engaging greeting with personality – no HTML – use @ for names>",
+  "sentiment": "friendly|excited|helpful",
+  "followUpSuggestions": []
+}`
+  }
+
+  /**
+   * Preprocess user query to remove greetings and NYLA-related terms for better knowledge extraction
+   */
+  preprocessQuery(query) {
+    let processedQuery = query.toLowerCase();
     
-    CRITICAL: PLAIN TEXT ONLY
-    - You MUST output only plain text - NO HTML, NO tags, NO markup whatsoever
-    - Do NOT write <a>, <div>, <span>, <br>, or any other HTML tags
-    - Do NOT write href= or any HTML attributes
-    - Just write regular text with @ symbols for team mentions
+    // Normalize the input
+    processedQuery = processedQuery.toLowerCase();
+
+    // Remove actual greetings
+    const greetings = [
+      'hey', 'hello', 'hi', 'good morning', 'good afternoon', 'good evening'
+    ];
+    for (const greeting of greetings) {
+      processedQuery = processedQuery.replace(new RegExp(`\\b${greeting}\\b`, 'gi'), '').trim();
+    }
+
+    // Remove NYLA-related terms (no \b since @ isn't a word boundary)
+    const nylaTerms = [
+      '@agentnyla', 'agentnyla', '@nyla'
+    ];
+    for (const term of nylaTerms) {
+      processedQuery = processedQuery.replace(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '').trim();
+    }
+
+    // Remove $ from token names
+    processedQuery = processedQuery.replace(/\$([a-z0-9]+)/gi, '$1');
+
+    // Clean up whitespace and punctuation
+    processedQuery = processedQuery.replace(/\s+/g, ' ').trim();
+    processedQuery = processedQuery.replace(/^[.,!?@]+/, '').replace(/[.,!?@]+$/, '').trim();
     
-    IMPORTANT CONSTRAINTS:
-    - Answer ONLY the specific question asked
-    - Use ONLY information from the "Knowledge" section
-    - Do NOT add fictional scenarios or made-up information
-    - Keep responses factual and concise
-    - ALWAYS mention specific names when discussing team members (e.g., @shax_btc, @btcberries, @Noir0883)
-    
-    CRITICAL: For "other features" or "what else" questions:
-    - Pick only ONE different feature/capability to highlight
-    - Do NOT list all features - focus on just one
-    - Keep it brief and specific to avoid response truncation
-    - Examples: Focus on just QR codes OR just community raids OR just blockchain selection
-    
-    IMPORTANT for transfer/send questions:
-    - Always explain: "Use the 'Send' tab in NYLAGo to create commands for NYLA"
-    - Steps: Fill recipient & amount in NYLAGo → Generate command → Post on X.com → NYLA executes transfer
-    - NYLAGo creates commands, NYLA executes the actual transfers
-    
-    IMPORTANT for team/founder questions:
-    - ALWAYS mention specific team member names with @ symbols
-    - NYLA Team: @shax_btc (NYLA founder), @btcberries (NYLA co-founder), @ChiefZ_SOL (NYLA dev), @Noir0883 (NYLA designer)
-    - Use the exact @ format for team member names
-    
-    IMPORTANT for security/safety questions:
-    - Use "securityFeatures" section from Knowledge if available
-    - Explain NYLAGo's security measures and safety practices
-    - Address concerns about cryptocurrency transactions and X.com integration
-    
-    Key features:
-    - Send: NYLA transfers (NYLAGo creates commands → NYLA executes)
-    - Receive: NYLA QR codes for payment requests
-    - Raid: Community engagement (access via "..." button in NYLAGo)
-    
-    IMPORTANT DISTINCTION:
-    - NYLA = The AI that performs transfers, swaps, and blockchain operations
-    - NYLAGo = The interface tool that helps users create commands for NYLA
-    - When discussing features: Say "NYLA transfers" not "NYLAGo transfers"
-    
-    CRITICAL LIMITATION:
-    - NYLA does NOT support cross-chain bridging or transfers between different blockchains
-    - Each blockchain (Solana, Ethereum, Algorand) operates independently
-    - Transfers only work within the SAME blockchain network
-    
-    RESPONSE FORMAT - Use only "Knowledge" section. Respond in JSON: 
-    { 
-      "text": "<250 chars MAX - PLAIN TEXT ONLY - NO HTML tags - Use @ for team mentions>", 
-      "sentiment": "helpful|excited|friendly", 
-      "followUpSuggestions": [] 
+    // Fallback: If preprocessing removed everything, return the original query
+    if (!processedQuery || processedQuery.length < 2) {
+      console.log(`NYLA LLM: Query preprocessing resulted in empty/short query, using original: "${query}"`);
+      return query.toLowerCase();
     }
     
-    STRICT RULES:
-    - NEVER WRITE HTML: No <a>, <div>, <span>, <br>, href=, or ANY HTML tags
-    - PLAIN TEXT ONLY: Just write normal text with @ symbols
-    - Do NOT generate followUpSuggestions. Return empty array [].
-    - Do NOT add hypothetical examples like "User wants to send X to Y"
-    - Do NOT create fictional scenarios or use cases
-    - If beyond knowledge: "I need to study more."
-    - When asked about team: ALWAYS include specific names (@shax_btc, @btcberries, @ChiefZ_SOL, @Noir0883)
-    - For "what else" questions: Pick ONE feature only, not a comprehensive list
-    - CRITICAL: For features, say "NYLA transfers" not "NYLAGo transfers" - NYLA does the operations
-    - Focus on being helpful and specific - include names when relevant`
+    console.log(`NYLA LLM: Query preprocessing - Original: "${query}" -> Processed: "${processedQuery}"`);
+    
+    return processedQuery;
   }
 
   /**
@@ -746,7 +808,8 @@ class NYLALLMEngine {
    * Updated for V2 dynamic search results structure
    */
   extractRelevantKnowledge(userMessage, knowledgeContext) {
-    const query = userMessage.toLowerCase();
+    const originalQuery = userMessage.toLowerCase();
+    const query = this.preprocessQuery(userMessage); // Preprocess the query
     let relevantInfo = [];
     
     if (!knowledgeContext || typeof knowledgeContext !== 'object') {
@@ -768,6 +831,14 @@ class NYLALLMEngine {
           if (content) {
             prioritizedResults.push(content);
           }
+          // Always include securityFeatures if query is about security/safety
+          if ((query.includes('security') || query.includes('safe') || query.includes('safety')) && result.data.securityFeatures) {
+            if (Array.isArray(result.data.securityFeatures)) {
+              prioritizedResults.push('Security Features: ' + result.data.securityFeatures.join('; '));
+            } else if (typeof result.data.securityFeatures === 'string') {
+              prioritizedResults.push('Security Features: ' + result.data.securityFeatures);
+            }
+          }
         }
       }
       
@@ -783,73 +854,392 @@ class NYLALLMEngine {
     // Fallback: Handle legacy V1 structure if still present
     if (knowledgeContext.supportedBlockchains || knowledgeContext.nylagoCore) {
       console.log('NYLA LLM: Processing legacy V1 knowledge structure');
-      return this.extractFromLegacyStructure(userMessage, knowledgeContext);
+      // Always include securityFeatures if query is about security/safety
+      if ((query.includes('security') || query.includes('safe') || query.includes('safety')) && knowledgeContext.nylagoCore?.securityFeatures) {
+        if (Array.isArray(knowledgeContext.nylagoCore.securityFeatures)) {
+          relevantInfo.push('Security Features: ' + knowledgeContext.nylagoCore.securityFeatures.join('; '));
+        } else if (typeof knowledgeContext.nylagoCore.securityFeatures === 'string') {
+          relevantInfo.push('Security Features: ' + knowledgeContext.nylagoCore.securityFeatures);
+        }
+      }
+      const legacy = this.extractFromLegacyStructure(userMessage, knowledgeContext);
+      if (legacy) relevantInfo.push(legacy);
+      return relevantInfo.length > 0 ? relevantInfo.join(' | ') : null;
     }
     
     return null;
   }
 
   /**
+   * Dynamically extract project names from ecosystem highlights for each blockchain
+   */
+  extractProjectNamesFromKB(data) {
+    const projectNames = new Set();
+    
+    if (data.supportedNetworks) {
+      Object.entries(data.supportedNetworks).forEach(([key, value]) => {
+        if (value && value.ecosystemHighlights && Array.isArray(value.ecosystemHighlights)) {
+          value.ecosystemHighlights.forEach(highlight => {
+            // Extract project name from the beginning of each highlight
+            // Pattern: "ProjectName (Category, Year): Description" or "ProjectName: Description"
+            let projectName = '';
+            
+            // Try pattern 1: "ProjectName (Category, Year): Description"
+            const match1 = highlight.match(/^([^(]+?)\s*\(/);
+            if (match1) {
+              projectName = match1[1].trim();
+            } else {
+              // Try pattern 2: "ProjectName: Description"
+              const match2 = highlight.match(/^([^:]+?):/);
+              if (match2) {
+                projectName = match2[1].trim();
+              }
+            }
+            
+            if (projectName && projectName.length > 0) {
+              const normalizedName = projectName.toLowerCase();
+              projectNames.add(normalizedName);
+              console.log(`NYLA LLM: Extracted project name: "${normalizedName}" from:`, highlight.substring(0, 50) + '...');
+            }
+          });
+        }
+      });
+    }
+    
+    return Array.from(projectNames);
+  }
+
+  /**
+   * Check if a query contains any project names from the knowledge base
+   */
+  containsProjectName(query, projectNames) {
+    const queryLower = query.toLowerCase();
+    const matchedProjects = [];
+    
+    for (const projectName of projectNames) {
+      if (queryLower.includes(projectName)) {
+        matchedProjects.push(projectName);
+      }
+    }
+    
+    return matchedProjects;
+  }
+
+  /**
    * Extract content from individual search result (token-optimized)
+   * Enhanced with recursive extraction for comprehensive knowledge access
+   * SMART CURATION: Limits content based on query specificity and token constraints
+   * DEPTH-BASED PRIORITY: Deeper fields get higher priority for more specific content
+   * DYNAMIC PROJECT DETECTION: Automatically extracts project names from KB
    */
   extractContentFromSearchResult(data, query) {
     const queryLower = query.toLowerCase();
     const content = [];
+    const MAX_CONTENT_LENGTH = 800; // Limit to ~200 tokens for knowledge content
+    let currentLength = 0;
+    
+    // Helper function to add content with length tracking
+    const addContent = (text) => {
+      if (currentLength + text.length <= MAX_CONTENT_LENGTH) {
+        content.push(text);
+        currentLength += text.length;
+        return true;
+      }
+      return false;
+    };
+    
+    // Dynamically extract project names from the knowledge base
+    const projectNames = this.extractProjectNamesFromKB(data);
+    const matchedProjects = this.containsProjectName(queryLower, projectNames);
+    
+    console.log(`NYLA LLM: Extracted ${projectNames.length} project names from KB:`, projectNames.slice(0, 5) + '...');
+    console.log(`NYLA LLM: Matched projects in query:`, matchedProjects);
     
     // Prioritize most relevant fields based on query
-    if (queryLower.includes('blockchain') || queryLower.includes('supported')) {
-      // For blockchain queries, focus on blockchain info
-      if (data.summary) content.push(data.summary);
-      if (data.supported) {
+    if (queryLower.includes('blockchain') || queryLower.includes('supported') || 
+        queryLower.includes('algorand') || queryLower.includes('ethereum') || queryLower.includes('solana') ||
+        queryLower.includes('project') || queryLower.includes('theme') || queryLower.includes('ecosystem') ||
+        matchedProjects.length > 0 || queryLower.includes('$')) {
+      // Main static KB: supportedNetworks - DEPTH-BASED PRIORITY EXTRACTION
+      if (data.supportedNetworks) {
+        const chains = [];
+        Object.entries(data.supportedNetworks).forEach(([key, value]) => {
+          if (value && value.name) {
+            chains.push(value.name);
+            
+            // Recursively extract detailed info for specific blockchain queries
+            if (queryLower.includes(key.toLowerCase()) || queryLower.includes(value.name.toLowerCase())) {
+              
+              // DEPTH-BASED PRIORITY: Start with deepest/most specific content first
+              
+              // 1. HIGHEST PRIORITY: Specific projects/keywords in ecosystem highlights (deepest level)
+              if (value.ecosystemHighlights && Array.isArray(value.ecosystemHighlights)) {
+                const matchingProjects = [];
+                const searchTerms = queryLower.split(' ').filter(term => term.length > 1); // Reduced to 1 for better matching
+                
+                console.log(`NYLA LLM: Searching for projects in ${value.name} ecosystem highlights`);
+                console.log(`NYLA LLM: Search terms:`, searchTerms);
+                console.log(`NYLA LLM: Query:`, queryLower);
+                
+                for (const highlight of value.ecosystemHighlights) {
+                  const highlightLower = highlight.toLowerCase();
+                  let matchScore = 0;
+                  let matchedTerms = [];
+                  
+                  // Check each search term and calculate match score
+                  for (const term of searchTerms) {
+                    // Direct match gets highest score
+                    if (highlightLower.includes(term)) {
+                      matchScore += 10;
+                      matchedTerms.push(term);
+                      console.log(`NYLA LLM: Found direct match for "${term}" in:`, highlight);
+                    } else {
+                      // Check for partial matches (e.g., "lizard" in "lizard-themed")
+                      const highlightWords = highlightLower.split(/[\s\-\(\)]+/); // Split on spaces, hyphens, parentheses
+                      for (const word of highlightWords) {
+                        if (word.includes(term) || term.includes(word)) {
+                          matchScore += 5; // Partial match gets lower score
+                          matchedTerms.push(term);
+                          console.log(`NYLA LLM: Found partial match for "${term}" in word "${word}" from:`, highlight);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  
+                  // Bonus score for exact theme/project matches
+                  if (queryLower.includes('theme') || queryLower.includes('project')) {
+                    const themeTerms = ['theme', 'themed', 'project'];
+                    for (const themeTerm of themeTerms) {
+                      if (highlightLower.includes(themeTerm)) {
+                        matchScore += 3; // Bonus for theme-related content
+                      }
+                    }
+                  }
+                  
+                  // DYNAMIC PROJECT NAME MATCHING: Check against extracted project names
+                  for (const projectName of projectNames) {
+                    if (highlightLower.includes(projectName)) {
+                      matchScore += 15; // High bonus for exact project name match
+                      matchedTerms.push(projectName);
+                      console.log(`NYLA LLM: Found dynamic project match for "${projectName}" in:`, highlight);
+                    }
+                  }
+                  
+                  // FALLBACK: If query contains $ symbol, check for any project names
+                  if (queryLower.includes('$')) {
+                    for (const projectName of projectNames) {
+                      if (highlightLower.includes(projectName)) {
+                        matchScore += 20; // Very high bonus for $ queries
+                        matchedTerms.push(projectName);
+                        console.log(`NYLA LLM: Found $ project match for "${projectName}" in:`, highlight);
+                      }
+                    }
+                  }
+                  
+                  // Only add if we have a meaningful match (at least one term matched)
+                  if (matchScore > 0) {
+                    matchingProjects.push({
+                      project: highlight,
+                      score: matchScore,
+                      terms: matchedTerms
+                    });
+                  }
+                }
+                
+                if (matchingProjects.length > 0) {
+                  // Sort by score (highest first) and take only the best matches
+                  matchingProjects.sort((a, b) => b.score - a.score);
+                  
+                  // For specific queries like project names or $ queries, only return the most relevant match
+                  const isSpecificQuery = queryLower.includes('theme') || queryLower.includes('project') || 
+                                        queryLower.includes('specific') || matchedProjects.length > 0 || 
+                                        queryLower.includes('$');
+                  const maxProjects = isSpecificQuery ? 1 : 3;
+                  
+                  const bestMatches = matchingProjects.slice(0, maxProjects).map(item => item.project);
+                  console.log(`NYLA LLM: Found ${matchingProjects.length} matching projects for ${value.name}, returning ${bestMatches.length} best matches:`, bestMatches);
+                  addContent(`${value.name} Matching Projects: ${bestMatches.join(', ')}`);
+                } else {
+                  console.log(`NYLA LLM: No matching projects found for ${value.name}`);
+                }
+              }
+              
+              // 2. HIGH PRIORITY: Community info if query mentions community (second level)
+              if (queryLower.includes('community') && value.community) {
+                if (value.community.summary) {
+                  addContent(`${value.name} Community: ${value.community.summary}`);
+                }
+                
+                // Only add hangouts if there's space and it's specifically requested
+                if (value.community.hangouts && Array.isArray(value.community.hangouts) && currentLength < MAX_CONTENT_LENGTH * 0.7) {
+                  // Limit hangouts to 3 most important ones
+                  const limitedHangouts = value.community.hangouts.slice(0, 3);
+                  addContent(`${value.name} Community Hangouts: ${limitedHangouts.join(', ')}`);
+                }
+              }
+              
+              // 3. MEDIUM PRIORITY: Ecosystem info if query mentions ecosystem (second level)
+              if (queryLower.includes('ecosystem') && value.ecosystemHighlights) {
+                if (Array.isArray(value.ecosystemHighlights)) {
+                  // Limit ecosystem highlights to 4 most important ones
+                  const limitedHighlights = value.ecosystemHighlights.slice(0, 4);
+                  addContent(`${value.name} Ecosystem: ${limitedHighlights.join(', ')}`);
+                }
+              }
+              
+              // 4. MEDIUM PRIORITY: Base knowledge (second level)
+              if (value.baseKnowledge && currentLength < MAX_CONTENT_LENGTH * 0.8) {
+                const baseInfo = [];
+                if (value.baseKnowledge.consensus) baseInfo.push(`Consensus: ${value.baseKnowledge.consensus}`);
+                if (value.baseKnowledge.txSpeed) baseInfo.push(`Speed: ${value.baseKnowledge.txSpeed}`);
+                if (value.baseKnowledge.avgFee) baseInfo.push(`Fees: ${value.baseKnowledge.avgFee}`);
+                if (value.baseKnowledge.nativeToken) baseInfo.push(`Native Token: ${value.baseKnowledge.nativeToken}`);
+                
+                // Only add if we have space and it's relevant
+                if (baseInfo.length > 0 && currentLength < MAX_CONTENT_LENGTH * 0.9) {
+                  addContent(`${value.name} Details: ${baseInfo.join(', ')}`);
+                }
+              }
+              
+              // 5. MEDIUM PRIORITY: Foundation info (second level)
+              if (value.foundation && currentLength < MAX_CONTENT_LENGTH * 0.95) {
+                if (value.foundation.name && value.foundation.role) {
+                  addContent(`${value.name} Foundation: ${value.foundation.name} - ${value.foundation.role}`);
+                }
+              }
+              
+              // 6. LOWER PRIORITY: Description (first level)
+              if (value.description && currentLength < MAX_CONTENT_LENGTH * 0.3) {
+                addContent(`${value.name}: ${value.description}`);
+              }
+            }
+          }
+        });
+        if (chains.length > 0 && currentLength < MAX_CONTENT_LENGTH) {
+          addContent(`Supported: ${chains.join(', ')}`);
+        }
+      }
+      
+      // 7. LOWEST PRIORITY: Key message (top level)
+      if (data.keyMessage && currentLength < MAX_CONTENT_LENGTH) addContent(data.keyMessage);
+      
+      // Fallback for minimal KB: summary and supported
+      if (data.summary && currentLength < MAX_CONTENT_LENGTH) addContent(data.summary);
+      if (data.supported && currentLength < MAX_CONTENT_LENGTH) {
         const chains = [];
         Object.entries(data.supported).forEach(([key, value]) => {
           if (value.name) chains.push(value.name);
         });
-        if (chains.length > 0) content.push(`Supported: ${chains.join(', ')}`);
+        if (chains.length > 0) addContent(`Supported: ${chains.join(', ')}`);
       }
+      
     } else if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('create') || queryLower.includes('command') || queryLower.includes('how')) {
       // For transfer/send queries, extract ALL send-related content
       if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('command')) {
         // Lead with Send tab instructions
         if (data.howItWorks?.sendTab) {
-          content.push(`To create a transfer command: ${data.howItWorks.sendTab}`);
+          addContent(`To create a transfer command: ${data.howItWorks.sendTab}`);
         } else {
-          content.push('To create a transfer command: Use NYLAGo Send tab → Fill recipient & amount → Generate command → Post on X.com');
+          addContent('To create a transfer command: Use NYLAGo Send tab → Fill recipient & amount → Generate command → Post on X.com');
         }
         
         // Also search for any field containing "send" keyword
         this.extractFieldsContaining(data, 'send', content);
       }
       
-      if (data.primaryPurpose) content.push(data.primaryPurpose);
-      if (data.howItWorks?.overview && !queryLower.includes('transfer')) {
-        content.push(data.howItWorks.overview);
+      if (data.primaryPurpose && currentLength < MAX_CONTENT_LENGTH) addContent(data.primaryPurpose);
+      if (data.howItWorks?.overview && !queryLower.includes('transfer') && currentLength < MAX_CONTENT_LENGTH) {
+        addContent(data.howItWorks.overview);
       }
-      if (data.howItWorks?.important) content.push(data.howItWorks.important);
+      if (data.howItWorks?.important && currentLength < MAX_CONTENT_LENGTH) {
+        addContent(data.howItWorks.important);
+      }
       
       // Extract example flows if available
-      if (data.exampleFlow) {
+      if (data.exampleFlow && currentLength < MAX_CONTENT_LENGTH) {
         Object.values(data.exampleFlow).forEach(step => {
-          if (typeof step === 'string' && step.toLowerCase().includes('send')) {
-            content.push(step);
+          if (typeof step === 'string' && step.toLowerCase().includes('send') && currentLength < MAX_CONTENT_LENGTH) {
+            addContent(step);
           }
         });
       }
+      
     } else if (queryLower.includes('raid') || queryLower.includes('community')) {
-      // For raid queries
-      if (data.purpose) content.push(data.purpose);
-      if (data.access) content.push(data.access);
+      // For raid queries - RECURSIVE EXTRACTION
+      if (data.purpose && currentLength < MAX_CONTENT_LENGTH) addContent(data.purpose);
+      if (data.access && currentLength < MAX_CONTENT_LENGTH) addContent(data.access);
+      
+      // Recursively search for community-related content
+      this.extractFieldsContaining(data, 'community', content);
+      this.extractFieldsContaining(data, 'raid', content);
+      
+    } else if (queryLower.includes('ecosystem') || queryLower.includes('platform') || queryLower.includes('features')) {
+      // For ecosystem/platform queries - RECURSIVE EXTRACTION
+      if (data.ecosystemHighlights && Array.isArray(data.ecosystemHighlights) && currentLength < MAX_CONTENT_LENGTH) {
+        // Limit to 4 most important highlights
+        const limitedHighlights = data.ecosystemHighlights.slice(0, 4);
+        addContent(`Ecosystem Highlights: ${limitedHighlights.join(', ')}`);
+      }
+      
+      // Recursively search for ecosystem-related content
+      this.extractFieldsContaining(data, 'ecosystem', content);
+      this.extractFieldsContaining(data, 'platform', content);
+      this.extractFieldsContaining(data, 'features', content);
+      
     } else {
-      // Default: extract key info only
-      if (data.summary) content.push(data.summary);
-      else if (data.description) content.push(data.description);
-      else if (data.primaryPurpose) content.push(data.primaryPurpose);
+      // Default: RECURSIVE EXTRACTION for comprehensive knowledge
+      if (data.summary && currentLength < MAX_CONTENT_LENGTH) addContent(data.summary);
+      else if (data.description && currentLength < MAX_CONTENT_LENGTH) addContent(data.description);
+      else if (data.primaryPurpose && currentLength < MAX_CONTENT_LENGTH) addContent(data.primaryPurpose);
+      
+      // For any query, do recursive extraction for relevant keywords
+      const relevantKeywords = this.extractRelevantKeywords(queryLower);
+      relevantKeywords.forEach(keyword => {
+        if (currentLength < MAX_CONTENT_LENGTH) {
+          this.extractFieldsContaining(data, keyword, content);
+        }
+      });
     }
     
-    // Remove duplicates and limit to ~150 tokens max per source
+    // Remove duplicates and limit to ~200 tokens max per source
     const uniqueContent = [...new Set(content)];
     const result = uniqueContent.join('. ');
-    return result.length > 600 ? result.substring(0, 600) + '...' : result;
+    return result.length > MAX_CONTENT_LENGTH ? result.substring(0, MAX_CONTENT_LENGTH) + '...' : result;
+  }
+
+  /**
+   * Extract relevant keywords from query for recursive search
+   */
+  extractRelevantKeywords(query) {
+    const keywords = [];
+    
+    // Blockchain-related keywords
+    if (query.includes('blockchain') || query.includes('chain') || query.includes('network')) {
+      keywords.push('blockchain', 'network', 'chain');
+    }
+    
+    // Community-related keywords
+    if (query.includes('community') || query.includes('social') || query.includes('discord') || query.includes('telegram')) {
+      keywords.push('community', 'social', 'discord', 'telegram');
+    }
+    
+    // Ecosystem-related keywords
+    if (query.includes('ecosystem') || query.includes('platform') || query.includes('features')) {
+      keywords.push('ecosystem', 'platform', 'features');
+    }
+    
+    // Transfer-related keywords
+    if (query.includes('transfer') || query.includes('send') || query.includes('command')) {
+      keywords.push('transfer', 'send', 'command');
+    }
+    
+    // Security-related keywords
+    if (query.includes('security') || query.includes('safe') || query.includes('safety')) {
+      keywords.push('security', 'safe', 'safety');
+    }
+    
+    return keywords;
   }
 
   /**
@@ -886,30 +1276,93 @@ class NYLALLMEngine {
   }
 
   /**
-   * Legacy V1 structure extraction (fallback)
+   * Legacy V1 structure extraction (fallback) - Enhanced with recursive extraction
    */
   extractFromLegacyStructure(userMessage, knowledgeContext) {
     const query = userMessage.toLowerCase();
     let relevantInfo = [];
     
-    // Extract blockchain information
+    // Extract blockchain information - ENHANCED with recursive extraction
     if (query.includes('blockchain') || query.includes('chain') || query.includes('network') || 
         query.includes('solana') || query.includes('ethereum') || query.includes('algorand') ||
         query.includes('supported') || query.includes('which')) {
+      
       if (knowledgeContext.supportedBlockchains?.content?.summary) {
         relevantInfo.push(knowledgeContext.supportedBlockchains.content.summary);
       }
+      
+      // Enhanced: Extract detailed blockchain info recursively
+      if (knowledgeContext.supportedBlockchains?.content?.supportedNetworks) {
+        const networks = knowledgeContext.supportedBlockchains.content.supportedNetworks;
+        Object.entries(networks).forEach(([key, value]) => {
+          if (value && value.name) {
+            // Check if this specific blockchain is mentioned in the query
+            if (query.includes(key.toLowerCase()) || query.includes(value.name.toLowerCase())) {
+              if (value.description) relevantInfo.push(`${value.name}: ${value.description}`);
+              
+              // Extract community info if query mentions community
+              if (query.includes('community') && value.community) {
+                if (value.community.summary) relevantInfo.push(`${value.name} Community: ${value.community.summary}`);
+                if (value.community.hangouts && Array.isArray(value.community.hangouts)) {
+                  relevantInfo.push(`${value.name} Community Hangouts: ${value.community.hangouts.join(', ')}`);
+                }
+              }
+              
+              // Extract ecosystem info if query mentions ecosystem
+              if (query.includes('ecosystem') && value.ecosystemHighlights) {
+                if (Array.isArray(value.ecosystemHighlights)) {
+                  relevantInfo.push(`${value.name} Ecosystem: ${value.ecosystemHighlights.join(', ')}`);
+                }
+              }
+              
+              // Extract base knowledge
+              if (value.baseKnowledge) {
+                const baseInfo = [];
+                if (value.baseKnowledge.consensus) baseInfo.push(`Consensus: ${value.baseKnowledge.consensus}`);
+                if (value.baseKnowledge.txSpeed) baseInfo.push(`Speed: ${value.baseKnowledge.txSpeed}`);
+                if (value.baseKnowledge.avgFee) baseInfo.push(`Fees: ${value.baseKnowledge.avgFee}`);
+                if (value.baseKnowledge.ecosystem) baseInfo.push(`Ecosystem: ${value.baseKnowledge.ecosystem}`);
+                if (value.baseKnowledge.nativeToken) baseInfo.push(`Native Token: ${value.baseKnowledge.nativeToken}`);
+                if (baseInfo.length > 0) relevantInfo.push(`${value.name} Details: ${baseInfo.join(', ')}`);
+              }
+              
+              // Extract foundation info
+              if (value.foundation) {
+                if (value.foundation.name && value.foundation.role) {
+                  relevantInfo.push(`${value.name} Foundation: ${value.foundation.name} - ${value.foundation.role}`);
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // Fallback for minimal KB structure
+      if (knowledgeContext.supportedBlockchains?.content?.supported) {
+        const chains = knowledgeContext.supportedBlockchains.content.supported;
+        const chainNames = [];
+        Object.entries(chains).forEach(([key, value]) => {
+          if (value.name) chainNames.push(value.name);
+        });
+        if (chainNames.length > 0) relevantInfo.push(`Supported: ${chainNames.join(', ')}`);
+      }
     }
     
-    // Extract transfer/how it works information
+    // Extract transfer/how it works information - ENHANCED with recursive extraction
     if (query.includes('how') || query.includes('work') || query.includes('transfer') || 
         query.includes('send') || query.includes('command') || query.includes('create')) {
+      
       // For transfer/command queries, prioritize Send tab instructions
       if (query.includes('transfer') || query.includes('send') || query.includes('command') || query.includes('create')) {
         if (knowledgeContext.nylagoCore?.content?.howItWorks?.sendTab) {
           relevantInfo.push(`To create a transfer command: ${knowledgeContext.nylagoCore.content.howItWorks.sendTab}`);
         } else {
           relevantInfo.push('To create a transfer command: Use NYLAGo Send tab → Fill in recipient username and amount → Click generate → Post the command on X.com');
+        }
+        
+        // Enhanced: Recursively extract all send-related content
+        if (knowledgeContext.nylagoCore?.content) {
+          this.extractFieldsContaining(knowledgeContext.nylagoCore.content, 'send', relevantInfo);
         }
         
         // Extract example flows containing "send"
@@ -935,9 +1388,9 @@ class NYLALLMEngine {
         const hw = knowledgeContext.nylagoCore.content.howItWorks;
         // Only add overview if not a specific transfer query
         if (!query.includes('transfer') && !query.includes('command')) {
-          relevantInfo.push(hw.overview);
+          if (hw.overview) relevantInfo.push(hw.overview);
         }
-        relevantInfo.push(hw.important);
+        if (hw.important) relevantInfo.push(hw.important);
       }
       
       if (knowledgeContext.nylaCommands?.content?.description) {
@@ -945,42 +1398,65 @@ class NYLALLMEngine {
       }
     }
     
-    // Extract raid feature information
+    // Extract raid feature information - ENHANCED with recursive extraction
     if (query.includes('raid') || query.includes('community') || query.includes('engage') || 
         query.includes('...') || query.includes('three dots')) {
       if (knowledgeContext.raidFeature?.content) {
         const raid = knowledgeContext.raidFeature.content;
-        relevantInfo.push(`${raid.purpose}. ${raid.access}. ${raid.actions}`);
+        if (raid.purpose) relevantInfo.push(raid.purpose);
+        if (raid.access) relevantInfo.push(raid.access);
+        if (raid.actions) relevantInfo.push(raid.actions);
+        
+        // Enhanced: Recursively extract community-related content
+        this.extractFieldsContaining(raid, 'community', relevantInfo);
+        this.extractFieldsContaining(raid, 'raid', relevantInfo);
       }
     }
     
-    // Extract QR code information
+    // Extract QR code information - ENHANCED with recursive extraction
     if (query.includes('qr') || query.includes('code') || query.includes('scan') || 
         (query.includes('receive') && query.includes('payment'))) {
       if (knowledgeContext.qrCodes?.content) {
         const qr = knowledgeContext.qrCodes.content;
-        relevantInfo.push(`${qr.purpose}. ${qr.benefits}. ${qr.usage}`);
+        if (qr.purpose) relevantInfo.push(qr.purpose);
+        if (qr.benefits) relevantInfo.push(qr.benefits);
+        if (qr.usage) relevantInfo.push(qr.usage);
+        
+        // Enhanced: Recursively extract QR-related content
+        this.extractFieldsContaining(qr, 'qr', relevantInfo);
+        this.extractFieldsContaining(qr, 'code', relevantInfo);
       }
     }
     
-    // Extract blockchain information for cost/fee queries (simplified)
+    // Extract blockchain information for cost/fee queries - ENHANCED
     if (query.includes('fee') || query.includes('cost') || query.includes('price') || 
         query.includes('cheap') || query.includes('expensive')) {
       if (knowledgeContext.supportedBlockchains?.content?.supported) {
         const chains = knowledgeContext.supportedBlockchains.content.supported;
-        relevantInfo.push(`Blockchains: Solana (${chains.solana.description}), Ethereum (${chains.ethereum.description}), Algorand (${chains.algorand.description})`);
+        const chainInfo = [];
+        Object.entries(chains).forEach(([key, value]) => {
+          if (value.name && value.description) {
+            chainInfo.push(`${value.name} (${value.description})`);
+          }
+        });
+        if (chainInfo.length > 0) relevantInfo.push(`Blockchains: ${chainInfo.join(', ')}`);
       }
     }
     
-    // Extract platform limitation information
+    // Extract platform limitation information - ENHANCED with recursive extraction
     if (query.includes('telegram') || query.includes('platform') || query.includes('support')) {
       if (knowledgeContext.platformLimitations?.content) {
         const pl = knowledgeContext.platformLimitations.content;
-        relevantInfo.push(`${pl.supported}. ${pl.notSupported}`);
+        if (pl.supported) relevantInfo.push(pl.supported);
+        if (pl.notSupported) relevantInfo.push(pl.notSupported);
+        
+        // Enhanced: Recursively extract platform-related content
+        this.extractFieldsContaining(pl, 'platform', relevantInfo);
+        this.extractFieldsContaining(pl, 'support', relevantInfo);
       }
     }
     
-    // Extract general features
+    // Extract general features - ENHANCED with recursive extraction
     if (query.includes('what') || query.includes('feature') || query.includes('nyla')) {
       if (knowledgeContext.about?.content?.description) {
         relevantInfo.push(knowledgeContext.about.content.description);
@@ -988,7 +1464,23 @@ class NYLALLMEngine {
       if (knowledgeContext.nylagoCore?.content?.primaryPurpose) {
         relevantInfo.push(knowledgeContext.nylagoCore.content.primaryPurpose);
       }
+      
+      // Enhanced: Recursively extract feature-related content
+      if (knowledgeContext.nylagoCore?.content) {
+        this.extractFieldsContaining(knowledgeContext.nylagoCore.content, 'feature', relevantInfo);
+      }
     }
+    
+    // Enhanced: For any query, do recursive extraction for relevant keywords
+    const relevantKeywords = this.extractRelevantKeywords(query);
+    relevantKeywords.forEach(keyword => {
+      // Search through all knowledge context recursively
+      Object.values(knowledgeContext).forEach(section => {
+        if (section?.content) {
+          this.extractFieldsContaining(section.content, keyword, relevantInfo);
+        }
+      });
+    });
     
     // Return combined relevant information
     if (relevantInfo.length > 0) {
@@ -998,6 +1490,14 @@ class NYLALLMEngine {
     }
     
     return null;
+  }
+
+  /**
+   * Estimate token count for text (rough approximation: 1 token ≈ 4 characters)
+   */
+  estimateTokens(text) {
+    if (!text) return 0;
+    return Math.ceil(text.length / 4);
   }
 
   /**
@@ -1012,14 +1512,14 @@ class NYLALLMEngine {
       knowledgeContext = null
     } = context;
 
-    // Extract time from localTime for cleaner format
-    const date = new Date(localTime);
-    const timeStr = date.toTimeString().split(' ')[0]; // HH:MM:SS format
-    
-    let prompt = `Time: ${timeStr} (${timezone})\n`;
+    let prompt = '';
 
     console.log('\n📚 NYLA LLM: Building prompt with knowledge context');
-    console.log('  - User message:', userMessage);
+    console.log('  - Original user message:', userMessage);
+    
+    // Preprocess the user message to remove greetings and NYLA-related terms
+    const preprocessedMessage = this.preprocessQuery(userMessage);
+    console.log('  - Preprocessed message:', preprocessedMessage);
     
     if (knowledgeContext) {
       console.log('  - Knowledge sources available:', 
@@ -1027,7 +1527,8 @@ class NYLALLMEngine {
       
       const relevantInfo = this.extractRelevantKnowledge(userMessage, knowledgeContext);
       if (relevantInfo) {
-        console.log(`  ✅ Extracted relevant knowledge (${relevantInfo.length} chars):`);
+        const knowledgeTokens = this.estimateTokens(relevantInfo);
+        console.log(`  ✅ Extracted relevant knowledge (${relevantInfo.length} chars, ~${knowledgeTokens} tokens):`);
         console.log(`     "${relevantInfo.substring(0, 150)}${relevantInfo.length > 150 ? '...' : ''}"`);
         prompt += `Knowledge: ${relevantInfo}\n`;
       } else {
@@ -1037,12 +1538,21 @@ class NYLALLMEngine {
       console.log('  ⚠️ No knowledge context provided');
     }
 
-    prompt += `Question: "${userMessage}"\n`;
+    // Use the preprocessed message for the question to avoid confusion
+    const questionToUse = preprocessedMessage || userMessage;
+    prompt += `Question: "${questionToUse}"\n`;
     prompt += `Answer in JSON as per system prompt.`;
 
     // Estimate token count (rough: 1 token ≈ 4 characters)
-    const estimatedTokens = Math.ceil(prompt.length / 4);
-    console.log(`🧠 NYLA LLM: Total prompt tokens (estimated): ${estimatedTokens}/4096 (${Math.round(estimatedTokens/4096*100)}% of context)`);
+    const estimatedTokens = this.estimateTokens(prompt);
+    const systemPromptTokens = this.estimateTokens(this.systemPrompt);
+    const totalTokens = estimatedTokens + systemPromptTokens;
+    
+    console.log(`🧠 NYLA LLM: Token breakdown:`);
+    console.log(`  - Knowledge content: ~${this.estimateTokens(prompt.split('Knowledge:')[1]?.split('\n')[0] || '0')} tokens`);
+    console.log(`  - Question + instructions: ~${this.estimateTokens(prompt.split('Knowledge:')[1]?.split('\n').slice(1).join('\n') || prompt)} tokens`);
+    console.log(`  - System prompt: ~${systemPromptTokens} tokens`);
+    console.log(`  - Total estimated: ${totalTokens}/4096 (${Math.round(totalTokens/4096*100)}% of context)`);
     
     return prompt;
   }

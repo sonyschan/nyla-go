@@ -80,8 +80,8 @@
 
 .message-avatar {
   font-size: 20px;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,7 +111,7 @@
 .message-sender {
   font-weight: 600;
   color: #FF6B35;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .nyla-message-user .message-sender {
