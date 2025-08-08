@@ -1,0 +1,72 @@
+# NYLA Go Pre-commit Configuration
+# Automatically runs checks before each commit to ensure quality and RAG consistency
+
+repos:
+  # Basic code quality checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+        files: \.(json)$
+      - id: check-yaml
+        files: \.(ya?ml)$
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=10000']  # Allow up to 10MB (for vector DB files)
+
+  # JavaScript/Node.js checks
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.44.0
+    hooks:
+      - id: eslint
+        files: \.(js|jsx|ts|tsx)$
+        args: [--fix]
+        additional_dependencies:
+          - eslint@8.44.0
+
+  # NYLA-specific hooks
+  - repo: local
+    hooks:
+      # Knowledge Base Change Detection
+      - id: detect-kb-changes
+        name: Detect Knowledge Base Changes
+        entry: hooks/detect-kb-changes.sh
+        language: script
+        files: '^(nylago-data\.js|pwa/js/nyla-knowledge-base\.js|pwa/data/.*\.js|pwa/data/.*\.json)$'
+        pass_filenames: true
+        always_run: false
+        
+      # RAG Embedding Status Check  
+      - id: check-rag-status
+        name: Check RAG Embedding Status
+        entry: hooks/check-rag-status.sh
+        language: script
+        files: '^(nylago-data\.js|pwa/js/nyla-knowledge-base\.js|pwa/data/.*\.(js|json)|CLAUDE\.md)$'
+        pass_filenames: true
+        always_run: false
+        
+      # Version Consistency Check
+      - id: version-consistency
+        name: Version Consistency Check
+        entry: hooks/check-version-consistency.sh
+        language: script
+        files: '^(manifest\.json|pwa/js/app\.js|pwa/sw\.js|popup\.js|CLAUDE\.md|README\.md)$'
+        pass_filenames: false
+        
+      # Extension Package Validation
+      - id: extension-package-check
+        name: Extension Package Validation
+        entry: hooks/validate-extension-package.sh
+        language: script
+        files: '^(manifest\.json|popup\.(html|js)|content\.js|icons/.*\.png)$'
+        pass_filenames: false
+        
+      # PWA Asset Check
+      - id: pwa-asset-check
+        name: PWA Asset Validation
+        entry: hooks/validate-pwa-assets.sh
+        language: script
+        files: '^pwa/.*\.(html|js|css|png|jpg|jpeg|gif|svg|mp4|json)$'
+        pass_filenames: true

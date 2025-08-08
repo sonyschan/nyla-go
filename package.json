@@ -13,13 +13,33 @@
     "test:performance": "node tests/performance/performance-comparison.js",
     "demo:performance": "node tests/performance/mock-performance-demo.js",
     "serve:pwa": "cd pwa && python3 -m http.server 3000",
-    "install:browsers": "playwright install"
+    "install:browsers": "playwright install",
+    "build:embeddings": "node pwa/js/rag/build-embeddings-nodejs.js",
+    "rag:status": "node scripts/check-rag-status.js",
+    "rag:verify": "node scripts/verify-embeddings.js",
+    "rag:test": "node scripts/test-rag-queries.js",
+    "rag:check-updates": "hooks/detect-kb-changes.sh",
+    "rag:rebuild-full": "npm run build:embeddings && npm run rag:verify",
+    "rag:analyze": "node scripts/analyze-rag-performance.js",
+    "rag:clear-cache": "node scripts/clear-rag-cache.js",
+    "rag:export-stats": "node scripts/export-rag-stats.js",
+    "precommit": "pre-commit run --all-files",
+    "install:precommit": "pip3 install pre-commit && pre-commit install",
+    "postinstall": "npm run install:transformers",
+    "install:transformers": "echo 'Note: @xenova/transformers will be installed on first embedding build'"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
+    "@xenova/transformers": "^2.17.2",
     "puppeteer": "^21.0.0"
   },
-  "keywords": ["nyla", "crypto", "testing", "e2e", "playwright"],
+  "keywords": [
+    "nyla",
+    "crypto",
+    "testing",
+    "e2e",
+    "playwright"
+  ],
   "author": "NYLA Go Team",
   "license": "MIT"
 }

@@ -515,3 +515,158 @@ git config --global alias.release-create '!f() { gh release create "$1" --title 
 - **Git Permission Issues**: Use SSH keys instead of HTTPS
 - **Missing GitHub Token**: Run `gh auth login` to authenticate
 - **Wrong Branch**: Verify you're on master/main before tagging
+
+## 🤖 Advanced RAG (Retrieval-Augmented Generation) System
+
+### 📊 **Complete RAG Pipeline Architecture**
+NYLA now implements a sophisticated knowledge handling system with multiple AI services:
+
+#### **Core RAG Components** (Existing)
+- **`nyla-embedding-service.js`** - Transformers.js with all-MiniLM-L6-v2 (384-dim embeddings)
+- **`nyla-vector-db.js`** - FAISS-web with IndexedDB persistence 
+- **`nyla-retriever.js`** - Semantic + hybrid search with ranking
+- **`nyla-context-builder.js`** - Token-optimized context assembly
+- **`nyla-kb-version-manager.js`** - Knowledge base version tracking
+- **`nyla-conversation-manager.js`** - Multi-turn conversation context
+
+#### **Advanced Enhancement Services** (NEW v2.2.0)
+- **`nyla-deduplication-service.js`** - Shingle hashing with MinHash/SimHash
+- **`nyla-mmr-reranker.js`** - Maximum Marginal Relevance reranking (λ=0.5)
+- **`nyla-clustering-service.js`** - Sentence embedding clustering (cosine > 0.92)
+- **`nyla-compression-service.js`** - Answer-aware compression with field-specific limits
+- **`nyla-content-filter.js`** - Marketing/boilerplate content blacklist filter
+
+### 🔄 **RAG Process Triggers**
+
+#### **CRITICAL: When to Rebuild RAG Embeddings**
+Claude should **ACTIVELY REMIND** the user to rebuild RAG embeddings when:
+
+1. **Knowledge Base Changes Detected:**
+   ```bash
+   # Claude should suggest running this when KB files change:
+   npm run build:embeddings
+   ```
+
+2. **New Knowledge Added:** When files in these locations are modified:
+   - `nylago-data.js` (community data)
+   - `pwa/js/nyla-knowledge-base.js` (main KB)
+   - Any files in `pwa/data/` directory
+   - Documentation updates that affect user guidance
+
+3. **Version Control Integration:** Watch for changes using:
+   ```bash
+   # Claude can check if embeddings need rebuilding:
+   git diff HEAD~1 --name-only | grep -E "(nylago-data|knowledge-base|pwa/data)"
+   ```
+
+#### **Automatic RAG Rebuild Triggers**
+Claude should **PROACTIVELY SUGGEST** rebuilding embeddings when:
+
+- ✅ User adds new cryptocurrency/blockchain information
+- ✅ New features are documented that users need to know about
+- ✅ API changes affect user workflows
+- ✅ New tutorials or how-to guides are added
+- ✅ Bug fixes that change user procedures
+- ✅ Security guidelines or warnings are updated
+
+#### **RAG Rebuild Command Sequence**
+When Claude detects knowledge changes, suggest this sequence:
+```bash
+# 1. Check current RAG status
+npm run rag:status
+
+# 2. Rebuild embeddings (73 chunks, ~11.5MB)
+npm run build:embeddings
+
+# 3. Verify rebuild success
+npm run rag:verify
+
+# 4. Test RAG queries
+npm run rag:test
+```
+
+### 🎯 **RAG Performance Optimization**
+
+#### **Current Capabilities:**
+- **Vector Search**: 384-dimensional semantic similarity
+- **Hybrid Ranking**: Semantic (70%) + keyword (30%) scoring
+- **Context Compression**: Field-specific token limits (50-200 tokens per chunk type)
+- **Deduplication**: MinHash + SimHash with 80% similarity threshold
+- **MMR Reranking**: Balances relevance vs diversity (λ=0.5)
+- **Content Filtering**: Removes marketing/boilerplate (70%+ threshold)
+
+#### **Knowledge Base Statistics:**
+- **Current Size**: 73 chunks, 11.5MB vector database
+- **Embedding Model**: all-MiniLM-L6-v2 (384 dimensions)
+- **Chunk Types**: technical_spec (150 tokens), how_to (200 tokens), qa_pair (180 tokens)
+- **Quality Filtering**: Minimum 30% quality score threshold
+
+### 🔍 **RAG Integration Checkpoints**
+
+#### **When Adding New Features:**
+1. **Update Knowledge Base** → Update relevant KB files
+2. **RAG Rebuild Required** → Run `npm run build:embeddings` 
+3. **Test RAG Responses** → Verify new knowledge is retrievable
+4. **Version Update** → Knowledge base version tracking automatically updates
+
+#### **When Fixing Issues:**
+1. **Document Solution** → Add to KB if it helps users
+2. **Consider RAG Update** → If user-facing fix, rebuild embeddings
+3. **Test Query Coverage** → Ensure users can find the fix via NYLA chat
+
+### 📋 **RAG Maintenance Commands**
+
+```bash
+# Check if RAG needs rebuilding (Claude should run this proactively)
+npm run rag:check-updates
+
+# Full RAG pipeline rebuild
+npm run rag:rebuild-full
+
+# RAG performance analysis
+npm run rag:analyze
+
+# Clear RAG cache and force refresh
+npm run rag:clear-cache
+
+# Export RAG statistics
+npm run rag:export-stats
+```
+
+### 🚨 **RAG Quality Assurance**
+
+#### **Before Each Release, Verify:**
+- [ ] **RAG embeddings current** - No "stale KB" warnings in logs
+- [ ] **Knowledge coverage complete** - All new features documented and indexed
+- [ ] **Query response accuracy** - Test common user questions
+- [ ] **Context compression working** - Responses stay within token limits
+- [ ] **Deduplication effective** - No redundant information in responses
+
+#### **RAG Testing Checklist:**
+```bash
+# Test core functionality queries
+curl -X POST localhost:3000/rag/test -d '{"query": "how to send tokens on solana"}'
+
+# Test new feature queries  
+curl -X POST localhost:3000/rag/test -d '{"query": "latest features in nyla go"}'
+
+# Test edge cases
+curl -X POST localhost:3000/rag/test -d '{"query": "cryptocurrency fees comparison"}'
+```
+
+### ⚡ **Performance Metrics**
+
+#### **Target RAG Performance:**
+- **Query Response Time**: < 2 seconds for semantic search
+- **Context Assembly**: < 400 tokens per response
+- **Embedding Generation**: < 100ms per chunk
+- **Deduplication Rate**: 15-25% duplicate removal
+- **Content Filter Rate**: 10-20% low-quality removal
+
+#### **RAG Pipeline Monitoring:**
+Claude should watch for these performance degradations:
+- Slow embedding generation (>200ms per chunk)
+- High memory usage during vector operations
+- Context token limit exceeded warnings
+- Low relevance scores in search results
+- High deduplication rates (>40% suggests KB quality issues)
