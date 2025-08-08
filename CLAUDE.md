@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.2.1
-- **Features**: Advanced RAG pipeline with Top-k=20 retrieval, MMR reranking (λ=0.5), Top-m=8 selection, semantic clustering deduplication (cosine>0.92), improved LLM timeout handling, and enhanced two-cap source filtering system
+- **Latest Release**: v2.2.2
+- **Features**: Advanced RAG pipeline with Top-k=20 retrieval, MMR reranking (λ=0.5), Top-m=8 selection, semantic clustering deduplication (cosine>0.92), refreshed embeddings with 73 optimized chunks, improved LLM timeout handling, and enhanced two-cap source filtering system
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version
