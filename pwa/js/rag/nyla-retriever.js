@@ -9,11 +9,13 @@ class NYLARetriever {
     this.embeddingService = embeddingService;
     
     this.options = {
-      topK: 5,
+      topK: 20,              // Top-k=20 for initial retrieval
+      finalTopK: 8,          // Top-m=8 for final results after MMR
       semanticWeight: 0.7,
       keywordWeight: 0.3,
       minScore: 0.5,
       reranking: true,
+      mmrEnabled: true,      // Enable MMR reranking
       ...options
     };
     
@@ -56,15 +58,32 @@ class NYLARetriever {
       );
       
       // Rerank if enabled
-      const finalResults = config.reranking
+      const rerankedResults = config.reranking
         ? this.rerankResults(hybridResults, processedQuery)
         : hybridResults;
       
       // Filter by minimum score
-      const filteredResults = finalResults.filter(r => r.finalScore >= config.minScore);
+      const filteredResults = rerankedResults.filter(r => r.finalScore >= config.minScore);
       
-      // Return top K results
-      return filteredResults.slice(0, config.topK);
+      // Apply MMR reranking if enabled
+      let finalResults = filteredResults;
+      if (config.mmrEnabled && typeof NYLAMMRReranker !== 'undefined') {
+        try {
+          const mmrReranker = new NYLAMMRReranker(this.embeddingService, {
+            lambda: 0.5  // λ≈0.5 as specified
+          });
+          finalResults = await mmrReranker.rerank(
+            query, 
+            filteredResults, 
+            config.finalTopK || 8  // Top-m=8 for final results
+          );
+        } catch (error) {
+          console.warn('⚠️ MMR reranking failed, using original results:', error);
+        }
+      }
+      
+      // Return final top-m results (default 8)
+      return finalResults.slice(0, config.finalTopK || 8);
       
     } catch (error) {
       console.error('❌ Retrieval failed:', error);

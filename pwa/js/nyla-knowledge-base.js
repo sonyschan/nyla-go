@@ -348,7 +348,23 @@ class NYLAKnowledgeBase {
         content: {
           purpose: 'Convert X.com payment links into scannable QR codes',
           benefits: 'Make it easy to share payment requests',
-          usage: 'Anyone can scan and pay through their phone'
+          usage: 'Anyone can scan and pay through their phone',
+          steps: {
+            create: [
+              'Go to the Receive tab in NYLAGo',
+              'Enter the amount',
+              'Select the blockchain network',
+              'Click Generate QR Code button',
+              'Share the QR code with others to scan'
+            ],
+            share: [
+              'Save the QR code image to your phone',
+              'Show it to others for in-person payments',
+              'Post it on social media for remote payments',
+              'Print it for physical locations or events'
+            ]
+          },
+          important: 'QR codes contain payment links that direct to X.com where users can post the transfer command'
         },
         lastFetched: Date.now(),
         status: 'static'

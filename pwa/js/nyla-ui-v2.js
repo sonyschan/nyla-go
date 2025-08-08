@@ -638,7 +638,7 @@ class NYLAAssistantUIV2 {
     if (knowledgePercentage < 10) {
       message = `${timeGreeting} Welcome to NYLAGo! I'm NYLA, your crypto assistant. Ready to explore NYLA transfers and blockchain magic? 🚀`;
     } else {
-      message = `${timeGreeting} Welcome back! You've learned ${knowledgePercentage.toFixed(0)}% about NYLA - great progress! Let me prepare something special for you...`;
+      message = `${timeGreeting} Welcome back! Let me check your knowledge level...`;
     }
     
     return {
@@ -662,18 +662,30 @@ class NYLAAssistantUIV2 {
     console.log('NYLA UI V2: Generating enhanced LLM greeting...');
     
     try {
+      // Get current simple greeting text from DOM
+      const messagesContainer = this.elements.messagesContainer;
+      const lastMessageElement = messagesContainer?.querySelector('.nyla-message:last-child .message-content');
+      const currentGreeting = lastMessageElement?.textContent?.trim() || '';
+      
+      console.log('NYLA UI V2: Current greeting to enhance:', currentGreeting);
+      
       // Show subtle typing indicator for enhancement
       this.showTyping();
       
-      // Generate enhanced greeting using existing personalized greeting logic
-      const enhancedGreeting = await this.generatePersonalizedGreeting();
+      // Small delay to ensure LLM is fully ready
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Generate enhanced follow-up message based on the current greeting context
+      const enhancedFollowUp = await this.generateGreetingFollowUp(currentGreeting);
       
       this.hideTyping();
       
-      // Replace the simple welcome with enhanced greeting
-      if (enhancedGreeting && enhancedGreeting.text) {
-        console.log('NYLA UI V2: Updating to enhanced LLM greeting');
-        await this.updateLastMessage(enhancedGreeting);
+      // Only display if we got a meaningful enhanced follow-up
+      if (enhancedFollowUp && enhancedFollowUp.text) {
+        console.log('NYLA UI V2: Displaying enhanced greeting as separate message');
+        await this.displayMessage(enhancedFollowUp, 'nyla');
+      } else {
+        console.log('NYLA UI V2: No enhanced greeting generated, keeping simple welcome only');
       }
       
     } catch (error) {
@@ -858,13 +870,16 @@ class NYLAAssistantUIV2 {
     
     const prompt = `Generate an engaging, personalized greeting for a user with this context: ${contextInfo}Start with: "${timeGreeting}". Be warm, mention their progress if >10%, ask an engaging question, and encourage interaction. Keep it conversational and natural.`;
 
+    // Declare variables outside try block to avoid ReferenceError in catch block
+    let originalSystemPrompt = null;
+    let simplifiedSystemPrompt = null;
+
     try {
       // Get the simplified system prompt for greeting generation
-      let simplifiedSystemPrompt;
       simplifiedSystemPrompt = this.conversation.llmEngine.createSystemPromptForGreeting();
       
-      // Use dynamic timeout based on LLM warmup status
-      const timeoutDuration = llmStatus.warmedUp ? 8000 : 15000; // 8s if warmed up, 15s if warming up
+      // Use dynamic timeout based on LLM warmup status - increased for more reliability
+      const timeoutDuration = llmStatus.warmedUp ? 12000 : 25000; // 12s if warmed up, 25s if warming up
       console.log('NYLA UI V2: Using', timeoutDuration/1000, 'second timeout for greeting generation');
       
       const timeoutPromise = new Promise((_, reject) => {
@@ -872,7 +887,7 @@ class NYLAAssistantUIV2 {
       });
       
       // Create a temporary override of the system prompt for greeting generation
-      const originalSystemPrompt = this.conversation.llmEngine.systemPrompt;
+      originalSystemPrompt = this.conversation.llmEngine.systemPrompt;
       this.conversation.llmEngine.systemPrompt = simplifiedSystemPrompt;
       
       const llmPromise = this.conversation.llmEngine.generateResponse(prompt, {
@@ -920,8 +935,8 @@ class NYLAAssistantUIV2 {
         console.log('NYLA UI V2: Unknown error in greeting generation:', error.message);
       }
       
-      // Ensure system prompt is restored even on error
-      if (this.conversation?.llmEngine?.systemPrompt !== originalSystemPrompt) {
+      // Ensure system prompt is restored even on error (only if it was actually set)
+      if (originalSystemPrompt && this.conversation?.llmEngine?.systemPrompt !== originalSystemPrompt) {
         this.conversation.llmEngine.systemPrompt = originalSystemPrompt;
         console.log('NYLA UI V2: System prompt restored after error');
       }
@@ -937,6 +952,152 @@ class NYLAAssistantUIV2 {
         timeGreeting = 'Good evening!';
       }
       return this.generateSimplePersonalizedGreeting(greetingContext, timeGreeting);
+    }
+  }
+
+  /**
+   * Build greeting context from user's knowledge tracker data
+   */
+  buildGreetingContext() {
+    try {
+      // Check if knowledge tracker is available
+      if (!this.conversation || !this.conversation.knowledgeTracker) {
+        console.log('NYLA UI V2: Knowledge tracker not available, using basic context');
+        return {
+          knowledgePercentage: 0,
+          userTopics: [],
+          userConcepts: [],
+          userFeatures: [],
+          totalExposure: 0,
+          timezone: 'UTC',
+          localTime: new Date().toLocaleString()
+        };
+      }
+      
+      // Check if the knowledge tracker has the required methods
+      if (typeof this.conversation.knowledgeTracker.getKnowledgeBreakdown !== 'function' ||
+          typeof this.conversation.knowledgeTracker.userKnowledge === 'undefined') {
+        console.log('NYLA UI V2: Knowledge tracker missing required methods, using basic context');
+        return {
+          knowledgePercentage: 0,
+          userTopics: [],
+          userConcepts: [],
+          userFeatures: [],
+          totalExposure: 0,
+          timezone: 'UTC',
+          localTime: new Date().toLocaleString()
+        };
+      }
+      
+      // Get user's knowledge breakdown
+      const knowledgeBreakdown = this.conversation.knowledgeTracker.getKnowledgeBreakdown();
+      const userTopics = Array.from(this.conversation.knowledgeTracker.userKnowledge.topics || []);
+      const userConcepts = Array.from(this.conversation.knowledgeTracker.userKnowledge.concepts || []);
+      const userFeatures = Array.from(this.conversation.knowledgeTracker.userKnowledge.features || []);
+      
+      // Create context for greeting generation
+      return {
+        knowledgePercentage: knowledgeBreakdown.percentage || 0,
+        userTopics: userTopics,
+        userConcepts: userConcepts,
+        userFeatures: userFeatures,
+        totalExposure: knowledgeBreakdown.totalExposure || 0,
+        timezone: this.conversation.userProfile?.timezone || 'UTC',
+        localTime: this.conversation.userProfile?.localTime || new Date().toLocaleString()
+      };
+      
+    } catch (error) {
+      console.error('NYLA UI V2: Error building greeting context:', error);
+      return {
+        knowledgePercentage: 0,
+        userTopics: [],
+        userConcepts: [],
+        userFeatures: [],
+        totalExposure: 0,
+        timezone: 'UTC',
+        localTime: new Date().toLocaleString()
+      };
+    }
+  }
+
+  /**
+   * Generate enhanced greeting follow-up message based on current simple greeting
+   */
+  async generateGreetingFollowUp(currentGreeting) {
+    console.log('NYLA UI V2: Generating LLM follow-up for greeting:', currentGreeting);
+    
+    // Get user context for personalization
+    const greetingContext = this.buildGreetingContext();
+    const llmStatus = this.conversation?.llmEngine?.getStatus();
+    
+    if (!llmStatus?.ready) {
+      console.log('NYLA UI V2: LLM not ready for greeting follow-up, skipping enhanced message');
+      return null;
+    }
+    
+    // Enhanced prompt for generating continuation text
+    const userTopicsStr = greetingContext.userTopics.slice(0, 2).join(', ') || 'crypto transfers';
+    const userConceptsStr = greetingContext.userConcepts.slice(0, 1).join(', ') || '';
+    
+    let contextInfo = '';
+    if (greetingContext.knowledgePercentage > 10) {
+      contextInfo = `User has learned ${greetingContext.knowledgePercentage.toFixed(0)}% of NYLA knowledge. `;
+      if (userTopicsStr) contextInfo += `Interests: ${userTopicsStr}. `;
+      if (userConceptsStr) contextInfo += `Concepts explored: ${userConceptsStr}. `;
+    } else {
+      contextInfo = `New user (${greetingContext.knowledgePercentage.toFixed(0)}% knowledge). `;
+    }
+    
+    const prompt = `User was welcomed. ${contextInfo}Generate a follow-up message acknowledging their progress and asking about their NYLA interests.`;
+
+    try {
+      // Skip LLM follow-up if engine isn't ready to avoid timeout
+      if (!this.conversation.llmEngine || !this.conversation.llmEngine.isEngineReady) {
+        console.log('NYLA UI V2: LLM engine not ready, skipping greeting follow-up');
+        return null;
+      }
+      
+      // Use 15 second timeout for greeting follow-up
+      const timeoutDuration = 15000; // 15 seconds for LLM greeting
+      console.log('NYLA UI V2: Using', timeoutDuration/1000, 'second timeout for greeting follow-up (non-critical)');
+      
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('LLM greeting follow-up timeout')), timeoutDuration);
+      });
+      
+      // Use regular LLM without system prompt override for simpler processing
+      const llmPromise = this.conversation.llmEngine.generateResponse(prompt, {
+        knowledgeContext: {
+          searchResults: [],
+          relevantKeys: [],
+          searchTerms: ''
+        },
+        userProfile: this.conversation.userProfile,
+        knowledgeStats: greetingContext
+      });
+      
+      // Race between LLM response and timeout
+      const response = await Promise.race([llmPromise, timeoutPromise]);
+      
+      // Return just the LLM follow-up message (no concatenation)
+      if (response && response.text && response.text.trim().length > 0) {
+        console.log('NYLA UI V2: Successfully generated greeting follow-up:', response.text);
+        return {
+          text: response.text,
+          sentiment: response.sentiment || 'friendly',
+          isWelcome: false, // This is a follow-up, not the welcome
+          confidence: response.confidence || 0.95
+        };
+      } else {
+        console.warn('NYLA UI V2: LLM returned invalid follow-up response');
+        throw new Error('Invalid LLM follow-up response');
+      }
+      
+    } catch (error) {
+      console.error('NYLA UI V2: LLM greeting follow-up failed:', error);
+      
+      // Return null on error - no follow-up message will be displayed
+      return null;
     }
   }
 
@@ -969,7 +1130,8 @@ class NYLAAssistantUIV2 {
       text: personalizedText,
       sentiment: 'friendly',
       isWelcome: true,
-      confidence: 0.9
+      confidence: 0.9,
+      isSimpleFallback: true
     };
   }
 
@@ -2235,19 +2397,31 @@ class NYLAAssistantUIV2 {
       message = { text: '' };
     }
     
+    // Check if this is a consecutive NYLA message
+    const previousMessage = this.elements.messagesContainer.querySelector('.nyla-message:last-child');
+    const isConsecutiveNyla = sender === 'nyla' && previousMessage && previousMessage.classList.contains('nyla-message-nyla');
+    
     const messageElement = document.createElement('div');
     messageElement.className = `nyla-message nyla-message-${sender}`;
+    if (isConsecutiveNyla) {
+      messageElement.classList.add('consecutive-message');
+    }
     
     const avatar = sender === 'nyla' ? '<img src="icons/NYLA.png" alt="NYLA" class="nyla-avatar-img">' : '👤';
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const messageText = String(message.text || '');
     
-    messageElement.innerHTML = `
+    // Only show header if not consecutive NYLA message
+    const headerHtml = !isConsecutiveNyla ? `
       <div class="message-header">
         <span class="message-avatar">${avatar}</span>
         <span class="message-sender">${sender === 'nyla' ? 'NYLA' : 'You'}</span>
         <span class="message-time">${timestamp}</span>
       </div>
+    ` : '';
+    
+    messageElement.innerHTML = `
+      ${headerHtml}
       <div class="message-content" data-text="${messageText.replace(/"/g, '&quot;')}">
         ${sender === 'nyla' ? '' : this.formatMessageText(messageText)}
       </div>
