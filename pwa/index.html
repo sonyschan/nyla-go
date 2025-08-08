@@ -380,7 +380,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="powered-by" id="versionText">
-        NYLA Go v2.2.0
+        NYLA Go v2.2.1
       </div>
       <div class="links" id="footerLinks">
         <!-- Footer links will be dynamically generated from shared data source -->
@@ -453,6 +453,13 @@
   <script src="js/rag/nyla-embedding-service.js"></script>
   <script src="js/rag/nyla-vector-db.js"></script>
   <script src="js/rag/nyla-retriever.js"></script>
+  <!-- Advanced RAG Services (must load before context builder) -->
+  <script src="js/rag/nyla-deduplication-service.js"></script>
+  <script src="js/rag/nyla-mmr-reranker.js"></script>
+  <script src="js/rag/nyla-clustering-service.js"></script>
+  <script src="js/rag/nyla-compression-service.js"></script>
+  <script src="js/rag/nyla-content-filter.js"></script>
+  <!-- Context Builder (must load after advanced services) -->
   <script src="js/rag/nyla-context-builder.js"></script>
   <script src="js/rag/nyla-kb-version-manager.js"></script>
   <script src="js/rag/nyla-production-sync.js"></script>
