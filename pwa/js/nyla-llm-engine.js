@@ -14,7 +14,7 @@ class NYLALLMEngine {
     this.modelConfig = {
       model: this.selectModel(),
       temperature: 0.8,
-      max_tokens: 300,
+      max_tokens: 600, // Increased from 300 to handle detailed instructions
       top_p: 0.8,
     };
     this.systemPrompt = this.createSystemPrompt();
@@ -689,13 +689,21 @@ class NYLALLMEngine {
       - Do NOT make assumptions or invent information.
       - Stay factual, concise, and on-topic.
 
-      RESPONSE FORMAT:
-      Respond in JSON only:
+      CRITICAL: RESPOND ONLY IN VALID JSON FORMAT:
       {
-        "text": "<250 chars max – plain text only – no HTML – use @ for names>",
+        "text": "<250 chars max – plain text only – no HTML – use @ for names – ESCAPE quotes and newlines properly>",
         "sentiment": "helpful|excited|friendly",
         "followUpSuggestions": []
       }
+      
+      JSON FORMATTING REQUIREMENTS (MANDATORY):
+      - MUST start with { and end with }
+      - MUST escape newlines as \\n in step-by-step instructions  
+      - MUST escape quotes as \\" for double quotes inside text
+      - Single quotes are safe in JSON strings (no escaping needed)
+      - Example: {"text": "Step 1: Go to 'Receive' tab\\nStep 2: Enter amount\\nStep 3: Click 'Generate QR Code'", "sentiment": "helpful", "followUpSuggestions": []}
+      
+      IMPORTANT: Do NOT respond with plain text. Always wrap your response in the JSON format above.
 
       STRICT RULES:
       - NO fictional scenarios, stories, or sample use cases.
@@ -1134,6 +1142,38 @@ Respond in JSON only:
         if (chains.length > 0) addContent(`Supported: ${chains.join(', ')}`);
       }
       
+    } else if (queryLower.includes('qr') || queryLower.includes('code') || queryLower.includes('payment request') || 
+               (queryLower.includes('receive') && (queryLower.includes('payment') || queryLower.includes('request')))) {
+      // For QR code/payment request queries, extract QR-specific content
+      console.log('NYLA LLM: Detected QR code query - extracting QR-specific content');
+      
+      // Priority 1: QR code creation steps
+      if (data.steps?.create && Array.isArray(data.steps.create)) {
+        addContent(`QR Code Creation Steps: ${data.steps.create.join(' ')}`);
+      }
+      
+      // Priority 2: QR code sharing steps
+      if (data.steps?.share && Array.isArray(data.steps.share)) {
+        addContent(`QR Code Sharing: ${data.steps.share.join(' ')}`);
+      }
+      
+      // Priority 3: QR code purpose and benefits
+      if (data.purpose) addContent(`QR Code Purpose: ${data.purpose}`);
+      if (data.benefits) addContent(`QR Code Benefits: ${data.benefits}`);
+      if (data.usage) addContent(`QR Code Usage: ${data.usage}`);
+      if (data.important) addContent(`Important: ${data.important}`);
+      
+      // Priority 4: Receive tab instructions
+      if (data.howItWorks?.receiveTab) {
+        addContent(`Receive Tab: ${data.howItWorks.receiveTab}`);
+      }
+      
+      // Recursive extraction for QR-related terms
+      this.extractFieldsContaining(data, 'qr', content);
+      this.extractFieldsContaining(data, 'code', content);
+      this.extractFieldsContaining(data, 'receive', content);
+      this.extractFieldsContaining(data, 'payment', content);
+      
     } else if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('create') || queryLower.includes('command') || queryLower.includes('how')) {
       // For transfer/send queries, extract ALL send-related content
       if (queryLower.includes('transfer') || queryLower.includes('send') || queryLower.includes('command')) {
@@ -1232,6 +1272,12 @@ Respond in JSON only:
     // Transfer-related keywords
     if (query.includes('transfer') || query.includes('send') || query.includes('command')) {
       keywords.push('transfer', 'send', 'command');
+    }
+    
+    // QR code and payment request keywords
+    if (query.includes('qr') || query.includes('code') || query.includes('payment') || 
+        query.includes('receive') || query.includes('request') || query.includes('scan')) {
+      keywords.push('qr', 'code', 'payment', 'receive', 'request', 'scan', 'generate');
     }
     
     // Security-related keywords
@@ -1415,12 +1461,21 @@ Respond in JSON only:
     
     // Extract QR code information - ENHANCED with recursive extraction
     if (query.includes('qr') || query.includes('code') || query.includes('scan') || 
-        (query.includes('receive') && query.includes('payment'))) {
+        (query.includes('receive') && query.includes('payment')) || query.includes('create payment')) {
       if (knowledgeContext.qrCodes?.content) {
         const qr = knowledgeContext.qrCodes.content;
         if (qr.purpose) relevantInfo.push(qr.purpose);
         if (qr.benefits) relevantInfo.push(qr.benefits);
         if (qr.usage) relevantInfo.push(qr.usage);
+        if (qr.important) relevantInfo.push(qr.important);
+        
+        // Add step-by-step instructions for QR code creation
+        if (qr.steps?.create) {
+          relevantInfo.push('QR Code Creation Steps: ' + qr.steps.create.join(' '));
+        }
+        if (qr.steps?.share) {
+          relevantInfo.push('QR Code Sharing: ' + qr.steps.share.join(' '));
+        }
         
         // Enhanced: Recursively extract QR-related content
         this.extractFieldsContaining(qr, 'qr', relevantInfo);
@@ -1540,8 +1595,8 @@ Respond in JSON only:
 
     // Use the preprocessed message for the question to avoid confusion
     const questionToUse = preprocessedMessage || userMessage;
-    prompt += `Question: "${questionToUse}"\n`;
-    prompt += `Answer in JSON as per system prompt.`;
+    prompt += `Question: "${questionToUse}"\n\n`;
+    prompt += `CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start with { and end with }. Do NOT use plain text.`;
 
     // Estimate token count (rough: 1 token ≈ 4 characters)
     const estimatedTokens = this.estimateTokens(prompt);
@@ -1598,7 +1653,7 @@ Respond in JSON only:
       let extractedText = null;
       let extractedFollowUps = [];
       
-      // Method 1: Try to extract with proper JSON string handling
+      // Method 1: Try to extract from JSON-like patterns first
       const textPatterns = [
         // Pattern 1: Standard JSON with escaped quotes
         /"text"\s*:\s*"((?:[^"\\]|\\.)*)"/,
@@ -1608,30 +1663,55 @@ Respond in JSON only:
         /"text"\s*:\s*["'](.+?)["']\s*[,\}]/s
       ];
       
-      for (const pattern of textPatterns) {
-        const match = cleanText.match(pattern);
-        if (match && match[1]) {
-          extractedText = match[1];
-          // Properly unescape JSON escape sequences
-          extractedText = extractedText
-            .replace(/\\n/g, '\n')
-            .replace(/\\r/g, '\r')
-            .replace(/\\t/g, '\t')
-            .replace(/\\"/g, '"')
-            .replace(/\\\\/g, '\\')
-            .replace(/\\'/g, "'");
-          
-          // If text seems cut off, add ellipsis
-          if (extractedText.length > 0 && 
-              !extractedText.endsWith('.') && 
-              !extractedText.endsWith('!') && 
-              !extractedText.endsWith('?') &&
-              !extractedText.endsWith('...')) {
-            extractedText += '...';
+      // Method 2: If no JSON patterns found, check if response is pure plain text
+      let isPureTextResponse = false;
+      if (!cleanText.includes('"text":') && !cleanText.includes('{') && cleanText.trim().length > 0) {
+        console.log('NYLA LLM: Detected pure plain text response (no JSON structure)');
+        isPureTextResponse = true;
+        extractedText = cleanText.trim();
+        
+        // Clean up the plain text response
+        if (extractedText.length > 250) {
+          // Truncate to 250 chars but try to end at a complete sentence
+          let truncated = extractedText.substring(0, 247);
+          const lastSentence = truncated.lastIndexOf('.');
+          const lastNewline = truncated.lastIndexOf('\n');
+          const cutPoint = Math.max(lastSentence, lastNewline);
+          if (cutPoint > 200) {
+            extractedText = truncated.substring(0, cutPoint + 1);
+          } else {
+            extractedText = truncated + '...';
           }
-          
-          console.log('NYLA LLM: Extracted text using pattern:', pattern.source);
-          break;
+        }
+      }
+      
+      // Only try JSON patterns if we haven't already detected pure text response
+      if (!isPureTextResponse) {
+        for (const pattern of textPatterns) {
+          const match = cleanText.match(pattern);
+          if (match && match[1]) {
+            extractedText = match[1];
+            // Properly unescape JSON escape sequences
+            extractedText = extractedText
+              .replace(/\\n/g, '\n')
+              .replace(/\\r/g, '\r')
+              .replace(/\\t/g, '\t')
+              .replace(/\\"/g, '"')
+              .replace(/\\\\/g, '\\')
+              .replace(/\\'/g, "'");
+            
+            // If text seems cut off, add ellipsis
+            if (extractedText.length > 0 && 
+                !extractedText.endsWith('.') && 
+                !extractedText.endsWith('!') && 
+                !extractedText.endsWith('?') &&
+                !extractedText.endsWith('...')) {
+              extractedText += '...';
+            }
+            
+            console.log('NYLA LLM: Extracted text using JSON pattern:', pattern.source);
+            break;
+          }
         }
       }
       
@@ -1699,15 +1779,18 @@ Respond in JSON only:
       
       // If we found some content, return it
       if (extractedText && extractedText.trim().length > 0) {
-        console.log('NYLA LLM: Extracted partial content from incomplete response:', extractedText);
+        const extractionMethod = isPureTextResponse ? 'pure plain text response' : 'partial JSON extraction';
+        console.log('NYLA LLM: Successfully extracted content using', extractionMethod + ':', extractedText.substring(0, 100) + (extractedText.length > 100 ? '...' : ''));
+        
         // Create response object that will get proper follow-ups in validateResponse
         const partialResponse = {
           text: extractedText.trim(),
           sentiment: 'helpful',
-          confidence: 0.7,
+          confidence: isPureTextResponse ? 0.8 : 0.7, // Higher confidence for clean plain text
           personalCare: { shouldAsk: false },
           followUpSuggestions: [], // Will be generated in validateResponse
-          contextRelevant: true
+          contextRelevant: true,
+          extractionMethod: extractionMethod
         };
         return this.validateResponse(partialResponse, context, userMessage);
       }
