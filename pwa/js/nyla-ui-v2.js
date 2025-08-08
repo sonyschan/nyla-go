@@ -523,37 +523,36 @@ class NYLAAssistantUIV2 {
   }
   
   /**
-   * Show enhanced welcome message with timezone info
+   * Show enhanced welcome message with staged greeting generation
    */
   async showEnhancedWelcomeMessage() {
     console.log('NYLA UI V2: showEnhancedWelcomeMessage called, isWelcomeMessageShown:', this.isWelcomeMessageShown);
-    // Prevent duplicate welcome messages
-    if (this.isWelcomeMessageShown) {
-      console.log('NYLA UI V2: Welcome message already shown, skipping duplicate');
-      return;
-    }
-    this.isWelcomeMessageShown = true;
-    console.log('NYLA UI V2: Showing welcome message...');
     
     // Check user's knowledge percentage
     const knowledgePercentage = this.getUserKnowledgePercentage();
     console.log('NYLA UI V2: User knowledge percentage:', knowledgePercentage);
     
-    let welcomeMessage;
-    
-    if (knowledgePercentage < 10) {
-      // Use existing default greeting for new users
-      console.log('NYLA UI V2: Using default greeting for new user (< 10% knowledge)');
-      welcomeMessage = await this.generateDefaultGreeting();
-    } else {
-      // Generate personalized greeting based on user's knowledge
-      console.log('NYLA UI V2: Generating personalized greeting for experienced user (>= 10% knowledge)');
-      welcomeMessage = await this.generatePersonalizedGreeting();
+    // Stage 1: Show immediate simple welcome (no LLM required)
+    if (!this.isWelcomeMessageShown) {
+      console.log('NYLA UI V2: Stage 1 - Showing immediate simple welcome...');
+      this.isWelcomeMessageShown = true;
+      
+      const simpleWelcome = await this.generateSimpleWelcomeMessage(knowledgePercentage);
+      await this.displayMessage(simpleWelcome, 'nyla');
+      console.log('NYLA UI V2: Simple welcome message displayed successfully');
     }
     
-    console.log('NYLA UI V2: Displaying welcome message:', welcomeMessage);
-    await this.displayMessage(welcomeMessage, 'nyla');
-    console.log('NYLA UI V2: Welcome message displayed successfully');
+    // Stage 2: Check if LLM is ready for enhanced greeting
+    const llmStatus = this.conversation?.llmEngine?.getStatus();
+    if (llmStatus && llmStatus.initialized && llmStatus.warmedUp && knowledgePercentage >= 10) {
+      console.log('NYLA UI V2: Stage 2 - LLM is warmed up, generating enhanced greeting...');
+      await this.generateAndUpdateEnhancedGreeting();
+    } else if (llmStatus && llmStatus.initialized && !llmStatus.warmedUp) {
+      console.log('NYLA UI V2: Stage 2 - LLM initializing, will generate enhanced greeting when ready...');
+      this.scheduleEnhancedGreetingOnWarmup();
+    } else {
+      console.log('NYLA UI V2: Stage 2 - Keeping simple welcome (LLM not ready or new user)');
+    }
     
     // Update timezone display
     this.updateTimezoneDisplay();
@@ -618,17 +617,123 @@ class NYLAAssistantUIV2 {
   }
 
   /**
+   * Generate simple welcome message for immediate display (no LLM required)
+   */
+  async generateSimpleWelcomeMessage(knowledgePercentage) {
+    const hour = new Date().getHours();
+    let timeGreeting = '';
+    if (hour < 12) {
+      timeGreeting = 'Good morning!';
+    } else if (hour < 18) {
+      timeGreeting = 'Good afternoon!';
+    } else {
+      timeGreeting = 'Good evening!';
+    }
+    
+    let message;
+    if (knowledgePercentage < 10) {
+      message = `${timeGreeting} Welcome to NYLAGo! I'm NYLA, your crypto assistant. Ready to explore NYLA transfers and blockchain magic? 🚀`;
+    } else {
+      message = `${timeGreeting} Welcome back! You've learned ${knowledgePercentage.toFixed(0)}% about NYLA - great progress! Let me prepare something special for you...`;
+    }
+    
+    return {
+      text: message,
+      sentiment: 'friendly',
+      isInitialWelcome: true
+    };
+  }
+  
+  /**
+   * Generate and update with enhanced LLM greeting
+   */
+  async generateAndUpdateEnhancedGreeting() {
+    console.log('NYLA UI V2: Generating enhanced LLM greeting...');
+    
+    try {
+      // Show subtle typing indicator for enhancement
+      this.showTyping();
+      
+      // Generate enhanced greeting using existing personalized greeting logic
+      const enhancedGreeting = await this.generatePersonalizedGreeting();
+      
+      this.hideTyping();
+      
+      // Replace the simple welcome with enhanced greeting
+      if (enhancedGreeting && enhancedGreeting.text) {
+        console.log('NYLA UI V2: Updating to enhanced LLM greeting');
+        await this.updateLastMessage(enhancedGreeting);
+      }
+      
+    } catch (error) {
+      console.error('NYLA UI V2: Enhanced greeting generation failed:', error);
+      this.hideTyping();
+      // Keep the simple welcome - no need to show error to user
+    }
+  }
+  
+  /**
+   * Schedule enhanced greeting generation when LLM warmup completes
+   */
+  scheduleEnhancedGreetingOnWarmup() {
+    console.log('NYLA UI V2: Scheduling enhanced greeting for when LLM warms up...');
+    
+    const checkWarmupStatus = async () => {
+      const llmStatus = this.conversation?.llmEngine?.getStatus();
+      
+      if (llmStatus && llmStatus.warmedUp) {
+        console.log('NYLA UI V2: LLM warmed up! Generating enhanced greeting...');
+        clearInterval(warmupChecker);
+        await this.generateAndUpdateEnhancedGreeting();
+      } else if (!llmStatus || !llmStatus.initialized) {
+        console.log('NYLA UI V2: LLM no longer initializing, canceling enhanced greeting');
+        clearInterval(warmupChecker);
+      }
+    };
+    
+    // Check every 2 seconds for up to 30 seconds
+    const warmupChecker = setInterval(checkWarmupStatus, 2000);
+    
+    // Cancel after 30 seconds to avoid infinite checking
+    setTimeout(() => {
+      clearInterval(warmupChecker);
+      console.log('NYLA UI V2: Enhanced greeting warmup timeout - keeping simple welcome');
+    }, 30000);
+  }
+  
+  /**
+   * Update the last message in the conversation
+   */
+  async updateLastMessage(newMessage) {
+    const messagesContainer = this.elements.messagesContainer;
+    const lastMessage = messagesContainer?.querySelector('.message:last-child .message-text');
+    
+    if (lastMessage) {
+      // Smooth transition effect
+      lastMessage.style.opacity = '0.6';
+      
+      setTimeout(() => {
+        lastMessage.textContent = newMessage.text;
+        lastMessage.style.opacity = '1';
+        console.log('NYLA UI V2: Last message updated successfully');
+      }, 300);
+    } else {
+      // Fallback: add as new message
+      console.log('NYLA UI V2: Could not find last message to update, adding as new message');
+      await this.displayMessage(newMessage, 'nyla');
+    }
+  }
+  
+  /**
    * Generate personalized greeting based on user's knowledge
+   * (Note: Caller is responsible for typing indicators)
    */
   async generatePersonalizedGreeting() {
-    // Show typing indicator while generating personalized greeting
-    this.showTyping();
     
     try {
       // Check if knowledge tracker is available
       if (!this.conversation || !this.conversation.knowledgeTracker) {
         console.log('NYLA UI V2: Knowledge tracker not available, using default greeting');
-        this.hideTyping();
         return await this.generateDefaultGreeting();
       }
       
@@ -636,7 +741,6 @@ class NYLAAssistantUIV2 {
       if (typeof this.conversation.knowledgeTracker.getKnowledgeBreakdown !== 'function' ||
           typeof this.conversation.knowledgeTracker.userKnowledge === 'undefined') {
         console.log('NYLA UI V2: Knowledge tracker missing required methods, using default greeting');
-        this.hideTyping();
         return await this.generateDefaultGreeting();
       }
       
@@ -662,14 +766,10 @@ class NYLAAssistantUIV2 {
       // Generate personalized greeting using LLM
       const personalizedGreeting = await this.generateLLMGreeting(greetingContext);
       
-      // Hide typing indicator
-      this.hideTyping();
-      
       return personalizedGreeting;
       
     } catch (error) {
       console.error('NYLA UI V2: Failed to generate personalized greeting:', error);
-      this.hideTyping();
       
       // Fallback to default greeting
       return await this.generateDefaultGreeting();
