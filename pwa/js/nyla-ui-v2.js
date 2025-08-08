@@ -37,6 +37,7 @@ class NYLAAssistantUIV2 {
     
     // Loading state management
     this.isWelcomeMessageShown = false;
+    this.isEnhancedGreetingInProgress = false;
     this.loadingInterval = null;
   }
 
@@ -320,6 +321,7 @@ class NYLAAssistantUIV2 {
    */
   resetLoadingState() {
     this.isWelcomeMessageShown = false;
+    this.isEnhancedGreetingInProgress = false;
     if (this.loadingInterval) {
       clearInterval(this.loadingInterval);
       this.loadingInterval = null;
@@ -542,17 +544,19 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: Simple welcome message displayed successfully');
     }
     
-    // Stage 2: Check if LLM is ready for enhanced greeting
-    const llmStatus = this.conversation?.llmEngine?.getStatus();
-    if (llmStatus && llmStatus.initialized && llmStatus.warmedUp && knowledgePercentage >= 10) {
-      console.log('NYLA UI V2: Stage 2 - LLM is warmed up, generating enhanced greeting...');
-      await this.generateAndUpdateEnhancedGreeting();
-    } else if (llmStatus && llmStatus.initialized && !llmStatus.warmedUp) {
-      console.log('NYLA UI V2: Stage 2 - LLM initializing, will generate enhanced greeting when ready...');
-      this.scheduleEnhancedGreetingOnWarmup();
-    } else {
-      console.log('NYLA UI V2: Stage 2 - Keeping simple welcome (LLM not ready or new user)');
-    }
+    // Stage 2: Check if LLM is ready for enhanced greeting (after simple welcome is displayed)
+    setTimeout(async () => {
+      const llmStatus = this.conversation?.llmEngine?.getStatus();
+      if (llmStatus && llmStatus.initialized && llmStatus.warmedUp && knowledgePercentage >= 10) {
+        console.log('NYLA UI V2: Stage 2 - LLM is warmed up, generating enhanced greeting...');
+        await this.generateAndUpdateEnhancedGreeting();
+      } else if (llmStatus && llmStatus.initialized && !llmStatus.warmedUp) {
+        console.log('NYLA UI V2: Stage 2 - LLM initializing, will generate enhanced greeting when ready...');
+        this.scheduleEnhancedGreetingOnWarmup();
+      } else {
+        console.log('NYLA UI V2: Stage 2 - Keeping simple welcome (LLM not ready or new user)');
+      }
+    }, 1000); // Wait 1 second for simple welcome to fully display
     
     // Update timezone display
     this.updateTimezoneDisplay();
@@ -648,6 +652,13 @@ class NYLAAssistantUIV2 {
    * Generate and update with enhanced LLM greeting
    */
   async generateAndUpdateEnhancedGreeting() {
+    // Prevent duplicate enhanced greeting generation
+    if (this.isEnhancedGreetingInProgress) {
+      console.log('NYLA UI V2: Enhanced greeting already in progress, skipping duplicate');
+      return;
+    }
+    
+    this.isEnhancedGreetingInProgress = true;
     console.log('NYLA UI V2: Generating enhanced LLM greeting...');
     
     try {
@@ -669,6 +680,8 @@ class NYLAAssistantUIV2 {
       console.error('NYLA UI V2: Enhanced greeting generation failed:', error);
       this.hideTyping();
       // Keep the simple welcome - no need to show error to user
+    } finally {
+      this.isEnhancedGreetingInProgress = false;
     }
   }
   
@@ -706,20 +719,29 @@ class NYLAAssistantUIV2 {
    */
   async updateLastMessage(newMessage) {
     const messagesContainer = this.elements.messagesContainer;
-    const lastMessage = messagesContainer?.querySelector('.message:last-child .message-text');
+    const lastMessageElement = messagesContainer?.querySelector('.nyla-message:last-child .message-content');
     
-    if (lastMessage) {
+    console.log('NYLA UI V2: Attempting to update last message...');
+    console.log('NYLA UI V2: Messages container exists:', !!messagesContainer);
+    console.log('NYLA UI V2: Last message element found:', !!lastMessageElement);
+    
+    if (lastMessageElement) {
       // Smooth transition effect
-      lastMessage.style.opacity = '0.6';
+      lastMessageElement.style.opacity = '0.6';
       
-      setTimeout(() => {
-        lastMessage.textContent = newMessage.text;
-        lastMessage.style.opacity = '1';
-        console.log('NYLA UI V2: Last message updated successfully');
+      setTimeout(async () => {
+        // Clear existing content and retype new message
+        lastMessageElement.innerHTML = '';
+        lastMessageElement.style.opacity = '1';
+        
+        // Use the same typing effect as normal messages
+        await this.typeMessage(lastMessageElement, newMessage.text);
+        console.log('NYLA UI V2: Last message updated successfully with typing effect');
       }, 300);
     } else {
       // Fallback: add as new message
       console.log('NYLA UI V2: Could not find last message to update, adding as new message');
+      console.log('NYLA UI V2: Available messages:', messagesContainer?.querySelectorAll('.nyla-message').length || 0);
       await this.displayMessage(newMessage, 'nyla');
     }
   }
