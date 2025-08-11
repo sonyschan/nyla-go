@@ -120,7 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
       categoryDiv.className = 'raid-category';
       
       const categoryTitle = document.createElement('h4');
-      categoryTitle.textContent = category.title;
+      // Use i18n if available, otherwise fallback to static text
+      if (window.extensionI18n && category.i18nKey) {
+        categoryTitle.textContent = window.extensionI18n.t(category.i18nKey);
+      } else {
+        categoryTitle.textContent = category.title;
+      }
       categoryDiv.appendChild(categoryTitle);
       
       // Generate items for this category
@@ -129,10 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
         itemDiv.className = 'raid-list-item';
         itemDiv.setAttribute('data-url', item.url);
         
+        // Use i18n for item name and description
+        const itemName = (window.extensionI18n && item.i18nNameKey) ? 
+                        window.extensionI18n.t(item.i18nNameKey) : item.name;
+        const itemDescription = (window.extensionI18n && item.i18nDescKey) ? 
+                               window.extensionI18n.t(item.i18nDescKey) : item.description;
+        
         itemDiv.innerHTML = `
           <div class="list-info">
-            <div class="list-name">${item.name}</div>
-            <div class="list-description">${item.description}</div>
+            <div class="list-name">${itemName}</div>
+            <div class="list-description">${itemDescription}</div>
           </div>
           <div class="list-action">
             <span class="open-icon">${item.icon}</span>
@@ -204,10 +215,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Generate links from shared data
     const linkElements = window.NYLA_FOOTER_DATA.links.map(link => {
+      // Use i18n if available, otherwise fallback to static text
+      const linkText = (window.extensionI18n && link.i18nKey) ? 
+                      window.extensionI18n.t(link.i18nKey) : link.text;
+      
       if (link.type === 'link') {
-        return `<a href="${link.url}" target="${link.target || '_self'}">${link.text}</a>`;
+        return `<a href="${link.url}" target="${link.target || '_self'}">${linkText}</a>`;
       } else if (link.type === 'action') {
-        return `<span class="donate-link" id="${link.id}Link">${link.text}</span>`;
+        return `<span class="donate-link" id="${link.id}Link">${linkText}</span>`;
       }
     });
     
@@ -682,6 +697,24 @@ document.addEventListener('DOMContentLoaded', function() {
   if (window.extensionI18n) {
     console.log('✅ Extension i18n initialized');
     
+    // Register language change callback for community menu, raid section, and footer
+    if (!window.nylaGoLanguageCallbacks) {
+      window.nylaGoLanguageCallbacks = {};
+    }
+    window.nylaGoLanguageCallbacks.updateCommunityMenu = generateCommunityMenu;
+    window.nylaGoLanguageCallbacks.updateRaidSection = generateRaidSection;
+    window.nylaGoLanguageCallbacks.updateFooter = generateFooter;
+    window.nylaGoLanguageCallbacks.updateCommandPreviews = function() {
+      // Update send command preview if empty
+      if (commandPreview && commandPreview.classList.contains('empty')) {
+        updateSendCommand();
+      }
+      // Update swap command preview if empty
+      if (swapCommandPreview && swapCommandPreview.classList.contains('empty')) {
+        updateSwapCommand();
+      }
+    };
+    
     // Regenerate community menu with i18n
     generateCommunityMenu();
   }
@@ -706,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v2.2.3';
+        appVersionElement.textContent = 'NYLA Go v2.4.0';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
@@ -779,7 +812,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } else {
       if (commandPreview) {
-        commandPreview.textContent = 'Fill in the fields above to see the command';
+        // Use i18n if available, otherwise fallback to static text
+        if (window.extensionI18n) {
+          commandPreview.textContent = window.extensionI18n.t('ext.send.command.placeholder');
+        } else {
+          commandPreview.textContent = 'Fill in the fields above to see the command';
+        }
         commandPreview.classList.add('empty');
       }
       if (sendButton) {
@@ -1170,7 +1208,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update instruction text based on token
     const qrInstructionText = document.getElementById('qrInstructionText');
     if (qrInstructionText) {
-      qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+      // Use i18n if available
+      if (window.extensionI18n) {
+        qrInstructionText.textContent = window.extensionI18n.t('ext.qr.instruction.dynamic', { token });
+      } else {
+        // Fallback without i18n
+        qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+      }
     }
     
     // Get selected blockchain
@@ -1856,7 +1900,12 @@ document.addEventListener('DOMContentLoaded', function() {
         swapButton.disabled = false;
       }
     } else {
-      swapCommandPreview.textContent = 'Fill in the tokens above to see the swap command';
+      // Use i18n if available, otherwise fallback to static text
+      if (window.extensionI18n) {
+        swapCommandPreview.textContent = window.extensionI18n.t('ext.swap.command.placeholder');
+      } else {
+        swapCommandPreview.textContent = 'Fill in the tokens above to see the swap command';
+      }
       swapCommandPreview.classList.add('empty');
       if (swapButton) {
         swapButton.disabled = true;
