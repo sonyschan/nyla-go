@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="css/desktop.css">
   <link rel="stylesheet" href="css/mobile-gestures.css">
   <link rel="stylesheet" href="css/nyla-assistant.css">
+  <link rel="stylesheet" href="css/i18n.css">
 </head>
 <body>
   <!-- Splash Screen -->
@@ -71,15 +72,15 @@
     <!-- Header -->
     <div class="header">
       <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
-      <p>Your AI agent for payments and community</p>
+      <p data-i18n="header.tagline">Your AI agent for payments and community</p>
     </div>
     
     <!-- Tab Navigation -->
     <div class="tab-navigation">
-      <button class="tab-button" data-tab="nyla">NYLA</button>
-      <button class="tab-button" data-tab="send">Send</button>
-      <button class="tab-button active" data-tab="receive">Receive</button>
-      <button class="tab-button" data-tab="swap">Swap</button>
+      <button class="tab-button" data-tab="nyla" data-i18n="tab.nyla">NYLA</button>
+      <button class="tab-button" data-tab="send" data-i18n="tab.send">Send</button>
+      <button class="tab-button active" data-tab="receive" data-i18n="tab.receive">Receive</button>
+      <button class="tab-button" data-tab="swap" data-i18n="tab.swap">Swap</button>
     </div>
     
     <!-- Main Content -->
@@ -103,7 +104,7 @@
       <div class="tab-content" id="sendTab" data-section-title="💸 Send Payments" style="display: none;">
         <form id="sendForm" class="send-form">
           <div class="form-group">
-            <label for="sendRecipient">Recipient Username on X</label>
+            <label for="sendRecipient" data-i18n="send.recipient.label">Recipient Username on X</label>
             <input type="text" id="sendRecipient" placeholder="@username" />
             <div class="error" id="sendRecipientError"></div>
           </div>
@@ -437,6 +438,8 @@
   <!-- Scripts -->
   <script src="lib/qr-simple.js"></script>
   <script src="nylago-data.js"></script>
+  <script src="js/nyla-i18n.js"></script>
+  <script src="js/nyla-ui-translator.js"></script>
   <script src="js/app.js"></script>
   
   <!-- NYLA AI Assistant V1 (Fallback) -->

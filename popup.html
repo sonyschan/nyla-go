@@ -482,6 +482,49 @@
       transform: rotate(90deg);
     }
     
+    /* Settings Content */
+    .settings-content {
+      padding: 15px 0;
+    }
+
+    .settings-content .form-group {
+      margin-bottom: 20px;
+    }
+
+    .settings-content label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .settings-content input[type="text"],
+    .settings-content select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #333333;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 14px;
+      transition: border-color 0.2s ease;
+    }
+
+    .settings-content input[type="text"]:focus,
+    .settings-content select:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+    }
+
+    .settings-content small {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #888888;
+      line-height: 1.3;
+    }
+    
     /* Community Menu Dropdown */
     .community-menu-dropdown {
       position: fixed;
@@ -1057,9 +1100,9 @@
   <!-- Action Tabs -->
   <div class="form-group">
     <div class="action-tabs">
-      <button type="button" class="action-tab active" data-tab="send">Send</button>
-      <button type="button" class="action-tab" data-tab="receive">Receive</button>
-      <button type="button" class="action-tab" data-tab="swap">Swap</button>
+      <button type="button" class="action-tab active" data-tab="send" data-i18n="ext.tab.send">Send</button>
+      <button type="button" class="action-tab" data-tab="receive" data-i18n="ext.tab.receive">Receive</button>
+      <button type="button" class="action-tab" data-tab="swap" data-i18n="ext.tab.swap">Swap</button>
     </div>
   </div>
   
@@ -1353,6 +1396,29 @@
     </div>
   </div>
   
+  <!-- Settings Section -->
+  <div id="settingsSection" class="tab-content" style="display: none;">
+    <div class="section-header">
+      <button type="button" class="back-button" id="settingsBackButton">← Back</button>
+      <h3 data-i18n="ext.settings.title">⚙️ Settings</h3>
+    </div>
+    <div class="settings-content">
+      <div class="form-group">
+        <label for="settingsUsername" data-i18n="ext.settings.username">Your X Username</label>
+        <input type="text" id="settingsUsername" placeholder="@username" />
+        <small style="color: #888; font-size: 11px;" data-i18n="ext.settings.username.help">This will be used in the Receive tab</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="settingsLanguage" data-i18n="ext.settings.language">Language</label>
+        <select id="settingsLanguage" class="language-selector">
+          <option value="en">English</option>
+          <option value="zh">中文 (Chinese)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
     <div class="status" id="status" style="display: none;"></div>
   </div>
   
@@ -1401,6 +1467,7 @@
   
   <script src="qr-simple.js"></script>
   <script src="nylago-data.js"></script>
+  <script src="extension-i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -271,8 +271,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.2.3
-- **Features**: Advanced RAG pipeline with Top-k=20 retrieval, MMR reranking (λ=0.5), Top-m=8 selection, semantic clustering deduplication (cosine>0.92), enhanced UI with experimental labeling, improved system stability, refreshed embeddings with 73 optimized chunks, and comprehensive code quality improvements
+- **Latest Release**: v2.3.0
+- **Features**: Complete internationalization with Chinese language support, enhanced Settings page with language preferences and username management, comprehensive i18n system for both PWA and Extension, fixed username sync between tabs, multilingual menu items, and improved user experience with proper localization throughout the application
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

@@ -42,12 +42,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const receiveSection = document.getElementById('receiveSection');
   const raidSection = document.getElementById('raidSection');
   const appSection = document.getElementById('appSection');
+  const settingsSection = document.getElementById('settingsSection');
   const raidListItems = document.querySelectorAll('.raid-list-item');
   const appVersionElement = document.getElementById('appVersion');
   
   // Community menu elements
   const communityMenuButton = document.getElementById('communityMenuButton');
   const communityDropdown = document.getElementById('communityDropdown');
+  
+  // Settings elements
+  const settingsUsername = document.getElementById('settingsUsername');
+  const settingsLanguage = document.getElementById('settingsLanguage');
+  const settingsBackButton = document.getElementById('settingsBackButton');
   
   // Swap form elements
   const swapAmountInput = document.getElementById('swapAmount');
@@ -156,10 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
       menuItem.className = 'community-menu-item';
       menuItem.setAttribute('data-action', item.action);
       
+      // Use i18n for menu item text if available
+      const menuText = (window.extensionI18n && item.i18nKey) 
+        ? window.extensionI18n.t(item.i18nKey) 
+        : item.name;
+      
       menuItem.innerHTML = `
         <span class="community-menu-icon">${item.icon}</span>
         <div class="community-menu-text">
-          <div class="community-menu-title">${item.name}</div>
+          <div class="community-menu-title">${menuText}</div>
         </div>
       `;
       
@@ -277,6 +288,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (action === 'showApp') {
           // Switch to app section (part of current tab)
           showAppSection();
+        } else if (action === 'showSettings') {
+          // Switch to settings section
+          showSettingsSection();
         }
         
         // Close dropdown
@@ -321,6 +335,63 @@ document.addEventListener('DOMContentLoaded', function() {
     actionTabs.forEach(tab => {
       tab.classList.remove('active');
     });
+  }
+
+  // Function to show settings section
+  function showSettingsSection() {
+    // Hide all tab sections
+    if (swapSection) swapSection.style.display = 'none';
+    if (sendSection) sendSection.style.display = 'none';
+    if (receiveSection) receiveSection.style.display = 'none';
+    if (raidSection) raidSection.style.display = 'none';
+    if (appSection) appSection.style.display = 'none';
+    
+    // Show settings section
+    if (settingsSection) {
+      settingsSection.style.display = 'block';
+    }
+    
+    // Load current settings
+    loadSettings();
+    
+    // Update tab states - make sure no tab appears active when showing settings section
+    actionTabs.forEach(tab => {
+      tab.classList.remove('active');
+    });
+  }
+
+  // Load settings from storage and current state
+  function loadSettings() {
+    // Load username from localStorage
+    const savedUsername = localStorage.getItem('nylaGoUsername');
+    if (settingsUsername && savedUsername) {
+      settingsUsername.value = savedUsername;
+    }
+    
+    // Load current language setting
+    if (settingsLanguage && window.extensionI18n) {
+      const currentLang = window.extensionI18n.currentLanguage;
+      settingsLanguage.value = currentLang;
+    }
+  }
+
+  // Save settings to storage
+  function saveSettings() {
+    // Save username to localStorage
+    if (settingsUsername) {
+      const username = settingsUsername.value.trim();
+      localStorage.setItem('nylaGoUsername', username);
+      
+      // Update receive tab username field
+      if (receiveUsernameInput) {
+        receiveUsernameInput.value = username;
+      }
+    }
+    
+    // Save language setting
+    if (settingsLanguage && window.extensionI18n) {
+      window.extensionI18n.setLanguage(settingsLanguage.value);
+    }
   }
   
   // Token Management Functions
@@ -575,6 +646,14 @@ document.addEventListener('DOMContentLoaded', function() {
       addCustomToken(newTokenInput ? newTokenInput.value : '');
     });
   }
+
+  // Settings Event Listeners
+  if (settingsUsername) {
+    settingsUsername.addEventListener('input', saveSettings);
+  }
+  if (settingsLanguage) {
+    settingsLanguage.addEventListener('change', saveSettings);
+  }
   
   if (newTokenInput) {
     newTokenInput.addEventListener('keydown', function(e) {
@@ -599,6 +678,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize app version
   updateAppVersion();
   
+  // Initialize extension i18n if available
+  if (window.extensionI18n) {
+    console.log('✅ Extension i18n initialized');
+    
+    // Regenerate community menu with i18n
+    generateCommunityMenu();
+  }
+  
   
   // Get extension version from manifest
   function updateAppVersion() {
@@ -606,13 +693,16 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         // Get version from Chrome extension manifest
         const manifestData = chrome.runtime.getManifest();
-        if (manifestData && manifestData.version) {
-          appVersionElement.textContent = `NYLA Go v${manifestData.version}`;
-          console.log('NYLA: Version updated to', manifestData.version);
+        const version = (manifestData && manifestData.version) ? manifestData.version : '2.2.3';
+        
+        // Use i18n if available
+        if (window.extensionI18n) {
+          window.extensionI18n.updateDynamicText('appVersion', 'ext.version', { version });
+          console.log('NYLA: Version updated to', version, 'with i18n');
         } else {
-          // Fallback to hardcoded version if manifest unavailable
-          appVersionElement.textContent = 'NYLA Go v2.2.3';
-          console.log('NYLA: Using fallback version 0.7.5');
+          // Fallback without i18n
+          appVersionElement.textContent = `NYLA Go v${version}`;
+          console.log('NYLA: Version updated to', version, 'without i18n');
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
@@ -1134,6 +1224,13 @@ document.addEventListener('DOMContentLoaded', function() {
     receiveUsernameInput.addEventListener('input', function() {
       generateReceiveQRCode();
       saveReceiveValues();
+      
+      // Sync with settings username and save to localStorage
+      const username = receiveUsernameInput.value.trim();
+      localStorage.setItem('nylaGoUsername', username);
+      if (settingsUsername) {
+        settingsUsername.value = username;
+      }
     });
   }
   if (receiveAmountInput) {
@@ -1796,6 +1893,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (appBackButton) {
     appBackButton.addEventListener('click', function() {
+      // Go back to the Send tab (default tab)
+      const sendTab = document.querySelector('.action-tab[data-tab="send"]');
+      if (sendTab) {
+        sendTab.click();
+      }
+    });
+  }
+  
+  if (settingsBackButton) {
+    settingsBackButton.addEventListener('click', function() {
       // Go back to the Send tab (default tab)
       const sendTab = document.querySelector('.action-tab[data-tab="send"]');
       if (sendTab) {

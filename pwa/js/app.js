@@ -62,13 +62,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '2.2.3';
+  let APP_VERSION = '2.3.0';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
   
   // Custom token management state
   let currentManageTokensSelect = null;
+
+  // i18n variables
+  let i18n, uiTranslator;
+
+  // Initialize i18n system
+  async function initializeI18n() {
+    try {
+      i18n = new NYLAi18n();
+      await i18n.initialize();
+      
+      uiTranslator = new NYLAUITranslator(i18n);
+      uiTranslator.initialize();
+      
+      console.log('✅ i18n initialized');
+      return true;
+    } catch (error) {
+      console.error('❌ i18n initialization failed:', error);
+      return false;
+    }
+  }
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -155,7 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeSplashScreen();
   
   // Generate initial QR code with default values (after splash)
-  function initializeApp() {
+  async function initializeApp() {
+    // Initialize i18n system first
+    await initializeI18n();
+    
     // Load saved username from localStorage
     const savedUsername = localStorage.getItem('nylaGoUsername');
     if (savedUsername) {
@@ -284,7 +307,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update QR instruction text based on token
   function updateQRInstructionText() {
     const token = receiveTokenSelect.value || 'NYLA';
-    qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+    if (uiTranslator) {
+      uiTranslator.onTokenChange(token);
+    } else {
+      // Fallback if i18n not loaded
+      qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
+    }
   }
 
   // Generate QR Code for payment requests
