@@ -9,14 +9,24 @@ const NYLA_COMMUNITY_DATA = {
       name: 'Community Raids',
       description: 'Join community engagement campaigns',
       icon: '🎯',
-      action: 'showRaid'
+      action: 'showRaid',
+      i18nKey: 'ext.menu.raids'
     },
     {
       id: 'app',
       name: 'Community Apps',
       description: 'Discover NYLA community applications',
       icon: '🚀', 
-      action: 'showApp'
+      action: 'showApp',
+      i18nKey: 'ext.menu.apps'
+    },
+    {
+      id: 'settings',
+      name: 'Settings',
+      description: 'Language and account preferences',
+      icon: '⚙️',
+      action: 'showSettings',
+      i18nKey: 'ext.menu.settings'
     }
   ]
 };

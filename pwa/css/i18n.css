@@ -1,0 +1,218 @@
+/**
+ * Internationalization CSS
+ * Styles for language selector and multi-language support
+ */
+
+/* Language Selector Container */
+.language-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+.language-selector {
+  font-size: 12px;
+  padding: 4px 8px;
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid #333333;
+  border-radius: 6px;
+  color: #ffffff;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-selector:hover {
+  border-color: #FF6B35;
+  opacity: 1;
+}
+
+.language-selector:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+.language-selector option {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 4px;
+}
+
+/* Extension Language Selector */
+.extension-lang-selector {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.extension-lang-selector:hover {
+  background: rgba(26, 26, 26, 0.9);
+  border-color: #FF6B35;
+}
+
+/* Chinese Font Support */
+html[lang="zh"],
+html[lang="zh-CN"],
+html[lang="zh-TW"] {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 
+               "WenQuanYi Micro Hei", sans-serif;
+}
+
+/* Chinese-specific adjustments */
+html[lang="zh"] .header p,
+html[lang="zh-CN"] .header p,
+html[lang="zh-TW"] .header p {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+html[lang="zh"] .tab-button,
+html[lang="zh-CN"] .tab-button,
+html[lang="zh-TW"] .tab-button {
+  font-size: 13px;
+  padding: 10px 16px;
+}
+
+html[lang="zh"] label,
+html[lang="zh-CN"] label,
+html[lang="zh-TW"] label {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+html[lang="zh"] .share-button,
+html[lang="zh-CN"] .share-button,
+html[lang="zh-TW"] .share-button {
+  font-size: 13px;
+  padding: 14px 20px;
+}
+
+/* Mobile Chinese adjustments */
+@media (max-width: 768px) {
+  html[lang="zh"] .header p,
+  html[lang="zh-CN"] .header p,
+  html[lang="zh-TW"] .header p {
+    font-size: 12px;
+  }
+  
+  html[lang="zh"] .tab-button,
+  html[lang="zh-CN"] .tab-button,
+  html[lang="zh-TW"] .tab-button {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+/* Language indicator for debugging */
+.language-indicator {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 107, 53, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  z-index: 9999;
+  display: none; /* Hidden by default, can be enabled for testing */
+}
+
+.language-indicator.show {
+  display: block;
+}
+
+/* RTL language support preparation (for future) */
+html[dir="rtl"] {
+  text-align: right;
+}
+
+html[dir="rtl"] .header {
+  text-align: center; /* Keep header centered */
+}
+
+html[dir="rtl"] .tab-navigation {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+html[dir="rtl"] .amount-group {
+  flex-direction: row-reverse;
+}
+
+/* Accessibility improvements */
+.language-selector:focus-visible {
+  outline: 2px solid #FF6B35;
+  outline-offset: 2px;
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .language-selector {
+    background: rgba(26, 26, 26, 0.95);
+    border-color: #404040;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .language-selector {
+    border-width: 2px;
+    background: #000;
+  }
+  
+  .language-selector:focus {
+    border-color: #fff;
+  }
+}
+
+/* Animation for language switching */
+.i18n-fade-out {
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.i18n-fade-in {
+  opacity: 1;
+  transition: opacity 0.15s ease-in;
+}
+
+/* Loading state for translation */
+.i18n-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.i18n-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 107, 53, 0.2), 
+    transparent
+  );
+  animation: i18n-loading 1s ease-in-out;
+}
+
+@keyframes i18n-loading {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
