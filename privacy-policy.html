@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - NYLA Go</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF6B35;
+            border-bottom: 3px solid #FF6B35;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #34495e;
+        }
+        .highlight {
+            background-color: #fff5f0;
+            padding: 15px;
+            border-left: 4px solid #FF6B35;
+            margin: 20px 0;
+        }
+        .new-feature {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+        ul, ol {
+            margin: 15px 0;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .version-info {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+            font-style: italic;
+            color: #6c757d;
+        }
+        .contact-info {
+            background-color: #e8f5e8;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .no-data {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .external-service {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy for NYLA Go</h1>
+        
+        <p><strong>Last Updated: August 2025</strong></p>
+        <p><strong>Version Coverage: v2.4.0 and later</strong></p>
+
+        <div class="highlight">
+            <h3>🌐 New in v2.4.0: Internationalization Features</h3>
+            <p>This version introduces comprehensive internationalization support with language preferences and enhanced user settings. All privacy practices remain the same with additional local storage for language preferences.</p>
+        </div>
+
+        <h2>Overview</h2>
+        <p>NYLA Go is a browser extension that helps users generate NYLA cryptocurrency transfer commands on X.com with full internationalization support. We are committed to protecting your privacy and maintaining transparency about our data practices.</p>
+
+        <h2>Data Collection</h2>
+        <ul>
+            <li><strong>Form Data</strong>: The extension stores your previously entered recipient usernames, token amounts, and selected cryptocurrencies locally in your browser to improve user experience</li>
+            <li><strong>Language Preferences</strong>: <span class="new-feature">NEW in v2.4.0</span> - Your selected interface language (English/Chinese) is stored locally in Chrome's storage for consistent experience across sessions</li>
+            <li><strong>Username Settings</strong>: <span class="new-feature">NEW in v2.4.0</span> - Your X.com username preference is stored locally for convenience across different tabs and features</li>
+            <li><strong>URL Processing</strong>: The extension reads the current X.com page URL to automatically detect usernames for transfer recipients (e.g., extracting 'username' from 'x.com/username/status/123')</li>
+            <li><strong>Page Context</strong>: The extension analyzes visible X.com page content to detect reply recipients and compose dialog context</li>
+            <li><strong>QR Code Generation</strong>: Transfer commands are sent to external QR code generation services to create scannable QR codes for mobile use</li>
+            <li><strong>Logo Integration</strong>: The official NYLA logo is loaded from IPFS (InterPlanetary File System) for display in QR codes</li>
+            <li class="no-data"><strong>No Personal Information</strong>: We do not collect, store, or transmit any personal information, private keys, or sensitive data beyond transfer commands for QR generation</li>
+            <li class="no-data"><strong>No Analytics</strong>: We do not use analytics services or track user behavior</li>
+            <li class="no-data"><strong>No Language Data Transmission</strong>: Language preferences and interface translations are processed entirely offline - no language data is sent to external servers</li>
+        </ul>
+
+        <h2>Data Storage</h2>
+        <div class="new-feature">
+            <h3>Enhanced Local Storage (v2.4.0)</h3>
+            <ul>
+                <li><strong>Language Settings</strong>: Interface language preference stored using Chrome's storage.sync API</li>
+                <li><strong>Username Preferences</strong>: X.com username stored locally for form auto-population</li>
+                <li><strong>Internationalization Data</strong>: Translation files and language configurations loaded locally within the extension</li>
+            </ul>
+        </div>
+        <ul>
+            <li>All form data and preferences are stored locally in your browser using Chrome's storage API</li>
+            <li>Transfer commands are temporarily sent to QR generation services but are not stored by those services</li>
+            <li>You can clear all local data at any time by removing the extension or clearing browser storage</li>
+            <li><span class="no-data">No personal data is shared with third parties</span></li>
+        </ul>
+
+        <h2>Permissions Usage</h2>
+        <ul>
+            <li><strong>ActiveTab</strong>: Required to detect X.com pages, read current page URL for username detection, and insert transfer commands</li>
+            <li><strong>Storage</strong>: Required to save form preferences, language settings, and username preferences locally in your browser</li>
+            <li><strong>Tabs</strong>: Required to detect when you're on X.com pages for extension functionality</li>
+        </ul>
+
+        <h3>Host Permissions</h3>
+        <ul>
+            <li><strong>x.com and twitter.com</strong>: For core extension functionality and page interaction</li>
+            <li><span class="external-service">api.qrserver.com</span>: For generating QR codes from transfer commands</li>
+            <li><span class="external-service">chart.googleapis.com</span>: For backup QR code generation service</li>
+            <li><span class="external-service">ipfs.io</span>: For loading the official NYLA logo displayed in QR codes</li>
+        </ul>
+
+        <h2>What We Access (And Why)</h2>
+        <ul>
+            <li><strong>Current Page URL</strong>: To extract usernames from URLs like 'x.com/username/status/123' for automatic recipient detection</li>
+            <li><strong>Page Content</strong>: To find "Replying to" text and compose dialog context for smart recipient suggestions</li>
+            <li><strong>Text Input Fields</strong>: To insert generated transfer commands into X.com compose boxes</li>
+            <li><strong>Navigation Context</strong>: To detect when you're commenting from profiles or replying to specific users</li>
+            <li><strong>Browser Language Settings</strong>: To detect preferred language for automatic interface localization</li>
+        </ul>
+
+        <h2>What We DON'T Access</h2>
+        <ul>
+            <li class="no-data">No browsing history outside of the current X.com tab</li>
+            <li class="no-data">No data from other websites or browser tabs</li>
+            <li class="no-data">No personal files, downloads, or system information</li>
+            <li class="no-data">No private keys, wallet information, or cryptocurrency balances</li>
+            <li class="no-data">No personal identification or contact information</li>
+            <li class="no-data">No language usage analytics or tracking</li>
+        </ul>
+
+        <h2>External Services Used</h2>
+        <ul>
+            <li><span class="external-service"><strong>QR Code Generation</strong></span>: api.qrserver.com and chart.googleapis.com receive transfer command text to generate QR codes</li>
+            <li><span class="external-service"><strong>Logo Hosting</strong></span>: ipfs.io serves the official NYLA logo for display in QR codes</li>
+            <li class="no-data"><strong>No Data Storage</strong>: These services do not store or log the transfer commands sent to them</li>
+            <li class="no-data"><strong>Limited Data</strong>: Only the transfer command text (e.g., "Hey @AgentNyla transfer 50 $NYLA @username") is shared, no personal information</li>
+            <li class="no-data"><strong>No Translation Services</strong>: All language processing and translations occur locally within the extension</li>
+        </ul>
+
+        <h2>Internationalization & Privacy</h2>
+        <div class="new-feature">
+            <h3>Language Data Protection (v2.4.0)</h3>
+            <ul>
+                <li><strong>Offline Processing</strong>: All translation and language switching occurs entirely offline within the extension</li>
+                <li><strong>No External Translation APIs</strong>: We do not use Google Translate, Microsoft Translator, or any external translation services</li>
+                <li><strong>Local Translation Files</strong>: All Chinese and English translations are bundled within the extension package</li>
+                <li><strong>Language Preference Privacy</strong>: Your language choice is stored locally and never transmitted to external servers</li>
+                <li><strong>No Language Analytics</strong>: We do not track which languages are used or collect language usage statistics</li>
+            </ul>
+        </div>
+
+        <h2>Data Sharing</h2>
+        <p class="no-data">We do not share, sell, or transmit any personal user data to third parties. Transfer commands are only sent to QR generation services for functionality purposes. Language preferences and user settings remain entirely local to your browser.</p>
+
+        <h2>Security</h2>
+        <ul>
+            <li><strong>No remote code execution</strong></li>
+            <li><strong>Limited external API calls</strong> only to trusted QR generation and logo hosting services</li>
+            <li><strong>No sensitive data transmission</strong> - only transfer command text for QR generation</li>
+            <li><strong>No data persistence on external servers</strong></li>
+            <li><strong>All form data, language preferences, and user settings remain local to your browser</strong></li>
+            <li><strong>Offline language processing</strong> - no translation data sent to external services</li>
+        </ul>
+
+        <h2>User Control & Data Management</h2>
+        <div class="new-feature">
+            <h3>Enhanced User Controls (v2.4.0)</h3>
+            <ul>
+                <li><strong>Language Settings</strong>: Easily switch between English and Chinese in the Settings page</li>
+                <li><strong>Username Management</strong>: Update your X username preference from a centralized Settings location</li>
+                <li><strong>Data Clearing</strong>: Remove the extension to clear all stored preferences, or use Chrome's extension storage management</li>
+                <li><strong>Settings Sync</strong>: Language and username preferences sync across extension tabs for consistent experience</li>
+            </ul>
+        </div>
+
+        <h2>Changes to This Policy</h2>
+        <p>We may update this privacy policy from time to time to reflect new features or changes in our practices. Users will be notified of any material changes through extension updates and GitHub release notes.</p>
+
+        <h2>Version History</h2>
+        <ul>
+            <li><strong>v2.4.0</strong>: Added internationalization features, language preferences, and enhanced Settings page</li>
+            <li><strong>v2.3.0</strong>: Previous version with improved community features</li>
+        </ul>
+
+        <div class="contact-info">
+            <h2>Contact</h2>
+            <p>For questions about this privacy policy or our data practices, please:</p>
+            <ul>
+                <li>Create an issue at our <a href="https://github.com/sonyschan/nyla-go/issues" target="_blank">GitHub repository</a></li>
+                <li>Contact us via X.com: <a href="https://x.com/h2crypto_eth" target="_blank">@h2crypto_eth</a></li>
+            </ul>
+        </div>
+
+        <div class="version-info">
+            <p><strong>This privacy policy applies to NYLA Go Chrome Extension version 2.4.0 and later.</strong></p>
+            <p>Last updated: August 11, 2025</p>
+        </div>
+    </div>
+</body>
+</html>
