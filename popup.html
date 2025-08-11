@@ -1116,7 +1116,7 @@
     </div>
     
     <div class="form-group">
-      <label for="amount">Amount & Token</label>
+      <label for="amount" data-i18n="ext.send.amount.token">Amount & Token</label>
       <div class="amount-group">
         <input type="number" id="amount" placeholder="1" value="1" step="0.01" min="0" />
         <div class="token-select-container">
@@ -1135,7 +1135,7 @@
     </div>
     
     <div class="form-group">
-      <label>Blockchain</label>
+      <label data-i18n="ext.blockchain">Blockchain</label>
       <div class="blockchain-group">
         <div class="blockchain-option">
           <input type="radio" id="solana" name="blockchain" value="Solana" checked />
@@ -1154,13 +1154,13 @@
     
     <div class="form-group">
       <div class="preview-header">
-        <label>Command Preview</label>
+        <label data-i18n="ext.command.preview">Command Preview</label>
         <button type="button" class="qr-toggle-btn" id="qrToggleBtn" disabled>
           <span class="qr-icon">📱</span>
           <span class="qr-text">Switch to QR Code</span>
         </button>
       </div>
-      <div class="command-preview empty" id="commandPreview">
+      <div class="command-preview empty" id="commandPreview" data-i18n="ext.send.command.placeholder">
         Fill in the fields above to see the command
       </div>
       <div class="qr-code-container" id="qrCodeContainer" style="display: none;">
@@ -1187,21 +1187,21 @@
         <!-- QR code will be generated here -->
       </div>
       <div class="qr-instructions">
-        <p id="qrInstructionText">📱 Share this QR code to receive NYLA payments</p>
-        <p class="qr-hint">Others can scan to send you tokens instantly</p>
+        <p id="qrInstructionText" data-i18n="ext.qr.instruction">📱 Share this QR code to receive NYLA payments</p>
+        <p class="qr-hint" data-i18n="ext.qr.hint">Others can scan to send you tokens instantly</p>
       </div>
     </div>
     
     <!-- Receive Form -->
     <form id="receiveForm">
       <div class="form-group">
-        <label for="receiveUsername">Your Username on X</label>
+        <label for="receiveUsername" data-i18n="ext.receive.username">Your Username on X</label>
         <input type="text" id="receiveUsername" placeholder="@h2crypto_eth" value="h2crypto_eth" />
         <div class="error" id="receiveUsernameError"></div>
       </div>
       
       <div class="form-group">
-        <label for="receiveAmount">Amount & Token</label>
+        <label for="receiveAmount" data-i18n="ext.receive.amount.token">Amount & Token</label>
         <div class="amount-group">
           <input type="number" id="receiveAmount" placeholder="1" step="0.01" min="0" value="1" />
           <div class="token-select-container">
@@ -1220,7 +1220,7 @@
       </div>
       
       <div class="form-group">
-        <label>Blockchain</label>
+        <label data-i18n="ext.blockchain">Blockchain</label>
         <div class="blockchain-group">
           <div class="blockchain-option">
             <input type="radio" id="receiveSolana" name="receiveBlockchain" value="Solana" checked />
@@ -1248,7 +1248,7 @@
   <div id="swapSection" class="tab-content" style="display: none;">
     <form id="swapForm">
       <div class="form-group">
-        <label for="swapAmount">Amount & From Token</label>
+        <label for="swapAmount" data-i18n="ext.swap.amount.from">Amount & From Token</label>
         <div class="amount-group">
           <input type="number" id="swapAmount" placeholder="1" value="1" step="0.01" min="0" />
           <div class="token-select-container">
@@ -1271,7 +1271,7 @@
       </div>
       
       <div class="form-group">
-        <label for="swapToToken">To Token</label>
+        <label for="swapToToken" data-i18n="ext.swap.to.token">To Token</label>
         <div class="token-select-container">
           <select id="swapToToken">
             <option value="NYLA" selected>NYLA</option>
@@ -1287,7 +1287,7 @@
       </div>
       
       <div class="form-group">
-        <label>Blockchain</label>
+        <label data-i18n="ext.blockchain">Blockchain</label>
         <div class="blockchain-group">
           <div class="blockchain-option">
             <input type="radio" id="swapSolana" name="swapBlockchain" value="Solana" checked />
@@ -1306,9 +1306,9 @@
       
       <div class="form-group">
         <div class="preview-header">
-          <label>Command Preview</label>
+          <label data-i18n="ext.command.preview">Command Preview</label>
         </div>
-        <div class="command-preview empty" id="swapCommandPreview">
+        <div class="command-preview empty" id="swapCommandPreview" data-i18n="ext.swap.command.placeholder">
           Fill in the fields above to see the swap command
         </div>
       </div>
@@ -1322,12 +1322,12 @@
   <!-- Raid Section -->
   <div id="raidSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="raidBackButton">← Back</button>
-      <h3>🎯 Community Raids</h3>
+      <button type="button" class="back-button" id="raidBackButton" data-i18n="ext.back">← Back</button>
+      <h3 data-i18n="ext.raids.title">🎯 Community Raids</h3>
     </div>
     <div class="raid-showcase">
       <div class="raid-intro">
-        <p>Join community engagement campaigns and support NYLA ecosystem growth</p>
+        <p data-i18n="ext.raids.subtitle">Join community engagement campaigns and support NYLA ecosystem growth</p>
       </div>
       <div class="raid-categories" id="raidCategories">
         <!-- Raid items will be dynamically generated from shared data source -->
@@ -1338,26 +1338,26 @@
   <!-- App Section -->
   <div id="appSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="appBackButton">← Back</button>
-      <h3>🚀 Community Apps</h3>
+      <button type="button" class="back-button" id="appBackButton" data-i18n="ext.back">← Back</button>
+      <h3 data-i18n="ext.apps.title">🚀 Community Apps</h3>
     </div>
     <div class="app-showcase">
       <div class="app-intro">
-        <p>Discover amazing applications built by the NYLA community</p>
+        <p data-i18n="ext.apps.subtitle">Discover amazing applications built by the NYLA community</p>
       </div>
       
       <!-- Ecosystem Apps Category -->
       <div class="app-category">
-        <h4>🌐 Ecosystem</h4>
+        <h4 data-i18n="ext.apps.ecosystem.title">🌐 Ecosystem</h4>
         
         <div class="app-item" data-url="https://www.loreagentnyla.com/">
           <div class="app-icon">
             <img src="app/Yuki.jpg" alt="Yuki" />
           </div>
           <div class="app-info">
-            <div class="app-name">NYLA x YUKI</div>
-            <div class="app-author">by @yukisofficial</div>
-            <div class="app-description">Interactive NYLA-powered experience with community features and engagement</div>
+            <div class="app-name" data-i18n="ext.apps.nyla.yuki.name">NYLA x YUKI</div>
+            <div class="app-author" data-i18n="ext.apps.nyla.yuki.author">by @yukisofficial</div>
+            <div class="app-description" data-i18n="ext.apps.nyla.yuki.description">Interactive NYLA-powered experience with community features and engagement</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1367,14 +1367,14 @@
       
       <!-- Gaming Apps Category -->
       <div class="app-category">
-        <h4>🎯 Gaming</h4>
+        <h4 data-i18n="ext.apps.gaming.title">🎯 Gaming</h4>
         
         <div class="app-item" data-url="https://nyla-dodge.vercel.app">
           <div class="app-icon">🌙</div>
           <div class="app-info">
-            <div class="app-name">Nyla Moon Dodge</div>
-            <div class="app-author">by @AgentPuffle</div>
-            <div class="app-description">Navigate through space obstacles in this exciting moon-themed dodge game</div>
+            <div class="app-name" data-i18n="ext.apps.moon.dodge.name">Nyla Moon Dodge</div>
+            <div class="app-author" data-i18n="ext.apps.moon.dodge.author">by @AgentPuffle</div>
+            <div class="app-description" data-i18n="ext.apps.moon.dodge.description">Navigate through space obstacles in this exciting moon-themed dodge game</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1384,9 +1384,9 @@
         <div class="app-item" data-url="https://nyla-jump.vercel.app/mobile">
           <div class="app-icon">🎮</div>
           <div class="app-info">
-            <div class="app-name">Nyla Jump</div>
-            <div class="app-author">by @AgentPuffle</div>
-            <div class="app-description">Fun jumping game featuring NYLA themes and mechanics</div>
+            <div class="app-name" data-i18n="ext.apps.nyla.jump.name">Nyla Jump</div>
+            <div class="app-author" data-i18n="ext.apps.nyla.jump.author">by @AgentPuffle</div>
+            <div class="app-description" data-i18n="ext.apps.nyla.jump.description">Fun jumping game featuring NYLA themes and mechanics</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1399,7 +1399,7 @@
   <!-- Settings Section -->
   <div id="settingsSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="settingsBackButton">← Back</button>
+      <button type="button" class="back-button" id="settingsBackButton" data-i18n="ext.back">← Back</button>
       <h3 data-i18n="ext.settings.title">⚙️ Settings</h3>
     </div>
     <div class="settings-content">
