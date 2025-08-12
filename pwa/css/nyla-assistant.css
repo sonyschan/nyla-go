@@ -427,7 +427,7 @@
 }
 
 .nyla-stats {
-  display: flex;
+  display: none; /* Hidden from UI - stats still work in background for LLM */
   gap: 16px;
   align-items: center;
 }
