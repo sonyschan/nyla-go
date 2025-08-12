@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Save language setting
     if (settingsLanguage && window.extensionI18n) {
-      window.extensionI18n.setLanguage(settingsLanguage.value);
+      window.extensionI18n.changeLanguage(settingsLanguage.value);
     }
   }
   
@@ -693,30 +693,39 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize app version
   updateAppVersion();
   
-  // Initialize extension i18n if available
-  if (window.extensionI18n) {
-    console.log('✅ Extension i18n initialized');
-    
-    // Register language change callback for community menu, raid section, and footer
-    if (!window.nylaGoLanguageCallbacks) {
-      window.nylaGoLanguageCallbacks = {};
-    }
-    window.nylaGoLanguageCallbacks.updateCommunityMenu = generateCommunityMenu;
-    window.nylaGoLanguageCallbacks.updateRaidSection = generateRaidSection;
-    window.nylaGoLanguageCallbacks.updateFooter = generateFooter;
-    window.nylaGoLanguageCallbacks.updateCommandPreviews = function() {
-      // Update send command preview if empty
-      if (commandPreview && commandPreview.classList.contains('empty')) {
-        updateSendCommand();
+  // Initialize extension i18n (i18next version)
+  if (window.getExtensionI18n) {
+    window.extensionI18n = window.getExtensionI18n();
+    window.extensionI18n.initialize().then(() => {
+      console.log('✅ Extension i18next initialized');
+      
+      // Translate initial page content
+      window.extensionI18n.translatePage();
+      
+      // Register language change callback for community menu, raid section, and footer
+      if (!window.nylaGoLanguageCallbacks) {
+        window.nylaGoLanguageCallbacks = {};
       }
-      // Update swap command preview if empty
-      if (swapCommandPreview && swapCommandPreview.classList.contains('empty')) {
-        updateSwapCommand();
-      }
-    };
-    
-    // Regenerate community menu with i18n
-    generateCommunityMenu();
+      
+      window.nylaGoLanguageCallbacks.updateCommunityMenu = generateCommunityMenu;
+      window.nylaGoLanguageCallbacks.updateRaidSection = generateRaidSection;
+      window.nylaGoLanguageCallbacks.updateFooter = generateFooter;
+      window.nylaGoLanguageCallbacks.updateCommandPreviews = function() {
+        // Update send command preview if empty
+        if (commandPreview && commandPreview.classList.contains('empty')) {
+          updateSendCommand();
+        }
+        // Update swap command preview if empty
+        if (swapCommandPreview && swapCommandPreview.classList.contains('empty')) {
+          updateSwapCommand();
+        }
+      };
+      
+      // Regenerate community menu, raid section, and footer with i18n
+      generateCommunityMenu();
+      generateRaidSection();
+      generateFooter();
+    });
   }
   
   
@@ -730,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Use i18n if available
         if (window.extensionI18n) {
-          window.extensionI18n.updateDynamicText('appVersion', 'ext.version', { version });
+          window.extensionI18n.updateDynamicText('appVersion', 'footer.version', { version });
           console.log('NYLA: Version updated to', version, 'with i18n');
         } else {
           // Fallback without i18n
@@ -814,7 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (commandPreview) {
         // Use i18n if available, otherwise fallback to static text
         if (window.extensionI18n) {
-          commandPreview.textContent = window.extensionI18n.t('ext.send.command.placeholder');
+          commandPreview.textContent = window.extensionI18n.t('command.send.placeholder');
         } else {
           commandPreview.textContent = 'Fill in the fields above to see the command';
         }
@@ -1152,6 +1161,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if (receiveSection) receiveSection.style.display = 'none';
           if (raidSection) raidSection.style.display = 'none';
           if (appSection) appSection.style.display = 'none';
+          if (settingsSection) settingsSection.style.display = 'none';
           
           // Show corresponding content
           if (tabName === 'swap') {
@@ -1210,7 +1220,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (qrInstructionText) {
       // Use i18n if available
       if (window.extensionI18n) {
-        qrInstructionText.textContent = window.extensionI18n.t('ext.qr.instruction.dynamic', { token });
+        qrInstructionText.textContent = window.extensionI18n.t('qr.instruction.dynamic', { token });
       } else {
         // Fallback without i18n
         qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
@@ -1902,7 +1912,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // Use i18n if available, otherwise fallback to static text
       if (window.extensionI18n) {
-        swapCommandPreview.textContent = window.extensionI18n.t('ext.swap.command.placeholder');
+        swapCommandPreview.textContent = window.extensionI18n.t('command.swap.placeholder');
       } else {
         swapCommandPreview.textContent = 'Fill in the tokens above to see the swap command';
       }
