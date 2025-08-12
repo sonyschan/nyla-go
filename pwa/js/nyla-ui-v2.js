@@ -2131,15 +2131,15 @@ class NYLAAssistantUIV2 {
         <!-- Question buttons will be dynamically added here -->
       </div>
       
-      <!-- User Comment Box (50%+ knowledge only) -->
-      <div class="nyla-user-input-container" id="nylaUserInputContainer" style="display: none;">
+      <!-- User Comment Box (Available for all users) -->
+      <div class="nyla-user-input-container" id="nylaUserInputContainer" style="display: block;">
         <div class="user-input-header" style="color: #FF6B35; font-size: 14px; font-weight: 500; margin-bottom: 8px;">
           💬 Free Talk - Ask me anything!
         </div>
         <input 
           type="text" 
           id="nylaUserInput" 
-          placeholder="You've unlocked free talk! Ask me anything about NYLA..."
+          placeholder="Ask me anything about NYLA..."
           style="
             width: 100%; 
             background: #1a1a1a; 
@@ -2196,9 +2196,7 @@ class NYLAAssistantUIV2 {
     if (!existingTab.querySelector('.nyla-info-panel')) {
       const infoPanelHTML = `
         <div class="nyla-info-panel" id="nylaInfoPanel">
-          <div class="nyla-stats">
-            <span class="stats-text" id="knowledgeStats" style="display: block; color: #FF6B35;">Checking NYLA knowledge gained..</span>
-          </div>
+          <!-- Knowledge stats removed from UI but still working in background -->
           <div class="nyla-disclaimer" style="
             margin-top: 12px;
             padding: 12px;
@@ -2277,7 +2275,7 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: ✅ Debug input event listener added');
     }
     
-    // Set up user input event listener for free talk (50%+ knowledge users)
+    // Set up user input event listener for free talk (available to all users)
     const userInput = document.getElementById('nylaUserInput');
     if (userInput) {
       userInput.addEventListener('keypress', (e) => {
@@ -2340,32 +2338,19 @@ class NYLAAssistantUIV2 {
    * Update knowledge progress display
    */
   updateKnowledgeProgress() {
+    // Keep knowledge stats functionality for LLM usage but remove from UI
     if (!this.conversation.getKnowledgeStats) return;
     
     const stats = this.conversation.getKnowledgeStats();
-    const knowledgeStatsEl = document.getElementById('knowledgeStats');
     
-    // Always show knowledge percentage, even if it's 0%
-    if (knowledgeStatsEl && stats && typeof stats.percentage === 'number') {
-      let displayText = `${stats.percentage}% NYLA knowledge gained`;
+    // Stats are still tracked in background for LLM usage
+    if (stats && typeof stats.percentage === 'number') {
+      console.log('NYLA Knowledge Stats (Background):', `${stats.percentage}% knowledge gained`);
       
-      // Add unlock indicator for users below 50%
-      if (stats.percentage < 50) {
-        displayText += ' [Free talk unlock at 50%]';
-      }
-      
-      knowledgeStatsEl.textContent = displayText;
-      knowledgeStatsEl.style.display = 'block';
-      knowledgeStatsEl.style.color = '#FF6B35';
-      
-      // Show/hide user input box based on knowledge level
+      // Free talk is now available to all users - no restrictions
       const userInputContainer = document.getElementById('nylaUserInputContainer');
       if (userInputContainer) {
-        if (stats.percentage >= 50) {
-          userInputContainer.style.display = 'block';
-        } else {
-          userInputContainer.style.display = 'none';
-        }
+        userInputContainer.style.display = 'block';
       }
     }
   }
