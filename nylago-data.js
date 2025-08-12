@@ -10,7 +10,7 @@ const NYLA_COMMUNITY_DATA = {
       description: 'Join community engagement campaigns',
       icon: '🎯',
       action: 'showRaid',
-      i18nKey: 'ext.menu.raids'
+      i18nKey: 'menu.raids'
     },
     {
       id: 'app',
@@ -18,7 +18,7 @@ const NYLA_COMMUNITY_DATA = {
       description: 'Discover NYLA community applications',
       icon: '🚀', 
       action: 'showApp',
-      i18nKey: 'ext.menu.apps'
+      i18nKey: 'menu.apps'
     },
     {
       id: 'settings',
@@ -26,7 +26,7 @@ const NYLA_COMMUNITY_DATA = {
       description: 'Language and account preferences',
       icon: '⚙️',
       action: 'showSettings',
-      i18nKey: 'ext.menu.settings'
+      i18nKey: 'menu.settings'
     }
   ]
 };
@@ -37,7 +37,7 @@ const NYLA_FOOTER_DATA = {
     {
       id: 'feedback',
       text: 'Feedback',
-      i18nKey: 'ext.feedback',
+      i18nKey: 'footer.feedback',
       url: 'https://x.com/h2crypto_eth',
       target: '_blank',
       type: 'link'
@@ -45,7 +45,7 @@ const NYLA_FOOTER_DATA = {
     {
       id: 'donate',
       text: 'Donate',
-      i18nKey: 'ext.donate',
+      i18nKey: 'footer.donate',
       action: 'showDonate',
       type: 'action'
     }
@@ -57,14 +57,14 @@ const NYLA_RAID_DATA = {
     {
       id: 'nyla-core',
       title: 'NYLA Core',
-      i18nKey: 'ext.raids.core.title',
+      i18nKey: 'raids.core.title',
       items: [
         {
           id: 'the-team',
           name: 'The Team',
           description: 'Key NYLA project contributors - support their posts',
-          i18nNameKey: 'ext.raids.team.title',
-          i18nDescKey: 'ext.raids.team.description',
+          i18nNameKey: 'raids.team.title',
+          i18nDescKey: 'raids.team.description',
           url: 'https://x.com/i/lists/1940678457350029559',
           icon: '->'
         }
@@ -73,14 +73,14 @@ const NYLA_RAID_DATA = {
     {
       id: 'community',
       title: 'Community',
-      i18nKey: 'ext.raids.community.title',
+      i18nKey: 'raids.community.title',
       items: [
         {
           id: 'active-raiders',
           name: 'Active NYLA Raiders',
           description: 'Follow these community members\' engagement patterns',
-          i18nNameKey: 'ext.raids.active.title',
-          i18nDescKey: 'ext.raids.active.description',
+          i18nNameKey: 'raids.active.title',
+          i18nDescKey: 'raids.active.description',
           url: 'https://x.com/i/lists/1950200431432647034',
           icon: '->'
         },
@@ -88,8 +88,8 @@ const NYLA_RAID_DATA = {
           id: 'ticker-mentioned',
           name: '$NYLA ticker mentioned',
           description: 'Engage top/latest X posts around $NYLA',
-          i18nNameKey: 'ext.raids.ticker.title',
-          i18nDescKey: 'ext.raids.ticker.description',
+          i18nNameKey: 'raids.ticker.title',
+          i18nDescKey: 'raids.ticker.description',
           url: 'https://x.com/search?q=%24NYLA&src=typed_query&f=live',
           icon: '->'
         }

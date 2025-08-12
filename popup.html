@@ -1087,7 +1087,7 @@
       <div class="header-content">
         <div class="header-main">
           <img src="NYLAGO-Logo-v2.png" alt="NYLA GO" class="header-logo" />
-          <p>Your AI agent for payments and community</p>
+          <p data-i18n="header.tagline">Your AI agent for payments and community</p>
         </div>
         <div class="header-menu">
           <button type="button" class="menu-button" id="communityMenuButton" title="Community Features">
@@ -1100,9 +1100,9 @@
   <!-- Action Tabs -->
   <div class="form-group">
     <div class="action-tabs">
-      <button type="button" class="action-tab active" data-tab="send" data-i18n="ext.tab.send">Send</button>
-      <button type="button" class="action-tab" data-tab="receive" data-i18n="ext.tab.receive">Receive</button>
-      <button type="button" class="action-tab" data-tab="swap" data-i18n="ext.tab.swap">Swap</button>
+      <button type="button" class="action-tab active" data-tab="send" data-i18n="tab.send">Send</button>
+      <button type="button" class="action-tab" data-tab="receive" data-i18n="tab.receive">Receive</button>
+      <button type="button" class="action-tab" data-tab="swap" data-i18n="tab.swap">Swap</button>
     </div>
   </div>
   
@@ -1110,13 +1110,13 @@
   <div id="sendSection" class="tab-content active">
     <form id="transferForm">
     <div class="form-group">
-      <label for="recipient">Recipient Username on X</label>
-      <input type="text" id="recipient" placeholder="@username" />
+      <label for="recipient" data-i18n="send.recipient.label">Recipient Username on X</label>
+      <input type="text" id="recipient" placeholder="@username" data-i18n-placeholder="send.recipient.placeholder" />
       <div class="error" id="recipientError"></div>
     </div>
     
     <div class="form-group">
-      <label for="amount" data-i18n="ext.send.amount.token">Amount & Token</label>
+      <label for="amount" data-i18n="send.amount.token">Amount & Token</label>
       <div class="amount-group">
         <input type="number" id="amount" placeholder="1" value="1" step="0.01" min="0" />
         <div class="token-select-container">
@@ -1135,7 +1135,7 @@
     </div>
     
     <div class="form-group">
-      <label data-i18n="ext.blockchain">Blockchain</label>
+      <label data-i18n="ui.blockchain">Blockchain</label>
       <div class="blockchain-group">
         <div class="blockchain-option">
           <input type="radio" id="solana" name="blockchain" value="Solana" checked />
@@ -1154,13 +1154,13 @@
     
     <div class="form-group">
       <div class="preview-header">
-        <label data-i18n="ext.command.preview">Command Preview</label>
+        <label data-i18n="command.preview">Command Preview</label>
         <button type="button" class="qr-toggle-btn" id="qrToggleBtn" disabled>
           <span class="qr-icon">📱</span>
-          <span class="qr-text">Switch to QR Code</span>
+          <span class="qr-text" data-i18n="qr.toggle">Switch to QR Code</span>
         </button>
       </div>
-      <div class="command-preview empty" id="commandPreview" data-i18n="ext.send.command.placeholder">
+      <div class="command-preview empty" id="commandPreview" data-i18n="command.send.placeholder">
         Fill in the fields above to see the command
       </div>
       <div class="qr-code-container" id="qrCodeContainer" style="display: none;">
@@ -1172,7 +1172,7 @@
       </div>
     </div>
     
-    <button type="button" class="send-button" id="sendButton" disabled>
+    <button type="button" class="send-button" id="sendButton" disabled data-i18n="send.button">
       Send to X.com
     </button>
     </form>
@@ -1187,21 +1187,21 @@
         <!-- QR code will be generated here -->
       </div>
       <div class="qr-instructions">
-        <p id="qrInstructionText" data-i18n="ext.qr.instruction">📱 Share this QR code to receive NYLA payments</p>
-        <p class="qr-hint" data-i18n="ext.qr.hint">Others can scan to send you tokens instantly</p>
+        <p id="qrInstructionText" data-i18n="qr.instruction">📱 Share this QR code to receive NYLA payments</p>
+        <p class="qr-hint" data-i18n="qr.hint">Others can scan to send you tokens instantly</p>
       </div>
     </div>
     
     <!-- Receive Form -->
     <form id="receiveForm">
       <div class="form-group">
-        <label for="receiveUsername" data-i18n="ext.receive.username">Your Username on X</label>
+        <label for="receiveUsername" data-i18n="receive.username">Your Username on X</label>
         <input type="text" id="receiveUsername" placeholder="@h2crypto_eth" value="h2crypto_eth" />
         <div class="error" id="receiveUsernameError"></div>
       </div>
       
       <div class="form-group">
-        <label for="receiveAmount" data-i18n="ext.receive.amount.token">Amount & Token</label>
+        <label for="receiveAmount" data-i18n="receive.amount.token">Amount & Token</label>
         <div class="amount-group">
           <input type="number" id="receiveAmount" placeholder="1" step="0.01" min="0" value="1" />
           <div class="token-select-container">
@@ -1220,7 +1220,7 @@
       </div>
       
       <div class="form-group">
-        <label data-i18n="ext.blockchain">Blockchain</label>
+        <label data-i18n="ui.blockchain">Blockchain</label>
         <div class="blockchain-group">
           <div class="blockchain-option">
             <input type="radio" id="receiveSolana" name="receiveBlockchain" value="Solana" checked />
@@ -1237,7 +1237,7 @@
         </div>
       </div>
       
-      <button type="button" class="send-button" id="shareButton">
+      <button type="button" class="send-button" id="shareButton" data-i18n="receive.button">
         📤 Share Payment Request
       </button>
     </form>
@@ -1248,7 +1248,7 @@
   <div id="swapSection" class="tab-content" style="display: none;">
     <form id="swapForm">
       <div class="form-group">
-        <label for="swapAmount" data-i18n="ext.swap.amount.from">Amount & From Token</label>
+        <label for="swapAmount" data-i18n="swap.amount.from">Amount & From Token</label>
         <div class="amount-group">
           <input type="number" id="swapAmount" placeholder="1" value="1" step="0.01" min="0" />
           <div class="token-select-container">
@@ -1271,7 +1271,7 @@
       </div>
       
       <div class="form-group">
-        <label for="swapToToken" data-i18n="ext.swap.to.token">To Token</label>
+        <label for="swapToToken" data-i18n="swap.to.token">To Token</label>
         <div class="token-select-container">
           <select id="swapToToken">
             <option value="NYLA" selected>NYLA</option>
@@ -1287,7 +1287,7 @@
       </div>
       
       <div class="form-group">
-        <label data-i18n="ext.blockchain">Blockchain</label>
+        <label data-i18n="ui.blockchain">Blockchain</label>
         <div class="blockchain-group">
           <div class="blockchain-option">
             <input type="radio" id="swapSolana" name="swapBlockchain" value="Solana" checked />
@@ -1306,14 +1306,14 @@
       
       <div class="form-group">
         <div class="preview-header">
-          <label data-i18n="ext.command.preview">Command Preview</label>
+          <label data-i18n="command.preview">Command Preview</label>
         </div>
-        <div class="command-preview empty" id="swapCommandPreview" data-i18n="ext.swap.command.placeholder">
+        <div class="command-preview empty" id="swapCommandPreview" data-i18n="command.swap.placeholder">
           Fill in the fields above to see the swap command
         </div>
       </div>
       
-      <button type="button" class="send-button" id="swapButton" disabled>
+      <button type="button" class="send-button" id="swapButton" disabled data-i18n="swap.button">
         🔄 Send to X.com
       </button>
     </form>
@@ -1322,12 +1322,12 @@
   <!-- Raid Section -->
   <div id="raidSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="raidBackButton" data-i18n="ext.back">← Back</button>
-      <h3 data-i18n="ext.raids.title">🎯 Community Raids</h3>
+      <button type="button" class="back-button" id="raidBackButton" data-i18n="ui.back">← Back</button>
+      <h3 data-i18n="raids.title">🎯 Community Raids</h3>
     </div>
     <div class="raid-showcase">
       <div class="raid-intro">
-        <p data-i18n="ext.raids.subtitle">Join community engagement campaigns and support NYLA ecosystem growth</p>
+        <p data-i18n="raids.subtitle">Join community engagement campaigns and support NYLA ecosystem growth</p>
       </div>
       <div class="raid-categories" id="raidCategories">
         <!-- Raid items will be dynamically generated from shared data source -->
@@ -1338,26 +1338,26 @@
   <!-- App Section -->
   <div id="appSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="appBackButton" data-i18n="ext.back">← Back</button>
-      <h3 data-i18n="ext.apps.title">🚀 Community Apps</h3>
+      <button type="button" class="back-button" id="appBackButton" data-i18n="ui.back">← Back</button>
+      <h3 data-i18n="apps.title">🚀 Community Apps</h3>
     </div>
     <div class="app-showcase">
       <div class="app-intro">
-        <p data-i18n="ext.apps.subtitle">Discover amazing applications built by the NYLA community</p>
+        <p data-i18n="apps.subtitle">Discover amazing applications built by the NYLA community</p>
       </div>
       
       <!-- Ecosystem Apps Category -->
       <div class="app-category">
-        <h4 data-i18n="ext.apps.ecosystem.title">🌐 Ecosystem</h4>
+        <h4 data-i18n="apps.ecosystem.title">🌐 Ecosystem</h4>
         
         <div class="app-item" data-url="https://www.loreagentnyla.com/">
           <div class="app-icon">
             <img src="app/Yuki.jpg" alt="Yuki" />
           </div>
           <div class="app-info">
-            <div class="app-name" data-i18n="ext.apps.nyla.yuki.name">NYLA x YUKI</div>
-            <div class="app-author" data-i18n="ext.apps.nyla.yuki.author">by @yukisofficial</div>
-            <div class="app-description" data-i18n="ext.apps.nyla.yuki.description">Interactive NYLA-powered experience with community features and engagement</div>
+            <div class="app-name" data-i18n="apps.yuki.name">NYLA x YUKI</div>
+            <div class="app-author" data-i18n="apps.yuki.author">by @yukisofficial</div>
+            <div class="app-description" data-i18n="apps.yuki.description">Interactive NYLA-powered experience with community features and engagement</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1367,14 +1367,14 @@
       
       <!-- Gaming Apps Category -->
       <div class="app-category">
-        <h4 data-i18n="ext.apps.gaming.title">🎯 Gaming</h4>
+        <h4 data-i18n="apps.gaming.title">🎯 Gaming</h4>
         
         <div class="app-item" data-url="https://nyla-dodge.vercel.app">
           <div class="app-icon">🌙</div>
           <div class="app-info">
-            <div class="app-name" data-i18n="ext.apps.moon.dodge.name">Nyla Moon Dodge</div>
-            <div class="app-author" data-i18n="ext.apps.moon.dodge.author">by @AgentPuffle</div>
-            <div class="app-description" data-i18n="ext.apps.moon.dodge.description">Navigate through space obstacles in this exciting moon-themed dodge game</div>
+            <div class="app-name" data-i18n="apps.dodge.name">Nyla Moon Dodge</div>
+            <div class="app-author" data-i18n="apps.dodge.author">by @AgentPuffle</div>
+            <div class="app-description" data-i18n="apps.dodge.description">Navigate through space obstacles in this exciting moon-themed dodge game</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1384,9 +1384,9 @@
         <div class="app-item" data-url="https://nyla-jump.vercel.app/mobile">
           <div class="app-icon">🎮</div>
           <div class="app-info">
-            <div class="app-name" data-i18n="ext.apps.nyla.jump.name">Nyla Jump</div>
-            <div class="app-author" data-i18n="ext.apps.nyla.jump.author">by @AgentPuffle</div>
-            <div class="app-description" data-i18n="ext.apps.nyla.jump.description">Fun jumping game featuring NYLA themes and mechanics</div>
+            <div class="app-name" data-i18n="apps.jump.name">Nyla Jump</div>
+            <div class="app-author" data-i18n="apps.jump.author">by @AgentPuffle</div>
+            <div class="app-description" data-i18n="apps.jump.description">Fun jumping game featuring NYLA themes and mechanics</div>
           </div>
           <div class="app-action">
             <span class="play-icon">▶</span>
@@ -1399,18 +1399,18 @@
   <!-- Settings Section -->
   <div id="settingsSection" class="tab-content" style="display: none;">
     <div class="section-header">
-      <button type="button" class="back-button" id="settingsBackButton" data-i18n="ext.back">← Back</button>
-      <h3 data-i18n="ext.settings.title">⚙️ Settings</h3>
+      <button type="button" class="back-button" id="settingsBackButton" data-i18n="ui.back">← Back</button>
+      <h3 data-i18n="settings.title">⚙️ Settings</h3>
     </div>
     <div class="settings-content">
       <div class="form-group">
-        <label for="settingsUsername" data-i18n="ext.settings.username">Your X Username</label>
+        <label for="settingsUsername" data-i18n="settings.username">Your X Username</label>
         <input type="text" id="settingsUsername" placeholder="@username" />
-        <small style="color: #888; font-size: 11px;" data-i18n="ext.settings.username.help">This will be used in the Receive tab</small>
+        <small style="color: #888; font-size: 11px;" data-i18n="settings.username_help">This will be used in the Receive tab</small>
       </div>
       
       <div class="form-group">
-        <label for="settingsLanguage" data-i18n="ext.settings.language">Language</label>
+        <label for="settingsLanguage" data-i18n="settings.language">Language</label>
         <select id="settingsLanguage" class="language-selector">
           <option value="en">English</option>
           <option value="zh">中文 (Chinese)</option>
@@ -1467,7 +1467,7 @@
   
   <script src="qr-simple.js"></script>
   <script src="nylago-data.js"></script>
-  <script src="extension-i18n.js"></script>
+  <script src="extension-i18n-consolidated.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
