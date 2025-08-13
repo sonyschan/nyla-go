@@ -9,10 +9,10 @@ class NYLAKBVersionManager {
     this.storeName = 'versions';
     this.db = null;
     
-    // Files to track for changes
+    // Files to track for changes - only actual KB files, not UI data
     this.trackedFiles = [
-      'pwa/js/nyla-knowledge-base.js',
-      'nylago-data.js'  // If this contains KB data
+      // Legacy nyla-knowledge-base.js removed - using structured KB from /pwa/kb/ only
+      // nylago-data.js is UI data for raids, not knowledge base content
     ];
     
     this.initialized = false;
