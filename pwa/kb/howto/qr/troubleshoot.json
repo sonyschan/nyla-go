@@ -1,0 +1,107 @@
+{
+  "chunks": [
+    {
+      "id": "howto_qr_troubleshoot_guide",
+      "source_id": "qr_troubleshoot_guide",
+      "type": "howto",
+      "lang": "bilingual",
+      "title": "Troubleshoot QR Code Issues",
+      "section": "qr_codes",
+      "tags": ["qr", "troubleshoot", "scanning", "problems", "guide"],
+      "as_of": "2025-01-15",
+      "stability": "stable", 
+      "source_url": "internal://howto/qr/troubleshoot",
+      "hash": "how_qr_trouble_001",
+      "body": "Common QR code problems and solutions for scanning, generating, and sharing payment QR codes with NYLA.",
+      "summary_en": "Troubleshooting guide for common QR code scanning and generation problems with step-by-step solutions.",
+      "summary_zh": "常见二维码扫描和生成问题的故障排除指南，包含分步解决方案。",
+      "priority": 6,
+      "related_chunks": ["howto_qr_create_guide"],
+      "glossary_terms": ["QR code", "troubleshoot", "scanning", "brightness", "camera"],
+      "steps": [
+        {
+          "number": 1,
+          "action": "Check screen brightness and clarity",
+          "details": "Increase screen brightness to maximum and ensure the QR code is displayed clearly without glare or reflections.",
+          "screenshot": null
+        },
+        {
+          "number": 2,
+          "action": "Clean camera lens and improve lighting",
+          "details": "Clean your device camera lens and ensure good lighting conditions for optimal QR code scanning.",
+          "screenshot": null
+        },
+        {
+          "number": 3,
+          "action": "Adjust scanning distance and angle",
+          "details": "Hold device 6-8 inches from QR code, keep steady hands, and scan straight-on rather than at an angle.",
+          "screenshot": null
+        },
+        {
+          "number": 4,
+          "action": "Try different QR scanner apps",
+          "details": "If default camera app fails, try dedicated QR scanner apps or wallet apps with built-in QR scanners.",
+          "screenshot": null
+        },
+        {
+          "number": 5,
+          "action": "Regenerate the QR code",
+          "details": "Go back to NYLAGo, check wallet connection, and generate a fresh QR code with correct network and amount.",
+          "screenshot": null
+        },
+        {
+          "number": 6,
+          "action": "Verify wallet address manually",
+          "details": "Copy the wallet address from NYLAGo and compare it to what the QR scanner detected to ensure accuracy.",
+          "screenshot": null
+        }
+      ],
+      "pitfalls": [
+        {
+          "issue": "QR code too small or pixelated",
+          "solution": "Zoom in on the QR code display or request a larger version. Avoid screenshots that reduce quality.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Screen glare making QR unreadable",
+          "solution": "Tilt device to avoid glare, use matte screen protector, or scan in different lighting conditions.",
+          "severity": "low"
+        },
+        {
+          "issue": "Camera won't focus on QR code",
+          "solution": "Tap screen to focus manually, clean camera lens, or try scanning from different distances.",
+          "severity": "medium"
+        },
+        {
+          "issue": "QR scanner reads wrong information",
+          "solution": "Regenerate QR code in NYLAGo and verify wallet connection. Always double-check scanned address.",
+          "severity": "critical"
+        },
+        {
+          "issue": "Amount not pre-filled from QR code",
+          "solution": "Some wallets don't support amount encoding. Manually enter the amount displayed with the QR code.",
+          "severity": "low"
+        }
+      ],
+      "common_errors": [
+        {
+          "error": "Invalid QR code format",
+          "cause": "QR code generated without proper wallet connection",
+          "solution": "Reconnect wallet in NYLAGo before generating QR code"
+        },
+        {
+          "error": "Network mismatch error", 
+          "cause": "Scanning wallet on different network than QR code",
+          "solution": "Switch wallet to matching network or regenerate QR for correct network"
+        },
+        {
+          "error": "Insufficient balance warning",
+          "cause": "Wallet doesn't have enough balance for transaction + fees",
+          "solution": "Add funds to wallet or reduce transaction amount"
+        }
+      ],
+      "estimated_time": "2-5 minutes",
+      "difficulty": "beginner"
+    }
+  ]
+}

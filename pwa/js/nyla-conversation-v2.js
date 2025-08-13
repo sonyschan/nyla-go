@@ -605,16 +605,61 @@ class NYLAConversationManagerV2 {
     // Save conversation with primary identified topic
     this.saveConversation(questionText, llmResponse, primaryTopic);
 
+    // Extract RAG metadata for UI display
+    let ragMetadata = null;
+    if (knowledgeContext && knowledgeContext.ragResult) {
+      ragMetadata = this.extractRAGMetadata(knowledgeContext.ragResult);
+    }
+
     return {
       answer: {
         text: llmResponse.text,
         sentiment: llmResponse.sentiment,
-        confidence: llmResponse.confidence || 0.8
+        confidence: llmResponse.confidence || 0.8,
+        ragMetadata: ragMetadata
       },
       followUps,
       sticker,
       timestamp: Date.now(),
       isLLMGenerated: true
+    };
+  }
+
+  /**
+   * Extract RAG metadata for UI display
+   */
+  extractRAGMetadata(ragResult) {
+    if (!ragResult || !ragResult.sources) return null;
+    
+    const sources = ragResult.sources.map(source => ({
+      title: source.metadata?.title || source.title || 'Unknown Source',
+      type: source.metadata?.type || 'info',
+      verified: source.metadata?.verified,
+      as_of: source.metadata?.as_of
+    }));
+    
+    // Find most recent date
+    let mostRecentDate = null;
+    let hasVolatileInfo = false;
+    
+    for (const source of ragResult.sources) {
+      const asOfDate = source.metadata?.as_of;
+      if (asOfDate) {
+        if (!mostRecentDate || new Date(asOfDate) > new Date(mostRecentDate)) {
+          mostRecentDate = asOfDate;
+        }
+      }
+      
+      // Check for volatile information
+      if (source.metadata?.stability === 'volatile') {
+        hasVolatileInfo = true;
+      }
+    }
+    
+    return {
+      sources,
+      mostRecentDate,
+      hasVolatileInfo
     };
   }
 

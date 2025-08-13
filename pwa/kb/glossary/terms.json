@@ -1,0 +1,188 @@
+{
+  "glossary": {
+    "blockchain_terms": {
+      "区块链": {
+        "en_primary": "blockchain",
+        "en_synonyms": ["distributed ledger", "chain"],
+        "abbreviations": ["BC"],
+        "context": "network infrastructure"
+      },
+      "智能合约": {
+        "en_primary": "smart contract",
+        "en_synonyms": ["contract", "dapp contract"],
+        "abbreviations": ["SC"],
+        "context": "automated program on blockchain"
+      },
+      "代币": {
+        "en_primary": "token",
+        "en_synonyms": ["coin", "cryptocurrency"],
+        "abbreviations": ["TKN"],
+        "context": "digital asset"
+      },
+      "钱包": {
+        "en_primary": "wallet",
+        "en_synonyms": ["address", "account"],
+        "abbreviations": ["WLT"],
+        "context": "storage for cryptocurrencies"
+      },
+      "转账": {
+        "en_primary": "transfer",
+        "en_synonyms": ["send", "transaction", "payment"],
+        "abbreviations": ["TXN", "TX"],
+        "context": "moving tokens between addresses"
+      },
+      "交换": {
+        "en_primary": "swap",
+        "en_synonyms": ["exchange", "trade"],
+        "abbreviations": ["SWP"],
+        "context": "exchanging one token for another"
+      },
+      "手续费": {
+        "en_primary": "fee",
+        "en_synonyms": ["gas", "transaction cost", "network fee"],
+        "abbreviations": ["FEE"],
+        "context": "cost to process transaction"
+      },
+      "白名单": {
+        "en_primary": "allowlist",
+        "en_synonyms": ["whitelist", "approved list"],
+        "abbreviations": ["WL"],
+        "context": "approved addresses or users"
+      }
+    },
+    "nyla_terms": {
+      "尼拉": {
+        "en_primary": "NYLA",
+        "en_synonyms": ["Agent NYLA", "NYLA AI"],
+        "abbreviations": ["NYLA"],
+        "context": "AI agent for crypto transfers"
+      },
+      "尼拉围棋": {
+        "en_primary": "NYLAGo",
+        "en_synonyms": ["NYLA Go", "NYLAgo"],
+        "abbreviations": ["NYLAGo"],
+        "context": "user interface for NYLA commands"
+      },
+      "社交支付": {
+        "en_primary": "social payment",
+        "en_synonyms": ["social transfer", "social crypto"],
+        "abbreviations": ["SP"],
+        "context": "payments via social media"
+      },
+      "二维码": {
+        "en_primary": "QR code",
+        "en_synonyms": ["QR", "quick response code"],
+        "abbreviations": ["QR"],
+        "context": "scannable payment code"
+      },
+      "突击": {
+        "en_primary": "raid",
+        "en_synonyms": ["community engagement", "social boost"],
+        "abbreviations": ["RAID"],
+        "context": "community support activity"
+      },
+      "命令": {
+        "en_primary": "command",
+        "en_synonyms": ["instruction", "order"],
+        "abbreviations": ["CMD"],
+        "context": "text instruction for NYLA"
+      }
+    },
+    "network_terms": {
+      "索拉纳": {
+        "en_primary": "Solana",
+        "en_synonyms": ["SOL network"],
+        "abbreviations": ["SOL"],
+        "context": "fast blockchain network"
+      },
+      "以太坊": {
+        "en_primary": "Ethereum",
+        "en_synonyms": ["ETH network", "Ethereum network"],
+        "abbreviations": ["ETH"],
+        "context": "smart contract blockchain"
+      },
+      "阿尔戈兰德": {
+        "en_primary": "Algorand",
+        "en_synonyms": ["ALGO network"],
+        "abbreviations": ["ALGO"],
+        "context": "proof of stake blockchain"
+      },
+      "跨链": {
+        "en_primary": "cross-chain",
+        "en_synonyms": ["cross-network", "bridge", "interchain"],
+        "abbreviations": ["CC"],
+        "context": "between different blockchains"
+      }
+    },
+    "technical_terms": {
+      "嵌入": {
+        "en_primary": "embedding",
+        "en_synonyms": ["vector embedding", "semantic vector"],
+        "abbreviations": ["EMB"],
+        "context": "numerical representation of text"
+      },
+      "检索": {
+        "en_primary": "retrieval",
+        "en_synonyms": ["search", "lookup", "query"],
+        "abbreviations": ["RET"],
+        "context": "finding relevant information"
+      },
+      "语义搜索": {
+        "en_primary": "semantic search",
+        "en_synonyms": ["meaning-based search", "AI search"],
+        "abbreviations": ["SS"],
+        "context": "search by meaning not keywords"
+      },
+      "重排序": {
+        "en_primary": "reranking",
+        "en_synonyms": ["reordering", "relevance scoring"],
+        "abbreviations": ["RR"],
+        "context": "improving search result order"
+      }
+    },
+    "ui_terms": {
+      "发送": {
+        "en_primary": "send",
+        "en_synonyms": ["transfer out", "pay"],
+        "abbreviations": [],
+        "context": "send tokens to someone"
+      },
+      "接收": {
+        "en_primary": "receive",
+        "en_synonyms": ["get payment", "accept"],
+        "abbreviations": [],
+        "context": "receive tokens from someone"  
+      },
+      "设置": {
+        "en_primary": "settings",
+        "en_synonyms": ["configuration", "preferences"],
+        "abbreviations": ["CFG"],
+        "context": "application configuration"
+      },
+      "语言": {
+        "en_primary": "language",
+        "en_synonyms": ["locale", "lang"],
+        "abbreviations": ["LANG"],
+        "context": "interface language setting"
+      }
+    }
+  },
+  "query_rewrite_patterns": {
+    "chinese_to_english": {
+      "怎么发送代币": ["how to send tokens", "token transfer guide", "send cryptocurrency"],
+      "什么是尼拉": ["what is NYLA", "NYLA explanation", "NYLA AI agent"],
+      "支持哪些区块链": ["supported blockchains", "which networks", "blockchain support"],
+      "手续费多少": ["transaction fees", "network costs", "fee structure"],
+      "二维码怎么用": ["QR code usage", "how to use QR codes", "QR code guide"],
+      "安全吗": ["is it secure", "security features", "safety"],
+      "错误怎么办": ["error handling", "troubleshooting", "problem solving"]
+    },
+    "expansion_terms": {
+      "NYLA": ["NYLA", "Agent NYLA", "尼拉", "NYLA AI"],
+      "NYLAGo": ["NYLAGo", "NYLA Go", "尼拉围棋", "interface"],
+      "blockchain": ["blockchain", "区块链", "network", "chain"],
+      "transfer": ["transfer", "转账", "send", "payment", "发送"],
+      "fee": ["fee", "手续费", "gas", "cost", "费用"]
+    }
+  }
+}

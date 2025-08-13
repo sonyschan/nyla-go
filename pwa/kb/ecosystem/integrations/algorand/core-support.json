@@ -1,0 +1,49 @@
+{
+  "chunks": [
+    {
+      "id": "algorand/core-support",
+      "source_id": "algorand_core_integration",
+      "type": "integration",
+      "lang": "bilingual",
+      "title": "NYLA Algorand Core Support",
+      "entity": "NYLA Algorand Core",
+      "chain": "Algorand",
+      "category": "blockchain_core",
+      "capabilities": ["algo_transfers", "asa_tokens", "pera_wallet", "sustainability_tracking"],
+      "status": "live",
+      "since": "2025-07-26",
+      "as_of": "2025-07-26",
+      "stability": "stable",
+      "verified": true,
+      "source_url": "https://nyla.ai/weekly-update-2025-07-26",
+      "hash": "int_algo_core_001",
+      "limits": ["algorand_mainnet_only", "no_cross_chain"],
+      "notes": "Canonical NYLA Algorand blockchain integration. Went live July 26, 2025 as announced in NYLA's weekly update. Includes Pera Wallet connectivity and sustainability features.",
+      "tags": ["integration", "support", "algorand", "live", "verified", "core"],
+      "summary_en": "NYLA's canonical Algorand integration supporting ALGO transfers, ASA tokens, and sustainability tracking since July 26, 2025.",
+      "summary_zh": "NYLA的標準Algorand整合，自2025年7月26日起支援ALGO轉帳、ASA代幣和可持續性追蹤。",
+      "priority": 10,
+      "section": "integrations",
+      "related_chunks": ["algorand/pera-wallet"],
+      "related_partners": ["ecosystem/partners/algorand/algorand-foundation"],
+      "related_campaigns": ["ecosystem/campaigns/algorand/2025-07-nyla-x-algorand-launch"],
+      "glossary_terms": ["NYLA", "Algorand", "integration", "live", "sustainability"],
+      "technical_details": {
+        "launch_date": "2025-07-26",
+        "announcement": "NYLA weekly update",
+        "supported_wallets": ["Pera Wallet"],
+        "supported_tokens": ["ALGO", "ASA tokens"],
+        "sustainability_features": ["carbon_tracking", "green_defi"]
+      },
+      "support_matrix": {
+        "algo_transfers": true,
+        "asa_tokens": true,
+        "pera_wallet_integration": true,
+        "sustainability_tracking": true,
+        "cross_chain": false,
+        "mainnet_only": true,
+        "testnet_support": false
+      }
+    }
+  ]
+}

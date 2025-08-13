@@ -1,0 +1,147 @@
+{
+  "chunks": [
+    {
+      "id": "policy_wording_features_vs_networks",
+      "source_id": "wording_guidelines",
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "Features vs Networks - Critical Distinction",
+      "section": "terminology",
+      "tags": ["terminology", "networks", "features", "blockchain", "accuracy"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/wording",
+      "hash": "wrd001_fvn",
+      "body": "CRITICAL DISTINCTION: Blockchain NETWORKS are infrastructure (Solana, Ethereum, Algorand). FEATURES are operations (transfer, swap, QR codes). NEVER say 'NYLA supports 3 blockchain features' - ALWAYS say 'NYLA supports 3 blockchain networks' or 'NYLA operates on 3 blockchains'.",
+      "summary_en": "Clear distinction between blockchain networks (infrastructure) and features (operations). Always use correct terminology.",
+      "summary_zh": "区块链网络（基础设施）和功能（操作）之间的明确区别。始终使用正确的术语。",
+      "priority": 10,
+      "glossary_terms": ["blockchain", "features", "networks"]
+    },
+    {
+      "id": "policy_wording_nyla_identity",
+      "source_id": "wording_guidelines", 
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "NYLA vs NYLAGo Identity Distinction",
+      "section": "identity",
+      "tags": ["identity", "naming", "distinction", "security"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/wording",
+      "hash": "wrd002_nvn",
+      "body": "When discussing security, ALWAYS identify as 'NYLAGo' not 'NYLA'. NYLA = AI agent that executes transfers. NYLAGo = Interface tool for creating commands. Projects work together but have distinct roles.",
+      "summary_en": "Maintain clear identity distinction between NYLA (AI agent) and NYLAGo (interface) especially for security discussions.",
+      "summary_zh": "保持NYLA（AI代理）和NYLAGo（界面）之间的清晰身份区别，特别是在安全讨论中。",
+      "priority": 9,
+      "related_chunks": ["about_team_distinction"],
+      "glossary_terms": ["NYLA", "NYLAGo"]
+    },
+    {
+      "id": "policy_wording_supported_networks",
+      "source_id": "wording_guidelines",
+      "type": "policy", 
+      "lang": "bilingual",
+      "title": "Authoritative Supported Networks List",
+      "section": "networks",
+      "tags": ["networks", "supported", "authoritative", "blockchain"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/wording",
+      "hash": "wrd003_snl",
+      "body": "NYLA officially supports exactly 3 blockchain networks: (1) Solana Network, (2) Ethereum Network, (3) Algorand Network. Each operates independently with no cross-network bridging. NOT supported: Base, Polygon, Arbitrum, Optimism, BSC, or any other networks.",
+      "summary_en": "Definitive list of 3 supported blockchain networks with explicit exclusions. No cross-chain operations.",
+      "summary_zh": "3个支持的区块链网络的权威列表，明确排除其他网络。无跨链操作。",
+      "priority": 10,
+      "related_chunks": ["facts_networks_solana", "facts_networks_ethereum", "facts_networks_algorand"],
+      "glossary_terms": ["Solana", "Ethereum", "Algorand", "cross-chain"]
+    },
+    {
+      "id": "policy_forbidden_phrases",
+      "source_id": "wording_guidelines",
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "Forbidden Phrases and Corrections",
+      "section": "forbidden_corrections",
+      "tags": ["forbidden", "corrections", "accuracy", "terminology"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/wording",
+      "hash": "wrd004_fpd",
+      "body": "Critical phrases that must NEVER be used and their required corrections.",
+      "summary_en": "Mandatory phrase corrections to maintain accuracy and prevent confusion.",
+      "summary_zh": "维护准确性和防止混淆的强制性措辞纠正。",
+      "priority": 10,
+      "forbidden_corrections": {
+        "blockchain_terminology": {
+          "❌ 3 blockchain features": "✅ 3 blockchain networks",
+          "❌ blockchain features": "✅ blockchain networks",
+          "❌ NYLA features three blockchains": "✅ NYLA operates on three blockchain networks",
+          "❌ supports blockchain features": "✅ supports operations on blockchain networks"
+        },
+        "cross_chain_errors": {
+          "❌ cross-chain transfers supported": "✅ transfers within same network only",
+          "❌ bridge between networks": "✅ no bridging - same network operations only",
+          "❌ Solana to Ethereum transfers": "✅ Solana to Solana transfers only",
+          "❌ multi-chain bridging": "✅ multi-network support (within each network)"
+        },
+        "identity_confusion": {
+          "❌ NYLA interface": "✅ NYLAGo interface", 
+          "❌ NYLA UI": "✅ NYLAGo UI",
+          "❌ NYLA generates commands": "✅ NYLAGo generates commands",
+          "❌ NYLA security features": "✅ NYLAGo security features"
+        },
+        "feature_confusion": {
+          "❌ three features: Solana, Ethereum, Algorand": "✅ three networks: Solana, Ethereum, Algorand",
+          "❌ blockchain feature set": "✅ supported blockchain networks",
+          "❌ network features": "✅ network operations or network capabilities"
+        },
+        "inaccurate_claims": {
+          "❌ NYLA holds your keys": "✅ NYLA never accesses your private keys",
+          "❌ custodial service": "✅ non-custodial system",
+          "❌ NYLA stores funds": "✅ NYLA generates commands only",
+          "❌ guaranteed transaction": "✅ command generation - execution depends on network"
+        }
+      }
+    },
+    {
+      "id": "policy_required_qualifiers", 
+      "source_id": "wording_guidelines",
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "Required Qualifiers and Disclaimers",
+      "section": "required_qualifiers",
+      "tags": ["qualifiers", "disclaimers", "accuracy", "legal"],
+      "as_of": "2025-01-15",
+      "stability": "stable", 
+      "source_url": "internal://policy/wording",
+      "hash": "wrd005_rql",
+      "body": "Required qualifiers that must accompany certain statements.",
+      "summary_en": "Mandatory qualifiers for financial, security, and technical statements.",
+      "summary_zh": "金融、安全和技术声明的强制性限定词。",
+      "priority": 9,
+      "required_qualifiers": {
+        "fee_statements": {
+          "context": "When mentioning transaction fees",
+          "qualifier_en": "Fees are approximate and subject to network conditions",
+          "qualifier_zh": "费用为近似值，取决于网络状况"
+        },
+        "security_statements": {
+          "context": "When discussing security features",
+          "qualifier_en": "Always verify commands before posting and maintain control of your private keys",
+          "qualifier_zh": "发布前务必验证命令并保持对私钥的控制"
+        },
+        "performance_claims": {
+          "context": "When mentioning network speeds or throughput",
+          "qualifier_en": "Performance varies based on network conditions and congestion",
+          "qualifier_zh": "性能因网络状况和拥堵而异"
+        },
+        "cross_network_queries": {
+          "context": "When asked about cross-chain operations", 
+          "qualifier_en": "NYLA operations work within the same network only - no cross-chain bridging supported",
+          "qualifier_zh": "NYLA操作仅在同一网络内工作 - 不支持跨链桥接"
+        }
+      }
+    }
+  ]
+}

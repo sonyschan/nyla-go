@@ -1,0 +1,94 @@
+{
+  "important_notice": "⚠️ CRITICAL: ALWAYS VERIFY CONTRACT ADDRESSES ON OFFICIAL EXPLORERS BEFORE USE",
+  "verification_required": "Contract addresses change over time. Always verify on Etherscan before transactions.",
+  "verification_sources": {
+    "primary": "https://etherscan.io",
+    "secondary": "https://ethereum.org"
+  },
+  "last_verified": "2025-01-15 (REQUIRES RE-VERIFICATION)",
+  "chunks": [
+    {
+      "id": "facts_contracts_ethereum_tokens",
+      "source_id": "ethereum_token_contracts",
+      "type": "facts", 
+      "lang": "bilingual",
+      "title": "Ethereum Token Contracts and Technical Specifications",
+      "section": "contracts",
+      "tags": ["ethereum", "contracts", "tokens", "addresses", "technical", "facts"],
+      "as_of": "2025-01-15",
+      "stability": "volatile",
+      "source_url": "https://etherscan.io",
+      "hash": "fct_eth_contracts_001",
+      "body": "⚠️ WARNING: Always verify contract addresses on Etherscan.io before use. Ethereum token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.",
+      "summary_en": "Authoritative Ethereum token contract addresses with decimals and technical specifications for accurate transfers.",
+      "summary_zh": "权威的以太坊代币合约地址，包含小数位数和技术规格，确保准确转账。",
+      "priority": 8,
+      "related_chunks": ["facts_supported_networks_ethereum_overview"],
+      "glossary_terms": ["Ethereum", "contract", "address", "decimals", "ERC-20"],
+      "contracts": [
+        {
+          "symbol": "ETH",
+          "name": "Ethereum",
+          "address": "native",
+          "decimals": 18,
+          "type": "native",
+          "verified": true,
+          "notes": "Native Ethereum token, no contract address needed"
+        },
+        {
+          "symbol": "USDC",
+          "name": "USD Coin",
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          "decimals": 6,
+          "type": "erc20",
+          "verified": true,
+          "notes": "Circle's USD-backed stablecoin on Ethereum"
+        },
+        {
+          "symbol": "USDT",
+          "name": "Tether USD",
+          "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+          "decimals": 6,
+          "type": "erc20",
+          "verified": true,
+          "notes": "Tether's USD-backed stablecoin on Ethereum"
+        },
+        {
+          "symbol": "WETH",
+          "name": "Wrapped Ethereum",
+          "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+          "decimals": 18,
+          "type": "erc20",
+          "verified": true,
+          "notes": "Wrapped ETH for DeFi compatibility"
+        },
+        {
+          "symbol": "DAI",
+          "name": "Dai Stablecoin",
+          "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          "decimals": 18,
+          "type": "erc20",
+          "verified": true,
+          "notes": "MakerDAO's decentralized stablecoin"
+        },
+        {
+          "symbol": "UNI",
+          "name": "Uniswap",
+          "address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+          "decimals": 18,
+          "type": "erc20",
+          "verified": true,
+          "notes": "Uniswap protocol governance token"
+        }
+      ],
+      "technical_notes": [
+        "⚠️ VERIFICATION REQUIRED: Check all addresses on https://etherscan.io before use",
+        "All ERC-20 tokens follow the same interface standard",
+        "Ethereum uses hex encoding for addresses (0x prefix)",
+        "Native ETH transfers don't require a contract address",
+        "Gas fees required for all Ethereum transactions",
+        "Contract addresses may change - never use without current verification"
+      ]
+    }
+  ]
+}

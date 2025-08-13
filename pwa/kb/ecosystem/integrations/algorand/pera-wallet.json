@@ -1,0 +1,48 @@
+{
+  "chunks": [
+    {
+      "id": "algorand/pera-wallet",
+      "source_id": "pera_integration_facts",
+      "type": "integration",
+      "lang": "bilingual",
+      "title": "Pera Wallet Integration",
+      "entity": "Pera Wallet",
+      "category": "wallet",
+      "chain": "Algorand",
+      "capabilities": ["transfer", "qr", "balance_check", "asa_tokens"],
+      "status": "live",
+      "since": "2025-07-26",
+      "as_of": "2025-07-26",
+      "verified": true,
+      "source_url": "https://docs.perawallet.app/references/wallet-connect",
+      "hash": "int_algo_pera_001",
+      "limits": ["no cross-chain", "algorand_mainnet_only"],
+      "notes": "Wallet connect via WalletConnect v2 protocol. Supports ASA tokens and ALGO transfers. Went live July 26, 2025 as part of NYLA's Algorand integration launch.",
+      "tags": ["facts", "support", "algorand", "wallet", "verified"],
+      "summary_en": "Live wallet integration for ALGO transfers, ASA tokens, and QR code generation.",
+      "summary_zh": "已上線的錢包整合，支援ALGO轉帳、ASA代幣和QR碼生成。",
+      "priority": 9,
+      "stability": "stable",
+      "section": "integrations",
+      "related_chunks": ["algorand/core-support"],
+      "related_partners": ["ecosystem/partners/algorand/algorand-foundation"],
+      "related_campaigns": ["ecosystem/campaigns/algorand/2025-07-nyla-x-algorand-launch"],
+      "glossary_terms": ["Pera Wallet", "WalletConnect", "ASA", "Algorand"],
+      "technical_details": {
+        "wallet_connect_version": "2.0",
+        "supported_methods": ["algo_signTxn", "algo_sendTxn"],
+        "sdk_version": "@perawallet/connect@1.3.2",
+        "networks": ["algorand-mainnet", "algorand-testnet"],
+        "hardware_support": ["ledger_nano"]
+      },
+      "support_matrix": {
+        "transfer": true,
+        "qr_generation": true,
+        "telegram_integration": false,
+        "cross_chain": false,
+        "nft_support": true,
+        "defi_protocols": true
+      }
+    }
+  ]
+}

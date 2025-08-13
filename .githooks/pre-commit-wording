@@ -1,0 +1,182 @@
+#!/bin/bash
+
+# NYLA Knowledge Base Pre-commit Hook
+# Enforces wording policy and chunk validation
+
+echo "🔍 Running NYLA KB pre-commit checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track violations
+VIOLATIONS=0
+WARNINGS=0
+
+# Function to check wording policy violations
+check_wording_policy() {
+    local file="$1"
+    
+    # Load wording policy
+    WORDING_POLICY="pwa/kb/policy/wording.json"
+    
+    if [[ ! -f "$WORDING_POLICY" ]]; then
+        echo -e "${YELLOW}Warning: Wording policy file not found: $WORDING_POLICY${NC}"
+        return 0
+    fi
+    
+    # Check forbidden phrases from policy
+    if grep -qi "3 blockchain features" "$file"; then
+        echo "❌ Forbidden phrase in $file: '3 blockchain features' → Use '3 blockchain networks'"
+        ((VIOLATIONS++))
+    fi
+    
+    if grep -qi "NYLA interface" "$file"; then
+        echo "❌ Identity error in $file: 'NYLA interface' → Use 'NYLAGo interface'"
+        ((VIOLATIONS++))
+    fi
+    
+    if grep -qi "cross-chain transfer" "$file" && ! grep -qi "same network only\|no bridging\|within network" "$file"; then
+        echo "❌ Cross-chain claim without disclaimer in $file"
+        ((VIOLATIONS++))
+    fi
+    
+    # Check for definitive financial claims without disclaimers
+    if grep -qi "guaranteed profit\|always profitable\|zero risk" "$file"; then
+        echo "❌ Prohibited financial claim in $file: Remove definitive profit/risk statements"
+        ((VIOLATIONS++))
+    fi
+    
+    # Check for AI agent confusion
+    if grep -qi "AI agent interface\|agent interface" "$file"; then
+        echo "❌ Terminology confusion in $file: Specify 'NYLA AI agent' or 'NYLAGo interface'"
+        ((VIOLATIONS++))
+    fi
+}
+
+# Function to validate chunk schema
+validate_chunk_schema() {
+    local file="$1"
+    
+    # Check for required summary fields
+    if [[ $file == *.json ]] && [[ $file == *"/kb/"* ]]; then
+        if ! grep -q "summary_en" "$file"; then
+            echo "❌ Missing summary_en in $file"
+            ((VIOLATIONS++))
+        fi
+        
+        if ! grep -q "summary_zh" "$file"; then
+            echo "❌ Missing summary_zh in $file"
+            ((VIOLATIONS++))
+        fi
+        
+        # Check for required fields in chunks
+        if grep -q "\"chunks\":" "$file"; then
+            if ! grep -q "\"verified\":" "$file" && [[ $file == *"/marketing/"* ]]; then
+                echo "❌ Marketing content missing verified field: $file"
+                ((VIOLATIONS++))
+            fi
+            
+            if ! grep -q "\"evidence_url\":" "$file" && [[ $file == *"/marketing/"* ]]; then
+                echo "⚠️  Marketing content missing evidence_url: $file"
+                ((WARNINGS++))
+            fi
+            
+            if ! grep -q "\"as_of\":" "$file"; then
+                echo "❌ Missing as_of date in $file"
+                ((VIOLATIONS++))
+            fi
+            
+            if ! grep -q "\"stability\":" "$file"; then
+                echo "⚠️  Missing stability indicator in $file"
+                ((WARNINGS++))
+            fi
+        fi
+    fi
+}
+
+# Function to check JSON syntax
+validate_json_syntax() {
+    local file="$1"
+    
+    if [[ $file == *.json ]]; then
+        if ! python3 -m json.tool "$file" > /dev/null 2>&1; then
+            echo "❌ Invalid JSON syntax in $file"
+            ((VIOLATIONS++))
+        fi
+    fi
+}
+
+# Function to check marketing content requirements
+validate_marketing_content() {
+    local file="$1"
+    
+    if [[ $file == *"/marketing/"* ]] && [[ $file == *.json ]]; then
+        # Check for evidence and verification
+        if grep -q "verified.*false" "$file"; then
+            # Check for definitive claims when verified=false
+            if grep -qi "will\|definitely\|guaranteed\|always\|never\|100%" "$file"; then
+                echo "⚠️  Definitive claims found in unverified marketing content: $file"
+                ((WARNINGS++))
+            fi
+        fi
+    fi
+}
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [[ -z "$STAGED_FILES" ]]; then
+    echo "✅ No staged files to check"
+    exit 0
+fi
+
+echo "📝 Checking staged files..."
+
+# Process each staged file
+for file in $STAGED_FILES; do
+    # Skip deleted files
+    if [[ ! -f "$file" ]]; then
+        continue
+    fi
+    
+    echo "  → Checking $file"
+    
+    # Validate JSON syntax first
+    validate_json_syntax "$file"
+    
+    # Check KB files
+    if [[ $file == *"/kb/"* ]]; then
+        # Run wording policy checks
+        check_wording_policy "$file"
+        
+        # Validate chunk schema
+        validate_chunk_schema "$file"
+        
+        # Check marketing content
+        validate_marketing_content "$file"
+    fi
+    
+    # Check markdown files for wording issues
+    if [[ $file == *.md ]]; then
+        check_wording_policy "$file"
+    fi
+done
+
+# Report results
+echo ""
+if [[ $VIOLATIONS -gt 0 ]]; then
+    echo -e "${RED}❌ Found $VIOLATIONS violation(s) that must be fixed before commit${NC}"
+    echo -e "${RED}Fix the issues above and try again${NC}"
+    exit 1
+fi
+
+if [[ $WARNINGS -gt 0 ]]; then
+    echo -e "${YELLOW}⚠️  Found $WARNINGS warning(s)${NC}"
+    echo -e "${YELLOW}Consider addressing these issues for better content quality${NC}"
+fi
+
+echo -e "${GREEN}✅ All pre-commit checks passed!${NC}"
+exit 0

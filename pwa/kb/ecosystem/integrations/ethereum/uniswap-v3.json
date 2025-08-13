@@ -1,0 +1,46 @@
+{
+  "chunks": [
+    {
+      "id": "ethereum/uniswap-v3",
+      "source_id": "uniswap_integration_facts",
+      "type": "integration",
+      "lang": "bilingual",
+      "entity": "Uniswap V3",
+      "category": "dex_protocol",
+      "chain": "Ethereum",
+      "capabilities": ["swap", "liquidity", "flash_loans", "price_oracle"],
+      "status": "live", 
+      "since": "2024-06-01",
+      "as_of": "2025-01-15",
+      "verified": true,
+      "source_url": "https://docs.uniswap.org/contracts/v3/reference/deployments",
+      "hash": "int_eth_uni_001",
+      "limits": ["ethereum_mainnet", "high_gas_fees"],
+      "notes": "Direct integration with Uniswap V3 smart contracts. Supports concentrated liquidity and multiple fee tiers.",
+      "tags": ["facts", "support", "ethereum", "dex", "verified"],
+      "summary_en": "Live DEX protocol integration with concentrated liquidity and flash loan capabilities.",
+      "summary_zh": "已上線的DEX協議整合，支援集中流動性和閃電貸款功能。",
+      "priority": 9,
+      "stability": "stable",
+      "section": "integrations", 
+      "related_chunks": ["ethereum/metamask-wallet"],
+      "glossary_terms": ["Uniswap V3", "concentrated liquidity", "flash loans", "fee tiers"],
+      "technical_details": {
+        "contract_factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "router_address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+        "sdk": "@uniswap/v3-sdk@3.10.0",
+        "supported_networks": ["ethereum", "polygon", "arbitrum", "optimism"],
+        "fee_tiers": ["0.01%", "0.05%", "0.30%", "1.00%"]
+      },
+      "support_matrix": {
+        "swap": true,
+        "liquidity_provision": true,
+        "flash_loans": true,
+        "price_oracle": true,
+        "limit_orders": false,
+        "cross_chain": false,
+        "gas_optimization": true
+      }
+    }
+  ]
+}

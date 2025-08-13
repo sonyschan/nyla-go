@@ -1,0 +1,76 @@
+{
+  "chunk_schema": {
+    "required_fields": {
+      "id": "string - unique identifier for this chunk",
+      "source_id": "string - identifier for the source document/topic",
+      "type": "string - content type: facts|howto|policy|faq|troubleshooting|about|integration|ecosystem|marketing",
+      "lang": "string - primary language: en|zh|bilingual",
+      "title": "string - human readable title",
+      "section": "string - subsection within the source",
+      "tags": "array<string> - searchable tags",
+      "as_of": "string - ISO date when content was last verified",
+      "stability": "string - stable|evolving|deprecated",
+      "source_url": "string - reference URL if applicable",
+      "hash": "string - content hash for deduplication",
+      "body": "string - main content body",
+      "summary_en": "string - English summary (50-100 words)",
+      "summary_zh": "string - Chinese summary (50-100 characters)"
+    },
+    "optional_fields": {
+      "priority": "number - relevance weight (1-10)",
+      "related_chunks": "array<string> - related chunk IDs",
+      "examples": "array<object> - code/usage examples",
+      "glossary_terms": "array<string> - terms that need translation context"
+    }
+  },
+  "content_categories": {
+    "integration": {
+      "description": "Facts-grade canonical records of actual NYLA support",
+      "location": "/ecosystem/integrations/<chain>/<entity-slug>.json",
+      "schema": {
+        "id": "<chain>/<entity-slug>",
+        "entity": "string - official entity name",
+        "category": "wallet|dex|dex_aggregator|dex_protocol|bridge|lending",
+        "chain": "string - blockchain network",
+        "capabilities": "array - what NYLA actually supports",
+        "status": "planned|beta|live|deprecated",
+        "since": "date - when support started",
+        "verified": "boolean - confirmed working",
+        "limits": "array - known limitations",
+        "support_matrix": "object - capability boolean matrix"
+      }
+    },
+    "ecosystem": {
+      "description": "Partnership, integration, and collaboration content",
+      "subcategories": {
+        "partners": "Organization profiles (foundations, wallets, DEXs, L2s) - relationship details", 
+        "campaigns": "Co-marketing, events, AMAs, giveaways - narrative content"
+      }
+    },
+    "marketing": {
+      "description": "Brand voice, announcements, blogs, PR content",
+      "subcategories": {
+        "brand": "Brand voice guidelines, messaging, tone",
+        "blogs": "Blog content, articles, thought leadership",
+        "announcements": "Product announcements, updates, releases",
+        "pr": "Press releases, media coverage, external communications"
+      }
+    }
+  },
+  "chunking_guidelines": {
+    "english": {
+      "token_range": "200-300 tokens",
+      "overlap": "15-20% with adjacent chunks",
+      "boundary": "respect sentence boundaries"
+    },
+    "chinese": {
+      "character_range": "350-500 characters",
+      "overlap": "15-20% with adjacent chunks", 
+      "boundary": "respect sentence boundaries"
+    },
+    "bilingual": {
+      "approach": "separate chunks for each language with cross-references",
+      "linking": "use related_chunks field to connect translations"
+    }
+  }
+}

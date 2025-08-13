@@ -1,0 +1,149 @@
+{
+  "chunks": [
+    {
+      "id": "policy_security_disclaimers",
+      "source_id": "answer_templates",
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "Security Disclaimers and Stance",
+      "section": "security_templates",
+      "tags": ["security", "disclaimers", "private-keys", "non-custodial"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/security",
+      "hash": "pol001_sec",
+      "body": "Security templates and required disclaimers for all security-related responses.",
+      "summary_en": "Standard security disclaimers and non-custodial stance templates.",
+      "summary_zh": "标准安全免责声明和非托管立场模板。",
+      "priority": 10,
+      "templates": {
+        "private_key_stance": {
+          "en": "NYLA and NYLAGo never handle or access your private keys. You maintain full control over your assets at all times.",
+          "zh": "NYLA和NYLAGo从不处理或访问您的私钥。您始终完全控制您的资产。"
+        },
+        "non_custodial_disclaimer": {
+          "en": "This is a non-custodial system - we do not hold, store, or have access to your funds or private information.",
+          "zh": "这是一个非托管系统 - 我们不持有、存储或访问您的资金或私人信息。"
+        },
+        "command_transparency": {
+          "en": "All transfer commands are transparent and verifiable on the blockchain. You can review commands before posting.",
+          "zh": "所有转账命令在区块链上都是透明和可验证的。您可以在发布前查看命令。"
+        },
+        "security_best_practices": {
+          "en": "Always verify recipient addresses, amounts, and network before posting transfer commands. Double-check all details.",
+          "zh": "在发布转账命令前，请务必验证收件人地址、金额和网络。仔细检查所有详细信息。"
+        }
+      }
+    },
+    {
+      "id": "policy_cross_chain_limitations",
+      "source_id": "answer_templates", 
+      "type": "policy",
+      "lang": "bilingual",
+      "title": "Cross-Chain Limitation Templates",
+      "section": "limitation_templates",
+      "tags": ["cross-chain", "limitations", "networks", "bridging"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/limitations",
+      "hash": "pol002_cc",
+      "body": "Standard responses for cross-chain limitation queries.",
+      "summary_en": "Templates explaining NYLA's within-network-only operations.",
+      "summary_zh": "解释NYLA仅限网络内操作的模板。",
+      "priority": 10,
+      "templates": {
+        "no_cross_chain_short": {
+          "en": "NYLA operations work within the same blockchain network only. No cross-chain bridging is supported.",
+          "zh": "NYLA操作仅在同一区块链网络内工作。不支持跨链桥接。"
+        },
+        "no_cross_chain_detailed": {
+          "en": "NYLA supports transfers and swaps within individual networks (Solana↔Solana, Ethereum↔Ethereum, Algorand↔Algorand), but cannot transfer between different networks (Solana↔Ethereum). Each network operates independently.",
+          "zh": "NYLA支持在单个网络内进行转账和交换（Solana↔Solana、Ethereum↔Ethereum、Algorand↔Algorand），但无法在不同网络之间转账（Solana↔Ethereum）。每个网络独立运行。"
+        },
+        "bridge_alternative": {
+          "en": "For cross-chain transfers, you would need to use dedicated bridge services outside of NYLA. NYLA focuses on within-network operations for security and simplicity.",
+          "zh": "对于跨链转账，您需要使用NYLA之外的专门桥接服务。NYLA专注于网络内操作以确保安全性和简便性。"
+        }
+      }
+    },
+    {
+      "id": "policy_language_output_rules",
+      "source_id": "answer_templates",
+      "type": "policy", 
+      "lang": "bilingual",
+      "title": "Language Output Rules",
+      "section": "language_templates",
+      "tags": ["language", "output", "bilingual", "response-format"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/language",
+      "hash": "pol003_lng",
+      "body": "Rules and templates for determining response language and format.",
+      "summary_en": "Guidelines for language detection and response formatting in bilingual contexts.",
+      "summary_zh": "双语环境中语言检测和响应格式的准则。",
+      "priority": 8,
+      "rules": {
+        "language_detection": {
+          "chinese_query": "If query contains Chinese characters, respond in Chinese with English technical terms in parentheses",
+          "english_query": "If query is primarily English, respond in English",
+          "mixed_query": "For mixed language queries, match the dominant language of the question"
+        },
+        "technical_terms": {
+          "blockchain_networks": "Always use 'blockchain networks' not 'blockchain features'",
+          "nyla_vs_nylago": "Distinguish NYLA (AI agent) from NYLAGo (interface) clearly",
+          "currency_formatting": "Use $ prefix for tokens ($NYLA, $SOL, $ETH, $ALGO)"
+        },
+        "response_structure": {
+          "step_by_step": "For how-to queries, provide numbered steps with clear actions",
+          "error_responses": "Include troubleshooting steps for error scenarios",
+          "disclaimer_inclusion": "Include security disclaimers for transfer/financial queries"
+        }
+      }
+    },
+    {
+      "id": "policy_volatility_handling",
+      "source_id": "answer_templates",
+      "type": "policy",
+      "lang": "bilingual", 
+      "title": "Volatile Information Handling",
+      "section": "volatility_templates",
+      "tags": ["volatility", "outdated-data", "qualitative", "numbers"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://policy/volatility",
+      "hash": "pol004_vol",
+      "body": "Templates for handling time-sensitive and potentially outdated information.",
+      "summary_en": "Guidelines for presenting volatile data without specific outdated numbers.",
+      "summary_zh": "处理易变数据的指南，避免提及具体的过时数字。",
+      "priority": 9,
+      "templates": {
+        "outdated_fees": {
+          "en": "Transaction fees vary based on network congestion and market conditions. For current rates, check the respective network's fee estimators.",
+          "zh": "交易费用因网络拥堵和市场条件而异。要了解当前费率，请查看相应网络的费用估算器。"
+        },
+        "outdated_performance": {
+          "en": "Network performance metrics change frequently. Refer to real-time network monitors for current transaction speeds and throughput.",
+          "zh": "网络性能指标经常变化。请参考实时网络监控器了解当前交易速度和吞吐量。"
+        },
+        "outdated_prices": {
+          "en": "Token prices are highly volatile and change constantly. Check current market data on exchanges or price tracking platforms.",
+          "zh": "代币价格波动很大，不断变化。请在交易所或价格跟踪平台上查看当前市场数据。"
+        },
+        "qualitative_fallback": {
+          "en": "While specific numbers may be outdated, the general relationship and trends described remain relevant.",
+          "zh": "虽然具体数字可能已过时，但所描述的总体关系和趋势仍然相关。"
+        }
+      },
+      "volatility_rules": {
+        "age_threshold_days": 30,
+        "volatile_indicators": ["fee", "price", "tps", "speed", "cost", "$", "USD"],
+        "qualitative_replacements": {
+          "specific_fee": "low fees",
+          "exact_tps": "high throughput",
+          "precise_time": "fast confirmation",
+          "dollar_amount": "affordable cost"
+        }
+      }
+    }
+  ]
+}

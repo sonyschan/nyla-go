@@ -2365,6 +2365,59 @@ class NYLAAssistantUIV2 {
   }
 
   /**
+   * Generate HTML for RAG metadata (source pills and as_of badges)
+   */
+  generateRAGMetadataHtml(ragMetadata) {
+    const { sources = [], mostRecentDate = null, hasVolatileInfo = false } = ragMetadata;
+    
+    if (!sources.length) return '';
+    
+    let html = '<div class="rag-metadata">';
+    
+    // Add as_of badge if we have recent date info
+    if (mostRecentDate) {
+      const badgeClass = hasVolatileInfo ? 'as-of-badge volatile' : 'as-of-badge';
+      html += `<span class="${badgeClass}" title="Information current as of this date">As of ${mostRecentDate}</span>`;
+    }
+    
+    // Add source pills
+    if (sources.length > 0) {
+      html += '<div class="source-pills">';
+      sources.slice(0, 3).forEach(source => { // Show max 3 sources to avoid clutter
+        const { title = 'Unknown', type = 'info', verified = null } = source;
+        let pillClass = `source-pill ${type}`;
+        let verificationIcon = '';
+        
+        if (verified === true) {
+          pillClass += ' verified';
+          verificationIcon = ' ✓';
+        } else if (verified === false) {
+          pillClass += ' unverified';
+          verificationIcon = ' !';
+        }
+        
+        html += `<span class="${pillClass}" title="Source: ${title}">${this.truncateText(title, 20)}${verificationIcon}</span>`;
+      });
+      
+      if (sources.length > 3) {
+        html += `<span class="source-pill more">+${sources.length - 3} more</span>`;
+      }
+      html += '</div>';
+    }
+    
+    html += '</div>';
+    return html;
+  }
+
+  /**
+   * Truncate text to specified length
+   */
+  truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) return text;
+    return text.substring(0, maxLength - 3) + '...';
+  }
+
+  /**
    * Display a message in the chat
    */
   async displayMessage(message, sender) {
@@ -2396,6 +2449,12 @@ class NYLAAssistantUIV2 {
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const messageText = String(message.text || '');
     
+    // Generate source pills and as_of badges for RAG responses
+    let ragMetadataHtml = '';
+    if (sender === 'nyla' && message.ragMetadata) {
+      ragMetadataHtml = this.generateRAGMetadataHtml(message.ragMetadata);
+    }
+    
     // Only show header if not consecutive NYLA message
     const headerHtml = !isConsecutiveNyla ? `
       <div class="message-header">
@@ -2410,6 +2469,7 @@ class NYLAAssistantUIV2 {
       <div class="message-content" data-text="${messageText.replace(/"/g, '&quot;')}">
         ${sender === 'nyla' ? '' : this.formatMessageText(messageText)}
       </div>
+      ${ragMetadataHtml}
     `;
 
     this.elements.messagesContainer.appendChild(messageElement);

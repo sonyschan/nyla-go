@@ -1,0 +1,120 @@
+{
+  "chunks": [
+    {
+      "id": "howto_raids_participate_guide",
+      "source_id": "raids_participate_guide",
+      "type": "howto",
+      "lang": "bilingual", 
+      "title": "How to Participate in Community Raids",
+      "section": "raids",
+      "tags": ["raid", "community", "engagement", "social", "guide"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://howto/raids/participate",
+      "hash": "how_raids_participate_001",
+      "body": "Complete guide for participating in community raids using NYLA's engagement features. Learn how to find, join, and contribute to community raids effectively.",
+      "summary_en": "Step-by-step guide for joining and participating in community raids through NYLA's social engagement system.",
+      "summary_zh": "通过NYLA社交参与系统加入和参与社区突袭的分步指南。",
+      "priority": 7,
+      "related_chunks": ["howto_raids_create", "ecosystem_campaigns"],
+      "glossary_terms": ["raid", "community", "engagement", "social", "three dots"],
+      "steps": [
+        {
+          "number": 1,
+          "action": "Open NYLAGo and click Raid tab",
+          "details": "Navigate to NYLAGo interface and select the 'Raid' tab to access community engagement features.",
+          "screenshot": null
+        },
+        {
+          "number": 2,
+          "action": "Find active raid campaigns",
+          "details": "Browse the list of active community raids. Look for campaigns with high engagement and clear objectives.",
+          "screenshot": null
+        },
+        {
+          "number": 3,
+          "action": "Select a raid to join",
+          "details": "Click on a raid that interests you. Read the description, goals, and participation requirements carefully.",
+          "screenshot": null
+        },
+        {
+          "number": 4,
+          "action": "Review raid objectives",
+          "details": "Understand what the raid is trying to achieve: likes, retweets, comments, or specific engagement targets.",
+          "screenshot": null
+        },
+        {
+          "number": 5,
+          "action": "Click 'Join Raid' button",
+          "details": "Confirm your participation by clicking the join button. This adds you to the raid participant list.",
+          "screenshot": null
+        },
+        {
+          "number": 6,
+          "action": "Access target posts via three dots",
+          "details": "Click the three dots (⋯) button to get direct links to posts that need engagement from raid participants.",
+          "screenshot": null
+        },
+        {
+          "number": 7,
+          "action": "Engage with target content",
+          "details": "Like, retweet, and comment on the target posts. Provide meaningful engagement, not spam comments.",
+          "screenshot": null
+        },
+        {
+          "number": 8,
+          "action": "Track your contribution",
+          "details": "Monitor your engagement activity in the raid dashboard to see your contribution to the campaign goals.",
+          "screenshot": null
+        }
+      ],
+      "pitfalls": [
+        {
+          "issue": "Spammy or low-quality comments",
+          "solution": "Always provide meaningful, relevant comments. Avoid generic responses like 'nice' or emoji-only comments.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Engaging with wrong posts",
+          "solution": "Always use the three dots (⋯) feature to get correct target posts. Don't guess which posts to engage with.",
+          "severity": "high"
+        },
+        {
+          "issue": "Over-engagement appears botlike",
+          "solution": "Space out your engagement over time. Don't like/comment on everything at once.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Raid objectives not clear",
+          "solution": "Ask questions in the raid discussion or contact raid organizers for clarification before participating.",
+          "severity": "low"
+        },
+        {
+          "issue": "Account flagged for suspicious activity",
+          "solution": "Vary your engagement patterns and always provide genuine interactions. Avoid repetitive behavior.",
+          "severity": "critical"
+        }
+      ],
+      "prerequisites": [
+        "Active X.com account with good standing",
+        "NYLAGo account access",
+        "Understanding of appropriate social media behavior"
+      ],
+      "estimated_time": "5-15 minutes per raid",
+      "difficulty": "beginner",
+      "best_practices": [
+        "Read raid objectives carefully before joining",
+        "Provide genuine, thoughtful engagement",
+        "Space out your activities to appear natural",
+        "Support community members' content authentically",
+        "Report any inappropriate raid objectives to moderators"
+      ],
+      "rewards": [
+        "Community recognition and networking",
+        "Potential token rewards for successful raids",
+        "Increased visibility for your own content",
+        "Building relationships within the ecosystem"
+      ]
+    }
+  ]
+}
