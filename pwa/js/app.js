@@ -70,25 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Custom token management state
   let currentManageTokensSelect = null;
 
-  // i18n variables
-  let i18n, uiTranslator;
-
-  // Initialize i18n system
-  async function initializeI18n() {
-    try {
-      i18n = new NYLAi18n();
-      await i18n.initialize();
-      
-      uiTranslator = new NYLAUITranslator(i18n);
-      uiTranslator.initialize();
-      
-      console.log('✅ i18n initialized');
-      return true;
-    } catch (error) {
-      console.error('❌ i18n initialization failed:', error);
-      return false;
-    }
-  }
+  // i18n is Extension-only - removed from PWA
 
   // Initialize app
   console.log('NYLA GO PWA: Starting application');
@@ -176,9 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Generate initial QR code with default values (after splash)
   async function initializeApp() {
-    // Initialize i18n system first
-    await initializeI18n();
-    
     // Load saved username from localStorage
     const savedUsername = localStorage.getItem('nylaGoUsername');
     if (savedUsername) {
@@ -307,12 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update QR instruction text based on token
   function updateQRInstructionText() {
     const token = receiveTokenSelect.value || 'NYLA';
-    if (uiTranslator) {
-      uiTranslator.onTokenChange(token);
-    } else {
-      // Fallback if i18n not loaded
-      qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
-    }
+    // PWA uses static English text (i18n is Extension-only)
+    qrInstructionText.textContent = `📱 Share this QR code to receive ${token} payments`;
   }
 
   // Generate QR Code for payment requests
