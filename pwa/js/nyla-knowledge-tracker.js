@@ -7,43 +7,27 @@ class NYLAKnowledgeTracker {
   constructor(knowledgeBase) {
     this.kb = knowledgeBase;
     this.userKnowledge = {
-      topics: new Set(),
-      concepts: new Set(),
-      features: new Set(),
-      mappedKeywords: new Set(), // Track unique mapped keywords
+      chunks: new Set(),           // Track individual knowledge chunks learned
+      categories: new Set(),       // Track KB categories covered (about, howto, facts, etc.)
+      tags: new Set(),            // Track tags encountered
+      glossaryTerms: new Set(),   // Track glossary terms learned
       totalExposure: 0,
       lastEngagementPrompt: null,
       engagementHistory: [],
       lastKnowledgeUpdate: Date.now()
     };
     
-    // Calculate total available keywords from mappings
-    this.totalKeywords = this.calculateTotalKeywords();
-    
-    // Define the complete NYLA knowledge universe
-    this.knowledgeUniverse = {
-      topics: [
-        'what-is-nyla', 'nyla-token', 'transfers', 'qr-codes', 'blockchains',
-        'solana', 'ethereum', 'algorand', 'community', 'raids', 'apps',
-        'security', 'fees', 'wallet-integration', 'social-features',
-        'team', 'contract-address', 'buy-links', 'site-stats'
-      ],
-      concepts: [
-        'crypto-transfers', 'multi-blockchain', 'payment-requests', 'qr-generation',
-        'community-building', 'social-viral', 'token-economics', 'defi-integration',
-        'user-experience', 'mobile-first', 'web3-adoption'
-      ],
-      features: [
-        'send-tokens', 'receive-payments', 'generate-qr', 'scan-qr', 'share-request',
-        'join-raids', 'community-apps', 'extension-mode', 'pwa-mode', 'x-integration',
-        'telegram-integration', 'multi-token-support', 'custom-tokens'
-      ]
+    // Initialize structured KB stats
+    this.structuredKB = null;
+    this.kbStats = {
+      totalChunks: 0,
+      totalCategories: 0,
+      totalTags: 0,
+      totalGlossaryTerms: 0
     };
     
-    this.totalKnowledgeItems = 
-      this.knowledgeUniverse.topics.length + 
-      this.knowledgeUniverse.concepts.length + 
-      this.knowledgeUniverse.features.length;
+    // Load structured KB for knowledge calculation
+    this.initializeStructuredKB();
     
     // Auto-save functionality
     this.autoSaveInterval = null;
@@ -68,30 +52,129 @@ class NYLAKnowledgeTracker {
   }
 
   /**
-   * Track knowledge exposure from a conversation
+   * Initialize structured KB for accurate knowledge tracking
    */
-  trackKnowledgeFromConversation(questionId, questionText, topic, answer) {
-    // Store current mapped keywords count to detect new mappings
-    const previousMappedKeywords = this.userKnowledge.mappedKeywords.size;
+  async initializeStructuredKB() {
+    try {
+      // Try to use RAG integration's loaded chunks if available
+      if (window.ragIntegration && window.ragIntegration.ragPipeline) {
+        const ragPipeline = window.ragIntegration.ragPipeline;
+        if (ragPipeline.vectorDB && ragPipeline.vectorDB.chunks) {
+          // Extract chunks from vector DB
+          this.structuredKB = Array.from(ragPipeline.vectorDB.chunks.values());
+          console.log(`📊 Knowledge Tracker: Using RAG pipeline chunks (${this.structuredKB.length})`);
+        }
+      }
+      
+      // Fallback: estimate KB size from known structure
+      if (!this.structuredKB) {
+        console.log('📊 Knowledge Tracker: Using estimated KB statistics');
+        this.kbStats = {
+          totalChunks: 87,       // Known from previous rebuild
+          totalCategories: 8,    // about, facts, faq, glossary, howto, marketing, policy, troubleshooting, ecosystem
+          totalTags: 45,         // Estimated unique tags
+          totalGlossaryTerms: 60 // Estimated glossary terms
+        };
+        return;
+      }
+      
+      // Calculate KB statistics from actual chunks
+      this.calculateKBStats();
+      
+      console.log(`📊 Knowledge Tracker initialized with structured KB:`);
+      console.log(`   Total chunks: ${this.kbStats.totalChunks}`);
+      console.log(`   Categories: ${this.kbStats.totalCategories}`);
+      console.log(`   Unique tags: ${this.kbStats.totalTags}`);
+      console.log(`   Glossary terms: ${this.kbStats.totalGlossaryTerms}`);
+    } catch (error) {
+      console.warn('⚠️ Failed to load structured KB, using fallback tracking:', error);
+      this.fallbackToLegacyTracking();
+    }
+  }
+
+  /**
+   * Calculate statistics from structured KB or metadata
+   */
+  calculateKBStats() {
+    if (!this.structuredKB || this.structuredKB.length === 0) return;
     
-    // Track topic exposure
-    if (topic) {
-      this.userKnowledge.topics.add(topic);
+    const allTags = new Set();
+    const allCategories = new Set();
+    const allGlossaryTerms = new Set();
+    let totalChunks = 0;
+    
+    // Process all chunks from structured KB
+    for (const chunk of this.structuredKB) {
+      totalChunks++;
+      
+      // Track categories (from chunk metadata)
+      const metadata = chunk.metadata || chunk;
+      if (metadata.type) {
+        allCategories.add(metadata.type);
+      }
+      if (metadata.section) {
+        allCategories.add(metadata.section);
+      }
+      
+      // Track tags
+      if (metadata.tags && Array.isArray(metadata.tags)) {
+        metadata.tags.forEach(tag => allTags.add(tag));
+      }
+      
+      // Track glossary terms
+      if (metadata.glossary_terms && Array.isArray(metadata.glossary_terms)) {
+        metadata.glossary_terms.forEach(term => allGlossaryTerms.add(term));
+      }
     }
     
-    // Analyze question and answer for concepts
-    this.analyzeAndTrackConcepts(questionText, answer);
+    this.kbStats = {
+      totalChunks,
+      totalCategories: Math.max(allCategories.size, 8), // Ensure minimum categories
+      totalTags: Math.max(allTags.size, 40),            // Ensure reasonable tag count
+      totalGlossaryTerms: Math.max(allGlossaryTerms.size, 50) // Ensure reasonable term count
+    };
+  }
+
+  /**
+   * Track knowledge exposure from a conversation with structured KB approach
+   */
+  trackKnowledgeFromConversation(questionId, questionText, topic, answer) {
+    const previousKnowledge = {
+      chunks: this.userKnowledge.chunks.size,
+      categories: this.userKnowledge.categories.size,
+      tags: this.userKnowledge.tags.size,
+      glossaryTerms: this.userKnowledge.glossaryTerms.size
+    };
     
-    // Track feature mentions
-    this.trackFeatureMentions(questionText, answer);
+    // Track knowledge from RAG response if available
+    if (answer && answer.ragResult && answer.ragResult.sources) {
+      this.trackFromRAGSources(answer.ragResult.sources);
+    }
     
-    // Check if new keywords were mapped
-    const currentMappedKeywords = this.userKnowledge.mappedKeywords.size;
-    if (currentMappedKeywords > previousMappedKeywords) {
-      const newKeywords = currentMappedKeywords - previousMappedKeywords;
+    // Analyze text content for knowledge elements
+    this.analyzeTextForKnowledge(questionText, answer);
+    
+    // Check if new knowledge was gained
+    const currentKnowledge = {
+      chunks: this.userKnowledge.chunks.size,
+      categories: this.userKnowledge.categories.size,
+      tags: this.userKnowledge.tags.size,
+      glossaryTerms: this.userKnowledge.glossaryTerms.size
+    };
+    
+    const hasNewKnowledge = Object.keys(currentKnowledge).some(
+      key => currentKnowledge[key] > previousKnowledge[key]
+    );
+    
+    if (hasNewKnowledge) {
       const percentage = this.getKnowledgePercentage();
-      console.log(`NYLA Knowledge: ${newKeywords} new keyword(s) mapped (${previousMappedKeywords} → ${currentMappedKeywords})`);
-      console.log(`NYLA Knowledge: Current percentage: ${percentage.toFixed(2)}% (${currentMappedKeywords}/${this.totalKeywords} keywords)`);
+      console.log(`📚 Knowledge gained:`);
+      console.log(`   Chunks: ${previousKnowledge.chunks} → ${currentKnowledge.chunks}`);
+      console.log(`   Categories: ${previousKnowledge.categories} → ${currentKnowledge.categories}`);
+      console.log(`   Tags: ${previousKnowledge.tags} → ${currentKnowledge.tags}`);
+      console.log(`   Glossary: ${previousKnowledge.glossaryTerms} → ${currentKnowledge.glossaryTerms}`);
+      console.log(`   Overall: ${percentage.toFixed(1)}%`);
+      
       this.userKnowledge.lastKnowledgeUpdate = Date.now();
       this.hasUnsavedChanges = true;
       this.saveToStorage();
@@ -102,79 +185,142 @@ class NYLAKnowledgeTracker {
   }
 
   /**
-   * Analyze text for NYLA concepts
+   * Track knowledge from RAG sources (most accurate method)
    */
-  analyzeAndTrackConcepts(questionText, answer) {
-    const textToAnalyze = (questionText + ' ' + (typeof answer === 'string' ? answer : answer.text)).toLowerCase();
-    
-    // Check for concept keywords
-    const conceptMappings = {
-      'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
-      'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
-      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated'],
-      'payment-requests': ['request', 'receive', 'payment', 'invoice'],
-      'qr-generation': ['qr', 'code', 'scan', 'generate'],
-      'community-building': ['community', 'together', 'ecosystem', 'social'],
-      'social-viral': ['viral', 'share', 'post', 'social', 'x.com', 'twitter'],
-      'token-economics': ['token', 'nyla', 'economics', 'value', 'utility'],
-      'defi-integration': ['defi', 'decentralized', 'finance', 'protocol'],
-      'user-experience': ['easy', 'simple', 'user', 'experience', 'interface'],
-      'mobile-first': ['mobile', 'phone', 'app', 'pwa', 'responsive'],
-      'web3-adoption': ['web3', 'adoption', 'mainstream', 'accessible'],
-      'nyla-lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul']
-    };
-    
-    for (const [concept, keywords] of Object.entries(conceptMappings)) {
-      const matchedKeywords = keywords.filter(keyword => textToAnalyze.includes(keyword));
-      if (matchedKeywords.length > 0) {
-        this.userKnowledge.concepts.add(concept);
-        // Track each matched keyword
-        matchedKeywords.forEach(keyword => this.userKnowledge.mappedKeywords.add(keyword));
+  trackFromRAGSources(sources) {
+    for (const source of sources) {
+      // Track chunk ID
+      if (source.id) {
+        this.userKnowledge.chunks.add(source.id);
+      }
+      
+      // Track metadata elements
+      if (source.metadata) {
+        const metadata = source.metadata;
+        
+        // Track category/type
+        if (metadata.type) {
+          this.userKnowledge.categories.add(metadata.type);
+        }
+        
+        // Track tags
+        if (metadata.tags && Array.isArray(metadata.tags)) {
+          metadata.tags.forEach(tag => this.userKnowledge.tags.add(tag));
+        }
+        
+        // Track glossary terms
+        if (metadata.glossary_terms && Array.isArray(metadata.glossary_terms)) {
+          metadata.glossary_terms.forEach(term => this.userKnowledge.glossaryTerms.add(term));
+        }
       }
     }
   }
 
   /**
-   * Track feature mentions
+   * Analyze text content for knowledge elements (fallback when no RAG data)
    */
-  trackFeatureMentions(questionText, answer) {
+  analyzeTextForKnowledge(questionText, answer) {
     const textToAnalyze = (questionText + ' ' + (typeof answer === 'string' ? answer : answer.text)).toLowerCase();
     
-    const featureMappings = {
-      'send-tokens': ['send', 'transfer', 'sending'],
-      'receive-payments': ['receive', 'payment', 'receiving'],
-      'generate-qr': ['generate', 'create', 'qr'],
-      'scan-qr': ['scan', 'scanning', 'camera'],
-      'share-request': ['share', 'sharing', 'link'],
-      'join-raids': ['raid', 'community', 'engagement'],
-      'community-apps': ['apps', 'application', 'community'],
-      'extension-mode': ['extension', 'browser', 'chrome'],
-      'pwa-mode': ['pwa', 'progressive', 'web app'],
-      'x-integration': ['x.com', 'twitter', 'post'],
-      'telegram-integration': ['telegram', 'bot', 'messaging'],
-      'multi-token-support': ['token', 'multiple', 'different'],
-      'custom-tokens': ['custom', 'add token', 'manage'],
-      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team', 'shax_btc', 'btcberries', 'chiefz_sol', 'h2crypto_eth', 'co-founder']
+    // Infer categories from text patterns
+    const categoryPatterns = {
+      'about': ['team', 'founder', 'developer', 'creator', 'who made', 'who built'],
+      'howto': ['how to', 'step', 'guide', 'tutorial', 'instructions'],
+      'facts': ['contract', 'address', 'network', 'blockchain', 'supported'],
+      'faq': ['what is', 'why', 'how does', 'frequently'],
+      'troubleshooting': ['error', 'problem', 'issue', 'troubleshoot', 'fix']
     };
     
-    for (const [feature, keywords] of Object.entries(featureMappings)) {
-      const matchedKeywords = keywords.filter(keyword => textToAnalyze.includes(keyword));
-      if (matchedKeywords.length > 0) {
-        this.userKnowledge.features.add(feature);
-        // Track each matched keyword
-        matchedKeywords.forEach(keyword => this.userKnowledge.mappedKeywords.add(keyword));
+    for (const [category, patterns] of Object.entries(categoryPatterns)) {
+      if (patterns.some(pattern => textToAnalyze.includes(pattern))) {
+        this.userKnowledge.categories.add(category);
+      }
+    }
+    
+    // Infer common tags from text
+    const commonTags = [
+      'transfer', 'send', 'receive', 'blockchain', 'solana', 'ethereum', 'algorand',
+      'qr', 'code', 'community', 'raid', 'team', 'founder', 'developer',
+      'NYLA', 'NYLAGo', 'token', 'payment', 'social', 'x.com', 'twitter'
+    ];
+    
+    for (const tag of commonTags) {
+      if (textToAnalyze.includes(tag.toLowerCase())) {
+        this.userKnowledge.tags.add(tag.toLowerCase());
+      }
+    }
+    
+    // Infer glossary terms from text
+    const commonTerms = [
+      'blockchain', 'smart contract', 'wallet', 'token', 'cryptocurrency',
+      'decentralized', 'web3', 'DeFi', 'NFT', 'stablecoin', 'gas fee',
+      'private key', 'public key', 'seed phrase', 'consensus'
+    ];
+    
+    for (const term of commonTerms) {
+      if (textToAnalyze.includes(term.toLowerCase())) {
+        this.userKnowledge.glossaryTerms.add(term.toLowerCase());
       }
     }
   }
 
   /**
-   * Calculate knowledge percentage based on mapped keywords
+   * Fallback to legacy tracking when structured KB is unavailable
+   */
+  fallbackToLegacyTracking() {
+    console.warn('📚 Knowledge Tracker: Using legacy keyword-based tracking');
+    
+    // Reset to old structure for compatibility
+    this.userKnowledge = {
+      topics: new Set(),
+      concepts: new Set(), 
+      features: new Set(),
+      mappedKeywords: new Set(),
+      totalExposure: 0,
+      lastEngagementPrompt: null,
+      engagementHistory: [],
+      lastKnowledgeUpdate: Date.now()
+    };
+    
+    // Use legacy KB stats
+    this.kbStats = {
+      totalChunks: 150,        // Estimated legacy total
+      totalCategories: 5,      // about, howto, facts, faq, troubleshooting
+      totalTags: 50,           // Estimated unique tags
+      totalGlossaryTerms: 100  // Estimated glossary terms
+    };
+  }
+
+  /**
+   * Calculate knowledge percentage based on structured KB coverage
    */
   getKnowledgePercentage() {
-    const mappedCount = this.userKnowledge.mappedKeywords.size;
-    const percentage = (mappedCount / this.totalKeywords) * 100;
-    // Return percentage with 2 decimal places, capped at 100%
-    return Math.min(Math.round(percentage * 100) / 100, 100);
+    if (!this.structuredKB) {
+      // Fallback calculation for legacy tracking
+      const mappedCount = this.userKnowledge.mappedKeywords ? this.userKnowledge.mappedKeywords.size : 0;
+      return Math.min((mappedCount / 100) * 100, 100); // Assume 100 total for legacy
+    }
+    
+    // Weighted calculation based on different knowledge dimensions
+    const weights = {
+      chunks: 0.5,           // 50% - most important (actual content learned)
+      categories: 0.2,       // 20% - coverage breadth
+      tags: 0.2,            // 20% - topic diversity  
+      glossaryTerms: 0.1     // 10% - vocabulary depth
+    };
+    
+    const scores = {
+      chunks: Math.min(this.userKnowledge.chunks.size / this.kbStats.totalChunks, 1),
+      categories: Math.min(this.userKnowledge.categories.size / this.kbStats.totalCategories, 1),
+      tags: Math.min(this.userKnowledge.tags.size / this.kbStats.totalTags, 1),
+      glossaryTerms: Math.min(this.userKnowledge.glossaryTerms.size / this.kbStats.totalGlossaryTerms, 1)
+    };
+    
+    const weightedScore = Object.keys(weights).reduce((total, key) => {
+      return total + (scores[key] * weights[key]);
+    }, 0);
+    
+    return Math.min(Math.round(weightedScore * 10000) / 100, 100); // 2 decimal places, max 100%
   }
 
   /**
@@ -232,37 +378,51 @@ class NYLAKnowledgeTracker {
   }
 
   /**
-   * Get detailed knowledge breakdown
+   * Get detailed knowledge breakdown based on structured KB
    */
   getKnowledgeBreakdown() {
     const totalPercentage = this.getKnowledgePercentage();
     
-    // Distribute the total percentage across categories proportionally
-    const totalItems = this.userKnowledge.topics.size + this.userKnowledge.concepts.size + this.userKnowledge.features.size;
+    if (!this.structuredKB) {
+      // Legacy fallback
+      return {
+        percentage: totalPercentage,
+        chunks: { known: 0, total: 150, percentage: totalPercentage },
+        categories: { known: 0, total: 5, percentage: 0 },
+        tags: { known: 0, total: 50, percentage: 0 },
+        glossaryTerms: { known: 0, total: 100, percentage: 0 },
+        totalExposure: this.userKnowledge.totalExposure
+      };
+    }
     
     return {
       percentage: totalPercentage,
-      topics: {
-        known: this.userKnowledge.topics.size,
-        total: this.knowledgeUniverse.topics.length,
-        percentage: totalItems > 0 ? Math.round((this.userKnowledge.topics.size / totalItems) * totalPercentage * 10) / 10 : 0
+      chunks: {
+        known: this.userKnowledge.chunks.size,
+        total: this.kbStats.totalChunks,
+        percentage: Math.round((this.userKnowledge.chunks.size / this.kbStats.totalChunks) * 100 * 10) / 10
       },
-      concepts: {
-        known: this.userKnowledge.concepts.size,
-        total: this.knowledgeUniverse.concepts.length,
-        percentage: totalItems > 0 ? Math.round((this.userKnowledge.concepts.size / totalItems) * totalPercentage * 10) / 10 : 0
+      categories: {
+        known: this.userKnowledge.categories.size,
+        total: this.kbStats.totalCategories,
+        percentage: Math.round((this.userKnowledge.categories.size / this.kbStats.totalCategories) * 100 * 10) / 10
       },
-      features: {
-        known: this.userKnowledge.features.size,
-        total: this.knowledgeUniverse.features.length,
-        percentage: totalItems > 0 ? Math.round((this.userKnowledge.features.size / totalItems) * totalPercentage * 10) / 10 : 0
+      tags: {
+        known: this.userKnowledge.tags.size,
+        total: this.kbStats.totalTags,
+        percentage: Math.round((this.userKnowledge.tags.size / this.kbStats.totalTags) * 100 * 10) / 10
+      },
+      glossaryTerms: {
+        known: this.userKnowledge.glossaryTerms.size,
+        total: this.kbStats.totalGlossaryTerms,
+        percentage: Math.round((this.userKnowledge.glossaryTerms.size / this.kbStats.totalGlossaryTerms) * 100 * 10) / 10
       },
       totalExposure: this.userKnowledge.totalExposure
     };
   }
 
   /**
-   * Check if user should receive engagement prompt
+   * Check if user should receive engagement prompt based on structured KB progress
    */
   shouldShowEngagementPrompt(isGreetingActive = false) {
     // DISABLED FOR DEVELOPMENT - Always return false to prevent work breaks
@@ -271,23 +431,42 @@ class NYLAKnowledgeTracker {
     // Don't show if greeting is active
     if (isGreetingActive) return false;
     
-    const percentage = this.getKnowledgePercentage();
+    const breakdown = this.getKnowledgeBreakdown();
+    const percentage = breakdown.percentage;
     const timeSinceLastPrompt = this.userKnowledge.lastEngagementPrompt ? 
       Date.now() - this.userKnowledge.lastEngagementPrompt : Infinity;
     
     // Don't prompt again within 10 minutes
     if (timeSinceLastPrompt < 10 * 60 * 1000) return false;
     
+    // Enhanced engagement logic based on structured KB metrics
     let probability = 0;
+    let engagementReason = '';
     
+    // Trigger 1: Good overall progress (50%+ knowledge)
     if (percentage >= 50) {
-      probability = 0.2; // 20% for 50%+ knowledge
-    } else if (percentage >= 30) {
-      probability = 0.1; // 10% for 30-50% knowledge
+      probability = 0.2; // 20% chance
+      engagementReason = 'high_knowledge';
+    }
+    // Trigger 2: Moderate progress but good category coverage
+    else if (percentage >= 30 && breakdown.categories.known >= 4) {
+      probability = 0.15; // 15% chance
+      engagementReason = 'good_breadth';
+    }
+    // Trigger 3: Deep learning in specific area (high tag diversity)
+    else if (breakdown.tags.known >= 15) {
+      probability = 0.12; // 12% chance
+      engagementReason = 'deep_learning';
+    }
+    // Trigger 4: Consistent learning (multiple chunks from different categories)
+    else if (breakdown.chunks.known >= 10 && breakdown.categories.known >= 3) {
+      probability = 0.1; // 10% chance
+      engagementReason = 'consistent_learning';
     }
     
     if (probability > 0 && Math.random() < probability) {
       this.userKnowledge.lastEngagementPrompt = Date.now();
+      console.log(`🎯 Engagement triggered: ${engagementReason} (${percentage}% knowledge, ${breakdown.chunks.known} chunks, ${breakdown.categories.known} categories)`);
       this.saveToStorage();
       return true;
     }
@@ -296,11 +475,12 @@ class NYLAKnowledgeTracker {
   }
 
   /**
-   * Generate engagement prompt based on user knowledge and history
+   * Generate engagement prompt based on structured KB progress and user learning patterns
    */
   generateEngagementPrompt() {
-    const percentage = this.getKnowledgePercentage();
     const breakdown = this.getKnowledgeBreakdown();
+    const percentage = breakdown.percentage;
+    const gaps = this.getStructuredKnowledgeGaps ? this.getStructuredKnowledgeGaps() : null;
     
     // Avoid recently used categories
     const recentCategories = this.userKnowledge.engagementHistory
@@ -312,16 +492,35 @@ class NYLAKnowledgeTracker {
     // If all categories used recently, allow all again
     const categories = availableCategories.length > 0 ? availableCategories : [1, 2, 3, 4];
     
-    const selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+    // Smart category selection based on user progress
+    let selectedCategory;
+    if (percentage >= 60 && breakdown.categories.known >= 5) {
+      // High knowledge users - focus on community engagement
+      selectedCategory = availableCategories.includes(2) ? 2 : categories[0]; // Community engagement
+    } else if (breakdown.chunks.known >= 15 && breakdown.categories.known >= 4) {
+      // Experienced users - encourage sharing knowledge
+      selectedCategory = availableCategories.includes(1) ? 1 : categories[0]; // Feedback
+    } else if (breakdown.tags.known >= 10) {
+      // Learning users - encourage practical application
+      selectedCategory = availableCategories.includes(3) ? 3 : categories[0]; // Transfer encouragement
+    } else {
+      // Default random selection
+      selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+    }
     
-    console.log(`NYLA Knowledge Tracker: Selected category ${selectedCategory} from available [${categories.join(', ')}]`);
-    console.log(`NYLA Knowledge Tracker: Recent categories in last 24h: [${recentCategories.join(', ')}]`);
+    console.log(`🎯 Smart engagement: Selected category ${selectedCategory} based on progress:`);
+    console.log(`   Knowledge: ${percentage}%, Chunks: ${breakdown.chunks.known}, Categories: ${breakdown.categories.known}, Tags: ${breakdown.tags.known}`);
+    console.log(`   Recent categories in last 24h: [${recentCategories.join(', ')}]`);
     
-    // Track this engagement attempt
+    // Track this engagement attempt with enhanced metadata
     this.userKnowledge.engagementHistory.push({
       category: selectedCategory,
       timestamp: Date.now(),
-      knowledgePercentage: percentage
+      knowledgePercentage: percentage,
+      chunksKnown: breakdown.chunks.known,
+      categoriesKnown: breakdown.categories.known,
+      tagsKnown: breakdown.tags.known,
+      engagementReason: this.getEngagementReason(breakdown)
     });
     
     // Keep only last 10 engagement attempts
@@ -331,13 +530,37 @@ class NYLAKnowledgeTracker {
     
     this.saveToStorage();
     
-    return this.createEngagementPrompt(selectedCategory, percentage, breakdown);
+    return this.createEngagementPrompt(selectedCategory, percentage, breakdown, gaps);
+  }
+  
+  /**
+   * Determine engagement reason based on knowledge breakdown
+   */
+  getEngagementReason(breakdown) {
+    if (breakdown.percentage >= 60) return 'expert_level';
+    if (breakdown.categories.known >= 5) return 'broad_knowledge';
+    if (breakdown.chunks.known >= 15) return 'deep_learning';
+    if (breakdown.tags.known >= 10) return 'diverse_topics';
+    return 'steady_progress';
+  }
+  
+  /**
+   * Get human-readable engagement trigger reason
+   */
+  getEngagementTriggerReason(percentage, breakdown) {
+    if (percentage >= 60) return `Expert level (${percentage}% knowledge)`;
+    if (breakdown.categories.known >= 5) return `Broad coverage (${breakdown.categories.known} categories)`;
+    if (breakdown.chunks.known >= 15) return `Deep learning (${breakdown.chunks.known} chunks)`;
+    if (breakdown.tags.known >= 10) return `Topic diversity (${breakdown.tags.known} tags)`;
+    if (percentage >= 50) return `High knowledge (${percentage}%)`;
+    if (percentage >= 30) return `Good progress (${percentage}%)`;
+    return `Steady learning (${percentage}%)`;
   }
 
   /**
-   * Create specific engagement prompt
+   * Create specific engagement prompt with structured KB context
    */
-  createEngagementPrompt(category, percentage, breakdown) {
+  createEngagementPrompt(category, percentage, breakdown, gaps = null) {
     const prompts = {
       1: { // Feedback Category
         messages: [
@@ -431,8 +654,15 @@ class NYLAKnowledgeTracker {
         actions: fallbackPrompt.actions,
         knowledgeContext: {
           percentage,
-          breakdown,
-          trigger: percentage >= 50 ? '50%+ knowledge' : '30%+ knowledge'
+          breakdown, 
+          gaps,
+          trigger: this.getEngagementTriggerReason(percentage, breakdown),
+          structuredProgress: {
+            chunksLearned: breakdown.chunks.known,
+            categoriesCovered: breakdown.categories.known,
+            tagsDiversified: breakdown.tags.known,
+            vocabularyBuilt: breakdown.glossaryTerms.known
+          }
         }
       };
     }
@@ -446,7 +676,14 @@ class NYLAKnowledgeTracker {
       knowledgeContext: {
         percentage,
         breakdown,
-        trigger: percentage >= 50 ? '50%+ knowledge' : '30%+ knowledge'
+        gaps,
+        trigger: this.getEngagementTriggerReason(percentage, breakdown),
+        structuredProgress: {
+          chunksLearned: breakdown.chunks.known,
+          categoriesCovered: breakdown.categories.known,
+          tagsDiversified: breakdown.tags.known,
+          vocabularyBuilt: breakdown.glossaryTerms.known
+        }
       }
     };
   }
@@ -534,20 +771,29 @@ class NYLAKnowledgeTracker {
   }
   
   /**
-   * Save knowledge state to localStorage
+   * Save knowledge state to localStorage with structured KB format
    */
   saveToStorage() {
     try {
       const data = {
-        topics: [...this.userKnowledge.topics],
-        concepts: [...this.userKnowledge.concepts],
-        features: [...this.userKnowledge.features],
-        mappedKeywords: [...this.userKnowledge.mappedKeywords],
+        // New structured KB format (v3)
+        chunks: [...(this.userKnowledge.chunks || [])],
+        categories: [...(this.userKnowledge.categories || [])],
+        tags: [...(this.userKnowledge.tags || [])],
+        glossaryTerms: [...(this.userKnowledge.glossaryTerms || [])],
+        
+        // Legacy format for backward compatibility
+        topics: [...(this.userKnowledge.topics || [])],
+        concepts: [...(this.userKnowledge.concepts || [])],
+        features: [...(this.userKnowledge.features || [])],
+        mappedKeywords: [...(this.userKnowledge.mappedKeywords || [])],
+        
+        // Common fields
         totalExposure: this.userKnowledge.totalExposure,
         lastEngagementPrompt: this.userKnowledge.lastEngagementPrompt,
         engagementHistory: this.userKnowledge.engagementHistory,
         lastKnowledgeUpdate: this.userKnowledge.lastKnowledgeUpdate,
-        version: 2,
+        version: 3, // Updated version for structured KB
         savedAt: Date.now()
       };
       
@@ -566,7 +812,8 @@ class NYLAKnowledgeTracker {
       
       this.hasUnsavedChanges = false;
       const percentage = this.getKnowledgePercentage();
-      console.log(`NYLA Knowledge: Saved ${percentage}% progress (${this.userKnowledge.mappedKeywords.size} keywords)`);
+      const chunkCount = this.userKnowledge.chunks ? this.userKnowledge.chunks.size : 0;
+      console.log(`NYLA Knowledge: Saved ${percentage}% progress (${chunkCount} chunks learned)`);
     } catch (error) {
       console.error('NYLA Knowledge Tracker: Failed to save to storage', error);
       
@@ -677,12 +924,29 @@ class NYLAKnowledgeTracker {
         }
       }
       
-      // Load the data
+      // Load the data with version compatibility
       if (data) {
+        // Load structured KB format (v3) if available
+        if (data.version >= 3) {
+          this.userKnowledge.chunks = new Set(data.chunks || []);
+          this.userKnowledge.categories = new Set(data.categories || []);
+          this.userKnowledge.tags = new Set(data.tags || []);
+          this.userKnowledge.glossaryTerms = new Set(data.glossaryTerms || []);
+        } else {
+          // Initialize empty sets for new format
+          this.userKnowledge.chunks = new Set();
+          this.userKnowledge.categories = new Set();
+          this.userKnowledge.tags = new Set();
+          this.userKnowledge.glossaryTerms = new Set();
+        }
+        
+        // Load legacy format for backward compatibility
         this.userKnowledge.topics = new Set(data.topics || []);
         this.userKnowledge.concepts = new Set(data.concepts || []);
         this.userKnowledge.features = new Set(data.features || []);
         this.userKnowledge.mappedKeywords = new Set(data.mappedKeywords || []);
+        
+        // Common fields
         this.userKnowledge.totalExposure = data.totalExposure || 0;
         this.userKnowledge.lastEngagementPrompt = data.lastEngagementPrompt || null;
         this.userKnowledge.engagementHistory = data.engagementHistory || [];
@@ -708,156 +972,152 @@ class NYLAKnowledgeTracker {
   }
 
   /**
-   * Get keywords that haven't been mapped by user yet
+   * Get structured knowledge gaps for targeted learning
    */
-  getUnmappedKeywords() {
-    const allKeywords = new Set();
+  getStructuredKnowledgeGaps() {
+    const breakdown = this.getKnowledgeBreakdown();
+    const userKnowledge = this.userKnowledge;
     
-    // Add all concept keywords
-    const conceptMappings = {
-      'crypto-transfers': ['transfer', 'send', 'payment', 'transaction'],
-      'blockchain-networks': ['blockchain', 'solana', 'ethereum', 'algorand', 'network', 'networks', 'infrastructure'],
-      'network-isolation': ['same-chain', 'within', 'independent', 'separate', 'isolated'],
-      'payment-requests': ['request', 'receive', 'payment', 'invoice'],
-      'qr-generation': ['qr', 'code', 'scan', 'generate'],
-      'community-building': ['community', 'together', 'ecosystem', 'social'],
-      'social-viral': ['viral', 'share', 'post', 'social', 'x.com', 'twitter'],
-      'token-economics': ['token', 'nyla', 'economics', 'value', 'utility'],
-      'defi-integration': ['defi', 'decentralized', 'finance', 'protocol'],
-      'user-experience': ['easy', 'simple', 'user', 'experience', 'interface'],
-      'mobile-first': ['mobile', 'phone', 'app', 'pwa', 'responsive'],
-      'web3-adoption': ['web3', 'adoption', 'mainstream', 'accessible'],
-      'nyla-lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul']
-    };
+    console.log(`📊 Structured Knowledge Gap Analysis: ${breakdown.percentage}% overall coverage`);
     
-    const featureMappings = {
-      'send-tokens': ['send', 'transfer', 'sending'],
-      'receive-payments': ['receive', 'payment', 'receiving'],
-      'generate-qr': ['generate', 'create', 'qr'],
-      'scan-qr': ['scan', 'scanning', 'camera'],
-      'share-request': ['share', 'sharing', 'link'],
-      'join-raids': ['raid', 'community', 'engagement'],
-      'community-apps': ['apps', 'application', 'community'],
-      'extension-mode': ['extension', 'browser', 'chrome'],
-      'pwa-mode': ['pwa', 'progressive', 'web app'],
-      'x-integration': ['x.com', 'twitter', 'post'],
-      'telegram-integration': ['telegram', 'bot', 'messaging'],
-      'multi-token-support': ['token', 'multiple', 'different'],
-      'custom-tokens': ['custom', 'add token', 'manage'],
-      'team-info': ['team', 'founder', 'developer', 'creator', 'who made', 'built by', 'dev team', 'shax_btc', 'btcberries', 'chiefz_sol', 'h2crypto_eth', 'co-founder']
-    };
-    
-    // Collect all unique keywords
-    Object.values(conceptMappings).forEach(keywords => 
-      keywords.forEach(keyword => allKeywords.add(keyword.toLowerCase()))
-    );
-    Object.values(featureMappings).forEach(keywords => 
-      keywords.forEach(keyword => allKeywords.add(keyword.toLowerCase()))
-    );
-    
-    // Find unmapped keywords
-    const unmappedKeywords = [];
-    for (const keyword of allKeywords) {
-      if (!this.userKnowledge.mappedKeywords.has(keyword)) {
-        unmappedKeywords.push(keyword);
+    return {
+      categories: {
+        missing: ['about', 'facts', 'howto', 'faq', 'glossary', 'troubleshooting', 'marketing', 'ecosystem']
+          .filter(cat => !(userKnowledge.categories || new Set()).has(cat)),
+        coverage: breakdown.categories.percentage
+      },
+      tags: {
+        missing: ['transfer', 'blockchain', 'solana', 'ethereum', 'algorand', 'qr', 'team', 'security']
+          .filter(tag => !(userKnowledge.tags || new Set()).has(tag)),
+        coverage: breakdown.tags.percentage
+      },
+      glossaryTerms: {
+        missing: ['blockchain', 'smart contract', 'gas fee', 'defi', 'web3']
+          .filter(term => !(userKnowledge.glossaryTerms || new Set()).has(term)),
+        coverage: breakdown.glossaryTerms.percentage
+      },
+      chunks: {
+        learned: breakdown.chunks.known,
+        total: breakdown.chunks.total,
+        coverage: breakdown.chunks.percentage
       }
-    }
-    
-    console.log(`📊 Knowledge Gap Analysis: ${unmappedKeywords.length} unmapped out of ${allKeywords.size} total keywords`);
-    return unmappedKeywords;
+    };
   }
   
   /**
-   * Generate follow-up questions targeting unmapped keywords
+   * Generate knowledge gap questions based on structured KB coverage
    */
   generateKnowledgeGapQuestions() {
-    const unmappedKeywords = this.getUnmappedKeywords();
     const currentPercentage = this.getKnowledgePercentage();
+    const breakdown = this.getKnowledgeBreakdown();
     
-    // Keyword to question mapping for targeted discovery
-    const keywordToQuestions = {
-      // Blockchain diversity
-      'algorand': "What are the benefits of using Algorand blockchain?",
-      'multi-chain': "How does multi-chain functionality work?",
-      
-      // Advanced features  
-      'invoice': "Can I create invoice-style payment requests?",
-      'defi': "How does NYLAGo integrate with DeFi protocols?",
-      'protocol': "What cryptocurrency protocols does NYLA support?",
-      'decentralized': "How does the decentralized system work?",
-      
-      // Platform features
-      'chrome': "What unique features does the Chrome extension have?",
-      'telegram': "Are there Telegram integration features?",
-      'bot': "How does the Telegram bot functionality work?",
-      'pwa': "What are the Progressive Web App features?",
-      'responsive': "How does NYLAGo work on different screen sizes?",
-      
-      // Token economics
-      'economics': "How does NYLA token economics work?",
-      'utility': "What utility does the NYLA token provide?",
-      'value': "What gives NYLA token its value?",
-      
-      // Social/Community
-      'viral': "How do viral sharing features work?",
-      'ecosystem': "What's the NYLA ecosystem like?",
-      'together': "How does NYLA bring the community together?",
-      'mainstream': "How is NYLA making crypto more mainstream?",
-      'accessible': "What makes NYLAGo accessible to new users?",
-      
-      // Technical
-      'camera': "How does the camera scanning feature work?",
-      'interface': "What makes the user interface special?",
-      'manage': "How do I manage custom tokens?",
-      'custom': "Can I add custom tokens to NYLAGo?",
-      
-      // Team and Development
-      'team': "Who is behind the NYLA project?",
-      'founder': "Who founded NYLA?",
-      'developer': "Who are the developers of NYLAGo?",
-      'creator': "Who created NYLA?",
-      'built': "Who built NYLAGo?",
-      
-      // NYLA Lore and Culture
-      'lore': "What's the story behind NYLA?",
-      'story': "Tell me NYLA's origin story",
-      'background': "What's NYLA's background and history?",
-      'journey': "What has NYLA's development journey been like?",
-      'mission': "What is NYLA's mission?",
-      'vision': "What's NYLA's vision for the future?",
-      'values': "What values does NYLA stand for?",
-      'culture': "What's the culture like in NYLA community?",
-      'spiritual': "What's the spiritual meaning behind NYLA?",
-      'meaning': "What's the deeper meaning of NYLA?",
-      'purpose': "What's NYLA's ultimate purpose?",
-      'philosophy': "What philosophy drives NYLA?",
-      'origin': "How did NYLA originally start?",
-      'inspiration': "What was the inspiration behind NYLA?",
-      'soul': "What's the soul of the NYLA project?"
+    console.log(`🎯 Generating knowledge gaps from structured KB coverage: ${currentPercentage}%`);
+    
+    const gapQuestions = [];
+    
+    // Gap 1: Missing categories - identify unexplored KB sections
+    const availableCategories = ['about', 'facts', 'howto', 'faq', 'glossary', 'troubleshooting', 'marketing', 'ecosystem'];
+    const userCategories = this.userKnowledge.categories || new Set();
+    const missingCategories = availableCategories.filter(cat => !userCategories.has(cat));
+    
+    const categoryQuestions = {
+      'about': "Who are the people behind NYLA and what's the team structure?",
+      'facts': "What are the technical contract addresses and network specifications?", 
+      'howto': "How do I perform specific tasks like creating QR codes or joining raids?",
+      'faq': "What are the most common questions and answers about NYLA?",
+      'glossary': "What do key cryptocurrency and blockchain terms mean?",
+      'troubleshooting': "How do I solve common issues with transfers and connections?",
+      'marketing': "What's NYLA's brand identity and visual elements?",
+      'ecosystem': "What partnerships and integrations does NYLA have?"
     };
     
-    const targetedQuestions = [];
+    // Add category gap questions (prioritize important categories)
+    const priorityCategories = ['about', 'howto', 'facts', 'ecosystem'];
+    const categoryGaps = missingCategories.filter(cat => priorityCategories.includes(cat));
     
-    // Prioritize unmapped keywords by importance
-    const priorityKeywords = unmappedKeywords.filter(keyword => 
-      ['algorand', 'defi', 'telegram', 'pwa', 'economics', 'mainstream', 'custom', 'team', 'founder', 'developer', 'creator', 'built', 'lore', 'story', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy'].includes(keyword)
-    );
+    for (const category of categoryGaps.slice(0, 2)) { // Max 2 category questions
+      gapQuestions.push({
+        text: categoryQuestions[category],
+        targetCategory: category,
+        source: 'category-gap',
+        priority: priorityCategories.includes(category) ? 'high' : 'normal'
+      });
+    }
     
-    const keywordsToTarget = priorityKeywords.length > 0 ? priorityKeywords : unmappedKeywords.slice(0, 8);
+    // Gap 2: Missing important tags - identify unexplored topics
+    const importantTags = [
+      'transfer', 'send', 'receive', 'blockchain', 'solana', 'ethereum', 'algorand',
+      'qr', 'team', 'founder', 'community', 'raid', 'smart contract', 'wallet',
+      'security', 'fees', 'troubleshoot', 'integration', 'partnership'
+    ];
     
-    for (const keyword of keywordsToTarget) {
-      if (keywordToQuestions[keyword]) {
-        targetedQuestions.push({
-          text: keywordToQuestions[keyword],
-          targetKeyword: keyword,
-          source: 'knowledge-gap',
-          priority: priorityKeywords.includes(keyword) ? 'high' : 'normal'
+    const userTags = this.userKnowledge.tags || new Set();
+    const missingTags = importantTags.filter(tag => !userTags.has(tag));
+    
+    const tagQuestions = {
+      'algorand': "What are the benefits of using Algorand blockchain with NYLA?",
+      'ethereum': "How does NYLA work on the Ethereum network?",
+      'solana': "What makes Solana special for NYLA transfers?",
+      'smart contract': "How do NYLA's smart contracts ensure security?",
+      'security': "What security measures does NYLA implement?",
+      'fees': "How do transaction fees work across different networks?",
+      'integration': "What external services and wallets integrate with NYLA?",
+      'partnership': "What strategic partnerships does NYLA have?",
+      'troubleshoot': "How do I resolve common transfer issues?",
+      'raid': "How do community raids work and how can I participate?",
+      'founder': "Who founded NYLA and what's their background?",
+      'wallet': "Which wallets are supported and recommended?"
+    };
+    
+    // Add tag gap questions (prioritize based on importance and user progress)
+    const tagGaps = missingTags.slice(0, 3); // Max 3 tag questions
+    for (const tag of tagGaps) {
+      if (tagQuestions[tag]) {
+        gapQuestions.push({
+          text: tagQuestions[tag],
+          targetTag: tag,
+          source: 'tag-gap',
+          priority: ['security', 'fees', 'integration'].includes(tag) ? 'high' : 'normal'
         });
       }
     }
     
-    console.log(`🎯 Generated ${targetedQuestions.length} knowledge-gap questions for keywords:`, keywordsToTarget);
-    return targetedQuestions;
+    // Gap 3: Glossary terms - identify missing technical vocabulary
+    const coreGlossaryTerms = [
+      'blockchain', 'cryptocurrency', 'smart contract', 'wallet', 'private key',
+      'gas fee', 'decentralized', 'web3', 'defi', 'consensus', 'stablecoin'
+    ];
+    
+    const userGlossaryTerms = this.userKnowledge.glossaryTerms || new Set();
+    const missingGlossaryTerms = coreGlossaryTerms.filter(term => !userGlossaryTerms.has(term));
+    
+    const glossaryQuestions = {
+      'blockchain': "What is a blockchain and how does it work?",
+      'smart contract': "What are smart contracts and how do they execute automatically?",
+      'gas fee': "What are gas fees and how do they affect my transactions?",
+      'defi': "What is DeFi and how does NYLA connect to decentralized finance?",
+      'web3': "What is Web3 and how is NYLA part of this movement?",
+      'consensus': "How do blockchain consensus mechanisms work?",
+      'stablecoin': "What are stablecoins and why are they useful for transfers?"
+    };
+    
+    // Add glossary gap questions (max 2)
+    const glossaryGaps = missingGlossaryTerms.slice(0, 2);
+    for (const term of glossaryGaps) {
+      if (glossaryQuestions[term]) {
+        gapQuestions.push({
+          text: glossaryQuestions[term],
+          targetGlossaryTerm: term,
+          source: 'glossary-gap',
+          priority: ['blockchain', 'smart contract', 'gas fee'].includes(term) ? 'high' : 'normal'
+        });
+      }
+    }
+    
+    console.log(`🎯 Generated ${gapQuestions.length} structured KB gap questions:`);
+    console.log(`   Category gaps: ${categoryGaps.length}, Tag gaps: ${tagGaps.length}, Glossary gaps: ${glossaryGaps.length}`);
+    
+    return gapQuestions;
   }
 
   /**

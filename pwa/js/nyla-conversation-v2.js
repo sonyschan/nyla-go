@@ -257,45 +257,31 @@ class NYLAConversationManagerV2 {
 
       let response;
       
-      // Hybrid approach: decide between LLM and rules
+      // Try LLM if available, otherwise fallback to "don't know" response
       const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
       console.log('NYLA Conversation V2: LLM Status:', llmStatus);
       
-      const shouldUseLLM = this.shouldUseLLM(questionId, questionText);
-      console.log('NYLA Conversation V2: Should use LLM:', shouldUseLLM, 'for question:', questionId);
-      
-      // Enhanced condition checking with detailed logging
-      const llmConditionCheck = {
-        shouldUseLLM: shouldUseLLM,
-        llmInitialized: llmStatus.initialized,
-        llmNotLoading: !llmStatus.loading,
-        llmWarmedUp: llmStatus.warmedUp,
-        overallCondition: shouldUseLLM && llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp
-      };
-      
-      console.log('NYLA Conversation V2: 🔍 LLM Condition Check:', llmConditionCheck);
-      console.log('NYLA Conversation V2: 📊 Full LLM Status:', llmStatus);
-      
-      // Check for Android debugging - try LLM even if not fully warmed up
+      // Check for mobile device (LLM engine will be null on mobile)
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const shouldForceDebug = isMobile && shouldUseLLM && llmStatus.initialized && !llmStatus.loading;
       
-      if (llmConditionCheck.overallCondition || shouldForceDebug) {
+      // Use LLM if engine is ready, or force attempt on mobile for debugging
+      const canUseLLM = llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp;
+      const shouldForceDebug = isMobile && llmStatus.initialized && !llmStatus.loading;
+      
+      if (canUseLLM || shouldForceDebug) {
         if (shouldForceDebug) {
-          console.log('NYLA Conversation V2: 🔧 ANDROID DEBUG: Forcing LLM attempt even if not warmed up');
+          console.log('NYLA Conversation V2: 🔧 MOBILE DEBUG: Forcing LLM attempt even if not warmed up');
         } else {
           console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
         }
         response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
       } else {
-        console.log('NYLA Conversation V2: ⚠️ Using rule-based system - LLM conditions not met');
-        console.log('NYLA Conversation V2: 🚨 FAILING CONDITIONS:', {
-          'shouldUseLLM (always true)': shouldUseLLM ? '✅' : '❌',
+        console.log('NYLA Conversation V2: ⚠️ LLM not ready - using fallback response');
+        console.log('NYLA Conversation V2: 🚨 LLM Status:', {
           'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
           'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
           'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌',
-          'isMobile': isMobile ? '✅' : '❌',
-          'shouldForceDebug': shouldForceDebug ? '✅' : '❌'
+          'isMobile': isMobile ? '✅' : '❌'
         });
         
         // Special handling when engine is initializing but not warmed up
@@ -303,7 +289,14 @@ class NYLAConversationManagerV2 {
           console.log('NYLA Conversation V2: 🔥 LLM engine warming up GPU buffers...');
         }
         
-        response = await this.processWithEnhancedRules(questionId, questionText, identifiedTopics);
+        // Simplified fallback - just return "don't know" response
+        response = {
+          answer: { text: "Sorry, I don't know about this.", isLLMGenerated: false },
+          followUps: [],
+          sticker: null,
+          timestamp: Date.now(),
+          isLLMGenerated: false
+        };
       }
       
       // Track knowledge exposure (only if knowledge tracker is available)
@@ -383,35 +376,6 @@ class NYLAConversationManagerV2 {
     }
   }
 
-  /**
-   * Determine if question should use LLM or rules (hybrid approach)
-   * TEMPORARILY DISABLED: Always use LLM to test speed improvements
-   */
-  shouldUseLLM(questionId, questionText) {
-    // TEMPORARILY: Always use LLM to test optimizations and knowledge base access
-    return true;
-    
-    // Previous hybrid logic (commented out for testing)
-    /*
-    const ruleBasedQuestions = [
-      'what-is-nyla',
-      'how-to-send', 
-      'how-to-receive',
-      'supported-blockchains',
-      'change-topic'
-    ];
-    
-    // Note: V2 removed hardcoded topic checks, now uses dynamic identification
-    if (ruleBasedQuestions.includes(questionId)) {
-      return false;
-    }
-    
-    const llmKeywords = ['why', 'how can', 'what if', 'compare', 'explain', 'understand', 'help me'];
-    const hasComplexKeywords = llmKeywords.some(keyword => questionText.toLowerCase().includes(keyword));
-    
-    return hasComplexKeywords || questionText.length > 50;
-    */
-  }
 
   /**
    * Process question using LLM (supports streaming for UI)
@@ -508,12 +472,28 @@ class NYLAConversationManagerV2 {
       }
     }
     
+    // Enhanced context with structured KB data
+    const structuredKnowledgeContext = this.knowledgeTracker ? {
+      chunks: Array.from(this.knowledgeTracker.userKnowledge.chunks || []),
+      categories: Array.from(this.knowledgeTracker.userKnowledge.categories || []),
+      tags: Array.from(this.knowledgeTracker.userKnowledge.tags || []),
+      glossaryTerms: Array.from(this.knowledgeTracker.userKnowledge.glossaryTerms || []),
+      breakdown: this.knowledgeTracker.getKnowledgeBreakdown(),
+      gaps: this.knowledgeTracker.getStructuredKnowledgeGaps ? 
+        this.knowledgeTracker.getStructuredKnowledgeGaps() : null
+    } : null;
+    
     const conversationContext = {
       timezone: this.userProfile.timezone,
       localTime: this.userProfile.localTime,
       conversationHistory: this.conversationHistory.slice(-3), // Reduced from 5 to 3 for speed
       userProfile: this.userProfile,
       knowledgeContext: knowledgeContext,
+      
+      // Enhanced structured knowledge data
+      structuredKnowledge: structuredKnowledgeContext,
+      
+      // Legacy compatibility
       knowledgeTracker: this.knowledgeTracker, // For knowledge gap analysis
       knowledgeStats: this.knowledgeTracker ? this.knowledgeTracker.getKnowledgeBreakdown() : null // For plateau detection
     };
@@ -522,10 +502,15 @@ class NYLAConversationManagerV2 {
     console.log('NYLA Conversation V2: Question:', questionText);
     console.log('NYLA Conversation V2: Relevant knowledge keys:', relevantKeys);
     console.log('NYLA Conversation V2: Knowledge retrieved:', conversationContext.knowledgeContext);
-    console.log('NYLA Conversation V2: Context provided to LLM:', {
+    console.log('NYLA Conversation V2: Enhanced context provided to LLM:', {
       hasKnowledge: !!conversationContext.knowledgeContext,
+      hasStructuredKB: !!conversationContext.structuredKnowledge,
       historyLength: conversationContext.conversationHistory.length,
       searchResultCount: conversationContext.knowledgeContext?.searchResults?.length || 0,
+      userChunksLearned: conversationContext.structuredKnowledge?.chunks.length || 0,
+      userCategories: conversationContext.structuredKnowledge?.categories.length || 0,
+      userTags: conversationContext.structuredKnowledge?.tags.length || 0,
+      knowledgePercentage: conversationContext.structuredKnowledge?.breakdown?.percentage || 0,
       relevantKeys: relevantKeys
     });
     
@@ -663,38 +648,6 @@ class NYLAConversationManagerV2 {
     };
   }
 
-  /**
-   * Process with enhanced rule-based system (fallback)
-   */
-  async processWithEnhancedRules(questionId, questionText, identifiedTopics) {
-    // Enhanced version of original rule-based system (V2 updated)
-    // Ensure identifiedTopics is awaited if it's a Promise
-    const resolvedTopics = identifiedTopics || await this.identifyRelevantKnowledgeKeys(questionText);
-    const answer = await this.generateEnhancedAnswer(questionId, questionText, resolvedTopics);
-    
-    // Add personal care check with timezone awareness (20% probability)
-    const personalCareCheck = this.generatePersonalCareCheck();
-    if (personalCareCheck) {
-      answer.text += `\n\n${personalCareCheck.message}`;
-      this.trackPersonalCareQuestion(personalCareCheck.type);
-    }
-
-    // Use pre-identified topics from processQuestion method
-    const primaryTopic = resolvedTopics.length > 0 ? resolvedTopics[0] : 'general';
-    
-    const followUps = this.generateContextualFollowUps(answer, primaryTopic, questionText, answer.isChangeTopicResponse);
-    const sticker = this.selectSticker(answer.sentiment);
-
-    this.saveConversation(questionText, answer, primaryTopic);
-
-    return {
-      answer,
-      followUps,
-      sticker,
-      timestamp: Date.now(),
-      isLLMGenerated: false
-    };
-  }
 
   /**
    * Generate personal care check with timezone awareness
@@ -1099,175 +1052,9 @@ class NYLAConversationManagerV2 {
 
   // ... [Continue with rest of the methods, extending the original conversation manager]
 
-  /**
-   * Enhanced answer generation (fallback method)
-   * Updated to use V2 dynamic topic identification
-   */
-  async generateEnhancedAnswer(questionId, questionText, identifiedTopics) {
-    // This is an enhanced version of the original generateAnswer method
-    // with better context awareness and timezone considerations
-    
-    // Use pre-identified topics from processQuestion method
-    const relevantKeys = identifiedTopics;
-    let knowledge = null;
-    
-    // Try RAG-based search first for better knowledge retrieval
-    if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
-      try {
-        console.log('NYLA Conversation V2: Enhanced answer using RAG semantic search');
-        
-        const ragResult = await this.ragIntegration.ragPipeline.query(questionText, {
-          topK: 1,
-          minScore: 0.5
-        });
-        
-        if (ragResult.sources && ragResult.sources.length > 0) {
-          knowledge = ragResult.sources[0].metadata.content || ragResult.sources[0].text;
-          console.log('NYLA Conversation V2: RAG found knowledge for enhanced answer');
-        }
-      } catch (error) {
-        console.warn('NYLA Conversation V2: RAG knowledge search failed in generateEnhancedAnswer:', error);
-      }
-    }
-    
-    // Fallback to legacy keyword search if RAG failed or unavailable
-    if (!knowledge && this.kb && this.kb.searchKnowledge) {
-      console.log('NYLA Conversation V2: Enhanced answer using legacy keyword search');
-      const searchResults = [];
-      
-      // Search using identified keys
-      for (const key of relevantKeys) {
-        const keywordSearch = this.topicKeywords[key]?.join(' ') || key;
-        const result = this.kb.searchKnowledge(keywordSearch);
-        if (result && result.length > 0) {
-          searchResults.push(...result);
-        }
-      }
-      
-      // Also search using the original question
-      const directSearch = this.kb.searchKnowledge(questionText);
-      if (directSearch && directSearch.length > 0) {
-        searchResults.push(...directSearch);
-      }
-      
-      // Use first result for compatibility with legacy code
-      if (searchResults.length > 0) {
-        knowledge = searchResults[0].data;
-      }
-    }
-    
-    switch (questionId) {
-      case 'what-is-nyla':
-        return this.generateWhatIsNYLAAnswerEnhanced(knowledge);
-      case 'how-to-send':
-        return this.generateTransferAnswerEnhanced(knowledge, 'send');
-      case 'how-to-receive':
-        return this.generateTransferAnswerEnhanced(knowledge, 'receive');
-      default:
-        return this.generateGenericAnswerEnhanced(questionText, knowledge);
-    }
-  }
 
-  /**
-   * Enhanced "What is NYLA" answer with personality
-   */
-  generateWhatIsNYLAAnswerEnhanced(knowledge) {
-    const hour = new Date(this.userProfile.localTime).getHours();
-    let greeting = '';
-    
-    if (hour < 12) {
-      greeting = 'Good morning! ☀️ ';
-    } else if (hour < 18) {
-      greeting = 'Good afternoon! 🌟 ';
-    } else {
-      greeting = 'Good evening! 🌙 ';
-    }
 
-    return {
-      text: `${greeting}Great question! Let me explain both NYLA and NYLAGo:\n\n**NYLA** 🧠 is the core AI token and ecosystem that powers blockchain transfers and community building.\n\n**NYLAGo** 🚀 is this user-friendly tutorial app you're using right now! It makes NYLA accessible by providing:\n\n• **Tutorial Interface**: Step-by-step guidance for crypto transfers\n• **Simple Forms**: Easy QR code generation and payment requests\n• **Multi-Chain Support**: Works with Solana, Ethereum, and Algorand\n• **Community Features**: Raids and app showcases\n• **Beginner-Friendly**: No technical expertise required!\n\nI'm NYLA's AI assistant, here to help you learn and navigate the crypto world through NYLAGo's interface! What would you like to explore first?`,
-      sentiment: 'excited',
-      confidence: 0.95
-    };
-  }
 
-  /**
-   * Enhanced generic answer for other questions
-   */
-  generateGenericAnswerEnhanced(questionText, knowledge) {
-    const hour = new Date(this.userProfile.localTime).getHours();
-    let greeting = '';
-    
-    if (hour < 12) {
-      greeting = 'Good morning! ☀️ ';
-    } else if (hour < 18) {
-      greeting = 'Good afternoon! 🌟 ';
-    } else {
-      greeting = 'Good evening! 🌙 ';
-    }
-
-    // Use knowledge base if available
-    if (knowledge && knowledge.content) {
-      let response = `${greeting}Great question! `;
-      
-      if (knowledge.content.description) {
-        response += knowledge.content.description;
-      } else if (knowledge.content.answer) {
-        response += knowledge.content.answer;
-      } else if (typeof knowledge.content === 'string') {
-        response += knowledge.content;
-      } else {
-        response += "I'd be happy to help you with NYLA and cryptocurrency questions!";
-      }
-      
-      // Add helpful context about NYLAGo
-      response += "\n\nRemember, you're using NYLAGo - the tutorial interface that makes NYLA accessible to everyone! Feel free to explore the Send, Receive, and Swap tabs to try out the features.";
-      
-      return {
-        text: response,
-        sentiment: 'helpful',
-        confidence: 0.85
-      };
-    }
-
-    // Fallback response when no knowledge available
-    return {
-      text: `${greeting}Sorry, I don't know about this.`,
-      sentiment: 'helpful',
-      confidence: 0.7
-    };
-  }
-
-  /**
-   * Enhanced transfer answer for send/receive questions
-   */
-  generateTransferAnswerEnhanced(knowledge, type) {
-    const hour = new Date(this.userProfile.localTime).getHours();
-    let greeting = '';
-    
-    if (hour < 12) {
-      greeting = 'Good morning! ☀️ ';
-    } else if (hour < 18) {
-      greeting = 'Good afternoon! 🌟 ';
-    } else {
-      greeting = 'Good evening! 🌙 ';
-    }
-
-    let response = `${greeting}Great question about ${type === 'send' ? 'sending' : 'receiving'} NYLA! `;
-    
-    if (type === 'send') {
-      response += `Here's how to send NYLA payments:\n\n• **Use the Send Tab**: Click on "Send" at the top of NYLAGo\n• **Enter Recipient**: Add their X (Twitter) username\n• **Choose Amount**: Select how much NYLA to send\n• **Pick Blockchain**: Solana, Ethereum, or Algorand\n• **Share on X**: Click "Send to X.com" to post the transfer request\n\nThe recipient can then claim the payment through the NYLA system! 💸`;
-    } else {
-      response += `Here's how to receive NYLA payments:\n\n• **Use the Receive Tab**: Click on "Receive" at the top of NYLAGo\n• **Set Your Details**: Enter your X username and desired amount\n• **Generate QR Code**: Automatically created for easy sharing\n• **Share Payment Request**: Use the QR code or share button\n• **Get Paid**: Others can scan or click to send you NYLA\n\nIt's that simple! The QR code makes it super easy for others to pay you. 💰`;
-    }
-    
-    response += `\n\nNYLAGo makes crypto transfers as easy as social media posts. Try it out using the tabs above!`;
-    
-    return {
-      text: response,
-      sentiment: 'helpful',
-      confidence: 0.9
-    };
-  }
 
   /**
    * Track user interests with enhanced analytics
