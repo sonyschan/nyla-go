@@ -39,16 +39,16 @@ class NYLAAssistantV2 {
     try {
       console.log('NYLA Assistant V2: === Starting Phase 2 initialization ===');
       
-      // Initialize knowledge base
-      console.log('NYLA Assistant V2: Step 1 - Loading knowledge base...');
-      if (typeof NYLAKnowledgeBase === 'undefined') {
-        throw new Error('NYLAKnowledgeBase not available');
-      }
-      this.knowledgeBase = new NYLAKnowledgeBase();
-      console.log('NYLA Assistant V2: Calling knowledgeBase.initialize()...');
-      await this.knowledgeBase.initialize();
+      // Initialize structured knowledge base (RAG-based)
+      console.log('NYLA Assistant V2: Step 1 - Using structured KB from RAG system...');
+      // Legacy NYLAKnowledgeBase removed - using RAG system for knowledge retrieval
+      this.knowledgeBase = {
+        // Minimal compatibility interface
+        getStaticKnowledgeBase: () => ({ message: 'Using structured KB via RAG system' }),
+        topics: { transfers: true, qrCodes: true, blockchains: true }
+      };
       this.features.knowledgeBase = true;
-      console.log('NYLA Assistant V2: ✅ Knowledge base initialized');
+      console.log('NYLA Assistant V2: ✅ Structured knowledge base ready (RAG-based)');
       
       // Initialize enhanced conversation manager V2
       console.log('NYLA Assistant V2: Step 2 - Setting up enhanced conversation manager...');
