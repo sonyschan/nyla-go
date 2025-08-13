@@ -876,7 +876,7 @@ class NYLAAssistantUIV2 {
 
     try {
       // Get the simplified system prompt for greeting generation
-      simplifiedSystemPrompt = this.conversation.llmEngine.createSystemPromptForGreeting();
+      simplifiedSystemPrompt = this.conversation.llmEngine.createSystemPrompt();
       
       // Use dynamic timeout based on LLM warmup status - increased for more reliability
       const timeoutDuration = llmStatus.warmedUp ? 12000 : 25000; // 12s if warmed up, 25s if warming up
