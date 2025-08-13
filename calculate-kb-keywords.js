@@ -1,18 +1,20 @@
 /**
- * NYLA Knowledge Base Keyword Calculator
- * Calculates the total number of keywords that can be matched in the KB
+ * NYLA Knowledge Base Keyword Calculator (DEPRECATED)
+ * 
+ * NOTE: This file is deprecated as of the structured KB migration.
+ * Topic identification now uses dynamic metadata from /pwa/kb/ via RAG system.
+ * 
+ * Legacy hardcoded keywords have been replaced with:
+ * - Dynamic 'type' categories: about, facts, howto, faq, etc.
+ * - Dynamic 'section' groupings: team, transfers, supported_networks, etc. 
+ * - Dynamic 'tags' from KB content
+ * 
+ * See nyla-conversation-v2.js identifyRelevantKnowledgeKeys() method.
  */
 
-// Topic keywords from nyla-conversation-v2.js
-const topicKeywords = {
-  'about': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
-  'supportedBlockchains': ['blockchain', 'chain', 'solana', 'ethereum', 'algorand', 'supported', 'which blockchain', 'what blockchain', 'network', 'fees', 'cost', 'cheap', 'expensive'],
-  'platformLimitations': ['telegram', 'platform', 'support', 'twitter', 'x.com', 'social media', 'where can', 'which platform'],
-  'raidFeature': ['raid', 'community', 'engage', 'engagement', 'three dots', '...', 'social', 'like', 'retweet', 'comment'],
-  'qrCodes': ['qr', 'qr code', 'code', 'scan', 'payment', 'mobile', 'phone', 'share'],
-  'nylaCommands': ['command', 'swap', 'transfer command', 'how to use', 'usage', 'syntax'],
-  'about': ['about', 'what is', 'features', 'benefits', 'description', 'overview', 'introduction'],
-  'stickers': ['sticker', 'emoji', 'reaction', 'fun', 'cute', 'image']
+// DEPRECATED: Topic keywords now extracted dynamically from structured KB metadata
+const deprecatedTopicKeywords = {
+  // This data is no longer used - kept for reference only
 };
 
 // Concept keywords from nyla-knowledge-tracker.js

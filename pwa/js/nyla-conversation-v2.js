@@ -29,19 +29,8 @@ class NYLAConversationManagerV2 {
       userResponses: {}
     };
 
-    // Dynamic topic identification system (replaces v1 hardcoded topics)
-    this.topicKeywords = {
-      'about': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
-      'supportedBlockchains': ['blockchain', 'chain', 'solana', 'ethereum', 'algorand', 'supported', 'which blockchain', 'what blockchain', 'network', 'fees', 'cost', 'cheap', 'expensive'],
-      'platformLimitations': ['telegram', 'platform', 'support', 'twitter', 'x.com', 'social media', 'where can', 'which platform'],
-      'raidFeature': ['raid', 'community', 'engage', 'engagement', 'three dots', '...', 'social', 'like', 'retweet', 'comment'],
-      'qrCodes': ['qr', 'qr code', 'code', 'scan', 'payment', 'mobile', 'phone', 'share'],
-      'nylaCommands': ['command', 'swap', 'transfer command', 'how to use', 'usage', 'syntax'],
-      'about': ['about', 'what is', 'features', 'benefits', 'description', 'overview', 'introduction'],
-      'team': ['team', 'founder', 'developer', 'creator', 'who made', 'who built', 'who created', 'behind', 'dev team', 'development team'],
-      'lore': ['lore', 'story', 'background', 'history', 'journey', 'mission', 'vision', 'values', 'culture', 'spiritual', 'meaning', 'purpose', 'philosophy', 'origin', 'inspiration', 'soul'],
-      'stickers': ['sticker', 'emoji', 'reaction', 'fun', 'cute', 'image']
-    };
+    // Topic identification now uses structured KB metadata (type, section, tags) via RAG system
+    // No hardcoded keywords needed - topics are dynamically extracted from KB structure
 
     // Knowledge tracking and engagement
     this.knowledgeTracker = null;
@@ -80,50 +69,61 @@ class NYLAConversationManagerV2 {
           minScore: 0.4
         });
         
-        // Extract topic categories from RAG results
-        const ragTopics = ragResult.sources.map(source => {
-          // Map source categories back to our topic structure
-          const category = source.metadata?.category || 'general';
-          return category;
-        }).filter((topic, index, self) => self.indexOf(topic) === index); // Remove duplicates
+        // Extract topic categories from RAG results using structured KB metadata
+        const topicCounts = {};
+        
+        ragResult.sources.forEach(source => {
+          const metadata = source.metadata || {};
+          const score = source.score || 0.5;
+          
+          // Count by type (about, facts, howto, etc.)
+          if (metadata.type) {
+            topicCounts[metadata.type] = (topicCounts[metadata.type] || 0) + score;
+          }
+          
+          // Count by section (team, transfers, supported_networks, etc.)
+          if (metadata.section) {
+            topicCounts[metadata.section] = (topicCounts[metadata.section] || 0) + score;
+          }
+          
+          // Count by tags for more specific topics
+          if (metadata.tags && Array.isArray(metadata.tags)) {
+            metadata.tags.forEach(tag => {
+              topicCounts[tag] = (topicCounts[tag] || 0) + (score * 0.7); // Tags get slightly lower weight
+            });
+          }
+        });
+        
+        // Sort by score and return top topics
+        const ragTopics = Object.entries(topicCounts)
+          .sort(([,a], [,b]) => b - a)
+          .map(([topic]) => topic)
+          .slice(0, 3);
         
         console.log('NYLA Conversation V2: RAG identified topics:', ragTopics);
         return ragTopics.slice(0, 3);
         
       } catch (error) {
-        console.warn('NYLA Conversation V2: RAG topic identification failed, falling back to keyword matching:', error);
+        console.warn('NYLA Conversation V2: RAG topic identification failed:', error);
       }
     }
     
-    // Fallback to rule-based keyword matching (legacy approach)
-    console.log('NYLA Conversation V2: Using rule-based topic identification (fallback)');
+    // Simple fallback: return generic topics when RAG is unavailable
+    console.log('NYLA Conversation V2: RAG unavailable, using generic topics');
     const inputLower = userInput.toLowerCase();
-    const keywordScores = {};
     
-    // Score each knowledge base key based on keyword matches
-    for (const [knowledgeKey, keywords] of Object.entries(this.topicKeywords)) {
-      let score = 0;
-      
-      for (const keyword of keywords) {
-        if (inputLower.includes(keyword.toLowerCase())) {
-          // Longer keywords get higher scores (more specific matches)
-          score += keyword.length;
-        }
-      }
-      
-      if (score > 0) {
-        keywordScores[knowledgeKey] = score;
-      }
+    // Basic topic inference from common keywords
+    if (inputLower.includes('team') || inputLower.includes('founder') || inputLower.includes('developer')) {
+      return ['team', 'about'];
+    } else if (inputLower.includes('send') || inputLower.includes('transfer') || inputLower.includes('payment')) {
+      return ['transfers', 'howto'];
+    } else if (inputLower.includes('blockchain') || inputLower.includes('solana') || inputLower.includes('ethereum')) {
+      return ['supported_networks', 'facts'];
+    } else if (inputLower.includes('raid') || inputLower.includes('community')) {
+      return ['raids', 'howto'];
+    } else {
+      return ['about', 'general'];
     }
-    
-    // Sort by score (highest first) and return top matches
-    const sortedKeys = Object.entries(keywordScores)
-      .sort(([,a], [,b]) => b - a)
-      .map(([key]) => key);
-    
-    console.log('NYLA Conversation V2: Rule-based identified topics:', sortedKeys.slice(0, 3));
-    
-    return sortedKeys.slice(0, 3); // Return top 3 most relevant keys
   }
 
   /**
@@ -442,10 +442,9 @@ class NYLAConversationManagerV2 {
       console.log('NYLA Conversation V2: Using legacy keyword search for knowledge context');
       const searchResults = [];
       
-      // Search using the identified keys as search terms
+      // Search using the identified keys directly as search terms
       for (const key of relevantKeys) {
-        const keywordSearch = this.topicKeywords[key]?.join(' ') || key;
-        const result = this.kb.searchKnowledge(keywordSearch);
+        const result = this.kb.searchKnowledge(key);
         if (result && result.length > 0) {
           searchResults.push(...result);
         }
@@ -1214,7 +1213,7 @@ class NYLAConversationManagerV2 {
       ];
     }
     // For transfer-related responses
-    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'about' || topic === 'nylaCommands') {
+    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'about' || topic === 'transfers' || topic === 'howto') {
       contextualFollowUps = [
         { id: 'try-send-now', text: '💸 Try sending now', context: 'hands-on practice' },
         { id: 'qr-code-help', text: '📱 How do QR codes work?', context: 'technical details' },
@@ -1223,7 +1222,7 @@ class NYLAConversationManagerV2 {
       ];
     }
     // For community/feature responses
-    else if (responseText.includes('community') || responseText.includes('raid') || responseText.includes('app') || topic === 'raidFeature') {
+    else if (responseText.includes('community') || responseText.includes('raid') || responseText.includes('app') || topic === 'raids' || topic === 'community') {
       contextualFollowUps = [
         { id: 'join-raid', text: '🎯 How do I join a raid?', context: 'participation guide' },
         { id: 'community-apps', text: '🚀 Show me community apps', context: 'app exploration' },
@@ -1232,7 +1231,7 @@ class NYLAConversationManagerV2 {
       ];
     }
     // For blockchain/technical responses
-    else if (responseText.includes('blockchain') || responseText.includes('solana') || responseText.includes('ethereum') || topic === 'supportedBlockchains') {
+    else if (responseText.includes('blockchain') || responseText.includes('solana') || responseText.includes('ethereum') || topic === 'supported_networks' || topic === 'facts') {
       contextualFollowUps = [
         { id: 'try-solana', text: '🟢 Try Solana transfers', context: 'hands-on practice' },
         { id: 'try-ethereum', text: '🔷 Try Ethereum transfers', context: 'hands-on practice' },
