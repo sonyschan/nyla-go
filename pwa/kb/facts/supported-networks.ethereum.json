@@ -1,0 +1,34 @@
+{
+  "chunks": [
+    {
+      "id": "facts_supported_networks_ethereum_overview",
+      "source_id": "ethereum_network_facts",
+      "type": "facts",
+      "lang": "bilingual",
+      "title": "Ethereum Network Support", 
+      "section": "supported_networks",
+      "tags": ["ethereum", "network", "blockchain", "smart-contracts", "defi", "facts"],
+      "as_of": "2025-01-15",
+      "stability": "volatile",
+      "source_url": "https://ethereum.org",
+      "hash": "fct_ethereum_support_001",
+      "body": "Ethereum Network: Most established blockchain platform, foundational to smart contracts, DeFi, and NFTs. Uses Proof of Stake consensus since The Merge. ~15-30 TPS mainnet speed. Variable gas fees $5-$50+ USD per transaction. Native token: ETH. NYLA supports transfers and swaps within Ethereum network only.",
+      "summary_en": "Most established blockchain with smart contracts. PoS consensus, $5-50+ variable fees, 15-30 TPS.",
+      "summary_zh": "最成熟的智能合约区块链。PoS共识，5-50+美元可变费用，15-30 TPS。",
+      "priority": 9,
+      "glossary_terms": ["Ethereum", "smart contract", "DeFi", "gas fee", "Proof of Stake"],
+      "network_specs": {
+        "consensus": "Proof of Stake",
+        "tps_mainnet": "15-30",
+        "fee_range_usd": "5-50+",
+        "native_token": "ETH",
+        "finality_seconds": "12-13"
+      },
+      "nyla_support": {
+        "supported_operations": ["transfer", "swap", "qr_generation"],
+        "cross_chain": false,
+        "status": "live"
+      }
+    }
+  ]
+}

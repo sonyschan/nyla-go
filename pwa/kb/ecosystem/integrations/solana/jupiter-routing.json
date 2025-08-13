@@ -1,0 +1,47 @@
+{
+  "chunks": [
+    {
+      "id": "solana/jupiter-routing",
+      "source_id": "jupiter_integration_facts",
+      "type": "integration",
+      "lang": "bilingual",
+      "title": "Jupiter DEX Aggregator Integration",
+      "entity": "Jupiter",
+      "category": "dex_aggregator", 
+      "chain": "Solana",
+      "capabilities": ["swap", "routing", "price_api", "limit_orders"],
+      "status": "live",
+      "since": "2024-08-01",
+      "as_of": "2025-01-15",
+      "verified": true,
+      "source_url": "https://docs.jup.ag/docs/apis/swap-api",
+      "hash": "int_sol_jup_001",
+      "limits": ["solana_only", "slippage_based"],
+      "notes": "DEX aggregator routing across 20+ Solana DEXs. Includes MEV protection and price optimization.",
+      "tags": ["facts", "support", "solana", "dex", "verified"],
+      "summary_en": "Live DEX aggregator for optimal Solana token routing across 20+ exchanges.",
+      "summary_zh": "已上線的DEX聚合器，在20多個交易所中提供最優Solana代幣路由。",
+      "priority": 9,
+      "stability": "stable", 
+      "section": "integrations",
+      "related_chunks": ["solana/phantom-wallet"],
+      "glossary_terms": ["Jupiter", "DEX aggregator", "routing", "Solana", "MEV"],
+      "technical_details": {
+        "api_version": "v6",
+        "sdk": "@jup-ag/api@6.0.0",
+        "rate_limits": "600_requests_per_minute",
+        "supported_dexs": ["Orca", "Raydium", "Serum", "Saber", "Mercurial"],
+        "fee_structure": "0.25% platform fee (configurable)"
+      },
+      "support_matrix": {
+        "swap": true,
+        "routing": true, 
+        "price_api": true,
+        "limit_orders": true,
+        "dca": true,
+        "cross_chain": false,
+        "mev_protection": true
+      }
+    }
+  ]
+}

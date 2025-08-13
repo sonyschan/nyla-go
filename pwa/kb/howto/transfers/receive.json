@@ -1,0 +1,101 @@
+{
+  "chunks": [
+    {
+      "id": "howto_transfers_receive_guide",
+      "source_id": "receive_transfer_guide", 
+      "type": "howto",
+      "lang": "bilingual",
+      "title": "How to Receive Tokens",
+      "section": "transfers",
+      "tags": ["transfer", "receive", "tokens", "guide", "wallet"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://howto/transfers/receive",
+      "hash": "how_receive_guide_001",
+      "body": "Complete guide for receiving tokens through NYLA. Learn how to share your wallet address and verify incoming transfers.",
+      "summary_en": "Step-by-step guide for receiving tokens through NYLA with wallet address sharing and verification.",
+      "summary_zh": "通过NYLA接收代币的分步指南，包括钱包地址共享和验证。",
+      "priority": 9,
+      "related_chunks": ["howto_transfers_send_guide", "howto_qr_create_guide"],
+      "glossary_terms": ["transfer", "receive", "wallet", "address", "NYLA"],
+      "steps": [
+        {
+          "number": 1,
+          "action": "Open NYLAGo and click Receive tab",
+          "details": "Navigate to NYLAGo interface and select the 'Receive' tab to access wallet address and QR code generation.",
+          "screenshot": null
+        },
+        {
+          "number": 2,
+          "action": "Select blockchain network",
+          "details": "Choose the network you want to receive tokens on (Solana, Ethereum, or Algorand). Make sure sender uses the same network.",
+          "screenshot": null
+        },
+        {
+          "number": 3,
+          "action": "Connect your wallet",
+          "details": "Connect your wallet (Phantom for Solana, MetaMask for Ethereum, Pera for Algorand) to display your receiving address.",
+          "screenshot": null
+        },
+        {
+          "number": 4,
+          "action": "Copy wallet address",
+          "details": "Copy your wallet address from the display. This is the address senders need to send tokens to you.",
+          "screenshot": null
+        },
+        {
+          "number": 5,
+          "action": "Share address with sender",
+          "details": "Send your wallet address to the person sending you tokens. You can share via DM, email, or generate a QR code.",
+          "screenshot": null
+        },
+        {
+          "number": 6,
+          "action": "Monitor for incoming transfers",
+          "details": "Watch your wallet balance and transaction history for incoming transfers. NYLA will post confirmation when transfer completes.",
+          "screenshot": null
+        },
+        {
+          "number": 7,
+          "action": "Verify transaction details",
+          "details": "Check the transaction hash, amount, and sender details match what you expected to receive.",
+          "screenshot": null
+        }
+      ],
+      "pitfalls": [
+        {
+          "issue": "Wrong network address shared",
+          "solution": "Always verify the network matches what sender will use. Solana addresses are different from Ethereum addresses.",
+          "severity": "critical"
+        },
+        {
+          "issue": "Wallet not connected",
+          "solution": "Ensure your wallet extension is installed, unlocked, and connected to NYLAGo.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Address copied incorrectly",
+          "solution": "Always use the copy button rather than manually selecting text to avoid errors.",
+          "severity": "high"
+        },
+        {
+          "issue": "Transfer doesn't appear",
+          "solution": "Check blockchain explorer with your wallet address. Network congestion may delay appearance in wallet.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Wrong token type received",
+          "solution": "Confirm with sender they selected correct token. Some wallets don't display all token types by default.",
+          "severity": "low"
+        }
+      ],
+      "prerequisites": [
+        "Wallet extension installed and set up",
+        "Active X.com account (for NYLA notifications)",
+        "Basic understanding of blockchain networks"
+      ],
+      "estimated_time": "1-2 minutes",
+      "difficulty": "beginner"
+    }
+  ]
+}

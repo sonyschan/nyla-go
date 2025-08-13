@@ -1,0 +1,26 @@
+{
+  "chunks": [
+    {
+      "id": "marketing_brand_voice_guidelines",
+      "source_id": "brand_voice",
+      "type": "marketing",
+      "lang": "bilingual", 
+      "title": "NYLA Brand Voice Guidelines",
+      "section": "brand",
+      "tags": ["brand", "voice", "tone", "messaging", "guidelines", "PR"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://marketing/brand",
+      "hash": "mkt001_bv",
+      "body": "NYLA brand voice emphasizes innovation, accessibility, and trust in AI-powered DeFi. Tone: Professional yet approachable, technically accurate but user-friendly. Key messages: AI democratizes DeFi access, non-custodial security, cross-chain interoperability. Avoid: Overly technical jargon, financial advice implications, competitive disparagement. Voice personality: Knowledgeable guide, innovative pioneer, trusted advisor. Use active voice, clear explanations, and inclusive language.",
+      "summary_en": "NYLA brand guidelines emphasizing innovation, accessibility, and trust with professional yet approachable tone.",
+      "summary_zh": "NYLA品牌指导原则，强调创新、可及性和信任，采用专业而亲切的语调。",
+      "priority": 7,
+      "related_chunks": ["policy_wording_nyla_identity"],
+      "glossary_terms": ["brand voice", "tone", "messaging", "DeFi", "AI"],
+      "exclude_from_tech": true,
+      "evidence_url": "internal://marketing/brand-guidelines-2025",
+      "verified": true
+    }
+  ]
+}

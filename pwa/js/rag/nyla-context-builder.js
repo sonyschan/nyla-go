@@ -592,7 +592,15 @@ class NYLAContextBuilder {
         ? `[Source: ${chunk.metadata.title || chunk.metadata.source}]`
         : '';
       
-      sections.push(`${citation}
+      // Add verification status for marketing content
+      let verificationNote = '';
+      if (chunk.metadata.type === 'marketing' && chunk.metadata.verified !== undefined) {
+        verificationNote = chunk.metadata.verified 
+          ? ' [VERIFIED CONTENT]'
+          : ' [UNVERIFIED MARKETING CONTENT - Use qualifying language]';
+      }
+      
+      sections.push(`${citation}${verificationNote}
 ${chunk.text}${chunk.truncated ? '...' : ''}`);
     }
     
@@ -646,7 +654,8 @@ IMPORTANT RULES:
 2. If the information is not in the context, say "I don't have that information"
 3. Be concise and accurate
 4. Always clarify that operations work within single blockchains only (no cross-chain)
-5. Focus on being helpful and user-friendly`;
+5. Focus on being helpful and user-friendly
+6. For marketing content marked "verified: false", avoid definitive claims (avoid words like "guaranteed", "always", "never", "definitely", "100%") and use qualifying language instead ("may", "typically", "generally")`;
   }
 
   /**

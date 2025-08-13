@@ -1,0 +1,253 @@
+{
+  "chunks": [
+    {
+      "id": "troubleshoot_transfer_not_working",
+      "source_id": "transfer_issues",
+      "type": "troubleshooting",
+      "lang": "bilingual",
+      "title": "Transfer Command Not Working",
+      "section": "transfer_problems",
+      "tags": ["transfer", "failed", "command", "troubleshooting", "X.com"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://troubleshooting/transfers",
+      "hash": "tbs001_tnw",
+      "body": "Symptom: Posted transfer command on X.com but NYLA didn't respond or transfer didn't execute.",
+      "summary_en": "Transfer command posted but no NYLA response - diagnostic steps and fixes.",
+      "summary_zh": "已发布转账命令但NYLA无响应 - 诊断步骤和修复方法。",
+      "priority": 9,
+      "troubleshooting": {
+        "symptoms": [
+          "Posted NYLA command on X.com",
+          "No response from @AgentNyla after 5+ minutes", 
+          "Transaction not showing up in wallet"
+        ],
+        "causes": [
+          {
+            "cause": "Incorrect command format",
+            "likelihood": "high",
+            "check": "Verify command follows exact format: 'Hey @AgentNyla transfer [amount] $[token] @[recipient]'"
+          },
+          {
+            "cause": "Wrong network specified",
+            "likelihood": "medium", 
+            "check": "Ensure recipient wallet exists on the same network as sender"
+          },
+          {
+            "cause": "Insufficient balance",
+            "likelihood": "medium",
+            "check": "Check wallet balance covers amount + network fees"
+          },
+          {
+            "cause": "Network congestion",
+            "likelihood": "low",
+            "check": "Try again during off-peak hours"
+          }
+        ],
+        "fixes": [
+          {
+            "step": 1,
+            "action_en": "Check command format",
+            "action_zh": "检查命令格式",
+            "details_en": "Verify your command exactly matches: 'Hey @AgentNyla transfer 50 $NYLA @username' - no extra words or characters",
+            "details_zh": "验证您的命令完全匹配：'Hey @AgentNyla transfer 50 $NYLA @username' - 不要有额外的词语或字符"
+          },
+          {
+            "step": 2,
+            "action_en": "Verify recipient username",
+            "action_zh": "验证收件人用户名", 
+            "details_en": "Ensure @username exists on X.com and recipient has wallet on same network",
+            "details_zh": "确保@用户名在X.com上存在，且收件人在同一网络上有钱包"
+          },
+          {
+            "step": 3,
+            "action_en": "Check wallet balance",
+            "action_zh": "检查钱包余额",
+            "details_en": "Confirm you have sufficient tokens + network fees (Solana: ~$0.0001, Ethereum: $5-50+, Algorand: ~$0.001)",
+            "details_zh": "确认您有足够的代币+网络费用（Solana：约0.0001美元，Ethereum：5-50+美元，Algorand：约0.001美元）"
+          },
+          {
+            "step": 4,
+            "action_en": "Wait and retry",
+            "action_zh": "等待并重试",
+            "details_en": "If network is congested, wait 10-15 minutes and try posting the command again",
+            "details_zh": "如果网络拥堵，等待10-15分钟后再次尝试发布命令"
+          },
+          {
+            "step": 5,
+            "action_en": "Contact support",
+            "action_zh": "联系支持",
+            "details_en": "If issue persists, contact NYLA team (@shax_btc, @btcberries) with screenshot of your X.com post",
+            "details_zh": "如果问题仍然存在，请联系NYLA团队（@shax_btc，@btcberries）并提供您X.com帖子的截图"
+          }
+        ]
+      }
+    },
+    {
+      "id": "troubleshoot_qr_not_scanning",
+      "source_id": "qr_issues", 
+      "type": "troubleshooting",
+      "lang": "bilingual",
+      "title": "QR Code Won't Scan",
+      "section": "qr_problems",
+      "tags": ["QR code", "scanning", "mobile", "troubleshooting"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://troubleshooting/qr",
+      "hash": "tbs002_qns",
+      "body": "Symptom: Generated QR code but mobile devices can't scan or recognize it.",
+      "summary_en": "QR code scanning problems - diagnostic steps and mobile compatibility fixes.",
+      "summary_zh": "二维码扫描问题 - 诊断步骤和移动兼容性修复。",
+      "priority": 7,
+      "troubleshooting": {
+        "symptoms": [
+          "QR code appears blank or corrupted",
+          "Mobile scanner doesn't recognize QR code",
+          "Scanning redirects to wrong page"
+        ],
+        "causes": [
+          {
+            "cause": "Low image quality",
+            "likelihood": "high",
+            "check": "QR code appears pixelated or blurry on screen"
+          },
+          {
+            "cause": "Screen brightness too low",
+            "likelihood": "medium",
+            "check": "QR code is hard to see clearly"
+          },
+          {
+            "cause": "Scanner app compatibility",
+            "likelihood": "medium", 
+            "check": "Different QR scanner apps give different results"
+          },
+          {
+            "cause": "Network connection issues",
+            "likelihood": "low",
+            "check": "QR generation failed due to poor connectivity"
+          }
+        ],
+        "fixes": [
+          {
+            "step": 1,
+            "action_en": "Regenerate QR code",
+            "action_zh": "重新生成二维码",
+            "details_en": "Go to Receive tab, re-enter amount and network, click 'Generate QR Code' again",
+            "details_zh": "转到接收选项卡，重新输入金额和网络，再次点击'生成二维码'"
+          },
+          {
+            "step": 2,
+            "action_en": "Increase screen brightness",
+            "action_zh": "增加屏幕亮度",
+            "details_en": "Set screen brightness to maximum for better QR code visibility",
+            "details_zh": "将屏幕亮度设置到最大，以便更好地显示二维码"
+          },
+          {
+            "step": 3,
+            "action_en": "Try different scanner app",
+            "action_zh": "尝试不同的扫描应用",
+            "details_en": "Use built-in camera app or download dedicated QR scanner (Google Lens, QR Code Reader)",
+            "details_zh": "使用内置相机应用或下载专用二维码扫描器（Google Lens，二维码阅读器）"
+          },
+          {
+            "step": 4,
+            "action_en": "Save and share image",
+            "action_zh": "保存并分享图片",
+            "details_en": "Right-click QR code → Save image, then share via messaging apps instead of direct scanning",
+            "details_zh": "右键点击二维码→保存图片，然后通过消息应用分享，而不是直接扫描"
+          },
+          {
+            "step": 5,
+            "action_en": "Use manual link sharing", 
+            "action_zh": "使用手动链接分享",
+            "details_en": "Copy the payment command text and share directly instead of using QR code",
+            "details_zh": "复制付款命令文本并直接分享，而不是使用二维码"
+          }
+        ]
+      }
+    },
+    {
+      "id": "troubleshoot_extension_not_loading",
+      "source_id": "extension_issues",
+      "type": "troubleshooting", 
+      "lang": "bilingual",
+      "title": "Extension Not Loading",
+      "section": "extension_problems",
+      "tags": ["extension", "loading", "browser", "troubleshooting"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://troubleshooting/extension",
+      "hash": "tbs003_enl",
+      "body": "Symptom: NYLAGo browser extension won't load or shows blank page.",
+      "summary_en": "Browser extension loading problems - troubleshooting steps and fixes.",
+      "summary_zh": "浏览器扩展加载问题 - 故障排除步骤和修复方法。",
+      "priority": 8,
+      "troubleshooting": {
+        "symptoms": [
+          "Extension icon appears but clicking shows blank page",
+          "Extension popup doesn't appear when clicked",
+          "Extension shows loading spinner indefinitely"
+        ],
+        "causes": [
+          {
+            "cause": "Browser cache issues",
+            "likelihood": "high",
+            "check": "Extension worked before but stopped suddenly"
+          },
+          {
+            "cause": "Extension permissions revoked",
+            "likelihood": "medium",
+            "check": "Browser shows permission warnings for extension"
+          },
+          {
+            "cause": "Browser version incompatibility", 
+            "likelihood": "medium",
+            "check": "Recently updated browser or extension"
+          },
+          {
+            "cause": "Conflicting extensions",
+            "likelihood": "low",
+            "check": "Multiple crypto or security extensions installed"
+          }
+        ],
+        "fixes": [
+          {
+            "step": 1,
+            "action_en": "Reload extension",
+            "action_zh": "重新加载扩展",
+            "details_en": "Go to browser Extensions → NYLAGo → Click reload/refresh icon",
+            "details_zh": "转到浏览器扩展→NYLAGo→点击重新加载/刷新图标"
+          },
+          {
+            "step": 2,
+            "action_en": "Clear browser cache",
+            "action_zh": "清除浏览器缓存", 
+            "details_en": "Clear browser cache and cookies, then restart browser and try extension again",
+            "details_zh": "清除浏览器缓存和cookie，然后重启浏览器并再次尝试扩展"
+          },
+          {
+            "step": 3,
+            "action_en": "Check extension permissions",
+            "action_zh": "检查扩展权限",
+            "details_en": "Go to Extensions → NYLAGo → Ensure all required permissions are granted",
+            "details_zh": "转到扩展→NYLAGo→确保所有必需的权限都已授予"
+          },
+          {
+            "step": 4,
+            "action_en": "Disable conflicting extensions",
+            "action_zh": "禁用冲突扩展",
+            "details_en": "Temporarily disable other crypto/wallet extensions to test if NYLAGo works alone",
+            "details_zh": "暂时禁用其他加密货币/钱包扩展，测试NYLAGo是否单独工作"
+          },
+          {
+            "step": 5,
+            "action_en": "Reinstall extension",
+            "action_zh": "重新安装扩展",
+            "details_en": "Remove NYLAGo extension completely, restart browser, then reinstall from Chrome Store",
+            "details_zh": "完全移除NYLAGo扩展，重启浏览器，然后从Chrome应用商店重新安装"
+          }
+        ]
+      }
+    }
+  ]
+}

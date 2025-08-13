@@ -1,0 +1,36 @@
+{
+  "chunks": [
+    {
+      "id": "facts_supported_networks_algorand_overview",
+      "source_id": "algorand_network_facts",
+      "type": "facts",
+      "lang": "bilingual",
+      "title": "Algorand Network Support",
+      "section": "supported_networks", 
+      "tags": ["algorand", "network", "blockchain", "sustainable", "ppos", "facts"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "https://algorand.org",
+      "hash": "fct_algorand_support_001",
+      "body": "Algorand Network: Energy-efficient blockchain with Pure Proof of Stake (PPoS). ~6,000 TPS with 4-5 second finality. Carbon-negative, ~$0.001 USD average fee. Founded by Turing Award winner Silvio Micali. 100% uptime since 2019. Native token: ALGO. NYLA supports transfers and swaps within Algorand network only.",
+      "summary_en": "Energy-efficient blockchain with PPoS consensus. ~$0.001 fees, 6k TPS, carbon-negative.",
+      "summary_zh": "采用纯权益证明共识机制的节能区块链。约0.001美元费用，6k TPS，碳中和。",
+      "priority": 9,
+      "glossary_terms": ["Algorand", "Pure Proof of Stake", "carbon-negative", "finality"],
+      "network_specs": {
+        "consensus": "Pure Proof of Stake",
+        "tps_capacity": 6000,
+        "avg_fee_usd": 0.001,
+        "native_token": "ALGO",
+        "finality_seconds": "4-5",
+        "carbon_impact": "negative"
+      },
+      "nyla_support": {
+        "supported_operations": ["transfer", "swap", "qr_generation"],
+        "cross_chain": false,
+        "status": "live",
+        "launch_date": "2025-07-26"
+      }
+    }
+  ]
+}

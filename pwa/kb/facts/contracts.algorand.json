@@ -1,0 +1,101 @@
+{
+  "important_notice": "⚠️ CRITICAL: ALWAYS VERIFY ASSET IDs ON OFFICIAL EXPLORERS BEFORE USE",
+  "verification_required": "ASA Asset IDs can change. Always verify on AlgoExplorer before transactions.",
+  "verification_sources": {
+    "primary": "https://algoexplorer.io",
+    "secondary": "https://allo.info"
+  },
+  "last_verified": "2025-01-15 (REQUIRES RE-VERIFICATION)",
+  "chunks": [
+    {
+      "id": "facts_contracts_algorand_tokens",
+      "source_id": "algorand_token_contracts",
+      "type": "facts",
+      "lang": "bilingual", 
+      "title": "Algorand Token Assets and Technical Specifications",
+      "section": "contracts",
+      "tags": ["algorand", "assets", "tokens", "asa", "technical", "facts"],
+      "as_of": "2025-01-15",
+      "stability": "volatile",
+      "source_url": "https://algoexplorer.io",
+      "hash": "fct_algo_contracts_001",
+      "body": "⚠️ WARNING: Always verify Asset IDs on AlgoExplorer.io before use. Algorand Standard Asset (ASA) IDs, decimals, and technical specifications for popular tokens. These Asset IDs require verification and may change over time.",
+      "summary_en": "Authoritative Algorand ASA token IDs with decimals and technical specifications for accurate transfers.",
+      "summary_zh": "权威的Algorand ASA代币ID，包含小数位数和技术规格，确保准确转账。",
+      "priority": 8,
+      "related_chunks": ["facts_supported_networks_algorand_overview"],
+      "glossary_terms": ["Algorand", "ASA", "asset ID", "decimals", "token"],
+      "contracts": [
+        {
+          "symbol": "ALGO",
+          "name": "Algorand",
+          "address": "native",
+          "asset_id": "0",
+          "decimals": 6,
+          "type": "native",
+          "verified": true,
+          "notes": "Native Algorand token, asset ID 0"
+        },
+        {
+          "symbol": "USDCa",
+          "name": "USD Coin (Algorand)",
+          "address": "31566704",
+          "asset_id": "31566704",
+          "decimals": 6,
+          "type": "asa",
+          "verified": true,
+          "notes": "Circle's USD-backed stablecoin on Algorand"
+        },
+        {
+          "symbol": "USDTa",
+          "name": "Tether USD (Algorand)",
+          "address": "312769",
+          "asset_id": "312769", 
+          "decimals": 6,
+          "type": "asa",
+          "verified": true,
+          "notes": "Tether's USD-backed stablecoin on Algorand"
+        },
+        {
+          "symbol": "goBTC",
+          "name": "goBTC",
+          "address": "386192725",
+          "asset_id": "386192725",
+          "decimals": 8,
+          "type": "asa",
+          "verified": true,
+          "notes": "Wrapped Bitcoin on Algorand"
+        },
+        {
+          "symbol": "goETH",
+          "name": "goETH",
+          "address": "386195940",
+          "asset_id": "386195940",
+          "decimals": 18,
+          "type": "asa",
+          "verified": true,
+          "notes": "Wrapped Ethereum on Algorand"
+        },
+        {
+          "symbol": "OPUL",
+          "name": "Opulous",
+          "address": "287867876",
+          "asset_id": "287867876",
+          "decimals": 10,
+          "type": "asa",
+          "verified": true,
+          "notes": "Opulous music platform token"
+        }
+      ],
+      "technical_notes": [
+        "⚠️ VERIFICATION REQUIRED: Check all Asset IDs on https://algoexplorer.io before use",
+        "Algorand uses Asset IDs (integers) instead of contract addresses",
+        "Native ALGO has Asset ID 0",
+        "All ASA tokens share the same on-chain logic",
+        "Asset IDs are unique and sequential",
+        "Algorand transactions require minimum balance for ASA opt-ins",
+        "Asset IDs may change - never use without current verification"
+      ]
+    }
+  ]
+}

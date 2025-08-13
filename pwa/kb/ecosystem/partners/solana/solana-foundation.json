@@ -1,0 +1,39 @@
+{
+  "chunks": [
+    {
+      "id": "ecosystem_partners_solana_foundation",
+      "source_id": "solana_foundation_partnership",
+      "type": "ecosystem",
+      "lang": "bilingual",
+      "title": "Solana Foundation Strategic Partnership",
+      "section": "partners",
+      "tags": ["solana", "foundation", "partnership", "grants", "ecosystem", "official"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "https://solana.org/grants",
+      "hash": "eco_part_sol_found_001",
+      "body": "Strategic partnership with Solana Foundation establishing NYLA as a key AI agent in the Solana ecosystem. Partnership includes developer grant funding, technical advisory support, and co-marketing opportunities. Solana Foundation provides guidance on best practices, security reviews, and access to core development teams. Collaboration includes Breakpoint conference presence, hackathon sponsorship, and ecosystem tool integration priority.",
+      "summary_en": "Strategic Solana Foundation partnership providing grants, technical advisory, and ecosystem integration priority for NYLA.",
+      "summary_zh": "与Solana基金会的战略合作，为NYLA提供资助、技术咨询和生态系统集成优先权。",
+      "priority": 10,
+      "related_chunks": ["ecosystem_campaigns_solana_breakpoint_2024"],
+      "glossary_terms": ["Solana Foundation", "grants", "ecosystem", "partnership", "Breakpoint"],
+      "partnership": {
+        "type": "ecosystem_foundation",
+        "status": "active",
+        "established": "2024-06-01",
+        "renewal_date": "2026-06-01",
+        "grant_amount": "confidential",
+        "collaboration_areas": ["technical", "marketing", "community", "events"],
+        "key_contacts": {
+          "grants": "grants@solana.org",
+          "technical": "devrel@solana.org"
+        },
+        "deliverables": {
+          "q1_2025": ["Jupiter integration", "Breakpoint presence"],
+          "q2_2025": ["Developer tooling", "Community workshops"]
+        }
+      }
+    }
+  ]
+}

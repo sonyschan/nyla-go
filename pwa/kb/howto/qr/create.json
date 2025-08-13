@@ -1,0 +1,113 @@
+{
+  "chunks": [
+    {
+      "id": "howto_qr_create_guide",
+      "source_id": "qr_create_guide",
+      "type": "howto", 
+      "lang": "bilingual",
+      "title": "How to Create Payment QR Codes",
+      "section": "qr_codes",
+      "tags": ["qr", "create", "payment", "mobile", "guide"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://howto/qr/create",
+      "hash": "how_qr_create_001",
+      "body": "Complete guide for creating payment QR codes with NYLA. Perfect for receiving payments in person or sharing payment links.",
+      "summary_en": "Step-by-step guide for creating payment QR codes for easy token receiving via mobile scanning.",
+      "summary_zh": "创建支付二维码的分步指南，便于通过移动设备扫描接收代币。",
+      "priority": 8,
+      "related_chunks": ["howto_transfers_receive_guide", "howto_qr_troubleshoot"],
+      "glossary_terms": ["QR code", "payment", "mobile", "scan", "receive"],
+      "steps": [
+        {
+          "number": 1,
+          "action": "Open NYLAGo Receive tab",
+          "details": "Navigate to NYLAGo and click the 'Receive' tab to access QR code generation tools.",
+          "screenshot": null
+        },
+        {
+          "number": 2,
+          "action": "Select blockchain network",
+          "details": "Choose which blockchain network for the payment (Solana, Ethereum, or Algorand). This determines which tokens can be received.",
+          "screenshot": null
+        },
+        {
+          "number": 3,
+          "action": "Connect your wallet",
+          "details": "Connect your wallet extension (Phantom/MetaMask/Pera) to display your receiving address in the QR code.",
+          "screenshot": null
+        },
+        {
+          "number": 4,
+          "action": "Enter payment amount (optional)",
+          "details": "Specify exact amount if you want a pre-filled payment request. Leave blank for flexible amount QR code.",
+          "screenshot": null
+        },
+        {
+          "number": 5,
+          "action": "Select token type (optional)",
+          "details": "Choose specific token (SOL, ETH, USDC, etc.) if you want to request a particular token type.",
+          "screenshot": null
+        },
+        {
+          "number": 6,
+          "action": "Click 'Generate QR Code'",
+          "details": "Click the generate button to create your payment QR code with your wallet address and optional amount/token.",
+          "screenshot": null
+        },
+        {
+          "number": 7,
+          "action": "Download or share QR code",
+          "details": "Save the QR code image to your device or display it on screen for others to scan.",
+          "screenshot": null
+        },
+        {
+          "number": 8,
+          "action": "Test the QR code",
+          "details": "Scan with a QR reader or wallet app to verify it contains correct payment information.",
+          "screenshot": null
+        }
+      ],
+      "pitfalls": [
+        {
+          "issue": "QR code too small to scan",
+          "solution": "Increase screen brightness and zoom in on QR code. Ensure clear display without glare.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Wrong wallet address in QR",
+          "solution": "Reconnect your wallet and regenerate the QR code. Always verify address matches your wallet.",
+          "severity": "critical"
+        },
+        {
+          "issue": "Amount not pre-filled when scanned",
+          "solution": "Some wallets don't support amount pre-filling. Recipients may need to enter amount manually.",
+          "severity": "low"
+        },
+        {
+          "issue": "QR code won't generate",
+          "solution": "Check wallet connection and network selection. Try refreshing the page and reconnecting wallet.",
+          "severity": "medium"
+        },
+        {
+          "issue": "Scanner can't read QR code",
+          "solution": "Ensure good lighting, steady hands, and proper distance. Try different QR scanner apps.",
+          "severity": "low"
+        }
+      ],
+      "prerequisites": [
+        "Wallet extension installed and funded",
+        "NYLAGo account access",
+        "Understanding of which network to use"
+      ],
+      "estimated_time": "1-2 minutes",
+      "difficulty": "beginner",
+      "tips": [
+        "Test QR codes before sharing with others",
+        "Higher screen brightness improves scannability",
+        "Save QR code image for reuse at events",
+        "Include amount for exact payment requests"
+      ]
+    }
+  ]
+}

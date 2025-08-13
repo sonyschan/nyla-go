@@ -1,0 +1,42 @@
+{
+  "chunks": [
+    {
+      "id": "ecosystem_partners_algorand_foundation", 
+      "source_id": "algorand_foundation_partnership",
+      "type": "partner",
+      "lang": "bilingual",
+      "title": "Algorand Foundation Partnership",
+      "section": "partners", 
+      "tags": ["algorand", "foundation", "partnership", "grants", "ecosystem", "sustainability"],
+      "as_of": "2025-01-15",
+      "stability": "evolving",
+      "source_url": "https://algorand.foundation/grants",
+      "hash": "eco_part_algo_found_001",
+      "body": "Partnership with Algorand Foundation focused on sustainable blockchain AI agents and carbon-negative DeFi solutions. Algorand Foundation supports NYLA's expansion into environmentally conscious blockchain operations. Partnership includes grant funding for Algorand integration development, sustainability reporting tools, and green DeFi protocol access. Collaboration emphasizes Algorand's proof-of-stake efficiency and carbon-negative network properties.",
+      "summary_en": "Algorand Foundation partnership emphasizing sustainable, carbon-negative AI agents and green DeFi solutions.",
+      "summary_zh": "与Algorand基金会的合作，重点关注可持续的碳负AI代理和绿色DeFi解决方案。",
+      "priority": 8,
+      "related_chunks": ["ecosystem_integrations_algorand_pera_wallet"],
+      "related_integrations": ["ecosystem/integrations/algorand/core-support", "ecosystem/integrations/algorand/pera-wallet"],
+      "related_campaigns": ["ecosystem/campaigns/algorand/2025-07-nyla-x-algorand-launch"],
+      "glossary_terms": ["Algorand Foundation", "carbon-negative", "proof-of-stake", "sustainability", "green DeFi"],
+      "partnership": {
+        "type": "sustainability_focused",
+        "status": "active",
+        "established": "2024-11-01", 
+        "focus_areas": ["carbon_tracking", "sustainable_defi", "environmental_impact"],
+        "grant_program": "Algorand Sustainability Grant",
+        "collaboration_areas": ["technical", "environmental", "research"],
+        "key_contacts": {
+          "grants": "grants@algorand.foundation",
+          "sustainability": "sustainability@algorand.foundation"
+        },
+        "environmental_goals": {
+          "carbon_tracking": "Real-time transaction carbon footprint",
+          "offset_integration": "Automated carbon offset purchases",
+          "reporting": "Monthly sustainability impact reports"
+        }
+      }
+    }
+  ]
+}

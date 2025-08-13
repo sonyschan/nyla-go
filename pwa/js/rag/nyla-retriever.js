@@ -215,8 +215,28 @@ class NYLARetriever {
   /**
    * Build filter based on intent
    */
-  buildFilter(intent, keywords) {
+  buildFilter(intent, keywords, options = {}) {
     const filter = {};
+    
+    // DEFAULT FILTERS - Always applied unless explicitly disabled
+    if (!options.includeNonTech) {
+      // Exclude team info, branding, and other non-technical content
+      filter.excludeFromTech = { $ne: true };
+    }
+    
+    // For support questions, prioritize verified integrations
+    if (intent === 'technical' || intent === 'blockchain' || keywords.some(k => 
+      ['transfer', 'send', 'wallet', 'integration', 'support'].includes(k.word.toLowerCase())
+    )) {
+      filter.$or = [
+        { type: { $ne: 'integration' } },  // Include non-integration content
+        { 
+          type: 'integration',
+          verified: true,
+          status: { $in: ['beta', 'live'] }
+        }
+      ];
+    }
     
     // Add intent-based filters
     switch (intent) {

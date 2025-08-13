@@ -1,0 +1,93 @@
+{
+  "important_notice": "⚠️ CRITICAL: ALWAYS VERIFY CONTRACT ADDRESSES ON OFFICIAL EXPLORERS BEFORE USE",
+  "verification_required": "Contract addresses change over time. Always verify on Solscan before transactions.",
+  "verification_sources": {
+    "primary": "https://solscan.io",
+    "secondary": "https://explorer.solana.com"
+  },
+  "last_verified": "2025-01-15 (REQUIRES RE-VERIFICATION)",
+  "chunks": [
+    {
+      "id": "facts_contracts_solana_tokens",
+      "source_id": "solana_token_contracts",
+      "type": "facts",
+      "lang": "bilingual",
+      "title": "Solana Token Contracts and Technical Specifications",
+      "section": "contracts",
+      "tags": ["solana", "contracts", "tokens", "addresses", "technical", "facts"],
+      "as_of": "2025-01-15",
+      "stability": "volatile",
+      "source_url": "https://solscan.io",
+      "hash": "fct_sol_contracts_001", 
+      "body": "⚠️ WARNING: Always verify contract addresses on Solscan.io before use. Solana token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.",
+      "summary_en": "Authoritative Solana token contract addresses with decimals and technical specifications for accurate transfers.",
+      "summary_zh": "权威的Solana代币合约地址，包含小数位数和技术规格，确保准确转账。",
+      "priority": 8,
+      "related_chunks": ["facts_supported_networks_solana_overview"],
+      "glossary_terms": ["Solana", "contract", "address", "decimals", "SPL token"],
+      "contracts": [
+        {
+          "symbol": "SOL",
+          "name": "Solana",
+          "address": "native",
+          "decimals": 9,
+          "type": "native",
+          "verified": true,
+          "notes": "Native Solana token, no contract address needed"
+        },
+        {
+          "symbol": "USDC",
+          "name": "USD Coin",
+          "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "decimals": 6,
+          "type": "spl_token",
+          "verified": true,
+          "notes": "Circle's USD-backed stablecoin on Solana"
+        },
+        {
+          "symbol": "USDT",
+          "name": "Tether USD",
+          "address": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+          "decimals": 6,
+          "type": "spl_token",
+          "verified": true,
+          "notes": "Tether's USD-backed stablecoin on Solana"
+        },
+        {
+          "symbol": "JUP",
+          "name": "Jupiter",
+          "address": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+          "decimals": 6,
+          "type": "spl_token",
+          "verified": true,
+          "notes": "Jupiter DEX aggregator governance token"
+        },
+        {
+          "symbol": "RAY",
+          "name": "Raydium",
+          "address": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+          "decimals": 6,
+          "type": "spl_token",
+          "verified": true,
+          "notes": "Raydium AMM and DEX protocol token"
+        },
+        {
+          "symbol": "BONK",
+          "name": "Bonk",
+          "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+          "decimals": 5,
+          "type": "spl_token",
+          "verified": true,
+          "notes": "Community-driven meme token on Solana"
+        }
+      ],
+      "technical_notes": [
+        "⚠️ VERIFICATION REQUIRED: Check all addresses on https://solscan.io before use",
+        "All SPL tokens use the same program ID: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "Solana uses base58 encoding for addresses",
+        "Native SOL transfers don't require a token program",
+        "Contract addresses may change - never use without current verification"
+      ]
+    }
+  ]
+}

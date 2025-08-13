@@ -1,0 +1,35 @@
+{
+  "chunks": [
+    {
+      "id": "ecosystem_campaigns_algorand_launch_july_2025",
+      "source_id": "algorand_launch_campaign",
+      "type": "campaign",
+      "lang": "bilingual",
+      "title": "NYLA x Algorand Integration Launch Campaign - July 26, 2025",
+      "section": "network_launches",
+      "tags": ["algorand", "launch", "july", "2025", "live", "sustainability", "campaign", "integration"],
+      "as_of": "2025-07-26",
+      "stability": "stable",
+      "source_url": "https://nyla.ai/weekly-update-2025-07-26",
+      "hash": "camp_algo_launch_001",
+      "body": "MAJOR MILESTONE: NYLA's collaboration with Algorand successfully went live on July 26, 2025, as announced in NYLA's weekly update. This integration makes Algorand the third blockchain network officially supported by NYLA, joining Solana and Ethereum. Key features include ALGO transfers, ASA token support, Pera Wallet integration, and sustainability tracking capabilities. This launch represents NYLA's first carbon-negative blockchain integration, aligning with Algorand's environmental commitments.",
+      "summary_en": "NYLA x Algorand integration launch campaign culminated in July 26, 2025 go-live, adding carbon-negative blockchain support.",
+      "summary_zh": "NYLA x Algorand整合發佈活動於2025年7月26日正式上線，增加碳負區塊鏈支援。",
+      "priority": 10,
+      "related_chunks": ["algorand/core-support", "algorand/pera-wallet"],
+      "related_integrations": ["ecosystem/integrations/algorand/core-support", "ecosystem/integrations/algorand/pera-wallet"],
+      "related_partners": ["ecosystem/partners/algorand/algorand-foundation"],
+      "glossary_terms": ["NYLA", "Algorand", "carbon-negative", "ASA tokens", "Pera Wallet", "sustainability"],
+      "campaign_details": {
+        "official_date": "2025-07-26",
+        "announcement_source": "NYLA weekly update",
+        "network_position": "third_blockchain_supported",
+        "previous_networks": ["Solana", "Ethereum"],
+        "key_features": ["ALGO transfers", "ASA tokens", "Pera Wallet", "sustainability tracking"],
+        "environmental_significance": "first_carbon_negative_integration",
+        "campaign_type": "integration_launch",
+        "status": "completed"
+      }
+    }
+  ]
+}

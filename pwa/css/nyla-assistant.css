@@ -1844,3 +1844,110 @@
     padding: 12px;
   }
 }
+
+/* RAG Metadata Styles - As_of badges and source pills */
+.rag-metadata {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.as-of-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(75, 85, 99, 0.6);
+  color: #D1D5DB;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.as-of-badge.volatile {
+  background: rgba(251, 191, 36, 0.6);
+  color: #1F2937;
+}
+
+.source-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.source-pill {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: default;
+  transition: opacity 0.2s ease;
+}
+
+.source-pill:hover {
+  opacity: 0.8;
+}
+
+/* Source pill types */
+.source-pill.facts {
+  background: rgba(34, 197, 94, 0.6);
+  color: #1F2937;
+}
+
+.source-pill.integration {
+  background: rgba(59, 130, 246, 0.6);
+  color: #1F2937;
+}
+
+.source-pill.marketing {
+  background: rgba(168, 85, 247, 0.6);
+  color: #1F2937;
+}
+
+.source-pill.howto {
+  background: rgba(251, 191, 36, 0.6);
+  color: #1F2937;
+}
+
+.source-pill.policy {
+  background: rgba(239, 68, 68, 0.6);
+  color: white;
+}
+
+.source-pill.ecosystem {
+  background: rgba(20, 184, 166, 0.6);
+  color: #1F2937;
+}
+
+.source-pill.info,
+.source-pill.more {
+  background: rgba(107, 114, 128, 0.6);
+  color: #D1D5DB;
+}
+
+/* Verification indicators */
+.source-pill.verified {
+  border: 1px solid rgba(34, 197, 94, 0.8);
+}
+
+.source-pill.unverified {
+  border: 1px solid rgba(251, 191, 36, 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .rag-metadata {
+    font-size: 11px;
+  }
+  
+  .source-pill,
+  .as-of-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .source-pills {
+    gap: 3px;
+  }
+}
