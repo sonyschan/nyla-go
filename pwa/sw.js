@@ -15,7 +15,7 @@ const urlsToCache = [
   '/nyla-go/js/nyla-conversation-v2.js',
   '/nyla-go/js/nyla-llm-engine.js',
   '/nyla-go/js/nyla-ui-v2.js',
-  '/nyla-go/js/nyla-knowledge-base.js',
+  // nyla-knowledge-base.js removed - using structured KB from /pwa/kb
   '/nyla-go/js/nyla-web-fetcher.js',
   '/nyla-go/js/nyla-knowledge-tracker.js',
   '/nyla-go/js/nyla-system-controller.js',

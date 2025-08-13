@@ -9,7 +9,8 @@ async function buildEmbeddings() {
   
   try {
     // Import required modules
-    const { NYLAKnowledgeBase } = await import('../nyla-knowledge-base.js');
+    // Legacy browser embedding build deprecated - use Node.js build: npm run build:embeddings
+    throw new Error('Browser embedding build deprecated. Use: npm run build:embeddings');
     const { NYLAKnowledgeChunker } = await import('./nyla-knowledge-chunker.js');
     const { NYLAEmbeddingService } = await import('./nyla-embedding-service.js');
     
