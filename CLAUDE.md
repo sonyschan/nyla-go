@@ -2,6 +2,26 @@
 
 This file contains important information for Claude to remember across sessions.
 
+## 🎯 **NYLAGo Core Functionality - CRITICAL REFERENCE**
+
+**IMPORTANT**: Always reference this section when describing NYLAGo capabilities to avoid misinformation.
+
+### **What NYLAGo ACTUALLY Does:**
+1. **Command Generation**: Generates transfer/swap commands to be posted on X.com
+2. **Social Media Integration**: Commands are executed through X.com posts (NOT direct blockchain interaction)
+3. **Multi-blockchain Support**: Supports Solana, Ethereum, and Algorand networks
+4. **Transfer Features**: Username-based transfers, QR code generation for receiving payments
+5. **Community Features**: Facilitates community engagement (NOT through blockchain actions)
+
+### **What NYLAGo DOES NOT Do:**
+- ❌ **NO Cross-blockchain swaps** - Only within same network (Solana→Solana, Ethereum→Ethereum, Algorand→Algorand)
+- ❌ **NO Direct DEX Integration** - Does not integrate with decentralized exchanges directly
+- ❌ **NO Direct Blockchain Actions** - All actions happen through X.com command posts
+- ❌ **NO Blockchain-based Community Engagement** - Community features are separate from blockchain actions
+
+### **Correct Capability Description:**
+"NYLAGo generates commands for cryptocurrency transfers and swaps within the same blockchain network (Solana, Ethereum, or Algorand). Users post these commands on X.com to execute transactions. It also provides QR code generation for receiving payments and facilitates community engagement through social features."
+
 ## 🚀 NYLA Go Release Process Checklist
 
 ### 🔄 **Pre-Release Development**

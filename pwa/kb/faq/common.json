@@ -94,6 +94,25 @@
       "priority": 9,
       "related_chunks": ["policy_wording_supported_networks", "facts_networks_limitations"],
       "glossary_terms": ["blockchains", "networks", "Solana", "Ethereum", "Algorand", "cross-chain"]
+    },
+    {
+      "id": "faq_what_can_nyla_do",
+      "source_id": "common_questions",
+      "type": "faq",
+      "lang": "bilingual",
+      "title": "What can NYLAGo do?",
+      "section": "capabilities",
+      "tags": ["FAQ", "capabilities", "features", "overview", "what", "can", "do"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://faq/capabilities",
+      "hash": "faq006_cap",
+      "body": "Q: What can NYLAGo do? A: NYLAGo generates commands for cryptocurrency operations through X.com: 1) Transfer tokens using usernames within Solana, Ethereum, or Algorand networks. 2) Swap tokens within the same blockchain network (no cross-chain swaps). 3) Generate QR codes for receiving payments. 4) Create X.com posts that execute transactions when posted. 5) Provide community engagement features like raid lists. All blockchain actions require posting generated commands on X.com.",
+      "summary_en": "NYLAGo generates commands for transfers, same-network swaps, QR payments, and X.com execution. Includes community features.",
+      "summary_zh": "NYLAGo生成转账、同网络交换、QR支付和X.com执行的命令。包括社区功能。",
+      "priority": 10,
+      "related_chunks": ["about_nylago_overview", "about_nylago_what_can_do", "faq_how_to_send"],
+      "glossary_terms": ["capabilities", "features", "transfers", "swaps", "QR codes", "X.com", "commands", "community"]
     }
   ]
 }
