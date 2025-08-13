@@ -1847,14 +1847,17 @@ document.addEventListener('DOMContentLoaded', function() {
     overlay.id = 'communityBackdrop';
     document.body.appendChild(overlay);
     
-    // Position dropdown relative to button
+    // Position dropdown above the FAB
     const buttonRect = communityMenuButton.getBoundingClientRect();
     communityDropdown.style.position = 'fixed';
-    communityDropdown.style.top = (buttonRect.bottom + 5) + 'px';
-    communityDropdown.style.right = (window.innerWidth - buttonRect.right) + 'px';
+    communityDropdown.style.bottom = (window.innerHeight - buttonRect.top + 10) + 'px';
+    communityDropdown.style.right = '15px';
     
     // Show dropdown
     communityDropdown.style.display = 'block';
+    
+    // Add active state to FAB
+    communityMenuButton.classList.add('active');
   }
   
   function closeCommunityDropdown() {
@@ -1874,6 +1877,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Hide dropdown
     communityDropdown.style.display = 'none';
+    
+    // Remove active state from FAB
+    if (communityMenuButton) {
+      communityMenuButton.classList.remove('active');
+    }
   }
   
   // Swap command generation
