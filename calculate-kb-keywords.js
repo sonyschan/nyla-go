@@ -5,7 +5,7 @@
 
 // Topic keywords from nyla-conversation-v2.js
 const topicKeywords = {
-  'nylagoCore': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
+  'about': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
   'supportedBlockchains': ['blockchain', 'chain', 'solana', 'ethereum', 'algorand', 'supported', 'which blockchain', 'what blockchain', 'network', 'fees', 'cost', 'cheap', 'expensive'],
   'platformLimitations': ['telegram', 'platform', 'support', 'twitter', 'x.com', 'social media', 'where can', 'which platform'],
   'raidFeature': ['raid', 'community', 'engage', 'engagement', 'three dots', '...', 'social', 'like', 'retweet', 'comment'],
