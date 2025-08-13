@@ -705,7 +705,7 @@ class NYLALLMEngine {
       STRICT
       - Always return JSON only.
       - No fictional scenarios or simulations.
-      - If info is unavailable: "I need to study more."
+      - If info is unavailable: "Sorry, I don't know about this."
       - No '@' mentions unless explicitly generating an X command.
 
       ROLES & WORDING

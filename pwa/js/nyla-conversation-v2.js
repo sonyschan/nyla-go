@@ -1231,7 +1231,7 @@ class NYLAConversationManagerV2 {
 
     // Fallback response when no knowledge available
     return {
-      text: `${greeting}That's an interesting question! While I don't have specific information about that right now, I'm here to help you with NYLA transfers, blockchain basics, and using NYLAGo.\n\nNYLAGo is designed to make cryptocurrency accessible through simple tutorials and guided workflows. Would you like to learn about making transfers or exploring the community features?`,
+      text: `${greeting}Sorry, I don't know about this.`,
       sentiment: 'helpful',
       confidence: 0.7
     };

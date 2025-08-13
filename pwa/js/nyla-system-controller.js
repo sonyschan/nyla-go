@@ -74,7 +74,7 @@ class NYLASystemController {
       NYLAAssistantV2: typeof window.NYLAAssistantV2 !== 'undefined',
       NYLAConversationManagerV2: typeof window.NYLAConversationManagerV2 !== 'undefined',
       NYLAAssistantUIV2: typeof window.NYLAAssistantUIV2 !== 'undefined',
-      NYLAKnowledgeBase: typeof window.NYLAKnowledgeBase !== 'undefined',
+      // NYLAKnowledgeBase removed - using structured KB via RAG system
       NYLALLMEngine: typeof window.NYLALLMEngine !== 'undefined',
       NYLAWebFetcher: typeof window.NYLAWebFetcher !== 'undefined'
     };
