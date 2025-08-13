@@ -1,0 +1,61 @@
+{
+  "chunks": [
+    {
+      "id": "about_nylago_agentic_capabilities",
+      "source_id": "nylago_agentic_features",
+      "type": "about", 
+      "lang": "bilingual",
+      "title": "NYLAGo as Your Intelligent Cryptocurrency Assistant",
+      "section": "agentic_capabilities",
+      "tags": ["agentic", "AI", "assistant", "intelligent", "automation", "workflow", "capabilities", "features"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://about/agentic-features",
+      "hash": "abt_agentic_001",
+      "body": "NYLAGo acts as your intelligent cryptocurrency assistant with advanced agentic AI capabilities: 1) Smart Command Generation - Analyzes your transfer requirements and generates optimized commands with proper formatting for X.com posting. 2) Automated Workflow Management - Handles the complete process from input validation to social media integration. 3) Multi-Network Intelligence - Understands different blockchain requirements (Solana, Ethereum, Algorand) and adapts commands accordingly. 4) Social Media Integration Agent - Automatically formats posts, monitors execution, and provides status updates. 5) Payment Request Automation - Generates QR codes, creates shareable links, manages cross-platform distribution. 6) Intelligent Route Optimization - For swaps within same network, analyzes best paths considering fees, liquidity, and slippage.",
+      "summary_en": "NYLAGo is an intelligent cryptocurrency assistant with agentic AI capabilities for command generation, workflow automation, and social media integration across multiple blockchains.",
+      "summary_zh": "NYLAGo是一个智能加密货币助手，具有代理AI功能，用于命令生成、工作流自动化和跨多个区块链的社交媒体集成。",
+      "priority": 10,
+      "related_chunks": ["about_nylago_overview", "faq_what_can_nyla_do", "about_nylago_what_can_do"],
+      "glossary_terms": ["agentic AI", "intelligent assistant", "automation", "workflow", "command generation", "social integration"]
+    },
+    {
+      "id": "about_nylago_what_else_can_do", 
+      "source_id": "nylago_additional_capabilities",
+      "type": "about",
+      "lang": "bilingual", 
+      "title": "What else can NYLAGo do?",
+      "section": "additional_capabilities",
+      "tags": ["what else", "additional", "capabilities", "features", "more", "other", "also"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://about/additional-capabilities", 
+      "hash": "abt_additional_001",
+      "body": "Beyond basic transfers, NYLAGo offers advanced intelligent features: 1) Smart Transfer Optimization - Automatically calculates optimal fees, gas settings, and timing for your transactions. 2) Username Resolution - Converts social media usernames to wallet addresses across different networks. 3) Multi-Format QR Generation - Creates payment QR codes with embedded metadata for mobile wallet compatibility. 4) Social Workflow Automation - Manages the entire process from command creation to X.com posting and execution monitoring. 5) Cross-Network Asset Tracking - Monitors your activities across Solana, Ethereum, and Algorand (within each network). 6) Community Engagement Tools - Provides raid lists, social features, and community interaction capabilities separate from blockchain operations. 7) Intelligent Error Handling - Detects common issues and provides guided solutions for transaction problems.",
+      "summary_en": "NYLAGo provides intelligent transfer optimization, username resolution, automated workflows, cross-network tracking, and community engagement beyond basic cryptocurrency operations.",
+      "summary_zh": "除了基本的加密货币操作，NYLAGo还提供智能转账优化、用户名解析、自动化工作流、跨网络跟踪和社区参与。",
+      "priority": 10,
+      "related_chunks": ["about_nylago_agentic_capabilities", "faq_what_can_nyla_do", "about_nylago_overview"],
+      "glossary_terms": ["optimization", "username resolution", "automation", "cross-network", "community engagement", "error handling"]
+    },
+    {
+      "id": "about_nylago_intelligent_features",
+      "source_id": "nylago_ai_intelligence", 
+      "type": "about",
+      "lang": "bilingual",
+      "title": "NYLAGo's Intelligent AI Features",
+      "section": "ai_intelligence",
+      "tags": ["AI", "intelligent", "smart", "automation", "agentic", "features", "artificial intelligence"],
+      "as_of": "2025-01-15", 
+      "stability": "stable",
+      "source_url": "internal://about/ai-intelligence",
+      "hash": "abt_ai_001",
+      "body": "NYLAGo leverages advanced AI to provide intelligent cryptocurrency assistance: 1) Context-Aware Command Generation - Understands your transaction intent and generates appropriate commands with safety checks. 2) Adaptive Network Selection - Recommends optimal blockchain networks based on transaction size, urgency, and cost preferences. 3) Predictive Fee Optimization - Analyzes network conditions to suggest optimal fee settings for fast, cost-effective transactions. 4) Smart Error Prevention - Validates addresses, amounts, and parameters before command generation to prevent costly mistakes. 5) Personalized Workflow Learning - Adapts to your usage patterns and preferences over time. 6) Intelligent Status Monitoring - Tracks transaction progress and proactively notifies of any issues or completions.",
+      "summary_en": "NYLAGo uses advanced AI for context-aware commands, adaptive network selection, fee optimization, error prevention, and personalized workflows.",
+      "summary_zh": "NYLAGo使用先进的AI进行上下文感知命令、自适应网络选择、费用优化、错误预防和个性化工作流。",
+      "priority": 9,
+      "related_chunks": ["about_nylago_agentic_capabilities", "about_nylago_what_else_can_do"], 
+      "glossary_terms": ["context-aware", "adaptive", "predictive", "error prevention", "personalized", "intelligent monitoring"]
+    }
+  ]
+}

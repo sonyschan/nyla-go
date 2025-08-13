@@ -113,6 +113,25 @@
       "priority": 10,
       "related_chunks": ["about_nylago_overview", "about_nylago_what_can_do", "faq_how_to_send"],
       "glossary_terms": ["capabilities", "features", "transfers", "swaps", "QR codes", "X.com", "commands", "community"]
+    },
+    {
+      "id": "faq_what_else_can_nyla_do",
+      "source_id": "common_questions",
+      "type": "faq",
+      "lang": "bilingual", 
+      "title": "What else can NYLAGo do?",
+      "section": "additional_capabilities",
+      "tags": ["FAQ", "what else", "additional", "more", "other", "also", "advanced", "intelligent"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://faq/additional-capabilities",
+      "hash": "faq007_else",
+      "body": "Q: What else can NYLAGo do? A: Beyond basic transfers and swaps, NYLAGo offers intelligent agentic AI features: 1) Smart command optimization with automatic fee calculation and safety validation. 2) Username-to-wallet resolution across all supported networks (Solana, Ethereum, Algorand). 3) Advanced QR code generation with mobile wallet compatibility and metadata embedding. 4) Automated X.com workflow management from command creation to execution monitoring. 5) Multi-network asset tracking and portfolio insights (within each blockchain). 6) Community engagement tools including raid lists and social features. 7) Predictive transaction optimization based on network conditions. NYLAGo acts as your intelligent cryptocurrency assistant, not just a command generator.",
+      "summary_en": "NYLAGo provides intelligent AI features: smart optimization, username resolution, advanced QR codes, automated workflows, asset tracking, and community tools beyond basic transfers.",
+      "summary_zh": "NYLAGo提供智能AI功能：智能优化、用户名解析、高级QR码、自动化工作流、资产跟踪以及超出基本转账的社区工具。",
+      "priority": 10,
+      "related_chunks": ["about_nylago_agentic_capabilities", "about_nylago_what_else_can_do", "faq_what_can_nyla_do"],
+      "glossary_terms": ["what else", "intelligent", "agentic AI", "optimization", "automation", "assistant", "advanced features"]
     }
   ]
 }
