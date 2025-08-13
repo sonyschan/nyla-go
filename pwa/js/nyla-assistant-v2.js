@@ -45,7 +45,15 @@ class NYLAAssistantV2 {
       this.knowledgeBase = {
         // Minimal compatibility interface
         getStaticKnowledgeBase: () => ({ message: 'Using structured KB via RAG system' }),
-        topics: { transfers: true, qrCodes: true, blockchains: true }
+        getKnowledge: (topic) => {
+          // Return null for all topics since we use RAG for knowledge retrieval now
+          console.log(`NYLA Assistant V2: getKnowledge('${topic}') called - using RAG system instead`);
+          return null;
+        },
+        topics: { transfers: true, qrCodes: true, blockchains: true },
+        sources: {},
+        lastUpdated: new Date().toISOString(),
+        staticData: { message: 'Using structured KB via RAG system' }
       };
       this.features.knowledgeBase = true;
       console.log('NYLA Assistant V2: ✅ Structured knowledge base ready (RAG-based)');
@@ -124,8 +132,8 @@ class NYLAAssistantV2 {
     // Check personal care (always available in V2)
     this.features.personalCare = true;
     
-    // Check enhanced stickers
-    this.features.enhancedStickers = !!this.knowledgeBase.getKnowledge('stickers');
+    // Check enhanced stickers - disabled since we use RAG system now
+    this.features.enhancedStickers = false;
     
     console.log('NYLA Assistant V2: Feature availability check complete');
   }
@@ -211,7 +219,7 @@ class NYLAAssistantV2 {
       baseStatus.knowledgeBase = {
         sources: Object.keys(this.knowledgeBase.sources).length,
         lastUpdated: this.knowledgeBase.lastUpdated,
-        stickersAvailable: !!this.knowledgeBase.getKnowledge('stickers')
+        stickersAvailable: false // RAG system doesn't use legacy stickers
       };
     }
 
