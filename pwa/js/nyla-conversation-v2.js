@@ -31,7 +31,7 @@ class NYLAConversationManagerV2 {
 
     // Dynamic topic identification system (replaces v1 hardcoded topics)
     this.topicKeywords = {
-      'nylagoCore': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
+      'about': ['nyla', 'transfer', 'send', 'receive', 'command', 'how it works', 'how does', 'works', 'what is nyla', 'what does nyla do'],
       'supportedBlockchains': ['blockchain', 'chain', 'solana', 'ethereum', 'algorand', 'supported', 'which blockchain', 'what blockchain', 'network', 'fees', 'cost', 'cheap', 'expensive'],
       'platformLimitations': ['telegram', 'platform', 'support', 'twitter', 'x.com', 'social media', 'where can', 'which platform'],
       'raidFeature': ['raid', 'community', 'engage', 'engagement', 'three dots', '...', 'social', 'like', 'retweet', 'comment'],
@@ -1205,7 +1205,7 @@ class NYLAConversationManagerV2 {
     const questionText = originalQuestion?.toLowerCase() || '';
     
     // For "What is NYLA?" responses - provide exploration options mentioned in the response
-    if (questionText.includes('what is nyla') || topic === 'nylagoCore' || topic === 'about') {
+    if (questionText.includes('what is nyla') || topic === 'about') {
       contextualFollowUps = [
         { id: 'try-send-tab', text: '💸 Try the Send tab', context: 'hands-on practice' },
         { id: 'explore-receive', text: '💰 Explore Receive payments', context: 'hands-on practice' },
@@ -1214,7 +1214,7 @@ class NYLAConversationManagerV2 {
       ];
     }
     // For transfer-related responses
-    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'nylagoCore' || topic === 'nylaCommands') {
+    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('receive') || topic === 'about' || topic === 'nylaCommands') {
       contextualFollowUps = [
         { id: 'try-send-now', text: '💸 Try sending now', context: 'hands-on practice' },
         { id: 'qr-code-help', text: '📱 How do QR codes work?', context: 'technical details' },
