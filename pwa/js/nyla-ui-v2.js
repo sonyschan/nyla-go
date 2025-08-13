@@ -989,18 +989,39 @@ class NYLAAssistantUIV2 {
         };
       }
       
-      // Get user's knowledge breakdown
+      // Get user's knowledge breakdown with new structured format
       const knowledgeBreakdown = this.conversation.knowledgeTracker.getKnowledgeBreakdown();
-      const userTopics = Array.from(this.conversation.knowledgeTracker.userKnowledge.topics || []);
-      const userConcepts = Array.from(this.conversation.knowledgeTracker.userKnowledge.concepts || []);
-      const userFeatures = Array.from(this.conversation.knowledgeTracker.userKnowledge.features || []);
+      const userKnowledge = this.conversation.knowledgeTracker.userKnowledge;
       
-      // Create context for greeting generation
+      // Extract structured KB data
+      const userChunks = Array.from(userKnowledge.chunks || []);
+      const userCategories = Array.from(userKnowledge.categories || []);
+      const userTags = Array.from(userKnowledge.tags || []);
+      const userGlossaryTerms = Array.from(userKnowledge.glossaryTerms || []);
+      
+      // Legacy fallback for backward compatibility
+      const userTopics = Array.from(userKnowledge.topics || []);
+      const userConcepts = Array.from(userKnowledge.concepts || []);
+      const userFeatures = Array.from(userKnowledge.features || []);
+      
+      // Create enhanced context for greeting generation with structured KB data
       return {
         knowledgePercentage: knowledgeBreakdown.percentage || 0,
+        
+        // New structured KB format (primary)
+        structuredKnowledge: {
+          chunks: userChunks,
+          categories: userCategories,
+          tags: userTags,
+          glossaryTerms: userGlossaryTerms,
+          breakdown: knowledgeBreakdown
+        },
+        
+        // Legacy format (fallback)
         userTopics: userTopics,
         userConcepts: userConcepts,
         userFeatures: userFeatures,
+        
         totalExposure: knowledgeBreakdown.totalExposure || 0,
         timezone: this.conversation.userProfile?.timezone || 'UTC',
         localTime: this.conversation.userProfile?.localTime || new Date().toLocaleString()
