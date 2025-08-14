@@ -260,17 +260,24 @@ class NYLAConversationManagerV2 {
       // Try LLM if available, otherwise fallback to "don't know" response
       const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
       console.log('NYLA Conversation V2: LLM Status:', llmStatus);
+      console.log('NYLA Conversation V2: LLM Engine isReady():', this.llmEngine ? this.llmEngine.isReady() : false);
       
       // Check for mobile device (LLM engine will be null on mobile)
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // Use LLM if engine is ready - warmup status is not required if LLM is already responding
-      const canUseLLM = llmStatus.initialized && !llmStatus.loading;
+      // Use LLM if engine is ready, or force attempt on mobile for debugging
+      const canUseLLM = llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp;
       const shouldForceDebug = isMobile && llmStatus.initialized && !llmStatus.loading;
       
-      if (canUseLLM || shouldForceDebug) {
+      // Special case: If the user is interacting via conversation box, try LLM even if warmup flag is false
+      // This handles race conditions where UI loads before warmup flag is set
+      const shouldTryLLMDespiteWarmup = llmStatus.initialized && !llmStatus.loading && !llmStatus.warmedUp;
+      
+      if (canUseLLM || shouldForceDebug || shouldTryLLMDespiteWarmup) {
         if (shouldForceDebug) {
           console.log('NYLA Conversation V2: 🔧 MOBILE DEBUG: Forcing LLM attempt even if not warmed up');
+        } else if (shouldTryLLMDespiteWarmup) {
+          console.log('NYLA Conversation V2: ⚡ Trying LLM despite warmup flag being false (race condition handling)');
         } else {
           console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
         }
@@ -280,7 +287,7 @@ class NYLAConversationManagerV2 {
         console.log('NYLA Conversation V2: 🚨 LLM Status:', {
           'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
           'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
-          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌ (not required)',
+          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌',
           'isMobile': isMobile ? '✅' : '❌'
         });
         
