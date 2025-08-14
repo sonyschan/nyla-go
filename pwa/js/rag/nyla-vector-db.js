@@ -251,6 +251,19 @@ class NYLAVectorDB {
   matchesFilter(chunk, filter) {
     if (!filter) return true;
     
+    // Handle $or operator
+    if (filter.$or && Array.isArray(filter.$or)) {
+      const matchesAny = filter.$or.some(condition => this.matchesFilter(chunk, condition));
+      if (!matchesAny) return false;
+    }
+    
+    // Handle excludeFromTech with $ne operator
+    if (filter.excludeFromTech && filter.excludeFromTech.$ne !== undefined) {
+      const expectedValue = filter.excludeFromTech.$ne;
+      const actualValue = chunk.metadata.excludeFromTech;
+      if (actualValue === expectedValue) return false;
+    }
+    
     // Filter by tags
     if (filter.tags && filter.tags.length > 0) {
       const chunkTags = chunk.metadata.tags || [];
@@ -263,9 +276,28 @@ class NYLAVectorDB {
       return false;
     }
     
+    // Filter by type with $ne support
+    if (filter.type) {
+      if (typeof filter.type === 'string') {
+        if (chunk.metadata.type !== filter.type) return false;
+      } else if (filter.type.$ne && chunk.metadata.type === filter.type.$ne) {
+        return false;
+      }
+    }
+    
     // Filter by chunk type
-    if (filter.chunkType && chunk.metadata.chunk_type !== filter.chunkType) {
-      return false;
+    if (filter.chunkType) {
+      if (typeof filter.chunkType === 'string') {
+        // Simple string match
+        if (chunk.metadata.chunk_type !== filter.chunkType) {
+          return false;
+        }
+      } else if (filter.chunkType.$in && Array.isArray(filter.chunkType.$in)) {
+        // MongoDB-style $in operator
+        if (!filter.chunkType.$in.includes(chunk.metadata.chunk_type)) {
+          return false;
+        }
+      }
     }
     
     return true;

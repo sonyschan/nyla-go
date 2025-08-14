@@ -262,7 +262,8 @@ class NYLARetriever {
     // Add intent-based filters
     switch (intent) {
       case 'howTo':
-        filter.chunkType = 'how_to';
+        // Allow multiple chunk types for how-to queries (FAQ and guides)
+        filter.chunkType = { $in: ['how_to', 'general_info', 'faq'] };
         break;
       case 'technical':
         filter.chunkType = 'technical_spec';
