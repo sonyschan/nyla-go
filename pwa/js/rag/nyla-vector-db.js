@@ -213,6 +213,11 @@ class NYLAVectorDB {
       
       // Apply metadata filter if provided
       if (filter && !this.matchesFilter(chunk, filter)) {
+        console.log(`❌ Chunk filtered out by metadata filter:`, {
+          id: result.id,
+          filter: filter,
+          chunkMetadata: chunk.metadata
+        });
         continue;
       }
       
@@ -226,6 +231,16 @@ class NYLAVectorDB {
       
       if (filteredResults.length >= k) break;
     }
+    
+    console.log('🔍 Vector DB Final Results:', {
+      inputResults: results.length,
+      filteredResults: filteredResults.length,
+      topResults: filteredResults.slice(0, 3).map(r => ({
+        id: r.id,
+        score: r.score.toFixed(4),
+        text: r.text.substring(0, 50) + '...'
+      }))
+    });
     
     return filteredResults;
   }

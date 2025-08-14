@@ -44,6 +44,12 @@ class NYLARetriever {
       const queryEmbedding = await this.embeddingService.embed(processedQuery.normalized);
       
       // Perform semantic search
+      console.log('🔍 Calling vector DB search with:', {
+        queryEmbeddingLength: queryEmbedding.length,
+        topK: config.topK * 2,
+        filter: processedQuery.filter
+      });
+      
       const semanticResults = await this.vectorDB.search(
         queryEmbedding,
         config.topK * 2,  // Get extra results for reranking
