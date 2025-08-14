@@ -291,8 +291,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.4.0
-- **Features**: Complete internationalization with Chinese language support, enhanced Settings page with language preferences and username management, comprehensive i18n system for both PWA and Extension, fixed username sync between tabs, multilingual menu items, and improved user experience with proper localization throughout the application
+- **Latest Release**: v2.4.1
+- **Features**: Complete internationalization with Chinese language support, enhanced Settings page with language preferences and username management, comprehensive i18n system for both PWA and Extension, fixed username sync between tabs, multilingual menu items, improved user experience with proper localization throughout the application, and fixed LLM response normalization issue
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

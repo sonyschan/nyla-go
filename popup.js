@@ -735,7 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         // Get version from Chrome extension manifest
         const manifestData = chrome.runtime.getManifest();
-        const version = (manifestData && manifestData.version) ? manifestData.version : '2.2.3';
+        const version = (manifestData && manifestData.version) ? manifestData.version : '2.4.1';
         
         // Use i18n if available
         if (window.extensionI18n) {
