@@ -57,8 +57,12 @@ class NYLARAGIntegration {
         console.log('💬 Conversation context integrated with RAG');
       }
       
-      // Set up production sync if available
-      if (window.NYLAProductionSync) {
+      // Set up production sync if available (skip in local development)
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.protocol === 'file:';
+      
+      if (window.NYLAProductionSync && !isLocalhost) {
         this.productionSync = new window.NYLAProductionSync({
           checkIntervalMs: 1000 * 60 * 60, // Check hourly
           forceCheckOnStartup: true
@@ -72,6 +76,8 @@ class NYLARAGIntegration {
         });
         
         console.log('🌐 Production sync integrated with RAG');
+      } else if (isLocalhost) {
+        console.log('📍 Running locally - production sync disabled');
       }
       
       // Try to load pre-built embeddings from the web data file
