@@ -23,7 +23,8 @@ class NYLAKnowledgeBaseLoader {
     try {
       // In browser, we load from the pre-built vector database
       // which contains all the knowledge chunks
-      const response = await fetch('/pwa/data/nyla-vector-db.json');
+      // Use relative path for proper loading in both local and production
+      const response = await fetch('data/nyla-vector-db.json');
       if (!response.ok) {
         throw new Error(`Failed to load KB: HTTP ${response.status}`);
       }
