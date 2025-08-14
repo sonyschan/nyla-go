@@ -515,6 +515,26 @@ class NYLALLMEngine {
     try {
       // Timing: Prompt preparation
       const promptStart = performance.now();
+      
+      // Extract additional context information from RAG pipeline
+      const sourceMetadata = conversationContext.sourceMetadata || [];
+      const contextStats = conversationContext.contextStats || {};
+      
+      // Store source metadata for potential use in response formatting
+      this.currentSources = sourceMetadata;
+      this.currentContextStats = contextStats;
+      
+      // Log context statistics if available
+      if (contextStats.chunksUsed > 0) {
+        console.log(`📊 NYLA LLM: Context stats - Used ${contextStats.chunksUsed}/${contextStats.totalChunks} chunks (${contextStats.estimatedTokens} tokens)`);
+        if (contextStats.hasConversationContext) {
+          console.log(`💬 NYLA LLM: Includes conversation context (${contextStats.conversationTokens} tokens)`);
+        }
+        if (sourceMetadata.length > 0) {
+          console.log(`📚 NYLA LLM: Sources available:`, sourceMetadata.map(s => s.source).join(', '));
+        }
+      }
+      
       const prompt = this.buildPrompt(userMessage, conversationContext);
       const promptTime = performance.now() - promptStart;
       
@@ -2053,6 +2073,29 @@ class NYLALLMEngine {
     // Always use improved follow-up generation (ignore LLM suggestions)
     console.log('NYLA LLM: Generating contextual follow-up suggestions...');
     response.followUpSuggestions = this.generateImprovedFollowUps(context, userMessage || '', response.text);
+    
+    // Add source information if available from RAG pipeline
+    if (this.currentSources && this.currentSources.length > 0) {
+      response.sources = this.currentSources.map(source => ({
+        title: source.title || source.source,
+        id: source.source,
+        chunksUsed: source.chunks ? source.chunks.length : 1
+      }));
+      console.log(`📚 NYLA LLM: Added ${response.sources.length} source references to response`);
+    }
+    
+    // Add context statistics if available
+    if (this.currentContextStats && this.currentContextStats.chunksUsed > 0) {
+      response.contextInfo = {
+        chunksUsed: this.currentContextStats.chunksUsed,
+        totalChunks: this.currentContextStats.totalChunks,
+        hasConversationContext: this.currentContextStats.hasConversationContext
+      };
+    }
+    
+    // Clear stored metadata to prevent leakage between requests
+    this.currentSources = null;
+    this.currentContextStats = null;
 
     // Personal care feature disabled for now - can be re-enabled when KB extraction is improved
     // if (context.timezone && context.localTime) {
