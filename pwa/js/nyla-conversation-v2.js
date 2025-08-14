@@ -264,8 +264,8 @@ class NYLAConversationManagerV2 {
       // Check for mobile device (LLM engine will be null on mobile)
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // Use LLM if engine is ready, or force attempt on mobile for debugging
-      const canUseLLM = llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp;
+      // Use LLM if engine is ready - warmup status is not required if LLM is already responding
+      const canUseLLM = llmStatus.initialized && !llmStatus.loading;
       const shouldForceDebug = isMobile && llmStatus.initialized && !llmStatus.loading;
       
       if (canUseLLM || shouldForceDebug) {
@@ -280,7 +280,7 @@ class NYLAConversationManagerV2 {
         console.log('NYLA Conversation V2: 🚨 LLM Status:', {
           'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
           'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
-          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌',
+          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌ (not required)',
           'isMobile': isMobile ? '✅' : '❌'
         });
         
