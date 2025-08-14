@@ -1454,6 +1454,9 @@ class NYLAAssistantUIV2 {
       
       // Display follow-up questions (unless in personal care mode)
       if (!this.personalCareMode) {
+        console.log('NYLA UI V2: About to display followUps:', response.followUps);
+        console.log('NYLA UI V2: FollowUps type:', typeof response.followUps);
+        console.log('NYLA UI V2: FollowUps length:', response.followUps ? response.followUps.length : 'undefined');
         this.displayQuestions(response.followUps);
       }
       
@@ -2031,7 +2034,13 @@ class NYLAAssistantUIV2 {
    * Override displayQuestions to handle engagement styling and tab switching
    */
   displayQuestions(questions) {
-    if (!questions || questions.length === 0) return;
+    console.log('NYLA UI V2: displayQuestions called with:', questions);
+    console.log('NYLA UI V2: questions length:', questions ? questions.length : 'null/undefined');
+    
+    if (!questions || questions.length === 0) {
+      console.log('NYLA UI V2: No questions to display, returning early');
+      return;
+    }
 
     this.clearQuestions();
 
