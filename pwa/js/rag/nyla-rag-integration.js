@@ -8,6 +8,7 @@ class NYLARAGIntegration {
     this.conversationManager = conversationManager;
     this.ragPipeline = null;
     this.productionSync = null;
+    this.semanticFollowups = null; // New semantic follow-up generator
     this.initialized = false;
     this.indexBuilt = false;
     this.indexBuildFailed = false; // Circuit breaker for index build failures
@@ -42,6 +43,14 @@ class NYLARAGIntegration {
       
       // Initialize pipeline
       await this.ragPipeline.initialize(knowledgeBase, llmEngine);
+      
+      // Initialize semantic follow-up generator
+      if (window.NYLASemanticFollowups) {
+        this.semanticFollowups = new window.NYLASemanticFollowups(this.ragPipeline);
+        console.log('🎯 Semantic follow-up generator initialized');
+      } else {
+        console.warn('⚠️ NYLASemanticFollowups not available, using fallback follow-ups');
+      }
       
       // Set up conversation context if available
       if (window.NYLAConversationContext) {
@@ -266,8 +275,8 @@ class NYLARAGIntegration {
     // Determine response type
     const responseType = this.determineResponseType(ragResult.metrics.confidence);
     
-    // Generate contextual follow-up suggestions based on the response
-    const followUpSuggestions = this.generateRAGFollowUps(ragResult, questionText);
+    // Generate contextual follow-up suggestions using semantic approach
+    const followUpSuggestions = await this.generateSemanticRAGFollowUps(ragResult, questionText, answer);
     
     // Convert followUpSuggestions to the format expected by UI
     const followUps = followUpSuggestions.map((suggestion, index) => ({
@@ -306,57 +315,63 @@ class NYLARAGIntegration {
   }
 
   /**
-   * Generate contextual follow-up suggestions based on RAG response
+   * Generate semantic follow-up suggestions based on RAG response
+   * Uses semantic similarity to create diverse, contextual follow-ups
    */
-  generateRAGFollowUps(ragResult, questionText) {
-    const responseText = ragResult.response.toLowerCase();
+  async generateSemanticRAGFollowUps(ragResult, questionText, responseText) {
+    try {
+      if (this.semanticFollowups) {
+        console.log('🎯 Generating semantic follow-ups...');
+        const followUps = await this.semanticFollowups.generateSemanticFollowUps(
+          ragResult, 
+          questionText, 
+          responseText
+        );
+        console.log('✅ Semantic follow-ups generated:', followUps);
+        return followUps;
+      } else {
+        console.warn('⚠️ Semantic follow-ups not available, using rule-based fallback');
+        return this.generateRuleBasedFollowUps(ragResult, questionText);
+      }
+    } catch (error) {
+      console.error('❌ Semantic follow-up generation failed:', error);
+      return this.generateRuleBasedFollowUps(ragResult, questionText);
+    }
+  }
+
+  /**
+   * Fallback rule-based follow-up generation
+   * Used when semantic generation fails
+   */
+  generateRuleBasedFollowUps(ragResult, questionText) {
     const question = questionText.toLowerCase();
     
-    // Default follow-ups
-    let followUps = [];
-    
-    // For "What is NYLA?" responses
-    if (question.includes('what is nyla') || question.includes('what is nylago')) {
-      followUps = [
+    // Simple rule-based fallback
+    if (question.includes('send') || question.includes('transfer')) {
+      return [
+        "How do I receive payments?",
+        "What are the transaction fees?", 
+        "What's new with NYLA recently?"
+      ];
+    } else if (question.includes('receive') || question.includes('qr')) {
+      return [
         "How do I send tokens?",
-        "How do I receive payments?", 
-        "What blockchains are supported?"
+        "Which blockchain should I use?",
+        "How does NYLA compare to other tools?"
       ];
-    }
-    // For transfer-related responses
-    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('command')) {
-      followUps = [
-        "How do I create a transfer command?",
-        "What happens after I post the command?",
-        "Can I transfer between different blockchains?"
+    } else if (question.includes('workflow') || question.includes('happens after')) {
+      return [
+        "How long do transactions take?",
+        "What are the different blockchain networks?",
+        "What makes NYLA special?"
       ];
-    }
-    // For receive/QR related responses
-    else if (responseText.includes('receive') || responseText.includes('qr') || responseText.includes('payment')) {
-      followUps = [
-        "How do I share my payment QR code?",
-        "Can I request specific amounts?",
-        "What wallets support QR scanning?"
-      ];
-    }
-    // For blockchain/network responses
-    else if (responseText.includes('blockchain') || responseText.includes('network') || responseText.includes('solana') || responseText.includes('ethereum') || responseText.includes('algorand')) {
-      followUps = [
-        "Tell me about different network capabilities",
-        "How do fees compare between networks?",
-        "Which network should I use?"
-      ];
-    }
-    // Generic fallback
-    else {
-      followUps = [
+    } else {
+      return [
         "How do I get started with NYLA?",
-        "Show me the main features",
+        "What are the main features?",
         "What can NYLA help me with?"
       ];
     }
-    
-    return followUps;
   }
 
   /**
