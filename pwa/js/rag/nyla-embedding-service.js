@@ -79,7 +79,7 @@ class NYLAEmbeddingService {
         
         // Configure for browser
         env.allowLocalModels = false;
-        env.useBrowserCache = true;
+        env.useBrowserCache = false;  // Match Node.js configuration
       }
       
       // Create feature extraction pipeline
