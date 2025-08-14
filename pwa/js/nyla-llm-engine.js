@@ -13,7 +13,7 @@ class NYLALLMEngine {
     this.deviceInfo = this.detectDevice();
     this.modelConfig = {
       model: this.selectModel(),
-      temperature: 0.7,
+      temperature: 0.5,
       max_tokens: 600, // Increased from 300 to handle detailed instructions
       top_p: 0.8,
     };
