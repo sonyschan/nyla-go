@@ -205,7 +205,11 @@ class NYLAVectorDB {
     for (const result of results) {
       const chunk = this.chunks.get(result.id);
       
-      if (!chunk) continue;
+      if (!chunk) {
+        console.log(`❌ Chunk not found for ID: ${result.id}. Available chunk IDs:`, 
+          Array.from(this.chunks.keys()).slice(0, 5));
+        continue;
+      }
       
       // Apply metadata filter if provided
       if (filter && !this.matchesFilter(chunk, filter)) {
