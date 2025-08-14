@@ -314,6 +314,15 @@ class NYLARAGIntegration {
    */
   async handleProductionUpdate(updateData) {
     try {
+      // Check if we already have embeddings loaded
+      if (this.indexBuilt && this.ragPipeline) {
+        const stats = this.ragPipeline.getStats();
+        if (stats.vectorDB && stats.vectorDB.chunkCount > 0) {
+          console.log('✅ Knowledge base already loaded with', stats.vectorDB.chunkCount, 'chunks');
+          return; // Skip update, we already have data
+        }
+      }
+      
       // Always auto-update silently, especially for first-time use
       const isFirstTime = updateData.reason === 'no_local_version';
       

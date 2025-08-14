@@ -15,7 +15,8 @@ class NYLAProductionSync {
     
     this.options = {
       // Production CDN endpoints - use relative paths when local
-      indexUrl: isLocalhost ? 'nyla-knowledge-index.json.gz' : `${baseUrl}/nyla-knowledge-index.json.gz`,
+      // For local dev, use uncompressed JSON; for production use compressed
+      indexUrl: isLocalhost ? 'nyla-knowledge-index.json' : `${baseUrl}/nyla-knowledge-index.json.gz`,
       versionUrl: isLocalhost ? 'nyla-knowledge-version.json' : `${baseUrl}/nyla-knowledge-version.json`,
       
       // Local storage configuration
