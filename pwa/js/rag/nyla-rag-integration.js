@@ -57,27 +57,22 @@ class NYLARAGIntegration {
         console.log('💬 Conversation context integrated with RAG');
       }
       
-      // Set up production sync if available (skip in local development)
-      const isLocalhost = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1' ||
-                         window.location.protocol === 'file:';
-      
-      if (window.NYLAProductionSync && !isLocalhost) {
+      // Set up production sync if available
+      if (window.NYLAProductionSync) {
         this.productionSync = new window.NYLAProductionSync({
           checkIntervalMs: 1000 * 60 * 60, // Check hourly
           forceCheckOnStartup: true
         });
         await this.productionSync.initialize();
         
-        // Set up event listeners
+        // Set up event listeners for silent auto-updates
         this.productionSync.on('updateAvailable', (data) => {
-          console.log('🆕 Production update available:', data.reason);
+          console.log('🆕 Knowledge base update available:', data.reason);
+          // Silently handle the update without user prompts
           this.handleProductionUpdate(data);
         });
         
-        console.log('🌐 Production sync integrated with RAG');
-      } else if (isLocalhost) {
-        console.log('📍 Running locally - production sync disabled');
+        console.log('🌐 Production sync initialized with auto-update');
       }
       
       // Try to load pre-built embeddings from the web data file
@@ -319,77 +314,54 @@ class NYLARAGIntegration {
    */
   async handleProductionUpdate(updateData) {
     try {
-      // Check user preferences for auto-update
-      const autoUpdate = localStorage.getItem('nyla-auto-update') === 'true';
+      // Always auto-update silently, especially for first-time use
+      const isFirstTime = updateData.reason === 'no_local_version';
       
-      if (autoUpdate) {
-        console.log('🔄 Auto-updating to production version...');
-        await this.productionSync.downloadAndInstall();
-        
-        // Notify user of successful update
-        this.showUpdateNotification('Update completed successfully!', 'success');
+      if (isFirstTime) {
+        console.log('🔄 First-time setup: Installing knowledge base...');
       } else {
-        // Show update available notification
-        this.showUpdateNotification(
-          `New knowledge base update available (${updateData.reason})`,
-          'info',
-          () => this.promptUserForUpdate(updateData)
-        );
+        console.log('🔄 Auto-updating knowledge base...');
       }
+      
+      // Download and install silently
+      await this.productionSync.downloadAndInstall();
+      
+      // Only log success, no user-facing notifications
+      console.log('✅ Knowledge base updated successfully');
+      
+      // For non-first-time updates, optionally show a subtle notification
+      if (!isFirstTime && window.nylaUI && window.nylaUI.showToast) {
+        // Show a brief, non-intrusive toast notification
+        window.nylaUI.showToast('Knowledge base updated', 'info', 2000);
+      }
+      
     } catch (error) {
-      console.error('❌ Failed to handle production update:', error);
-      this.showUpdateNotification('Update failed. Using local version.', 'error');
+      console.error('❌ Failed to update knowledge base:', error);
+      // Silent failure - just use existing data
+      console.log('📍 Using existing knowledge base');
     }
   }
 
   /**
-   * Prompt user for manual update
+   * Prompt user for manual update (deprecated - keeping for backwards compatibility)
    */
   async promptUserForUpdate(updateData) {
-    const shouldUpdate = confirm(
-      `A new knowledge base update is available.\n\n` +
-      `Reason: ${updateData.reason}\n` +
-      `Current: ${updateData.current?.hash?.substring(0, 8) || 'none'}\n` +
-      `New: ${updateData.production.hash.substring(0, 8)}\n\n` +
-      `Download and install update now?`
-    );
-    
-    if (shouldUpdate) {
-      try {
-        this.showUpdateNotification('Downloading update...', 'info');
-        
-        // Show progress during update
-        this.productionSync.on('updateProgress', (progress) => {
-          this.showUpdateProgress(progress);
-        });
-        
-        await this.productionSync.downloadAndInstall();
-        this.showUpdateNotification('Update completed successfully!', 'success');
-        
-      } catch (error) {
-        console.error('❌ Manual update failed:', error);
-        this.showUpdateNotification('Update failed. Continuing with local version.', 'error');
-      }
-    }
+    // This method is deprecated as we now auto-update silently
+    // Keeping it to avoid breaking existing code that might reference it
+    console.log('⚠️ promptUserForUpdate called but auto-update is now automatic');
+    await this.handleProductionUpdate(updateData);
   }
 
   /**
    * Show update notification to user
    */
   showUpdateNotification(message, type = 'info', action = null) {
-    // Try to use existing NYLA UI notification system
-    if (window.nylaUI && window.nylaUI.showNotification) {
-      window.nylaUI.showNotification(message, type, action);
-    } else {
-      // Fallback to console
-      const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-      console.log(`${emoji} ${message}`);
-      
-      // Simple browser notification if available
-      if (action && confirm(message + '\n\nTake action?')) {
-        action();
-      }
-    }
+    // Only log to console - no user-facing notifications for KB updates
+    const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+    console.log(`${emoji} ${message}`);
+    
+    // Never show confirm dialogs or browser notifications for KB updates
+    // This prevents security concerns and improves UX
   }
 
   /**
