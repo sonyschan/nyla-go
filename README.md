@@ -2,11 +2,13 @@
 
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
-![NYLA Go](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bbfolghcbmfbfcphapfhnmdalapifklh?label=Chrome%20Web%20Store&color=blue&logo=googlechrome)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
 ![Version](https://img.shields.io/badge/Version-2.5.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Security](https://img.shields.io/badge/Security-Verified-brightgreen?logo=shield)
 ![Open Source](https://img.shields.io/badge/Source-Open-blue?logo=github)
+
+**[📥 Get it on Chrome Web Store](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)** • **[🌐 Try the PWA](https://sonyschan.github.io/nyla-go/)**
 
 ## 🎥 Video Demo
 
@@ -88,10 +90,14 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 
 ## 🔧 Installation
 
-### Method 1: From Chrome Web Store (Coming Soon)
-[Install NYLA Transfer Assistant](https://chrome.google.com/webstore/detail/your-extension-id)
+### Method 1: From Chrome Web Store (Recommended)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bbfolghcbmfbfcphapfhnmdalapifklh?label=Chrome%20Web%20Store&color=blue)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
 
-### Method 2: Install from ZIP File (Current)
+**[📥 Install from Chrome Web Store →](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)**
+
+*One-click installation with automatic updates*
+
+### Method 2: Install from ZIP File (For Developers)
 1. **Download the Extension**
    - Go to [Releases](https://github.com/sonyschan/nyla-go/releases)
    - Download `nyla-go-v2.5.0-extension-only.zip`
