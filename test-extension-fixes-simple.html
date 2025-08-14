@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Extension Fixes Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            margin: 10px 5px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        .button:hover { background: #e55a2b; }
+        .demo-box {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+        }
+        .success { color: #4CAF50; }
+        .current-lang {
+            background: #FF6B35;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .translation-demo {
+            font-size: 18px;
+            margin: 8px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Extension Fixes - Simple Test</h1>
+    
+    <div class="demo-box">
+        <h3>Language Status</h3>
+        <div>Current: <span id="currentLang" class="current-lang">Loading...</span></div>
+        <button class="button" onclick="setEnglish()">English</button>
+        <button class="button" onclick="setChinese()">中文</button>
+        <div id="status" style="margin-top: 10px;">Initializing...</div>
+    </div>
+
+    <div class="demo-box">
+        <h3>🛠️ Fixed Translations Demo</h3>
+        <p>These are the exact keys that were missing and have been fixed:</p>
+        
+        <div class="translation-demo">
+            <strong>Send - QR Toggle:</strong> 
+            <span id="qrToggle" style="color: #FFD700;">Loading...</span>
+        </div>
+        
+        <div class="translation-demo">
+            <strong>Receive - Username:</strong> 
+            <span id="username" style="color: #FFD700;">Loading...</span>
+        </div>
+        
+        <div class="translation-demo">
+            <strong>Receive - Share Button:</strong> 
+            <span id="shareBtn" style="color: #FFD700;">Loading...</span>
+        </div>
+        
+        <div class="translation-demo">
+            <strong>Swap - Amount From:</strong> 
+            <span id="amountFrom" style="color: #FFD700;">Loading...</span>
+        </div>
+        
+        <div class="translation-demo">
+            <strong>Footer - Feedback:</strong> 
+            <span id="feedback" style="color: #FFD700;">Loading...</span>
+        </div>
+    </div>
+
+    <script src="extension-i18n-next.js"></script>
+    <script>
+        let i18n = null;
+        
+        // Mock chrome storage
+        window.chrome = window.chrome || {
+            storage: {
+                sync: {
+                    set: (data, cb) => {
+                        Object.keys(data).forEach(k => localStorage.setItem('test_' + k, data[k]));
+                        if (cb) cb();
+                    },
+                    get: (keys, cb) => {
+                        const result = {};
+                        (Array.isArray(keys) ? keys : [keys]).forEach(k => {
+                            const val = localStorage.getItem('test_' + k);
+                            if (val) result[k] = val;
+                        });
+                        cb(result);
+                    }
+                }
+            }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                if (window.getExtensionI18n) {
+                    i18n = window.getExtensionI18n();
+                } else {
+                    i18n = new ExtensionI18nNext();
+                }
+                
+                await i18n.initialize();
+                updateDisplay();
+                document.getElementById('status').innerHTML = '<span class="success">✅ Ready!</span>';
+            } catch (e) {
+                document.getElementById('status').innerHTML = '❌ Error: ' + e.message;
+            }
+        });
+        
+        function setEnglish() {
+            if (i18n) {
+                i18n.changeLanguage('en').then(updateDisplay);
+            }
+        }
+        
+        function setChinese() {
+            if (i18n) {
+                i18n.changeLanguage('zh').then(updateDisplay);
+            }
+        }
+        
+        function updateDisplay() {
+            if (!i18n) return;
+            
+            const lang = i18n.getCurrentLanguage();
+            document.getElementById('currentLang').textContent = lang === 'zh' ? '中文' : 'English';
+            
+            // Update all the fixed translations
+            document.getElementById('qrToggle').textContent = i18n.t('send.qr.toggle');
+            document.getElementById('username').textContent = i18n.t('receive.username');
+            document.getElementById('shareBtn').textContent = i18n.t('receive.button');
+            document.getElementById('amountFrom').textContent = i18n.t('swap.amount.from');
+            document.getElementById('feedback').textContent = i18n.t('ext.feedback');
+        }
+    </script>
+</body>
+</html>

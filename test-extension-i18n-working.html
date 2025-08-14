@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension i18n Working Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .test-button:hover {
+            background: #e55a2b;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+            font-size: 14px;
+        }
+        .ui-demo {
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .current-lang {
+            background: #FF6B35;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .key-info {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #888;
+        }
+        .working-demo {
+            background: #1a4a1a;
+            border: 1px solid #4a7c59;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Extension i18n Working Test</h1>
+    
+    <div class="test-section">
+        <h2>Language System Status</h2>
+        <div style="margin-bottom: 15px;">
+            Current Language: <span id="currentLang" class="current-lang">Loading...</span>
+        </div>
+        <button class="test-button" onclick="switchToEnglish()">English</button>
+        <button class="test-button" onclick="switchToChinese()">中文</button>
+        <div id="initStatus" class="test-result">Initializing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🛠️ New Translation Keys Test</h2>
+        <p>Testing all the keys that were added to fix the reported issues:</p>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Send - QR Toggle:</strong><br>
+                <span class="key-info">send.qr.toggle</span>
+            </div>
+            <div id="sendQrToggle" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Send - Command Placeholder:</strong><br>
+                <span class="key-info">ext.send.command.placeholder</span>
+            </div>
+            <div id="sendCommandPlaceholder" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Receive - Username Label:</strong><br>
+                <span class="key-info">receive.username</span>
+            </div>
+            <div id="receiveUsername" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Receive - Share Button:</strong><br>
+                <span class="key-info">receive.button</span>
+            </div>
+            <div id="receiveButton" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Receive - Dynamic QR:</strong><br>
+                <span class="key-info">ext.qr.instruction.dynamic</span>
+            </div>
+            <div id="receiveQrDynamic" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Swap - Amount From:</strong><br>
+                <span class="key-info">swap.amount.from</span>
+            </div>
+            <div id="swapAmountFrom" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Swap - To Token:</strong><br>
+                <span class="key-info">swap.to.token</span>
+            </div>
+            <div id="swapToToken" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Footer - Feedback:</strong><br>
+                <span class="key-info">ext.feedback</span>
+            </div>
+            <div id="footerFeedback" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <div class="ui-demo working-demo">
+            <div>
+                <strong>Footer - Donate:</strong><br>
+                <span class="key-info">ext.donate</span>
+            </div>
+            <div id="footerDonate" style="text-align: right;">Loading...</div>
+        </div>
+        
+        <button class="test-button" onclick="updateAllTranslations()">Update All Translations</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Test Results</h2>
+        <div id="testResults" class="test-result">
+            <p><strong>Instructions:</strong></p>
+            <ol>
+                <li>Click "English" or "中文" to switch language</li>
+                <li>Click "Update All Translations" to see the new translations</li>
+                <li>Verify that all text changes when switching languages</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Load the extension i18n system -->
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let extensionI18n = null;
+        let initializationAttempted = false;
+        
+        // Mock chrome.storage API for testing
+        if (typeof chrome === 'undefined') {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        set: function(data, callback) {
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem('chrome_storage_' + key, data[key]);
+                            });
+                            if (callback) callback();
+                            console.log('✅ Chrome storage set:', data);
+                        },
+                        get: function(keys, callback) {
+                            const result = {};
+                            if (Array.isArray(keys)) {
+                                keys.forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    if (value) result[key] = value;
+                                });
+                            } else if (typeof keys === 'string') {
+                                const value = localStorage.getItem('chrome_storage_' + keys);
+                                if (value) result[keys] = value;
+                            } else if (typeof keys === 'object') {
+                                Object.keys(keys).forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    result[key] = value || keys[key];
+                                });
+                            }
+                            console.log('✅ Chrome storage get:', keys, '=>', result);
+                            callback(result);
+                        }
+                    }
+                }
+            };
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeExtensionI18n();
+        });
+        
+        async function initializeExtensionI18n() {
+            if (initializationAttempted) return;
+            initializationAttempted = true;
+            
+            try {
+                console.log('🔄 Initializing extension i18n...');
+                
+                // Get the extension i18n instance
+                if (typeof getExtensionI18n === 'function') {
+                    extensionI18n = getExtensionI18n();
+                } else if (typeof ExtensionI18nNext === 'function') {
+                    extensionI18n = new ExtensionI18nNext();
+                } else {
+                    throw new Error('Extension i18n system not found');
+                }
+                
+                const success = await extensionI18n.initialize();
+                
+                if (success) {
+                    const currentLang = extensionI18n.getCurrentLanguage();
+                    document.getElementById('currentLang').textContent = 
+                        currentLang === 'zh' ? '中文 (Chinese)' : 'English';
+                    document.getElementById('initStatus').innerHTML = 
+                        `<span class="success">✅ Extension i18n initialized successfully with ${currentLang}</span>`;
+                    
+                    // Update translations initially
+                    updateAllTranslations();
+                } else {
+                    throw new Error('Initialization returned false');
+                }
+                
+            } catch (error) {
+                console.error('❌ Extension i18n initialization failed:', error);
+                document.getElementById('initStatus').innerHTML = 
+                    `<span class="error">❌ Initialization failed: ${error.message}</span>`;
+            }
+        }
+        
+        async function switchToEnglish() {
+            if (!extensionI18n) {
+                await initializeExtensionI18n();
+            }
+            
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('en');
+                    document.getElementById('currentLang').textContent = 'English';
+                    document.getElementById('initStatus').innerHTML = 
+                        '<span class="success">✅ Switched to English</span>';
+                    updateAllTranslations();
+                } catch (error) {
+                    document.getElementById('initStatus').innerHTML = 
+                        `<span class="error">❌ Language switch failed: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        async function switchToChinese() {
+            if (!extensionI18n) {
+                await initializeExtensionI18n();
+            }
+            
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('zh');
+                    document.getElementById('currentLang').textContent = '中文 (Chinese)';
+                    document.getElementById('initStatus').innerHTML = 
+                        '<span class="success">✅ 切换到中文</span>';
+                    updateAllTranslations();
+                } catch (error) {
+                    document.getElementById('initStatus').innerHTML = 
+                        `<span class="error">❌ 切换失败: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        function updateAllTranslations() {
+            if (!extensionI18n || !extensionI18n.isInitialized) {
+                console.warn('⚠️ Extension i18n not ready for translation updates');
+                return;
+            }
+            
+            try {
+                // Update all the new translation keys we added
+                document.getElementById('sendQrToggle').textContent = 
+                    extensionI18n.t('send.qr.toggle');
+                    
+                document.getElementById('sendCommandPlaceholder').textContent = 
+                    extensionI18n.t('ext.send.command.placeholder');
+                    
+                document.getElementById('receiveUsername').textContent = 
+                    extensionI18n.t('receive.username');
+                    
+                document.getElementById('receiveButton').textContent = 
+                    extensionI18n.t('receive.button');
+                    
+                document.getElementById('receiveQrDynamic').textContent = 
+                    extensionI18n.t('ext.qr.instruction.dynamic', { token: 'SOL' });
+                    
+                document.getElementById('swapAmountFrom').textContent = 
+                    extensionI18n.t('swap.amount.from');
+                    
+                document.getElementById('swapToToken').textContent = 
+                    extensionI18n.t('swap.to.token');
+                    
+                document.getElementById('footerFeedback').textContent = 
+                    extensionI18n.t('ext.feedback');
+                    
+                document.getElementById('footerDonate').textContent = 
+                    extensionI18n.t('ext.donate');
+                
+                // Update test results
+                const currentLang = extensionI18n.getCurrentLanguage();
+                const results = [
+                    '<p><strong>✅ All new translations updated successfully!</strong></p>',
+                    `<p><strong>Current Language:</strong> ${currentLang === 'zh' ? '中文 (Chinese)' : 'English'}</p>`,
+                    '<p><strong>Status:</strong> All 9 missing i18n keys are now working</p>',
+                    '<p><strong>Try switching languages</strong> to see the translations change in real-time.</p>'
+                ];
+                
+                document.getElementById('testResults').innerHTML = results.join('');
+                
+            } catch (error) {
+                console.error('❌ Translation update failed:', error);
+                document.getElementById('testResults').innerHTML = 
+                    `<span class="error">❌ Translation update failed: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension All Tabs Language Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        .ui-element {
+            padding: 8px;
+            margin: 3px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        .tab-element {
+            background: #444;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+        .current-lang {
+            background: #FF6B35;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Extension All Tabs Language Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Control</h2>
+        <div style="margin-bottom: 15px;">
+            Current Language: <span id="currentLang" class="current-lang">Loading...</span>
+        </div>
+        <button class="test-button" onclick="switchToEnglish()">Switch to English</button>
+        <button class="test-button" onclick="switchToChinese()">Switch to 中文</button>
+        <button class="test-button" onclick="testAllTranslations()">Test All Translations</button>
+        <div id="langResult" class="test-result">Click buttons to test language switching</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Tab Navigation Elements</h2>
+        <div class="tab-element" data-i18n="ext.tab.send">Send</div>
+        <div class="tab-element" data-i18n="ext.tab.receive">Receive</div>
+        <div class="tab-element" data-i18n="ext.tab.swap">Swap</div>
+        <div id="tabResult" class="test-result">Tab translations will appear here</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Send Tab Elements</h2>
+        <div class="ui-element">
+            <span>Header Tagline:</span>
+            <span data-i18n="header.tagline">Your AI agent for payments and community</span>
+        </div>
+        <div class="ui-element">
+            <span>Recipient Label:</span>
+            <span data-i18n="send.recipient.label">Recipient Username on X</span>
+        </div>
+        <div class="ui-element">
+            <span>Amount Token:</span>
+            <span data-i18n="send.amount.token">Amount & Token</span>
+        </div>
+        <div class="ui-element">
+            <span>Blockchain:</span>
+            <span data-i18n="ext.blockchain">Blockchain</span>
+        </div>
+        <div class="ui-element">
+            <span>Send Button:</span>
+            <span data-i18n="send.button">💸 Send to X.com</span>
+        </div>
+        <div class="ui-element">
+            <span>Command Preview:</span>
+            <span data-i18n="ext.command.preview">Command Preview</span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Receive Tab Elements</h2>
+        <div class="ui-element">
+            <span>Username Label:</span>
+            <span data-i18n="receive.username">Your Username on X</span>
+        </div>
+        <div class="ui-element">
+            <span>QR Instruction:</span>
+            <span data-i18n="ext.qr.instruction">📱 Share this QR code to receive NYLA payments</span>
+        </div>
+        <div class="ui-element">
+            <span>QR Hint:</span>
+            <span data-i18n="ext.qr.hint">Others can scan to send you tokens instantly</span>
+        </div>
+        <div class="ui-element">
+            <span>Dynamic QR (SOL):</span>
+            <span id="dynamicQR">Loading...</span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Swap Tab Elements</h2>
+        <div class="ui-element">
+            <span>Amount From:</span>
+            <span data-i18n="swap.amount.from">Amount & From Token</span>
+        </div>
+        <div class="ui-element">
+            <span>To Token:</span>
+            <span data-i18n="swap.to.token">To Token</span>
+        </div>
+        <div class="ui-element">
+            <span>Swap Button:</span>
+            <span data-i18n="swap.button">🔄 Send to X.com</span>
+        </div>
+        <div class="ui-element">
+            <span>Swap Command Placeholder:</span>
+            <span data-i18n="ext.swap.command.placeholder">Fill in the fields above to see the swap command</span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Community Menu Elements</h2>
+        <div class="ui-element">
+            <span>🎯 Community Raids:</span>
+            <span data-i18n="ext.menu.raids">Community Raids</span>
+        </div>
+        <div class="ui-element">
+            <span>🚀 Community Apps:</span>
+            <span data-i18n="ext.menu.apps">Community Apps</span>
+        </div>
+        <div class="ui-element">
+            <span>⚙️ Settings:</span>
+            <span data-i18n="ext.menu.settings">Settings</span>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings Elements</h2>
+        <div class="ui-element">
+            <span>Settings Title:</span>
+            <span data-i18n="settings.title">⚙️ Settings</span>
+        </div>
+        <div class="ui-element">
+            <span>Username Setting:</span>
+            <span data-i18n="settings.username">Your X Username</span>
+        </div>
+        <div class="ui-element">
+            <span>Language Setting:</span>
+            <span data-i18n="settings.language">Language</span>
+        </div>
+        <div class="ui-element">
+            <span>Footer Version:</span>
+            <span id="footerVersion">Loading...</span>
+        </div>
+    </div>
+
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let extensionI18n = null;
+        
+        // Mock chrome.storage for testing
+        if (typeof chrome === 'undefined') {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        set: function(data, callback) {
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem('chrome_storage_' + key, data[key]);
+                            });
+                            if (callback) callback();
+                            console.log('Mock chrome.storage.sync.set:', data);
+                        },
+                        get: function(keys, callback) {
+                            const result = {};
+                            if (Array.isArray(keys)) {
+                                keys.forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    if (value) result[key] = value;
+                                });
+                            } else if (typeof keys === 'string') {
+                                const value = localStorage.getItem('chrome_storage_' + keys);
+                                if (value) result[keys] = value;
+                            } else if (typeof keys === 'object') {
+                                Object.keys(keys).forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    result[key] = value || keys[key];
+                                });
+                            }
+                            console.log('Mock chrome.storage.sync.get:', keys, '=>', result);
+                            callback(result);
+                        }
+                    }
+                }
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeTest();
+        });
+        
+        async function initializeTest() {
+            try {
+                extensionI18n = getExtensionI18n();
+                const success = await extensionI18n.initialize();
+                
+                if (success) {
+                    const currentLang = extensionI18n.getCurrentLanguage();
+                    document.getElementById('currentLang').textContent = currentLang === 'zh' ? '中文' : 'English';
+                    document.getElementById('langResult').innerHTML = 
+                        `<span class="success">✅ Extension i18n initialized with ${currentLang}</span>`;
+                    
+                    // Update dynamic elements
+                    updateDynamicElements();
+                } else {
+                    throw new Error('Initialization failed');
+                }
+                
+            } catch (error) {
+                document.getElementById('langResult').innerHTML = 
+                    `<span class="error">❌ Initialization failed: ${error.message}</span>`;
+            }
+        }
+        
+        function updateDynamicElements() {
+            if (!extensionI18n) return;
+            
+            // Update dynamic QR instruction
+            const dynamicQR = extensionI18n.t('ext.qr.instruction_dynamic', { token: 'SOL' });
+            document.getElementById('dynamicQR').textContent = dynamicQR;
+            
+            // Update footer version
+            const footerVersion = extensionI18n.t('footer.version', { version: '2.4.0' });
+            document.getElementById('footerVersion').textContent = footerVersion;
+        }
+        
+        async function switchToEnglish() {
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('en');
+                    document.getElementById('currentLang').textContent = 'English';
+                    document.getElementById('langResult').innerHTML = '<span class="success">✅ Switched to English</span>';
+                    updateDynamicElements();
+                } catch (error) {
+                    document.getElementById('langResult').innerHTML = `<span class="error">❌ Switch failed: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        async function switchToChinese() {
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('zh');
+                    document.getElementById('currentLang').textContent = '中文';
+                    document.getElementById('langResult').innerHTML = '<span class="success">✅ 切换到中文</span>';
+                    updateDynamicElements();
+                } catch (error) {
+                    document.getElementById('langResult').innerHTML = `<span class="error">❌ 切换失败: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        function testAllTranslations() {
+            if (!extensionI18n) {
+                document.getElementById('langResult').innerHTML = '<span class="error">❌ Extension i18n not initialized</span>';
+                return;
+            }
+            
+            let results = [];
+            const currentLang = extensionI18n.getCurrentLanguage();
+            results.push(`Testing language: ${currentLang}`);
+            
+            // Test key translations
+            const testKeys = [
+                'header.tagline',
+                'ext.tab.send',
+                'ext.tab.receive', 
+                'ext.tab.swap',
+                'send.recipient.label',
+                'send.amount.token',
+                'ext.blockchain',
+                'send.button',
+                'receive.username',
+                'ext.qr.instruction',
+                'ext.qr.hint',
+                'swap.amount.from',
+                'swap.to.token',
+                'swap.button',
+                'ext.menu.raids',
+                'ext.menu.apps',
+                'ext.menu.settings',
+                'settings.title',
+                'settings.username',
+                'settings.language'
+            ];
+            
+            let successCount = 0;
+            testKeys.forEach(key => {
+                const translation = extensionI18n.t(key);
+                if (translation && translation !== key) {
+                    successCount++;
+                } else {
+                    results.push(`❌ ${key}: No translation`);
+                }
+            });
+            
+            results.unshift(`✅ ${successCount}/${testKeys.length} translations working`);
+            
+            // Test interpolation
+            const dynamicTest = extensionI18n.t('footer.version', { version: '2.4.0' });
+            if (dynamicTest.includes('2.4.0')) {
+                results.push('✅ Variable interpolation working');
+            } else {
+                results.push('❌ Variable interpolation failed');
+            }
+            
+            document.getElementById('langResult').innerHTML = results.join('<br>');
+            
+            // Update tab test result
+            const tabTranslations = [
+                extensionI18n.t('ext.tab.send'),
+                extensionI18n.t('ext.tab.receive'),
+                extensionI18n.t('ext.tab.swap')
+            ];
+            document.getElementById('tabResult').innerHTML = 
+                `Tab translations: ${tabTranslations.join(' | ')}`;
+        }
+    </script>
+</body>
+</html>

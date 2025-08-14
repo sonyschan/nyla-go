@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Debug Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        h1 { color: #FF6B35; text-align: center; }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #e55a2b; }
+        .test-result {
+            background: #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .success { border-left: 4px solid #44ff44; }
+        .error { border-left: 4px solid #ff4444; }
+        .warning { border-left: 4px solid #ffa500; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Knowledge Base Search Debug</h1>
+    
+    <div class="container">
+        <p>Testing why QR code knowledge isn't being found by the search method.</p>
+        
+        <button onclick="testQRSearch()">Test QR Code Search</button>
+        <button onclick="testKBContent()">Check KB Content</button>
+        <button onclick="testSearchTerms()">Debug Search Terms</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="js/nyla-knowledge-base.js"></script>
+
+    <script>
+        function addResult(title, content, type = 'success') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<h3>${title}</h3><pre>${content}</pre>`;
+            results.appendChild(div);
+        }
+        
+        async function testQRSearch() {
+            addResult('🔍 Testing QR Code Search', 'Initializing knowledge base...', 'warning');
+            
+            try {
+                // Initialize knowledge base
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                
+                // Test the exact query from the screenshot
+                const query = "How do I create payment requests with QR codes?";
+                const searchResults = kb.searchKnowledge(query);
+                
+                addResult(
+                    '📋 Search Results for QR Query',
+                    `Query: "${query}"\n\nResults Found: ${searchResults.length}\n\n${JSON.stringify(searchResults, null, 2)}`,
+                    searchResults.length > 0 ? 'success' : 'error'
+                );
+                
+                // Test shorter QR-specific terms
+                const qrTerms = ["qr code", "payment request", "receive tab", "generate qr"];
+                for (const term of qrTerms) {
+                    const results = kb.searchKnowledge(term);
+                    addResult(
+                        `🎯 Search: "${term}"`,
+                        `Results: ${results.length}\n${results.length > 0 ? JSON.stringify(results[0], null, 2) : 'No results'}`,
+                        results.length > 0 ? 'success' : 'error'
+                    );
+                }
+                
+            } catch (error) {
+                addResult('❌ Search Test Failed', error.message, 'error');
+            }
+        }
+        
+        async function testKBContent() {
+            addResult('📚 Testing KB Content', 'Checking knowledge base structure...', 'warning');
+            
+            try {
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                
+                // Check if qrCodes section exists
+                const qrCodes = kb.knowledgeBase.qrCodes;
+                addResult(
+                    '🔍 QR Codes Section',
+                    `Exists: ${!!qrCodes}\n\n${qrCodes ? JSON.stringify(qrCodes, null, 2) : 'Not found'}`,
+                    qrCodes ? 'success' : 'error'
+                );
+                
+                // Check what gets JSON.stringify'd for search
+                if (qrCodes) {
+                    const searchableContent = JSON.stringify(qrCodes.content).toLowerCase();
+                    addResult(
+                        '🔍 Searchable QR Content',
+                        `Content Length: ${searchableContent.length}\n\nContent Preview:\n${searchableContent.substring(0, 500)}...`,
+                        'warning'
+                    );
+                    
+                    // Check if search terms are in the content
+                    const terms = ["step", "receive", "tab", "generate", "code", "payment"];
+                    const termResults = terms.map(term => ({
+                        term,
+                        found: searchableContent.includes(term)
+                    }));
+                    
+                    addResult(
+                        '🎯 Term Matching Test',
+                        termResults.map(r => `"${r.term}": ${r.found ? '✅' : '❌'}`).join('\n'),
+                        'warning'
+                    );
+                }
+                
+            } catch (error) {
+                addResult('❌ KB Content Test Failed', error.message, 'error');
+            }
+        }
+        
+        async function testSearchTerms() {
+            addResult('🧮 Testing Search Logic', 'Debugging search algorithm...', 'warning');
+            
+            try {
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                
+                // Simulate the search logic manually
+                const query = "How do I create payment requests with QR codes?";
+                const queryLower = query.toLowerCase();
+                const queryTerms = queryLower.split(' ');
+                
+                addResult(
+                    '📝 Search Terms Analysis',
+                    `Original Query: "${query}"\nQuery Terms: ${JSON.stringify(queryTerms)}\nFiltered Terms (>2 chars): ${JSON.stringify(queryTerms.filter(t => t.length > 2))}`,
+                    'warning'
+                );
+                
+                // Check each KB section
+                for (const [source, data] of Object.entries(kb.knowledgeBase)) {
+                    if (data.content && typeof data.content === 'object') {
+                        const content = JSON.stringify(data.content).toLowerCase();
+                        let matches = 0;
+                        const matchedTerms = [];
+                        
+                        for (const term of queryTerms) {
+                            if (term.length > 2 && content.includes(term)) {
+                                matches++;
+                                matchedTerms.push(term);
+                            }
+                        }
+                        
+                        if (matches > 0) {
+                            addResult(
+                                `✅ Matches in "${source}"`,
+                                `Matches: ${matches} / Terms: ${matchedTerms.join(', ')}\nContent Preview: ${content.substring(0, 200)}...`,
+                                'success'
+                            );
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                addResult('❌ Search Terms Test Failed', error.message, 'error');
+            }
+        }
+        
+        // Auto-run basic test
+        setTimeout(() => {
+            addResult('🚀 Starting Debug Tests', 'Testing knowledge base search for QR codes...', 'warning');
+        }, 500);
+    </script>
+</body>
+</html>

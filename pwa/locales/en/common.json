@@ -1,0 +1,148 @@
+{
+  "tab": {
+    "nyla": "NYLA",
+    "send": "Send", 
+    "receive": "Receive",
+    "swap": "Swap",
+    "raid": "Community"
+  },
+  "header": {
+    "tagline": "Your AI agent for payments and community"
+  },
+  "ui": {
+    "amount": "Amount",
+    "token": "Token",
+    "blockchain": "Blockchain", 
+    "username": "Username",
+    "recipient": "Recipient",
+    "generate": "Generate",
+    "share": "Share",
+    "send": "Send",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "back": "← Back"
+  },
+  "send": {
+    "title": "💸 Send Payments",
+    "recipient": {
+      "label": "Recipient Username on X",
+      "placeholder": "@username"
+    },
+    "amount": {
+      "label": "Amount & Token",
+      "token": "Amount & Token"
+    },
+    "button": "💸 Send to X.com",
+    "preview": "Command Preview",
+    "command": {
+      "placeholder": "Fill in the fields above to see the command"
+    }
+  },
+  "receive": {
+    "title": "💰 Receive Payments",
+    "username": {
+      "label": "Your Username on X"
+    },
+    "amount": {
+      "label": "Amount & Token",
+      "token": "Amount & Token"
+    },
+    "qr": {
+      "instruction": "📱 Share this QR code to receive NYLA payments",
+      "instruction_dynamic": "📱 Share this QR code to receive {{token}} payments",
+      "hint": "Others can scan to send you tokens instantly"
+    },
+    "button": "📤 Share Payment Request"
+  },
+  "swap": {
+    "title": "🔄 Token Swap",
+    "from": {
+      "label": "Amount & From Token"
+    },
+    "to": {
+      "label": "To Token",
+      "token": "To Token"
+    },
+    "button": "🔄 Send to X.com",
+    "command": {
+      "placeholder": "Fill in the fields above to see the swap command"
+    }
+  },
+  "blockchain": {
+    "solana": "Solana",
+    "ethereum": "Ethereum", 
+    "algorand": "Algorand"
+  },
+  "nyla": {
+    "title": "❤️ NYLA AI Assistant (Experimental)",
+    "loading": "NYLA is starting up...",
+    "placeholder": "Ask about NYLA transfers, QR codes, or blockchain questions...",
+    "send": "Send"
+  },
+  "error": {
+    "network": "Network error, please try again",
+    "invalid": {
+      "username": "Invalid username format", 
+      "amount": "Please enter a valid amount",
+      "input": "Invalid input"
+    },
+    "qr": {
+      "generation": "QR code generation failed"
+    }
+  },
+  "status": {
+    "loading": "Loading...",
+    "generating": "Generating QR Code...",
+    "ready": "Ready"
+  },
+  "menu": {
+    "raids": "Community Raids",
+    "apps": "Community Apps", 
+    "settings": "Settings"
+  },
+  "raids": {
+    "title": "🎯 Community Raids",
+    "subtitle": "Join community engagement campaigns and support NYLA ecosystem growth"
+  },
+  "apps": {
+    "title": "🚀 Community Apps",
+    "subtitle": "Discover amazing applications built by the NYLA community",
+    "ecosystem": {
+      "title": "🌐 Ecosystem"
+    },
+    "gaming": {
+      "title": "🎯 Gaming"
+    },
+    "nyla": {
+      "yuki": {
+        "name": "NYLA x YUKI",
+        "author": "by @yukisofficial",
+        "description": "Interactive NYLA-powered experience with community features and engagement"
+      }
+    },
+    "moon": {
+      "dodge": {
+        "name": "Nyla Moon Dodge",
+        "author": "by @AgentPuffle", 
+        "description": "Navigate through space obstacles in this exciting moon-themed dodge game"
+      }
+    },
+    "jump": {
+      "name": "Nyla Jump",
+      "author": "by @AgentPuffle",
+      "description": "Fun jumping game featuring NYLA themes and mechanics"
+    }
+  },
+  "settings": {
+    "title": "⚙️ Settings",
+    "username": "Your X Username",
+    "language": "Language",
+    "username_help": "This will be used in the Receive tab"
+  },
+  "footer": {
+    "version": "NYLA Go v{{version}}",
+    "feedback": "Feedback",
+    "donate": "Donate"
+  }
+}

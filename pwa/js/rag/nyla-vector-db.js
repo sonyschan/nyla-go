@@ -316,6 +316,120 @@ class NYLAVectorDB {
   }
 
   /**
+   * Load vector data from pre-built JSON file
+   */
+  async loadFromData(vectorData) {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+    
+    console.log('📥 Loading vector data from pre-built file...');
+    
+    try {
+      // Check for embeddings array (new format)
+      let chunks = [];
+      let embeddings = [];
+      
+      if (vectorData.embeddings && Array.isArray(vectorData.embeddings)) {
+        console.log('📦 Loading from embeddings format...');
+        embeddings = vectorData.embeddings;
+        chunks = vectorData.chunks || [];
+      } else if (vectorData.chunks && Array.isArray(vectorData.chunks)) {
+        console.log('📦 Loading from chunks format...');
+        chunks = vectorData.chunks;
+      } else {
+        throw new Error('Invalid vector data format - missing chunks or embeddings array');
+      }
+      
+      // Clear existing data
+      this.chunks.clear();
+      if (this.index && this.index.vectors) {
+        this.index.vectors = [];
+        this.index.ids = [];
+      }
+      
+      let loadedCount = 0;
+      let skippedCount = 0;
+      
+      // Load chunks with embeddings
+      if (embeddings.length > 0) {
+        // New format: separate chunks and embeddings arrays
+        const chunksMap = new Map();
+        chunks.forEach(chunk => chunksMap.set(chunk.id, chunk));
+        
+        for (const embeddingData of embeddings) {
+          if (embeddingData.id && embeddingData.embedding && Array.isArray(embeddingData.embedding)) {
+            const chunk = chunksMap.get(embeddingData.id);
+            
+            // Update dimension if needed
+            const embeddingDim = embeddingData.embedding.length;
+            if (embeddingDim !== this.options.dimension) {
+              console.log(`🔧 Updating dimension from ${this.options.dimension} to ${embeddingDim}`);
+              this.options.dimension = embeddingDim;
+            }
+            
+            this.chunks.set(embeddingData.id, {
+              id: embeddingData.id,
+              text: chunk?.text || '',
+              metadata: embeddingData.metadata || chunk?.metadata || {},
+              embedding: embeddingData.embedding
+            });
+            
+            // Add to FAISS index
+            if (this.index) {
+              this.index.add(embeddingData.embedding, embeddingData.id);
+            }
+            
+            loadedCount++;
+          } else {
+            skippedCount++;
+            console.warn(`⚠️ Skipping invalid embedding data for chunk ${embeddingData.id}`);
+          }
+        }
+      } else {
+        // Old format: chunks with embedded embeddings
+        for (const chunk of chunks) {
+          if (chunk.id && chunk.embedding && Array.isArray(chunk.embedding)) {
+            // Update dimension if needed
+            const embeddingDim = chunk.embedding.length;
+            if (embeddingDim !== this.options.dimension) {
+              console.log(`🔧 Updating dimension from ${this.options.dimension} to ${embeddingDim}`);
+              this.options.dimension = embeddingDim;
+            }
+            
+            this.chunks.set(chunk.id, {
+              id: chunk.id,
+              text: chunk.text || '',
+              metadata: chunk.metadata || {},
+              embedding: chunk.embedding
+            });
+            
+            // Add to FAISS index
+            if (this.index) {
+              this.index.add(chunk.embedding, chunk.id);
+            }
+            
+            loadedCount++;
+          } else {
+            skippedCount++;
+            console.warn(`⚠️ Skipping chunk ${chunk.id}: missing or invalid embedding`);
+          }
+        }
+      }
+      
+      console.log(`✅ Loaded ${loadedCount} chunks from pre-built data (${skippedCount} skipped)`);
+      
+      if (loadedCount === 0) {
+        throw new Error('No valid chunks with embeddings found in data');
+      }
+      
+    } catch (error) {
+      console.error('❌ Failed to load vector data:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get index statistics
    */
   getStats() {

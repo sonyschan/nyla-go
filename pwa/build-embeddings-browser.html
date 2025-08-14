@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NYLA Go - Build Embeddings</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        h1 { color: #FF6B35; text-align: center; }
+        .progress {
+            background: #333;
+            border-radius: 4px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: #FF6B35;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .log {
+            background: #1a1a1a;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover { background: #e55a2b; }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF6B35;
+        }
+        .warning {
+            background: #4a3a00;
+            border: 1px solid #ffa500;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 NYLA Go - Embedding Builder</h1>
+    
+    <div class="container">
+        <div class="warning">
+            ⚠️ <strong>Note:</strong> This will download ~50MB of AI models and may take several minutes. 
+            Run this when you have a good internet connection and time to wait.
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="chunksCount">-</div>
+                <div>Total Chunks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="embeddingsCount">-</div>
+                <div>Embeddings Generated</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="progress">0%</div>
+                <div>Progress</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="timeElapsed">0s</div>
+                <div>Time Elapsed</div>
+            </div>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <button onclick="startBuild()" id="buildBtn">🚀 Generate Embeddings</button>
+        <button onclick="downloadData()" id="downloadBtn" disabled>💾 Download Vector DB</button>
+        <button onclick="clearData()" id="clearBtn">🗑️ Clear All Data</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Load existing scripts -->
+    <script src="js/nyla-knowledge-base.js"></script>
+    <script src="js/rag/nyla-environment.js"></script>
+    <script src="js/rag/nyla-knowledge-chunker.js"></script>
+    <script src="js/rag/nyla-embedding-service.js"></script>
+    <script src="js/rag/nyla-vector-db.js"></script>
+
+    <script>
+        let buildInProgress = false;
+        let startTime = 0;
+        let generatedData = null;
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : '#fff';
+            
+            logDiv.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateProgress(current, total, message) {
+            const percent = Math.round((current / total) * 100);
+            document.getElementById('progress').textContent = percent + '%';
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('embeddingsCount').textContent = current;
+            
+            const elapsed = Math.round((Date.now() - startTime) / 1000);
+            document.getElementById('timeElapsed').textContent = elapsed + 's';
+            
+            if (message) {
+                log(`Progress: ${percent}% - ${message}`);
+            }
+        }
+        
+        async function startBuild() {
+            if (buildInProgress) return;
+            
+            buildInProgress = true;
+            startTime = Date.now();
+            document.getElementById('buildBtn').disabled = true;
+            document.getElementById('downloadBtn').disabled = true;
+            
+            try {
+                log('🚀 Starting embedding build process...', 'info');
+                
+                // Initialize knowledge base
+                log('📚 Loading knowledge base...');
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                const knowledgeBase = kb.knowledgeBase;
+                log(`✅ Knowledge base loaded: ${Object.keys(knowledgeBase).length} categories`, 'success');
+                
+                // Create chunks
+                log('🔪 Creating chunks from knowledge base...');
+                const chunker = new NYLAKnowledgeChunker();
+                const chunks = chunker.chunkKnowledgeBase(knowledgeBase);
+                document.getElementById('chunksCount').textContent = chunks.length;
+                log(`✅ Created ${chunks.length} chunks`, 'success');
+                
+                // Initialize embedding service
+                log('🤖 Initializing embedding service (downloading model)...');
+                const embeddingService = getEmbeddingService();
+                await embeddingService.initialize();
+                log('✅ Embedding service ready', 'success');
+                
+                // Generate embeddings
+                log('⚡ Generating embeddings...');
+                updateProgress(0, chunks.length, 'Starting embedding generation');
+                
+                const embeddings = [];
+                const batchSize = 5; // Small batches to prevent memory issues
+                
+                for (let i = 0; i < chunks.length; i += batchSize) {
+                    const batch = chunks.slice(i, i + batchSize);
+                    
+                    for (const chunk of batch) {
+                        try {
+                            const embedding = await embeddingService.embed(chunk.text);
+                            embeddings.push({
+                                id: chunk.id,
+                                embedding: Array.from(embedding),
+                                metadata: chunk.metadata
+                            });
+                            
+                            updateProgress(embeddings.length, chunks.length);
+                            
+                            // Small delay to prevent overwhelming
+                            await new Promise(resolve => setTimeout(resolve, 50));
+                            
+                        } catch (error) {
+                            log(`❌ Failed to generate embedding for chunk ${chunk.id}: ${error.message}`, 'error');
+                        }
+                    }
+                }
+                
+                // Initialize vector DB and store data
+                log('💾 Storing embeddings in vector database...');
+                const vectorDB = new NYLAVectorDB();
+                await vectorDB.initialize();
+                
+                // Add embeddings to vector DB
+                for (const item of embeddings) {
+                    await vectorDB.addVector(item.id, item.embedding, item.metadata);
+                }
+                
+                // Create final data structure
+                generatedData = {
+                    chunks: chunks,
+                    embeddings: embeddings,
+                    metadata: {
+                        generated_at: new Date().toISOString(),
+                        version: '1.0.0',
+                        model: 'all-MiniLM-L6-v2',
+                        dimension: embeddings[0]?.embedding?.length || 384,
+                        total_chunks: chunks.length,
+                        total_embeddings: embeddings.length
+                    }
+                };
+                
+                const duration = Math.round((Date.now() - startTime) / 1000);
+                
+                log('🎉 Build completed successfully!', 'success');
+                log(`📊 Summary:`, 'success');
+                log(`   • Total chunks: ${chunks.length}`, 'success');
+                log(`   • Total embeddings: ${embeddings.length}`, 'success');
+                log(`   • Embedding dimension: ${generatedData.metadata.dimension}`, 'success');
+                log(`   • Build time: ${duration}s`, 'success');
+                
+                document.getElementById('downloadBtn').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Build failed: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                buildInProgress = false;
+                document.getElementById('buildBtn').disabled = false;
+            }
+        }
+        
+        function downloadData() {
+            if (!generatedData) {
+                log('❌ No data to download', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(generatedData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'nyla-vector-db.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            URL.revokeObjectURL(url);
+            
+            log('💾 Vector database downloaded as nyla-vector-db.json', 'success');
+            log('📁 Place this file in pwa/data/ directory', 'info');
+        }
+        
+        async function clearData() {
+            if (confirm('Clear all generated data? This cannot be undone.')) {
+                // Clear IndexedDB
+                try {
+                    const vectorDB = new NYLAVectorDB();
+                    await vectorDB.initialize();
+                    await vectorDB.clear();
+                    log('🗑️ Vector database cleared', 'success');
+                } catch (error) {
+                    log(`⚠️ Could not clear vector DB: ${error.message}`, 'error');
+                }
+                
+                // Reset UI
+                generatedData = null;
+                document.getElementById('chunksCount').textContent = '-';
+                document.getElementById('embeddingsCount').textContent = '-';
+                document.getElementById('progress').textContent = '0%';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('timeElapsed').textContent = '0s';
+                document.getElementById('downloadBtn').disabled = true;
+                document.getElementById('log').innerHTML = '';
+                
+                log('✅ All data cleared', 'success');
+            }
+        }
+        
+        // Initialize
+        log('🔧 Embedding builder ready. Click "Generate Embeddings" to start.');
+    </script>
+</body>
+</html>

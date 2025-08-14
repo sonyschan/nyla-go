@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test QR Knowledge Extraction Fix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        h1 { color: #FF6B35; text-align: center; }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #e55a2b; }
+        .test-result {
+            background: #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { border-left: 4px solid #44ff44; }
+        .error { border-left: 4px solid #ff4444; }
+        .warning { border-left: 4px solid #ffa500; }
+    </style>
+</head>
+<body>
+    <h1>✅ QR Knowledge Extraction Fix Test</h1>
+    
+    <div class="container">
+        <p>This test verifies that the QR code knowledge extraction fixes are working:</p>
+        <ul>
+            <li>✅ Added specific QR code query detection in extractContentFromSearchResult</li>
+            <li>✅ Added QR code step extraction from knowledge base</li>
+            <li>✅ Added QR-related keyword recognition</li>
+        </ul>
+        
+        <button onclick="testKnowledgeExtraction()">Test Knowledge Extraction</button>
+        <button onclick="testSearchResults()">Test Search → Extraction Flow</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="js/nyla-knowledge-base.js"></script>
+    <script src="js/nyla-llm-engine.js"></script>
+
+    <script>
+        function addResult(title, content, type = 'success') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<h3>${title}</h3><pre>${content}</pre>`;
+            results.appendChild(div);
+        }
+        
+        async function testKnowledgeExtraction() {
+            addResult('🧪 Testing Knowledge Extraction', 'Starting extraction test...', 'warning');
+            
+            try {
+                // Initialize
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                const llmEngine = new NYLALLMEngine();
+                
+                // Test the exact query
+                const query = "How do I create payment requests with QR codes?";
+                
+                // Simulate what the conversation manager does
+                const searchResults = kb.searchKnowledge(query);
+                console.log('Search results:', searchResults);
+                
+                // Create knowledge context like conversation manager does
+                const knowledgeContext = {
+                    searchResults: searchResults,
+                    relevantKeys: ['qr', 'payment', 'receive'],
+                    searchTerms: query
+                };
+                
+                // Test the fixed extraction
+                const extractedKnowledge = llmEngine.extractRelevantKnowledge(query, knowledgeContext);
+                
+                const hasSteps = extractedKnowledge && extractedKnowledge.includes('Step 1');
+                const hasQRSteps = extractedKnowledge && extractedKnowledge.includes('QR Code Creation Steps');
+                const hasReceiveTab = extractedKnowledge && extractedKnowledge.includes('Receive tab');
+                
+                addResult(
+                    hasSteps ? '✅ Knowledge Extraction SUCCESS' : '❌ Knowledge Extraction FAILED',
+                    `Query: "${query}"\n\nExtracted Knowledge:\n${extractedKnowledge || 'None'}\n\nHas Steps: ${hasSteps}\nHas QR Steps: ${hasQRSteps}\nHas Receive Tab: ${hasReceiveTab}`,
+                    hasSteps ? 'success' : 'error'
+                );
+                
+            } catch (error) {
+                addResult('❌ Extraction Test Failed', error.message + '\n' + error.stack, 'error');
+            }
+        }
+        
+        async function testSearchResults() {
+            addResult('🔍 Testing Search → Extraction Flow', 'Testing complete flow...', 'warning');
+            
+            try {
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                const llmEngine = new NYLALLMEngine();
+                
+                // Test search results
+                const query = "QR code generation";
+                const searchResults = kb.searchKnowledge(query);
+                
+                addResult(
+                    '🔍 Search Results',
+                    `Query: "${query}"\nResults: ${searchResults.length}\n\n${JSON.stringify(searchResults, null, 2)}`,
+                    searchResults.length > 0 ? 'success' : 'error'
+                );
+                
+                // Test extraction from each result
+                if (searchResults.length > 0) {
+                    for (let i = 0; i < searchResults.length; i++) {
+                        const result = searchResults[i];
+                        const extractedContent = llmEngine.extractContentFromSearchResult(result.data, query);
+                        
+                        const hasQRContent = extractedContent && extractedContent.toLowerCase().includes('qr');
+                        
+                        addResult(
+                            `${hasQRContent ? '✅' : '❌'} Extraction from "${result.source}"`,
+                            `Extracted Content:\n${extractedContent || 'None'}\n\nHas QR Content: ${hasQRContent}`,
+                            hasQRContent ? 'success' : 'warning'
+                        );
+                    }
+                }
+                
+            } catch (error) {
+                addResult('❌ Search→Extraction Test Failed', error.message, 'error');
+            }
+        }
+        
+        // Auto-start test
+        setTimeout(() => {
+            addResult('🚀 Starting Tests', 'Testing QR code knowledge extraction fixes...', 'warning');
+        }, 500);
+    </script>
+</body>
+</html>

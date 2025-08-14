@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Raids i18n Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        select {
+            padding: 8px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .raids-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .raid-category {
+            margin: 20px 0;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+        }
+        .raid-category h4 {
+            color: #FF6B35;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .raid-list-item {
+            background: #404040;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-info {
+            flex: 1;
+        }
+        .list-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .list-description {
+            font-size: 12px;
+            color: #ccc;
+        }
+        .list-action {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Community Raids i18n Test</h1>
+    
+    <div>
+        <label>Language:</label>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="zh">中文 (Chinese)</option>
+        </select>
+        <button onclick="changeLanguage()" class="test-button">Apply Language</button>
+    </div>
+    
+    <div class="raids-section">
+        <h2>Community Raids Interface:</h2>
+        
+        <!-- Header Elements (exact same structure as popup.html) -->
+        <div class="section-header">
+            <h3 data-i18n="ext.raids.title">🎯 Community Raids</h3>
+        </div>
+        <div class="raid-showcase">
+            <div class="raid-intro">
+                <p data-i18n="ext.raids.subtitle">Join community engagement campaigns and support NYLA ecosystem growth</p>
+            </div>
+        </div>
+        
+        <!-- Dynamic Raid Categories -->
+        <div id="raidCategories">
+            <!-- Will be populated by generateTestRaidSection() -->
+        </div>
+    </div>
+    
+    <div class="test-result" id="testResult">
+        Select a language and click "Apply Language" to test the Community Raids translations.
+    </div>
+    
+    <h2>Translation Keys Test:</h2>
+    <div class="test-result" id="translationTest">
+        <div id="keyResults">Loading...</div>
+    </div>
+
+    <script src="nylago-data.js"></script>
+    <script src="extension-i18n.js"></script>
+    <script>
+        let extensionI18n;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.ExtensionI18n) {
+                extensionI18n = new window.ExtensionI18n();
+                testTranslationKeys();
+                generateTestRaidSection();
+            }
+        });
+        
+        function changeLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLang = languageSelect.value;
+            const testResult = document.getElementById('testResult');
+            
+            if (!extensionI18n) {
+                testResult.innerHTML = '❌ Extension i18n not initialized';
+                return;
+            }
+            
+            // Change language
+            extensionI18n.setLanguage(selectedLang);
+            
+            testResult.innerHTML = `
+                ✅ <strong>Language changed to: ${selectedLang}</strong><br>
+                Community Raids should now show in ${selectedLang === 'zh' ? 'Chinese' : 'English'}.<br>
+                Check the interface above to verify the translations worked!
+            `;
+            
+            // Update translation keys test
+            testTranslationKeys();
+            
+            // Regenerate raid section with new language
+            generateTestRaidSection();
+        }
+        
+        function generateTestRaidSection() {
+            const raidCategoriesContainer = document.getElementById('raidCategories');
+            if (!raidCategoriesContainer || !window.NYLA_RAID_DATA) return;
+            
+            // Clear existing content
+            raidCategoriesContainer.innerHTML = '';
+            
+            // Generate categories (using same logic as popup.js)
+            window.NYLA_RAID_DATA.categories.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'raid-category';
+                
+                const categoryTitle = document.createElement('h4');
+                // Use i18n if available, otherwise fallback to static text
+                if (extensionI18n && category.i18nKey) {
+                    categoryTitle.textContent = extensionI18n.t(category.i18nKey);
+                } else {
+                    categoryTitle.textContent = category.title;
+                }
+                categoryDiv.appendChild(categoryTitle);
+                
+                // Generate items for this category
+                category.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'raid-list-item';
+                    
+                    // Use i18n for item name and description
+                    const itemName = (extensionI18n && item.i18nNameKey) ? 
+                                    extensionI18n.t(item.i18nNameKey) : item.name;
+                    const itemDescription = (extensionI18n && item.i18nDescKey) ? 
+                                           extensionI18n.t(item.i18nDescKey) : item.description;
+                    
+                    itemDiv.innerHTML = `
+                        <div class="list-info">
+                            <div class="list-name">${itemName}</div>
+                            <div class="list-description">${itemDescription}</div>
+                        </div>
+                        <div class="list-action">
+                            <span class="open-icon">${item.icon}</span>
+                        </div>
+                    `;
+                    
+                    categoryDiv.appendChild(itemDiv);
+                });
+                
+                raidCategoriesContainer.appendChild(categoryDiv);
+            });
+        }
+        
+        function testTranslationKeys() {
+            const keyResults = document.getElementById('keyResults');
+            
+            if (!extensionI18n) {
+                keyResults.innerHTML = 'Extension i18n not available';
+                return;
+            }
+            
+            const raidsKeys = [
+                'ext.raids.title',
+                'ext.raids.subtitle',
+                'ext.raids.core.title',
+                'ext.raids.team.title', 
+                'ext.raids.team.description',
+                'ext.raids.community.title',
+                'ext.raids.active.title',
+                'ext.raids.active.description',
+                'ext.raids.ticker.title',
+                'ext.raids.ticker.description'
+            ];
+            
+            let results = `Current Language: <strong>${extensionI18n.currentLanguage}</strong><br><br>`;
+            
+            raidsKeys.forEach(key => {
+                const translation = extensionI18n.t(key);
+                const status = translation === key ? '❌' : '✅';
+                results += `${status} ${key}: "<strong>${translation}</strong>"<br>`;
+            });
+            
+            keyResults.innerHTML = results;
+        }
+    </script>
+</body>
+</html>

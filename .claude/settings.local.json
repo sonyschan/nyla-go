@@ -32,7 +32,20 @@
       "Bash(gh api:*)",
       "Bash(git fetch:*)",
       "WebFetch(domain:mlc.ai)",
-      "WebFetch(domain:x.com)"
+      "WebFetch(domain:x.com)",
+      "Bash(npm install:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(open test-all-extension-i18n-fixes.html)",
+      "Bash(open test-extension-i18n-working.html)",
+      "Bash(open test-extension-fixes-simple.html)",
+      "Bash(open test-community-i18n-comprehensive.html)",
+      "Bash(open test-individual-items-i18n.html)",
+      "Bash(open test-community-raids-dynamic-i18n.html)",
+      "Bash(open test-fab-extension.html)",
+      "Bash(node:*)",
+      "Bash(touch:*)",
+      "Bash(npm run build:embeddings:*)"
     ],
     "deny": []
   }
