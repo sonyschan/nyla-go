@@ -30,7 +30,7 @@
       "stability": "stable",
       "source_url": "internal://policy/wording",
       "hash": "wrd002_nvn",
-      "body": "CRITICAL DISTINCTION: NYLA and NYLAGo are separate entities. NYLA = AI agent that executes blockchain transactions on X.com. NYLAGo = Interface tool that generates commands for users. NEVER say 'NYLA is provided by NYLAGo' - this is incorrect. The correct relationship: NYLAGo creates commands → NYLA executes transactions.",
+      "body": "NYLA and NYLAGo are separate entities with distinct roles. NYLA is the AI agent that executes blockchain transactions on X.com social platform. NYLAGo is the interface tool that generates commands for users. The relationship works as follows: NYLAGo creates commands, users post them, and NYLA executes the transactions.",
       "summary_en": "Maintain clear identity distinction between NYLA (AI agent) and NYLAGo (interface) especially for security discussions.",
       "summary_zh": "保持NYLA（AI代理）和NYLAGo（界面）之间的清晰身份区别，特别是在安全讨论中。",
       "priority": 9,
