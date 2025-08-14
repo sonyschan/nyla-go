@@ -748,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (error) {
         // Fallback to hardcoded version if error occurs
-        appVersionElement.textContent = 'NYLA Go v2.4.0';
+        appVersionElement.textContent = 'NYLA Go v2.5.0';
         console.log('NYLA: Error getting manifest version, using fallback:', error);
       }
     }
