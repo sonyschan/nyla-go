@@ -12,7 +12,7 @@
       "stability": "stable", 
       "source_url": "internal://facts/limitations",
       "hash": "fct_network_limits_001",
-      "body": "CRITICAL: NYLA operations work within same blockchain network ONLY. NO cross-network bridging supported. Examples: Solana→Solana (✅), Ethereum→Ethereum (✅), Algorand→Algorand (✅), but Solana→Ethereum (❌), Ethereum→Algorand (❌), any cross-network operations (❌).",
+      "body": "CRITICAL: NYLA operations work within same blockchain network ONLY. NO cross-network bridging supported. Examples: Solana→Solana (✅), Ethereum→Ethereum (✅), Algorand→Algorand (✅), but Solana→Ethereum (❌), Ethereum→Algorand (❌), any cross-network operations (❌). NYLA supports transfers and swaps within individual networks only. For cross-chain transfers, users need dedicated bridge services outside of NYLA. NYLA focuses on within-network operations for security and simplicity.",
       "summary_en": "All NYLA operations are within-network only. No cross-chain bridging between different blockchains.",
       "summary_zh": "所有NYLA操作仅限于同一网络内。不同区块链之间无跨链桥接。",
       "priority": 10,

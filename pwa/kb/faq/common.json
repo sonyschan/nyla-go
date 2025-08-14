@@ -208,6 +208,40 @@
       "priority": 9,
       "related_chunks": ["howto_qr_create_guide", "howto_transfers_receive_guide"],
       "glossary_terms": ["QR code", "share", "payment", "receive", "NYLAGo", "download", "display"]
+    },
+    {
+      "id": "faq_send_tokens_natural",
+      "source_id": "common_questions",
+      "type": "faq",
+      "lang": "bilingual",
+      "title": "How do I send tokens?",
+      "section": "basic_usage",
+      "tags": ["FAQ", "send tokens", "how do I", "tokens", "send", "transfer", "basic", "step by step"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://faq/send-tokens-natural",
+      "hash": "faq012_sendnat",
+      "body": "To send tokens using NYLAGo: 1) Open NYLAGo and click the Send tab. 2) Enter the recipient's X.com username (no @ symbol needed). 3) Choose the token amount and type (SOL, ETH, ALGO, etc.). 4) Select the blockchain network that matches your token. 5) Click 'Send to X.com' to generate the transfer command. 6) Copy and post the generated command on X.com. 7) NYLA will execute the transfer and reply with confirmation. The whole process takes about 2-3 minutes including transaction confirmation.",
+      "summary_en": "Send tokens through NYLAGo: use Send tab, enter recipient username, choose amount/token/network, generate command, post on X.com for execution.",
+      "summary_zh": "通过NYLAGo发送代币：使用发送选项卡，输入收件人用户名，选择金额/代币/网络，生成命令，在X.com上发布执行。",
+      "priority": 10,
+      "related_chunks": ["howto_transfers_send_guide", "faq_how_to_send", "faq_getting_started"],
+      "glossary_terms": ["send tokens", "how do I", "tokens", "send", "transfer", "NYLAGo", "Send tab", "X.com", "username", "step by step"],
+      "query_variations": [
+        "How do I send tokens?",
+        "Send tokens",
+        "How to send cryptocurrency", 
+        "Transfer tokens",
+        "How do I transfer crypto?",
+        "Send crypto",
+        "How to send tokens step by step",
+        "Token transfer guide",
+        "Cryptocurrency sending process",
+        "How do I send money?",
+        "Send payment",
+        "How to make a transfer?",
+        "Token sending instructions"
+      ]
     }
   ]
 }
