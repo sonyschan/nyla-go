@@ -5,10 +5,18 @@
 
 class NYLAProductionSync {
   constructor(options = {}) {
+    // Detect if running locally or in production
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1' ||
+                       window.location.protocol === 'file:';
+    
+    // Use relative paths for local development, absolute for production
+    const baseUrl = isLocalhost ? '' : 'https://sonyschan.github.io/NYLAgo/pwa';
+    
     this.options = {
-      // Production CDN endpoints
-      indexUrl: 'https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-index.json.gz',
-      versionUrl: 'https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-version.json',
+      // Production CDN endpoints - use relative paths when local
+      indexUrl: isLocalhost ? 'nyla-knowledge-index.json.gz' : `${baseUrl}/nyla-knowledge-index.json.gz`,
+      versionUrl: isLocalhost ? 'nyla-knowledge-version.json' : `${baseUrl}/nyla-knowledge-version.json`,
       
       // Local storage configuration
       localDBName: 'nyla-vector-db',

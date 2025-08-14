@@ -11,9 +11,7 @@ async function runProductionSyncDemo() {
     // Initialize production sync manager
     console.log('1. Initializing production sync manager...');
     const productionSync = new NYLAProductionSync({
-      // Use demo/test endpoints for safety
-      indexUrl: 'https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-index.json.gz',
-      versionUrl: 'https://sonyschan.github.io/NYLAgo/pwa/nyla-knowledge-version.json',
+      // Use default URLs (will be relative when local)
       checkIntervalMs: 1000 * 60 * 5, // 5 minutes for demo
       forceCheckOnStartup: false // Don't auto-check in demo
     });
