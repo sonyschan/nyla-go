@@ -75,9 +75,9 @@ class NYLARAGIntegration {
       }
       
       // Try to load pre-built embeddings from the web data file
-      console.log('📥 Loading pre-built embeddings from /pwa/data/nyla-vector-db.json...');
+      console.log('📥 Loading pre-built embeddings from data/nyla-vector-db.json...');
       try {
-        const response = await fetch('/pwa/data/nyla-vector-db.json');
+        const response = await fetch('data/nyla-vector-db.json');
         if (response.ok) {
           const vectorData = await response.json();
           
