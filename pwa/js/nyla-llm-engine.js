@@ -13,7 +13,7 @@ class NYLALLMEngine {
     this.deviceInfo = this.detectDevice();
     this.modelConfig = {
       model: this.selectModel(),
-      temperature: 0.5,
+      temperature: 0.3,
       max_tokens: 600, // Increased from 300 to handle detailed instructions
       top_p: 0.8,
     };
@@ -1954,6 +1954,9 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       // Clean up the text - remove extra whitespace and ensure it's a string
       response.text = response.text.trim();
       
+      // Remove duplicate sentences (common LLM issue)
+      response.text = this.deduplicateText(response.text);
+      
       // The LLM should only generate plain text with @ mentions
     }
     
@@ -2129,6 +2132,30 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       console.log('NYLA LLM: ✅ Engine fully ready for inference');
     }
     return ready;
+  }
+
+  /**
+   * Remove duplicate sentences from LLM response
+   */
+  deduplicateText(text) {
+    if (!text || text.length === 0) return text;
+    
+    // Split by sentence boundaries
+    const sentences = text.split(/(?<=[.!?])\s+/);
+    
+    // Remove duplicate sentences while preserving order
+    const uniqueSentences = [];
+    const seenSentences = new Set();
+    
+    for (const sentence of sentences) {
+      const trimmedSentence = sentence.trim().toLowerCase();
+      if (trimmedSentence.length > 0 && !seenSentences.has(trimmedSentence)) {
+        seenSentences.add(trimmedSentence);
+        uniqueSentences.push(sentence.trim());
+      }
+    }
+    
+    return uniqueSentences.join(' ');
   }
 
   /**
