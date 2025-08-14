@@ -590,6 +590,10 @@ class NYLAConversationManagerV2 {
     
     const followUps = this.generateIntelligentFollowUps(llmResponse, primaryTopic, questionText);
     
+    // Debug: Log the generated follow-ups
+    console.log('NYLA Conversation V2: Generated followUps:', followUps);
+    console.log('NYLA Conversation V2: FollowUps count:', followUps ? followUps.length : 0);
+    
     // Select appropriate sticker
     const sticker = this.selectIntelligentSticker(llmResponse.sentiment, llmResponse.text, questionText);
 
