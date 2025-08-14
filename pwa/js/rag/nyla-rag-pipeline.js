@@ -293,35 +293,37 @@ class NYLARAGPipeline {
     }
     
     // Handle streaming response
-    if (options.streaming) {
-      const streamController = new AbortController();
-      
-      const stream = await this.llmEngine.generateStream(
-        context.prompt.full,
+    if (options.streaming && this.llmEngine.generateStreamingResponse) {
+      // Use the LLM engine's streaming method
+      const streamResponse = await this.llmEngine.generateStreamingResponse(
+        query,
         {
-          ...options,
-          signal: streamController.signal
-        }
+          knowledgeContext: context,
+          ...options
+        },
+        options.onChunk // Pass chunk callback if provided
       );
       
       return {
-        text: null,  // Will be accumulated by caller
-        streaming: {
-          stream,
-          controller: streamController
-        }
+        text: streamResponse.text || streamResponse,
+        streaming: true,
+        llmResponse: streamResponse
       };
     }
     
     // Non-streaming response
-    const response = await this.llmEngine.generate(
-      context.prompt.full,
-      options
+    const response = await this.llmEngine.generateResponse(
+      query,
+      {
+        knowledgeContext: context,
+        ...options
+      }
     );
     
     return {
-      text: response,
-      streaming: null
+      text: response.text || response,
+      streaming: false,
+      llmResponse: response
     };
   }
 
