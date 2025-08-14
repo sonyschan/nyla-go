@@ -80,19 +80,32 @@ class NYLARAGIntegration {
           const vectorData = await response.json();
           
           // Load the data into the vector database
+          console.log('🔍 RAG Debug: Vector data structure:', {
+            hasChunks: !!vectorData.chunks,
+            chunksLength: vectorData.chunks?.length || 0,
+            hasEmbeddings: !!vectorData.embeddings,
+            embeddingsLength: vectorData.embeddings?.length || 0,
+            sampleChunkIds: vectorData.chunks?.slice(0, 3).map(c => c.id) || []
+          });
+          
           if (this.ragPipeline.vectorDB && typeof this.ragPipeline.vectorDB.loadFromData === 'function') {
             await this.ragPipeline.vectorDB.loadFromData(vectorData);
             const stats = this.ragPipeline.getStats();
+            console.log('🔍 RAG Debug: Vector DB stats after loading:', stats);
+            
             if (stats.vectorDB && stats.vectorDB.chunkCount > 0) {
               this.indexBuilt = true;
               console.log(`✅ Loaded pre-built vector database with ${stats.vectorDB.chunkCount} chunks`);
             } else {
-              console.log('⚠️ Vector database loaded but is empty');
+              console.log('⚠️ Vector database loaded but is empty - detailed stats:', stats);
               this.indexBuilt = false;
               this.indexBuildFailed = true;
             }
           } else {
-            console.log('⚠️ Vector database loadFromData method not available');
+            console.log('⚠️ Vector database loadFromData method not available', {
+              hasVectorDB: !!this.ragPipeline.vectorDB,
+              hasLoadMethod: this.ragPipeline.vectorDB ? typeof this.ragPipeline.vectorDB.loadFromData : 'no vectorDB'
+            });
             this.indexBuilt = false;
             this.indexBuildFailed = true;
           }
