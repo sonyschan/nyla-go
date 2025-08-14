@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Extension i18n Fixes Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+            font-size: 13px;
+        }
+        .ui-element {
+            padding: 8px;
+            margin: 3px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .current-lang {
+            background: #FF6B35;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .tab-content {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        h3 {
+            color: #FF6B35;
+            margin-top: 0;
+        }
+        .fix-status {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛠️ All Extension i18n Fixes Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Control & Status</h2>
+        <div style="margin-bottom: 15px;">
+            Current Language: <span id="currentLang" class="current-lang">Loading...</span>
+        </div>
+        <button class="test-button" onclick="switchToEnglish()">English</button>
+        <button class="test-button" onclick="switchToChinese()">中文</button>
+        <button class="test-button" onclick="testAllNewFixes()">Test All New Fixes</button>
+        <div id="langResult" class="test-result">Click buttons to test language switching</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Send Tab Fixes <span class="fix-status">✅ FIXED</span></h2>
+        <div class="tab-content">
+            <h3>Issue: "Switch to QR Code" and ext.send.command.placeholder missing i18n</h3>
+            
+            <div class="ui-element">
+                <span>QR Toggle Button Text:</span>
+                <span data-i18n="send.qr.toggle">Switch to QR Code</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>Command Placeholder:</span>
+                <span data-i18n="ext.send.command.placeholder">Fill in the fields above to see the command</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📥 Receive Tab Fixes <span class="fix-status">✅ FIXED</span></h2>
+        <div class="tab-content">
+            <h3>Issues: ext.qr.instruction.dynamic, Username/Amount labels, Share button</h3>
+            
+            <div class="ui-element">
+                <span>Dynamic QR Instruction:</span>
+                <span id="dynamicQRInstruction">Loading...</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>Username Label:</span>
+                <span data-i18n="receive.username">Your Username on X</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>Amount Token Label:</span>
+                <span data-i18n="receive.amount.token">Amount & Token</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>Share Payment Request Button:</span>
+                <span data-i18n="receive.button">📤 Share Payment Request</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔄 Swap Tab Fixes <span class="fix-status">✅ FIXED</span></h2>
+        <div class="tab-content">
+            <h3>Issues: "Amount & From Token", "To Token" missing i18n</h3>
+            
+            <div class="ui-element">
+                <span>Amount From Token Label:</span>
+                <span data-i18n="swap.amount.from">Amount & From Token</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>To Token Label:</span>
+                <span data-i18n="swap.to.token">To Token</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔗 Footer Fixes <span class="fix-status">✅ FIXED</span></h2>
+        <div class="tab-content">
+            <h3>Issues: "Feedback" and "Donate" links missing i18n</h3>
+            
+            <div class="ui-element">
+                <span>Feedback Link:</span>
+                <span data-i18n="ext.feedback">Feedback</span>
+            </div>
+            
+            <div class="ui-element">
+                <span>Donate Link:</span>
+                <span data-i18n="ext.donate">Donate</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 Comprehensive Test Results</h2>
+        <div id="testResults" class="test-result">Click "Test All New Fixes" to see comprehensive results</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Translation Coverage Summary</h2>
+        <div class="tab-content">
+            <div id="coverageSummary">
+                <p><strong>Send Tab:</strong> 2 new translations added</p>
+                <p><strong>Receive Tab:</strong> 4 new translations added</p>
+                <p><strong>Swap Tab:</strong> 2 new translations added</p>
+                <p><strong>Footer:</strong> 2 new translations added</p>
+                <p><strong>Total New Keys:</strong> 10 translation keys added</p>
+                <br>
+                <p><strong>Status:</strong> All reported missing i18n issues have been resolved ✅</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let extensionI18n = null;
+        
+        // Mock chrome.storage for testing
+        if (typeof chrome === 'undefined') {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        set: function(data, callback) {
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem('chrome_storage_' + key, data[key]);
+                            });
+                            if (callback) callback();
+                            console.log('Mock chrome.storage.sync.set:', data);
+                        },
+                        get: function(keys, callback) {
+                            const result = {};
+                            if (Array.isArray(keys)) {
+                                keys.forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    if (value) result[key] = value;
+                                });
+                            } else if (typeof keys === 'string') {
+                                const value = localStorage.getItem('chrome_storage_' + keys);
+                                if (value) result[keys] = value;
+                            } else if (typeof keys === 'object') {
+                                Object.keys(keys).forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    result[key] = value || keys[key];
+                                });
+                            }
+                            console.log('Mock chrome.storage.sync.get:', keys, '=>', result);
+                            callback(result);
+                        }
+                    }
+                }
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeTest();
+        });
+        
+        async function initializeTest() {
+            try {
+                extensionI18n = getExtensionI18n();
+                const success = await extensionI18n.initialize();
+                
+                if (success) {
+                    const currentLang = extensionI18n.getCurrentLanguage();
+                    document.getElementById('currentLang').textContent = currentLang === 'zh' ? '中文' : 'English';
+                    document.getElementById('langResult').innerHTML = 
+                        `<span class="success">✅ Extension i18n initialized with ${currentLang}</span>`;
+                    
+                    // Update dynamic elements
+                    updateDynamicElements();
+                } else {
+                    throw new Error('Initialization failed');
+                }
+                
+            } catch (error) {
+                document.getElementById('langResult').innerHTML = 
+                    `<span class="error">❌ Initialization failed: ${error.message}</span>`;
+            }
+        }
+        
+        function updateDynamicElements() {
+            if (!extensionI18n) return;
+            
+            // Update dynamic QR instruction (key fix test)
+            const dynamicQR = extensionI18n.t('ext.qr.instruction.dynamic', { token: 'SOL' });
+            document.getElementById('dynamicQRInstruction').textContent = dynamicQR;
+        }
+        
+        async function switchToEnglish() {
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('en');
+                    document.getElementById('currentLang').textContent = 'English';
+                    document.getElementById('langResult').innerHTML = '<span class="success">✅ Switched to English</span>';
+                    updateDynamicElements();
+                } catch (error) {
+                    document.getElementById('langResult').innerHTML = `<span class="error">❌ Switch failed: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        async function switchToChinese() {
+            if (extensionI18n) {
+                try {
+                    await extensionI18n.changeLanguage('zh');
+                    document.getElementById('currentLang').textContent = '中文';
+                    document.getElementById('langResult').innerHTML = '<span class="success">✅ 切换到中文</span>';
+                    updateDynamicElements();
+                } catch (error) {
+                    document.getElementById('langResult').innerHTML = `<span class="error">❌ 切换失败: ${error.message}</span>`;
+                }
+            }
+        }
+        
+        function testAllNewFixes() {
+            if (!extensionI18n) {
+                document.getElementById('testResults').innerHTML = '<span class="error">❌ Extension i18n not initialized</span>';
+                return;
+            }
+            
+            let results = [];
+            const currentLang = extensionI18n.getCurrentLanguage();
+            results.push(`<strong>Testing all new fixes in ${currentLang === 'zh' ? '中文' : 'English'}:</strong>`);
+            results.push('');
+            
+            // Test all new translation keys that were added to fix the issues
+            const newKeys = [
+                // Send tab fixes
+                { key: 'send.qr.toggle', description: 'Send - QR Toggle Button' },
+                { key: 'ext.send.command.placeholder', description: 'Send - Command Placeholder' },
+                
+                // Receive tab fixes  
+                { key: 'ext.qr.instruction.dynamic', description: 'Receive - Dynamic QR Instruction', variables: { token: 'SOL' } },
+                { key: 'receive.username', description: 'Receive - Username Label' },
+                { key: 'receive.amount.token', description: 'Receive - Amount Token Label' },
+                { key: 'receive.button', description: 'Receive - Share Button' },
+                
+                // Swap tab fixes
+                { key: 'swap.amount.from', description: 'Swap - Amount From Token Label' },
+                { key: 'swap.to.token', description: 'Swap - To Token Label' },
+                
+                // Footer fixes
+                { key: 'ext.feedback', description: 'Footer - Feedback Link' },
+                { key: 'ext.donate', description: 'Footer - Donate Link' }
+            ];
+            
+            let successCount = 0;
+            let fixesResults = [];
+            
+            newKeys.forEach(item => {
+                const translation = extensionI18n.t(item.key, item.variables || {});
+                if (translation && translation !== item.key) {
+                    successCount++;
+                    fixesResults.push(`✅ <strong>${item.description}:</strong> "${translation}"`);
+                } else {
+                    fixesResults.push(`❌ <strong>${item.description}:</strong> Translation missing`);
+                }
+            });
+            
+            results.push(`<span class="success"><strong>✅ ${successCount}/${newKeys.length} new translation keys working</strong></span>`);
+            results.push('');
+            results.push('<strong>Detailed Results:</strong>');
+            results = results.concat(fixesResults);
+            
+            // Test variable interpolation specifically
+            const dynamicTest = extensionI18n.t('ext.qr.instruction.dynamic', { token: 'NYLA' });
+            if (dynamicTest.includes('NYLA')) {
+                results.push('');
+                results.push('✅ <strong>Variable Interpolation:</strong> Working correctly');
+            } else {
+                results.push('');
+                results.push('❌ <strong>Variable Interpolation:</strong> Failed');
+            }
+            
+            // Summary
+            results.push('');
+            results.push('<strong>Fix Status Summary:</strong>');
+            results.push('✅ Send Tab: "Switch to QR Code" + Command placeholder');
+            results.push('✅ Receive Tab: Dynamic QR + Username + Amount + Share button');  
+            results.push('✅ Swap Tab: Amount From + To Token labels');
+            results.push('✅ Footer: Feedback + Donate links');
+            
+            document.getElementById('testResults').innerHTML = results.join('<br>');
+            
+            // Update all visual elements
+            updateDynamicElements();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYLA KB Content Creator - Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .tag {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 2px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .tag .remove {
+            margin-left: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .examples {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .example-button {
+            background: #95a5a6;
+            font-size: 12px;
+            padding: 6px 12px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NYLA Knowledge Base Content Creator</h1>
+        <p>Development tool for creating bilingual knowledge base content with automatic translation.</p>
+        
+        <div class="examples">
+            <h3>📚 Quick Examples</h3>
+            <button class="example-button" onclick="loadExample('transfer')">How-to Guide</button>
+            <button class="example-button" onclick="loadExample('network')">Network Facts</button>
+            <button class="example-button" onclick="loadExample('policy')">Policy Info</button>
+            <button class="example-button" onclick="loadExample('troubleshoot')">Troubleshooting</button>
+            <button class="example-button" onclick="loadExample('integration_facts')">🔌 Integration Facts</button>
+            <button class="example-button" onclick="loadExample('partnership')">🤝 Partnership</button>
+            <button class="example-button" onclick="loadExample('campaign')">📢 Campaign</button>
+        </div>
+        
+        <form id="contentForm">
+            <div class="form-group">
+                <label for="type">Content Type:</label>
+                <select id="type" required>
+                    <option value="">Select type...</option>
+                    <option value="facts">Facts</option>
+                    <option value="howto">How-to Guide</option>
+                    <option value="policy">Policy</option>
+                    <option value="faq">FAQ</option>
+                    <option value="troubleshooting">Troubleshooting</option>
+                    <option value="about">About</option>
+                    <option value="integration">🔌 Integration (Facts)</option>
+                    <option value="ecosystem">🌐 Ecosystem</option>
+                    <option value="marketing">📢 Marketing</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" required placeholder="Clear, descriptive title">
+            </div>
+            
+            <div class="form-group">
+                <label for="content">Content (English):</label>
+                <textarea id="content" required placeholder="Detailed explanation, steps, or information..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">Tags (comma separated):</label>
+                <input type="text" id="tags" placeholder="blockchain, transfer, guide, example">
+            </div>
+            
+            <div class="form-group">
+                <label for="priority">Priority (1-10):</label>
+                <input type="number" id="priority" min="1" max="10" value="5">
+            </div>
+            
+            <div class="form-group">
+                <label for="stability">Stability:</label>
+                <select id="stability">
+                    <option value="stable">Stable</option>
+                    <option value="volatile">Volatile</option>
+                    <option value="evolving">Evolving</option>
+                    <option value="deprecated">Deprecated</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="sourceUrl">Source URL:</label>
+                <input type="url" id="sourceUrl" placeholder="https://docs.nyla.ai/...">
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <button type="button" id="createBtn" onclick="createKnowledge()">🤖 Create with Auto-Translation</button>
+                <button type="button" onclick="clearForm()">🧹 Clear</button>
+                <button type="button" onclick="toggleOutput()">👁️ Show/Hide Output</button>
+            </div>
+        </form>
+        
+        <div id="status"></div>
+        <div id="output" class="output" style="display: none;"></div>
+    </div>
+
+    <!-- Load our services -->
+    <script src="js/rag/nyla-chunk-hygiene.js"></script>
+    <script src="js/rag/nyla-llm-translation-service.js"></script>
+    <script src="js/rag/nyla-kb-content-creator.js"></script>
+    
+    <script>
+        // Global instances
+        let contentCreator = null;
+        let outputVisible = false;
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            showStatus('Initializing KB Content Creator...', 'info');
+            
+            try {
+                contentCreator = new NYLAKBContentCreator({
+                    autoTranslate: true,
+                    autoGenerateHash: true,
+                    validateSchema: true
+                });
+                
+                // Initialize (this will load the LLM models)
+                await contentCreator.initialize();
+                
+                showStatus('✅ Content Creator ready! LLM translation available.', 'success');
+                
+            } catch (error) {
+                showStatus(`❌ Initialization failed: ${error.message}`, 'error');
+                console.error('Init error:', error);
+            }
+        });
+        
+        // Create knowledge chunk
+        async function createKnowledge() {
+            if (!contentCreator) {
+                showStatus('❌ Content creator not initialized', 'error');
+                return;
+            }
+            
+            const button = document.getElementById('createBtn');
+            button.disabled = true;
+            button.textContent = '🤖 Creating...';
+            
+            try {
+                // Collect form data
+                const metadata = {
+                    type: document.getElementById('type').value,
+                    title: document.getElementById('title').value,
+                    tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t),
+                    priority: parseInt(document.getElementById('priority').value),
+                    stability: document.getElementById('stability').value,
+                    source_url: document.getElementById('sourceUrl').value || undefined
+                };
+                
+                const content = document.getElementById('content').value;
+                
+                // Validate
+                if (!metadata.type || !metadata.title || !content) {
+                    throw new Error('Please fill in required fields');
+                }
+                
+                showStatus('🌐 Generating bilingual summaries with LLM...', 'info');
+                log(`Creating chunk: ${metadata.title}`);
+                log(`Type: ${metadata.type}`);
+                log(`Tags: ${metadata.tags.join(', ')}`);
+                log(`Content: ${content.substring(0, 100)}...`);
+                
+                // Create chunk
+                const chunk = await contentCreator.createKnowledgeChunk(content, metadata);
+                
+                log('✅ Chunk created successfully!');
+                log(`ID: ${chunk.id}`);
+                log(`Hash: ${chunk.hash}`);
+                log(`Summary EN: ${chunk.summary_en}`);
+                log(`Summary ZH: ${chunk.summary_zh}`);
+                
+                // Show result
+                showStatus('✅ Knowledge chunk created! Check output for details.', 'success');
+                
+                // Display the JSON for copy/paste
+                log('\n📋 Complete chunk JSON (copy to appropriate KB file):');
+                log(JSON.stringify(chunk, null, 2));
+                
+                // Show which file it should go to
+                const targetFile = getTargetFile(chunk);
+                log(`\n📁 Target file: ${targetFile}`);
+                log(`\n💡 In production, this would be automatically saved to the KB.`);
+                
+                if (!outputVisible) {
+                    toggleOutput();
+                }
+                
+            } catch (error) {
+                showStatus(`❌ Creation failed: ${error.message}`, 'error');
+                log(`❌ Error: ${error.message}`);
+                console.error('Creation error:', error);
+                
+            } finally {
+                button.disabled = false;
+                button.textContent = '🤖 Create with Auto-Translation';
+            }
+        }
+        
+        // Helper functions
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            output.textContent += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearForm() {
+            document.getElementById('contentForm').reset();
+            document.getElementById('output').textContent = '';
+            showStatus('Form cleared', 'info');
+        }
+        
+        function toggleOutput() {
+            const output = document.getElementById('output');
+            outputVisible = !outputVisible;
+            output.style.display = outputVisible ? 'block' : 'none';
+        }
+        
+        function getTargetFile(chunk) {
+            const { type, section } = chunk;
+            const typeMap = {
+                'facts': 'facts',
+                'howto': 'howto',
+                'policy': 'policy', 
+                'faq': 'faq',
+                'troubleshooting': 'troubleshooting',
+                'about': 'about'
+            };
+            
+            const dir = typeMap[type] || 'misc';
+            let filename = section || type;
+            
+            if (type === 'facts' && chunk.tags.includes('network')) {
+                filename = 'networks';
+            } else if (type === 'howto' && chunk.tags.includes('transfer')) {
+                filename = 'transfers';
+            }
+            
+            return `/pwa/kb/${dir}/${filename}.json`;
+        }
+        
+        // Load example data
+        function loadExample(type) {
+            const examples = {
+                transfer: {
+                    type: 'howto',
+                    title: 'How to Send Tokens with NYLA',
+                    content: 'To send tokens using NYLA, you need to create a command on X.com. The format is "NYLA send [amount] [token] to [recipient]". For example: "NYLA send 1 SOL to abc123...". Make sure your wallet is connected and you have sufficient balance. The NYLA AI agent will process your command within 2-3 minutes.',
+                    tags: 'transfer, send, tokens, tutorial, X.com',
+                    priority: 9,
+                    stability: 'stable',
+                    sourceUrl: 'https://docs.nyla.ai/transfers'
+                },
+                network: {
+                    type: 'facts', 
+                    title: 'Ethereum Network Features',
+                    content: 'Ethereum is the most established network supported by NYLA. It offers the largest selection of tokens and DeFi protocols. However, it has higher fees compared to Solana and Polygon. Gas fees typically range from $5-50 depending on network congestion. Ethereum is best for large transfers and accessing maximum liquidity.',
+                    tags: 'ethereum, network, fees, liquidity, DeFi',
+                    priority: 8,
+                    stability: 'volatile',
+                    sourceUrl: 'https://ethereum.org'
+                },
+                policy: {
+                    type: 'policy',
+                    title: 'Private Key Security Policy',
+                    content: 'NYLA and NYLAGo never access or store your private keys. All transactions are initiated by you through connected wallets. Your keys remain in your control at all times. NYLA only reads public wallet information to execute commands. Never share your private keys or seed phrases with anyone.',
+                    tags: 'security, private key, policy, safety',
+                    priority: 10,
+                    stability: 'stable',
+                    sourceUrl: 'https://docs.nyla.ai/security'
+                },
+                troubleshoot: {
+                    type: 'troubleshooting',
+                    title: 'Fix: NYLA Command Not Working',
+                    content: 'If your NYLA command on X.com is not working: 1. Check command format is correct, 2. Ensure wallet is connected, 3. Verify sufficient balance including fees, 4. Wait 3-5 minutes for processing, 5. Check if network is experiencing issues. If problem persists, try disconnecting and reconnecting your wallet.',
+                    tags: 'troubleshooting, command, fix, X.com, wallet',
+                    priority: 7,
+                    stability: 'stable',
+                    sourceUrl: 'https://docs.nyla.ai/troubleshooting'
+                },
+                integration_facts: {
+                    type: 'integration',
+                    title: 'MetaMask Wallet Integration',
+                    content: 'Facts-grade canonical record: NYLA supports MetaMask wallet integration for Ethereum mainnet. Capabilities: token transfers, balance queries, transaction signing. Status: Live since June 2024. Verified functionality with Web3.js SDK. Limitations: Ethereum mainnet only, high gas fees during congestion.',
+                    tags: 'facts, support, metamask, ethereum, wallet, verified',
+                    priority: 9,
+                    stability: 'stable',
+                    sourceUrl: 'https://metamask.io/developers'
+                },
+                partnership: {
+                    type: 'ecosystem',
+                    title: 'Uniswap Protocol Partnership',
+                    content: 'Strategic partnership with Uniswap Labs enables seamless DEX integration for NYLA users. Partnership provides access to Uniswap V3 liquidity pools, automated market making features, and cross-chain swap capabilities. Users can execute swaps directly through NYLA commands with optimal routing and MEV protection. Partnership established Q4 2024 with ongoing technical collaboration.',
+                    tags: 'uniswap, partnership, DEX, protocol, liquidity, organization',
+                    priority: 9,
+                    stability: 'stable',
+                    sourceUrl: 'https://uniswap.org'
+                },
+                campaign: {
+                    type: 'ecosystem',
+                    title: 'ETHDenver 2025 Collaboration',
+                    content: 'NYLA collaboration with ETHDenver 2025 featuring developer bounties, AI agent workshops, and community hackathon. Campaign includes $50K in bounty rewards for NYLA integrations, daily workshops on AI x DeFi, and special NFT rewards for participants. Co-marketing with ETHDenver organizers and sponsor ecosystem partners.',
+                    tags: 'ethdenver, campaign, hackathon, bounty, event, marketing',
+                    priority: 6,
+                    stability: 'evolving',
+                    sourceUrl: 'https://ethdenver.com'
+                }
+            };
+            
+            const example = examples[type];
+            if (!example) return;
+            
+            document.getElementById('type').value = example.type;
+            document.getElementById('title').value = example.title;
+            document.getElementById('content').value = example.content;
+            document.getElementById('tags').value = example.tags;
+            document.getElementById('priority').value = example.priority;
+            document.getElementById('stability').value = example.stability;
+            document.getElementById('sourceUrl').value = example.sourceUrl;
+            
+            showStatus(`Loaded ${type} example - ready to create!`, 'info');
+        }
+    </script>
+</body>
+</html>

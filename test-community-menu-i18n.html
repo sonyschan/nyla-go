@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Menu i18n Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        
+        .community-menu-dropdown {
+            position: relative;
+            background: rgba(26, 26, 26, 0.98);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+            max-width: 280px;
+        }
+        
+        .community-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .community-menu-item:hover {
+            background: #444;
+        }
+        
+        .community-menu-icon {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        .community-menu-title {
+            font-weight: 500;
+        }
+        
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        
+        select {
+            padding: 8px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Community Menu i18n Test</h1>
+    
+    <div>
+        <label>Language:</label>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="zh">中文 (Chinese)</option>
+        </select>
+        <button onclick="changeLanguage()" class="test-button">Apply Language & Update Menu</button>
+    </div>
+    
+    <h2>Community Menu:</h2>
+    <div class="community-menu-dropdown" id="communityDropdown">
+        <!-- Menu items will be dynamically generated -->
+    </div>
+    
+    <div class="test-result" id="testResult">
+        Select a language and click "Apply Language & Update Menu" to test.
+    </div>
+    
+    <h2>Translation Debug:</h2>
+    <div class="test-result" id="translationDebug">
+        <div id="debugResults">Loading...</div>
+    </div>
+
+    <script src="nylago-data.js"></script>
+    <script src="extension-i18n.js"></script>
+    <script>
+        let extensionI18n;
+        const communityDropdown = document.getElementById('communityDropdown');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.ExtensionI18n) {
+                extensionI18n = new window.ExtensionI18n();
+                
+                // Register callback system like in popup.js
+                if (!window.nylaGoLanguageCallbacks) {
+                    window.nylaGoLanguageCallbacks = {};
+                }
+                window.nylaGoLanguageCallbacks.updateCommunityMenu = generateCommunityMenu;
+                
+                // Generate initial menu
+                generateCommunityMenu();
+                updateDebugInfo();
+            }
+        });
+        
+        // Replicate the generateCommunityMenu function from popup.js
+        function generateCommunityMenu() {
+            if (!communityDropdown || !window.NYLA_COMMUNITY_DATA) return;
+            
+            // Clear existing content
+            communityDropdown.innerHTML = '';
+            
+            // Generate menu items
+            window.NYLA_COMMUNITY_DATA.menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'community-menu-item';
+                menuItem.setAttribute('data-action', item.action);
+                
+                // Use i18n for menu item text if available
+                const menuText = (window.extensionI18n && item.i18nKey) 
+                    ? window.extensionI18n.t(item.i18nKey) 
+                    : item.name;
+                
+                menuItem.innerHTML = `
+                    <span class="community-menu-icon">${item.icon}</span>
+                    <div class="community-menu-text">
+                        <div class="community-menu-title">${menuText}</div>
+                    </div>
+                `;
+                
+                communityDropdown.appendChild(menuItem);
+            });
+            
+            console.log('✅ Community menu regenerated');
+        }
+        
+        function changeLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLang = languageSelect.value;
+            const testResult = document.getElementById('testResult');
+            
+            if (!extensionI18n) {
+                testResult.innerHTML = '❌ Extension i18n not initialized';
+                return;
+            }
+            
+            // Change language (this should trigger menu update via callback)
+            extensionI18n.setLanguage(selectedLang);
+            
+            // Update debug info
+            updateDebugInfo();
+            
+            testResult.innerHTML = `
+                ✅ <strong>Language changed to: ${selectedLang}</strong><br>
+                Community menu should now show items in ${selectedLang === 'zh' ? 'Chinese' : 'English'}.<br>
+                Check the menu above to verify the translation worked!
+            `;
+        }
+        
+        function updateDebugInfo() {
+            const debugResults = document.getElementById('debugResults');
+            
+            if (!extensionI18n) {
+                debugResults.innerHTML = 'Extension i18n not available';
+                return;
+            }
+            
+            const menuKeys = ['ext.menu.raids', 'ext.menu.apps', 'ext.menu.settings'];
+            let results = `Current Language: <strong>${extensionI18n.currentLanguage}</strong><br><br>`;
+            
+            menuKeys.forEach(key => {
+                const translation = extensionI18n.t(key);
+                const status = translation === key ? '❌' : '✅';
+                results += `${status} ${key}: "<strong>${translation}</strong>"<br>`;
+            });
+            
+            results += `<br>Callback registered: ${window.nylaGoLanguageCallbacks?.updateCommunityMenu ? '✅ Yes' : '❌ No'}`;
+            
+            debugResults.innerHTML = results;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Tab i18n Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        select {
+            padding: 8px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .receive-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .qr-instructions {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .qr-instructions p {
+            margin: 5px 0;
+        }
+        .back-button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Receive Tab i18n Test</h1>
+    
+    <div>
+        <label>Language:</label>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="zh">中文 (Chinese)</option>
+        </select>
+        <button onclick="changeLanguage()" class="test-button">Apply Language</button>
+    </div>
+    
+    <div class="receive-section">
+        <h2>Receive Tab Elements:</h2>
+        
+        <div class="form-group">
+            <label data-i18n="ext.receive.username">Your Username on X</label>
+            <em>English: "Your Username on X" → Chinese: "您的X用户名"</em>
+        </div>
+        
+        <div class="form-group">
+            <label data-i18n="ext.receive.amount.token">Amount & Token</label>
+            <em>English: "Amount & Token" → Chinese: "金额和代币"</em>
+        </div>
+        
+        <div class="form-group">
+            <label data-i18n="ext.send.amount.token">Amount & Token (Send Tab)</label>
+            <em>English: "Amount & Token" → Chinese: "金额和代币"</em>
+        </div>
+        
+        <div class="qr-instructions">
+            <p data-i18n="ext.qr.instruction">📱 Share this QR code to receive NYLA payments</p>
+            <p data-i18n="ext.qr.hint">Others can scan to send you tokens instantly</p>
+            <em>QR instructions should translate to Chinese</em>
+        </div>
+        
+        <div class="form-group">
+            <button class="back-button" data-i18n="ext.back">← Back</button>
+            <em>English: "← Back" → Chinese: "← 返回"</em>
+        </div>
+        
+        <div class="form-group">
+            <h3>Dynamic QR Instruction Test:</h3>
+            <p id="dynamicQR">Loading dynamic QR instruction...</p>
+            <button onclick="testDynamicQR('SOL')" class="test-button">Test with SOL</button>
+            <button onclick="testDynamicQR('ETH')" class="test-button">Test with ETH</button>
+            <button onclick="testDynamicQR('NYLA')" class="test-button">Test with NYLA</button>
+        </div>
+    </div>
+    
+    <div class="test-result" id="testResult">
+        Select a language and click "Apply Language" to test the receive tab translations.
+    </div>
+    
+    <h2>Translation Keys Test:</h2>
+    <div class="test-result" id="translationTest">
+        <div id="keyResults">Loading...</div>
+    </div>
+
+    <script src="extension-i18n.js"></script>
+    <script>
+        let extensionI18n;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.ExtensionI18n) {
+                extensionI18n = new window.ExtensionI18n();
+                testTranslationKeys();
+                testDynamicQR('NYLA');
+            }
+        });
+        
+        function changeLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLang = languageSelect.value;
+            const testResult = document.getElementById('testResult');
+            
+            if (!extensionI18n) {
+                testResult.innerHTML = '❌ Extension i18n not initialized';
+                return;
+            }
+            
+            // Change language
+            extensionI18n.setLanguage(selectedLang);
+            
+            testResult.innerHTML = `
+                ✅ <strong>Language changed to: ${selectedLang}</strong><br>
+                Receive tab labels should now show in ${selectedLang === 'zh' ? 'Chinese' : 'English'}.<br>
+                Check the labels above to verify the translations worked!
+            `;
+            
+            // Update translation keys test
+            testTranslationKeys();
+            
+            // Update dynamic QR with current token
+            testDynamicQR('NYLA');
+        }
+        
+        function testDynamicQR(token) {
+            const dynamicQR = document.getElementById('dynamicQR');
+            
+            if (!extensionI18n) {
+                dynamicQR.innerHTML = 'Extension i18n not available';
+                return;
+            }
+            
+            const dynamicText = extensionI18n.t('ext.qr.instruction.dynamic', { token });
+            dynamicQR.innerHTML = `<strong>${dynamicText}</strong><br><em>Token: ${token}</em>`;
+        }
+        
+        function testTranslationKeys() {
+            const keyResults = document.getElementById('keyResults');
+            
+            if (!extensionI18n) {
+                keyResults.innerHTML = 'Extension i18n not available';
+                return;
+            }
+            
+            const receiveKeys = [
+                'ext.receive.username',
+                'ext.receive.amount.token', 
+                'ext.send.amount.token',
+                'ext.qr.instruction',
+                'ext.qr.hint',
+                'ext.back'
+            ];
+            
+            let results = `Current Language: <strong>${extensionI18n.currentLanguage}</strong><br><br>`;
+            
+            receiveKeys.forEach(key => {
+                const translation = extensionI18n.t(key);
+                const status = translation === key ? '❌' : '✅';
+                results += `${status} ${key}: "<strong>${translation}</strong>"<br>`;
+            });
+            
+            keyResults.innerHTML = results;
+        }
+    </script>
+</body>
+</html>

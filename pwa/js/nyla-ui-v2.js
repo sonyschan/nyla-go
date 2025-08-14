@@ -1310,7 +1310,7 @@ class NYLAAssistantUIV2 {
       this.hideTyping();
       
       // Display positive response
-      await this.displayMessage(response.answer, 'nyla');
+      await this.displayMessage(this.normalizeResponseFormat(response), 'nyla');
       
       // Display follow-up questions
       this.displayQuestions(response.followUps);
@@ -1412,25 +1412,29 @@ class NYLAAssistantUIV2 {
       // Hide typing indicator
       this.hideTyping();
       console.log('NYLA UI V2: ✅ Question processed successfully');
-      console.log('NYLA UI V2: Response received:', {
-        text: response.answer.text.substring(0, 100) + '...',
-        isLLMGenerated: response.isLLMGenerated,
-        sentiment: response.answer.sentiment
+      console.log('NYLA UI V2: Raw response received:', response);
+      
+      // Normalize response format
+      const normalizedResponse = this.normalizeResponseFormat(response);
+      console.log('NYLA UI V2: Normalized response:', {
+        text: normalizedResponse.text.substring(0, 100) + '...',
+        sentiment: normalizedResponse.sentiment,
+        isLLMGenerated: response.isLLMGenerated
       });
       
       // Check if this response contains personal care
-      const personalCareDetected = this.detectPersonalCareInResponse(response.answer.text);
+      const personalCareDetected = this.detectPersonalCareInResponse(normalizedResponse.text);
       
       if (personalCareDetected) {
         // Split response and personal care
-        const { mainResponse, carePrompt, careType } = this.extractPersonalCare(response.answer.text, response.answer.sentiment);
+        const { mainResponse, carePrompt, careType } = this.extractPersonalCare(normalizedResponse.text, normalizedResponse.sentiment);
         
         // Display main response first
         if (mainResponse.trim()) {
           await this.displayMessage({
             text: mainResponse,
-            sentiment: response.answer.sentiment,
-            confidence: response.answer.confidence
+            sentiment: normalizedResponse.sentiment,
+            confidence: normalizedResponse.confidence
           }, 'nyla');
         }
         
@@ -1440,7 +1444,7 @@ class NYLAAssistantUIV2 {
         }
       } else {
         // Display NYLA's response normally
-        await this.displayMessage(response.answer, 'nyla');
+        await this.displayMessage(normalizedResponse, 'nyla');
       }
       
       // Show sticker if available
@@ -1492,6 +1496,46 @@ class NYLAAssistantUIV2 {
       }
       await this.displayMessage(errorResponse.answer, 'nyla');
       this.displayQuestions(errorResponse.followUps);
+    }
+  }
+
+  /**
+   * Normalize response format to handle different structures
+   */
+  normalizeResponseFormat(response) {
+    if (!response) {
+      return {
+        text: 'No response available',
+        sentiment: 'neutral',
+        confidence: 0
+      };
+    }
+
+    // Handle different response formats
+    if (response.answer) {
+      // Legacy format: response.answer.text
+      return {
+        text: response.answer.text || 'No response available',
+        sentiment: response.answer.sentiment || 'neutral',
+        confidence: response.answer.confidence || 0,
+        followUpSuggestions: response.answer.followUpSuggestions || []
+      };
+    } else if (response.text) {
+      // Direct format: response.text
+      return {
+        text: response.text,
+        sentiment: response.sentiment || 'neutral',
+        confidence: response.confidence || 0,
+        followUpSuggestions: response.followUpSuggestions || []
+      };
+    } else {
+      // Fallback
+      return {
+        text: 'Invalid response format',
+        sentiment: 'neutral',
+        confidence: 0,
+        followUpSuggestions: []
+      };
     }
   }
 
@@ -1858,7 +1902,7 @@ class NYLAAssistantUIV2 {
       this.hideTyping();
       
       // Display NYLA's response
-      await this.displayMessage(response.answer, 'nyla');
+      await this.displayMessage(this.normalizeResponseFormat(response), 'nyla');
       
       // Handle special actions
       if (response.externalAction) {
@@ -1916,7 +1960,7 @@ class NYLAAssistantUIV2 {
       this.hideTyping();
       
       // Display response
-      await this.displayMessage(response.answer, 'nyla');
+      await this.displayMessage(this.normalizeResponseFormat(response), 'nyla');
       
       if (!response.workBreak) {
         // NYLA is back! Show regular questions
@@ -2262,8 +2306,8 @@ class NYLAAssistantUIV2 {
                 this.hideTyping();
                 
                 // Display NYLA's response
-                if (response && response.answer) {
-                  await this.displayMessage(response.answer, 'nyla');
+                if (response) {
+                  await this.displayMessage(this.normalizeResponseFormat(response), 'nyla');
                   
                   // Show sticker if available
                   if (response.sticker) {
@@ -2320,8 +2364,8 @@ class NYLAAssistantUIV2 {
                 this.hideTyping();
                 
                 // Display NYLA's response
-                if (response && response.answer) {
-                  await this.displayMessage(response.answer, 'nyla');
+                if (response) {
+                  await this.displayMessage(this.normalizeResponseFormat(response), 'nyla');
                   
                   // Show sticker if available
                   if (response.sticker) {

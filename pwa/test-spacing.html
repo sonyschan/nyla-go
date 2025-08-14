@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NYLA Spacing Test</title>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/desktop.css">
+    <link rel="stylesheet" href="css/nyla-assistant.css">
+    <style>
+        body { 
+            padding: 20px; 
+            background: #000;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #FF6B35;
+        }
+    </style>
+</head>
+<body class="desktop-mode">
+    <h1>Spacing Comparison Test</h1>
+    
+    <div class="test-section">
+        <h2>Receive Tab Structure</h2>
+        <div class="tab-content" data-section-title="💰 Receive Payments">
+            <div class="receive-qr-container">
+                <div class="receive-qr-code">QR CODE AREA</div>
+                <div class="qr-instructions">
+                    <p>📱 Share this QR code to receive NYLA payments</p>
+                </div>
+            </div>
+            
+            <form class="receive-form">
+                <div class="form-group">
+                    <label>Your Username on X</label>
+                    <input type="text" placeholder="@username" />
+                </div>
+                <div class="form-group">
+                    <label>Amount & Token</label>
+                    <input type="number" placeholder="1" />
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>NYLA Tab Structure</h2>
+        <div class="tab-content" id="nylaTab" data-section-title="❤️ NYLA AI Assistant">
+            <div class="nyla-chat-container">
+                <div class="nyla-messages">
+                    <div class="nyla-message">MESSAGES AREA</div>
+                </div>
+                
+                <div class="nyla-questions">
+                    QUESTIONS AREA
+                </div>
+                
+                <div class="nyla-user-input-container">
+                    USER INPUT AREA
+                </div>
+                
+                <div class="nyla-info-panel">
+                    INFO PANEL AREA
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

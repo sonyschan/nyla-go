@@ -11,6 +11,7 @@ class NYLAEmbeddingService {
       maxSequenceLength: 256,
       batchSize: 32,
       cacheEnabled: true,
+      performanceLogging: true,
       ...options
     };
     
@@ -18,6 +19,23 @@ class NYLAEmbeddingService {
     this.modelLoaded = false;
     this.embeddingCache = new Map();
     this.loadingPromise = null;
+    
+    // Performance tracking
+    this.performanceMetrics = {
+      modelLoadTime: null,
+      warmupTime: null,
+      totalEmbeddings: 0,
+      totalEmbeddingTime: 0,
+      batchStats: [],
+      averagePerToken: null,
+      cacheHits: 0,
+      cacheMisses: 0,
+      modelInfo: {
+        name: this.options.modelName,
+        dimension: this.options.dimension,
+        maxLength: this.options.maxSequenceLength
+      }
+    };
   }
 
   /**
@@ -36,8 +54,10 @@ class NYLAEmbeddingService {
    * Load the transformer model
    */
   async _loadModel() {
+    const startTime = performance.now();
+    
     try {
-      console.log('🤖 Loading embedding model...');
+      this.log('🤖 Loading embedding model:', this.options.modelName);
       
       let pipeline, env;
       
@@ -67,13 +87,16 @@ class NYLAEmbeddingService {
         quantized: true,  // Use quantized model for smaller size
         progress_callback: (progress) => {
           if (progress.status === 'downloading') {
-            console.log(`📥 Downloading model: ${Math.round(progress.progress)}%`);
+            this.log(`📥 Downloading model: ${Math.round(progress.progress)}%`);
           }
         }
       });
       
       this.modelLoaded = true;
-      console.log('✅ Embedding model loaded successfully');
+      const loadTime = performance.now() - startTime;
+      this.performanceMetrics.modelLoadTime = loadTime;
+      
+      this.log(`✅ Embedding model loaded in ${loadTime.toFixed(2)}ms`);
       
       // Warm up the model
       await this._warmupModel();
@@ -88,9 +111,14 @@ class NYLAEmbeddingService {
    * Warm up the model with a test embedding
    */
   async _warmupModel() {
-    console.log('🔥 Warming up embedding model...');
+    const startTime = performance.now();
+    this.log('🔥 Warming up embedding model...');
+    
     await this.embed('test query for model warmup');
-    console.log('✅ Model warmed up');
+    
+    const warmupTime = performance.now() - startTime;
+    this.performanceMetrics.warmupTime = warmupTime;
+    this.log(`✅ Model warmed up in ${warmupTime.toFixed(2)}ms`);
   }
 
   /**
@@ -101,12 +129,17 @@ class NYLAEmbeddingService {
     
     // Check cache first
     if (this.options.cacheEnabled && this.embeddingCache.has(text)) {
+      this.performanceMetrics.cacheHits++;
       return this.embeddingCache.get(text);
     }
+    
+    const startTime = performance.now();
+    this.performanceMetrics.cacheMisses++;
     
     try {
       // Truncate text if too long
       const truncatedText = this.truncateText(text);
+      const tokenCount = this.estimateTokenCount(truncatedText);
       
       // Generate embedding
       const output = await this.pipeline(truncatedText, {
@@ -116,6 +149,10 @@ class NYLAEmbeddingService {
       
       // Extract embedding array
       const embedding = Array.from(output.data);
+      
+      // Track performance
+      const embeddingTime = performance.now() - startTime;
+      this.updatePerformanceStats(embeddingTime, tokenCount, text.length);
       
       // Cache the result
       if (this.options.cacheEnabled) {
@@ -136,13 +173,18 @@ class NYLAEmbeddingService {
   async embedBatch(texts, onProgress) {
     await this.initialize();
     
+    const batchStartTime = performance.now();
     const embeddings = [];
     const totalTexts = texts.length;
+    const totalTokens = texts.reduce((sum, text) => sum + this.estimateTokenCount(text), 0);
+    
+    this.log(`📊 Starting batch processing: ${totalTexts} texts, ~${totalTokens} tokens`);
     
     // Process in batches
     for (let i = 0; i < totalTexts; i += this.options.batchSize) {
       const batch = texts.slice(i, i + this.options.batchSize);
       const batchEmbeddings = [];
+      const batchIterStartTime = performance.now();
       
       // Process each text in the batch
       for (const text of batch) {
@@ -152,19 +194,44 @@ class NYLAEmbeddingService {
       
       embeddings.push(...batchEmbeddings);
       
-      // Report progress
+      const batchIterTime = performance.now() - batchIterStartTime;
+      const avgTimePerText = batchIterTime / batch.length;
+      const remainingTexts = totalTexts - embeddings.length;
+      const estimatedTimeRemaining = (avgTimePerText * remainingTexts) / 1000; // seconds
+      
+      // Track batch statistics
+      this.performanceMetrics.batchStats.push({
+        batchIndex: Math.floor(i / this.options.batchSize),
+        batchSize: batch.length,
+        processingTime: batchIterTime,
+        avgTimePerText: avgTimePerText,
+        timestamp: Date.now()
+      });
+      
+      // Report progress with enhanced timing info
       if (onProgress) {
         const progress = Math.round((embeddings.length / totalTexts) * 100);
         onProgress({
           current: embeddings.length,
           total: totalTexts,
-          percentage: progress
+          percentage: progress,
+          batchTime: batchIterTime,
+          avgTimePerText: avgTimePerText,
+          estimatedTimeRemaining: estimatedTimeRemaining
         });
       }
+      
+      this.log(`📦 Batch ${Math.floor(i / this.options.batchSize) + 1}: ${batch.length} embeddings in ${batchIterTime.toFixed(1)}ms (${avgTimePerText.toFixed(1)}ms/text, ~${estimatedTimeRemaining.toFixed(1)}s remaining)`);
       
       // Small delay to prevent blocking UI
       await new Promise(resolve => setTimeout(resolve, 10));
     }
+    
+    const totalBatchTime = performance.now() - batchStartTime;
+    const avgTimePerEmbedding = totalBatchTime / totalTexts;
+    const avgTokensPerSecond = (totalTokens / totalBatchTime) * 1000;
+    
+    this.log(`✅ Batch completed: ${totalTexts} embeddings in ${totalBatchTime.toFixed(1)}ms (${avgTimePerEmbedding.toFixed(1)}ms/embedding, ${avgTokensPerSecond.toFixed(0)} tokens/sec)`);
     
     return embeddings;
   }
@@ -288,6 +355,76 @@ class NYLAEmbeddingService {
       dimension: this.options.dimension,
       count: chunks.length
     };
+  }
+
+  /**
+   * Estimate token count for text (rough approximation)
+   */
+  estimateTokenCount(text) {
+    // Rough approximation: 1 token ≈ 4 characters for English text
+    return Math.ceil(text.length / 4);
+  }
+
+  /**
+   * Update performance statistics
+   */
+  updatePerformanceStats(embeddingTime, tokenCount, textLength) {
+    this.performanceMetrics.totalEmbeddings++;
+    this.performanceMetrics.totalEmbeddingTime += embeddingTime;
+    
+    // Calculate running average
+    const avgTime = this.performanceMetrics.totalEmbeddingTime / this.performanceMetrics.totalEmbeddings;
+    this.performanceMetrics.averagePerToken = avgTime / (tokenCount || 1);
+    
+    if (this.options.performanceLogging) {
+      this.log(`⚡ Embedding: ${embeddingTime.toFixed(1)}ms, ${tokenCount} tokens, ${textLength} chars (avg: ${avgTime.toFixed(1)}ms, ${this.performanceMetrics.averagePerToken.toFixed(2)}ms/token)`);
+    }
+  }
+
+  /**
+   * Conditional logging based on performance logging setting
+   */
+  log(message) {
+    if (this.options.performanceLogging) {
+      console.log(message);
+    }
+  }
+
+  /**
+   * Get comprehensive performance metrics
+   */
+  getPerformanceMetrics() {
+    const cacheHitRate = this.performanceMetrics.totalEmbeddings > 0
+      ? (this.performanceMetrics.cacheHits / (this.performanceMetrics.cacheHits + this.performanceMetrics.cacheMisses) * 100).toFixed(2)
+      : '0';
+    
+    const avgBatchTime = this.performanceMetrics.batchStats.length > 0
+      ? this.performanceMetrics.batchStats.reduce((sum, batch) => sum + batch.processingTime, 0) / this.performanceMetrics.batchStats.length
+      : 0;
+    
+    return {
+      ...this.performanceMetrics,
+      cacheHitRate: `${cacheHitRate}%`,
+      avgBatchProcessingTime: avgBatchTime.toFixed(2) + 'ms',
+      totalBatches: this.performanceMetrics.batchStats.length,
+      embeddingsPerSecond: this.performanceMetrics.totalEmbeddingTime > 0
+        ? (this.performanceMetrics.totalEmbeddings / (this.performanceMetrics.totalEmbeddingTime / 1000)).toFixed(2)
+        : '0'
+    };
+  }
+
+  /**
+   * Reset performance metrics
+   */
+  resetPerformanceMetrics() {
+    this.performanceMetrics.totalEmbeddings = 0;
+    this.performanceMetrics.totalEmbeddingTime = 0;
+    this.performanceMetrics.batchStats = [];
+    this.performanceMetrics.averagePerToken = null;
+    this.performanceMetrics.cacheHits = 0;
+    this.performanceMetrics.cacheMisses = 0;
+    
+    this.log('📊 Performance metrics reset');
   }
 
   /**

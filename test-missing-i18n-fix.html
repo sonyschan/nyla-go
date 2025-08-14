@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missing i18n Keys Fix Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        .menu-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Missing i18n Keys Fix Test</h1>
+    
+    <div class="test-section">
+        <h2>Extension Menu i18n Test</h2>
+        <div class="menu-item">
+            <span>🎯</span>
+            <span id="menuRaids">Community Raids</span>
+        </div>
+        <div class="menu-item">
+            <span>🚀</span>
+            <span id="menuApps">Community Apps</span>
+        </div>
+        <div class="menu-item">
+            <span>⚙️</span>
+            <span id="menuSettings">Settings</span>
+        </div>
+        
+        <button class="test-button" onclick="testMenuTranslations()">Test Menu Translations</button>
+        <div id="menuTestResult" class="test-result">Click to test menu translations</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>QR Hint i18n Test</h2>
+        <div style="background: #333; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="background: #666; padding: 20px; margin-bottom: 10px;">
+                [QR Code Would Be Here]
+            </div>
+            <p id="qrInstruction">📱 Share this QR code to receive NYLA payments</p>
+            <p id="qrHint">Others can scan to send you tokens instantly</p>
+        </div>
+        
+        <button class="test-button" onclick="testQRTranslations()">Test QR Translations</button>
+        <div id="qrTestResult" class="test-result">Click to test QR translations</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Switch Test</h2>
+        <button class="test-button" onclick="switchToEnglish()">English</button>
+        <button class="test-button" onclick="switchToChinese()">中文</button>
+        <div id="langSwitchResult" class="test-result">Click language buttons to test switching</div>
+    </div>
+
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let extensionI18n = null;
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                extensionI18n = getExtensionI18n();
+                await extensionI18n.initialize();
+                console.log('✅ Extension i18n initialized');
+                document.getElementById('langSwitchResult').innerHTML = '<span class="success">✅ Extension i18n initialized successfully</span>';
+            } catch (error) {
+                console.error('❌ Extension i18n failed:', error);
+                document.getElementById('langSwitchResult').innerHTML = `<span class="error">❌ Extension i18n failed: ${error.message}</span>`;
+            }
+        });
+        
+        function testMenuTranslations() {
+            const result = document.getElementById('menuTestResult');
+            let testResults = [];
+            
+            try {
+                // Test English menu translations
+                const raids = extensionI18n.t('ext.menu.raids');
+                const apps = extensionI18n.t('ext.menu.apps');
+                const settings = extensionI18n.t('ext.menu.settings');
+                
+                document.getElementById('menuRaids').textContent = raids;
+                document.getElementById('menuApps').textContent = apps;
+                document.getElementById('menuSettings').textContent = settings;
+                
+                if (raids !== 'ext.menu.raids') testResults.push('✅ Menu Raids: ' + raids);
+                else testResults.push('❌ Menu Raids: Translation failed');
+                
+                if (apps !== 'ext.menu.apps') testResults.push('✅ Menu Apps: ' + apps);
+                else testResults.push('❌ Menu Apps: Translation failed');
+                
+                if (settings !== 'ext.menu.settings') testResults.push('✅ Menu Settings: ' + settings);
+                else testResults.push('❌ Menu Settings: Translation failed');
+                
+                result.innerHTML = testResults.join('<br>');
+                
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Menu test failed: ${error.message}</span>`;
+            }
+        }
+        
+        function testQRTranslations() {
+            const result = document.getElementById('qrTestResult');
+            let testResults = [];
+            
+            try {
+                // Test QR hint translation
+                const qrHint = extensionI18n.t('ext.qr.hint');
+                const qrInstr = extensionI18n.t('ext.qr.instruction');
+                
+                document.getElementById('qrHint').textContent = qrHint;
+                document.getElementById('qrInstruction').textContent = qrInstr;
+                
+                if (qrHint !== 'ext.qr.hint') testResults.push('✅ QR Hint: ' + qrHint);
+                else testResults.push('❌ QR Hint: Translation failed');
+                
+                if (qrInstr !== 'ext.qr.instruction') testResults.push('✅ QR Instruction: ' + qrInstr);
+                else testResults.push('❌ QR Instruction: Translation failed');
+                
+                // Test dynamic QR with token
+                const qrDynamic = extensionI18n.t('ext.qr.instruction_dynamic', { token: 'SOL' });
+                if (qrDynamic.includes('SOL')) testResults.push('✅ Dynamic QR: ' + qrDynamic);
+                else testResults.push('❌ Dynamic QR: Interpolation failed');
+                
+                result.innerHTML = testResults.join('<br>');
+                
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ QR test failed: ${error.message}</span>`;
+            }
+        }
+        
+        function switchToEnglish() {
+            if (extensionI18n) {
+                extensionI18n.changeLanguage('en').then(() => {
+                    document.getElementById('langSwitchResult').innerHTML = '<span class="success">✅ Switched to English</span>';
+                    updateAllTranslations();
+                });
+            }
+        }
+        
+        function switchToChinese() {
+            if (extensionI18n) {
+                extensionI18n.changeLanguage('zh').then(() => {
+                    document.getElementById('langSwitchResult').innerHTML = '<span class="success">✅ 切换到中文</span>';
+                    updateAllTranslations();
+                });
+            }
+        }
+        
+        function updateAllTranslations() {
+            // Update menu items
+            document.getElementById('menuRaids').textContent = extensionI18n.t('ext.menu.raids');
+            document.getElementById('menuApps').textContent = extensionI18n.t('ext.menu.apps');
+            document.getElementById('menuSettings').textContent = extensionI18n.t('ext.menu.settings');
+            
+            // Update QR elements
+            document.getElementById('qrInstruction').textContent = extensionI18n.t('ext.qr.instruction');
+            document.getElementById('qrHint').textContent = extensionI18n.t('ext.qr.hint');
+        }
+    </script>
+</body>
+</html>

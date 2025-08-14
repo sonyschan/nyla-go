@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYLA i18n Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 8px; }
+        .test-button { background: #FF6B35; color: white; border: none; padding: 10px 15px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        .test-result { margin: 10px 0; padding: 10px; background: #2a2a2a; border-radius: 4px; }
+        .language-selector { margin: 10px 0; }
+    </style>
+    <link rel="stylesheet" href="css/i18n.css">
+</head>
+<body>
+    <h1>NYLA i18n System Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Detection Test</h2>
+        <div id="langDetectionResult" class="test-result">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Translation Test</h2>
+        <div class="language-selector">
+            <select id="testLangSelector" class="language-selector">
+                <option value="en">English</option>
+                <option value="zh">中文 (Chinese)</option>
+                <option value="zh-CN">简体中文 (Simplified)</option>
+                <option value="zh-TW">繁體中文 (Traditional)</option>
+            </select>
+        </div>
+        
+        <!-- Test elements with i18n attributes -->
+        <div>
+            <p><strong>Tab Navigation:</strong></p>
+            <button data-i18n="tab.send" class="test-button">Send</button>
+            <button data-i18n="tab.receive" class="test-button">Receive</button>
+            <button data-i18n="tab.swap" class="test-button">Swap</button>
+        </div>
+        
+        <div>
+            <p><strong>Headers:</strong></p>
+            <p data-i18n="header.tagline">Your AI agent for payments and community</p>
+        </div>
+        
+        <div>
+            <p><strong>Form Labels:</strong></p>
+            <label data-i18n="send.recipient.label">Recipient Username on X</label><br>
+            <label data-i18n="send.amount.label">Amount and Token</label><br>
+        </div>
+        
+        <div>
+            <p><strong>Buttons:</strong></p>
+            <button data-i18n="send.button" class="test-button">💸 Send to X.com</button>
+            <button data-i18n="receive.button" class="test-button">📤 Share Payment Request</button>
+        </div>
+        
+        <div>
+            <p><strong>Dynamic Content:</strong></p>
+            <p id="qrInstructionText">📱 Share this QR code to receive NYLA payments</p>
+            <p id="versionText">NYLA Go v2.2.3</p>
+        </div>
+        
+        <div id="translationResult" class="test-result">Select a language to test translations...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Tests</h2>
+        <button onclick="testTranslationKeys()" class="test-button">Test Translation Keys</button>
+        <button onclick="testLanguageSwitch()" class="test-button">Test Language Switch</button>
+        <button onclick="testDynamicContent()" class="test-button">Test Dynamic Content</button>
+        <div id="manualTestResult" class="test-result">Click buttons to run manual tests...</div>
+    </div>
+
+    <script src="js/nyla-i18n.js"></script>
+    <script src="js/nyla-ui-translator.js"></script>
+    <script>
+        let i18n, uiTranslator;
+        
+        async function initTest() {
+            try {
+                // Initialize i18n
+                i18n = new NYLAi18n();
+                await i18n.initialize();
+                
+                // Initialize UI translator
+                uiTranslator = new NYLAUITranslator(i18n);
+                uiTranslator.initialize();
+                
+                // Test language detection
+                document.getElementById('langDetectionResult').innerHTML = `
+                    <strong>✅ i18n Initialized Successfully</strong><br>
+                    Detected Language: <strong>${i18n.currentLanguage}</strong><br>
+                    Browser Language: <strong>${navigator.language}</strong><br>
+                    Supported Languages: <strong>${Object.keys(i18n.supportedLanguages).join(', ')}</strong>
+                `;
+                
+                // Setup language selector
+                document.getElementById('testLangSelector').addEventListener('change', async (e) => {
+                    await i18n.setLanguage(e.target.value);
+                    updateTranslationTest();
+                });
+                
+                updateTranslationTest();
+                
+            } catch (error) {
+                document.getElementById('langDetectionResult').innerHTML = `
+                    <strong>❌ i18n Failed to Initialize</strong><br>
+                    Error: ${error.message}
+                `;
+            }
+        }
+        
+        function updateTranslationTest() {
+            const testKeys = [
+                'tab.send', 'tab.receive', 'tab.swap',
+                'header.tagline', 'send.recipient.label', 
+                'send.button', 'receive.button'
+            ];
+            
+            let results = `<strong>Current Language: ${i18n.currentLanguage}</strong><br><br>`;
+            
+            testKeys.forEach(key => {
+                const translation = i18n.t(key);
+                const status = translation === key ? '❌' : '✅';
+                results += `${status} ${key}: "${translation}"<br>`;
+            });
+            
+            document.getElementById('translationResult').innerHTML = results;
+        }
+        
+        function testTranslationKeys() {
+            const missingKeys = [];
+            const testKeys = [
+                'tab.send', 'tab.receive', 'tab.swap', 'tab.nyla',
+                'header.tagline', 'send.recipient.label', 'send.amount.label',
+                'send.button', 'receive.button', 'swap.button',
+                'blockchain.ethereum', 'blockchain.solana'
+            ];
+            
+            testKeys.forEach(key => {
+                const translation = i18n.t(key);
+                if (translation === key) {
+                    missingKeys.push(key);
+                }
+            });
+            
+            const result = missingKeys.length === 0 
+                ? '✅ All translation keys found!'
+                : `❌ Missing keys: ${missingKeys.join(', ')}`;
+                
+            document.getElementById('manualTestResult').innerHTML = result;
+        }
+        
+        function testLanguageSwitch() {
+            const startLang = i18n.currentLanguage;
+            const targetLang = startLang === 'en' ? 'zh' : 'en';
+            
+            i18n.setLanguage(targetLang).then(() => {
+                const result = `✅ Language switched from ${startLang} to ${i18n.currentLanguage}`;
+                document.getElementById('manualTestResult').innerHTML = result;
+                
+                // Switch back after 2 seconds
+                setTimeout(() => {
+                    i18n.setLanguage(startLang);
+                }, 2000);
+            });
+        }
+        
+        function testDynamicContent() {
+            // Test QR instruction update
+            if (uiTranslator) {
+                uiTranslator.onTokenChange('ETH');
+                const result = '✅ Dynamic content updated (check QR instruction text)';
+                document.getElementById('manualTestResult').innerHTML = result;
+            } else {
+                document.getElementById('manualTestResult').innerHTML = '❌ UI Translator not available';
+            }
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initTest);
+    </script>
+</body>
+</html>

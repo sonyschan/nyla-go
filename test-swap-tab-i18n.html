@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swap Tab i18n Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        select {
+            padding: 8px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .swap-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Swap Tab i18n Test</h1>
+    
+    <div>
+        <label>Language:</label>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="zh">中文 (Chinese)</option>
+        </select>
+        <button onclick="changeLanguage()" class="test-button">Apply Language</button>
+    </div>
+    
+    <div class="swap-section">
+        <h2>Swap Tab Elements:</h2>
+        
+        <div class="form-group">
+            <label data-i18n="ext.swap.amount.from">Amount & From Token</label>
+            <em>English: "Amount & From Token" → Chinese: "金额和源代币"</em>
+        </div>
+        
+        <div class="form-group">
+            <label data-i18n="ext.swap.to.token">To Token</label>
+            <em>English: "To Token" → Chinese: "目标代币"</em>
+        </div>
+        
+        <div class="form-group">
+            <label data-i18n="ext.blockchain">Blockchain</label>
+            <em>English: "Blockchain" → Chinese: "区块链"</em>
+        </div>
+        
+        <div class="form-group">
+            <label data-i18n="ext.command.preview">Command Preview</label>
+            <em>English: "Command Preview" → Chinese: "命令预览"</em>
+        </div>
+    </div>
+    
+    <div class="test-result" id="testResult">
+        Select a language and click "Apply Language" to test the swap tab translations.
+    </div>
+    
+    <h2>Translation Keys Test:</h2>
+    <div class="test-result" id="translationTest">
+        <div id="keyResults">Loading...</div>
+    </div>
+
+    <script src="extension-i18n.js"></script>
+    <script>
+        let extensionI18n;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.ExtensionI18n) {
+                extensionI18n = new window.ExtensionI18n();
+                testTranslationKeys();
+            }
+        });
+        
+        function changeLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLang = languageSelect.value;
+            const testResult = document.getElementById('testResult');
+            
+            if (!extensionI18n) {
+                testResult.innerHTML = '❌ Extension i18n not initialized';
+                return;
+            }
+            
+            // Change language
+            extensionI18n.setLanguage(selectedLang);
+            
+            testResult.innerHTML = `
+                ✅ <strong>Language changed to: ${selectedLang}</strong><br>
+                Swap tab labels should now show in ${selectedLang === 'zh' ? 'Chinese' : 'English'}.<br>
+                Check the labels above to verify the translations worked!
+            `;
+            
+            // Update translation keys test
+            testTranslationKeys();
+        }
+        
+        function testTranslationKeys() {
+            const keyResults = document.getElementById('keyResults');
+            
+            if (!extensionI18n) {
+                keyResults.innerHTML = 'Extension i18n not available';
+                return;
+            }
+            
+            const swapKeys = [
+                'ext.swap.amount.from', 
+                'ext.swap.to.token', 
+                'ext.blockchain', 
+                'ext.command.preview'
+            ];
+            
+            let results = `Current Language: <strong>${extensionI18n.currentLanguage}</strong><br><br>`;
+            
+            swapKeys.forEach(key => {
+                const translation = extensionI18n.t(key);
+                const status = translation === key ? '❌' : '✅';
+                results += `${status} ${key}: "<strong>${translation}</strong>"<br>`;
+            });
+            
+            keyResults.innerHTML = results;
+        }
+    </script>
+</body>
+</html>

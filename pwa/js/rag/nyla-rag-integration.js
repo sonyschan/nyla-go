@@ -10,6 +10,7 @@ class NYLARAGIntegration {
     this.productionSync = null;
     this.initialized = false;
     this.indexBuilt = false;
+    this.indexBuildFailed = false; // Circuit breaker for index build failures
     
     // Configuration
     this.config = {
@@ -39,7 +40,7 @@ class NYLARAGIntegration {
       });
       
       // Get knowledge base and LLM engine from conversation manager
-      const knowledgeBase = this.conversationManager.kb.knowledgeBase;
+      const knowledgeBase = this.conversationManager.kb;
       const llmEngine = this.conversationManager.llmEngine;
       
       // Initialize pipeline
@@ -73,11 +74,39 @@ class NYLARAGIntegration {
         console.log('🌐 Production sync integrated with RAG');
       }
       
-      // Check if index needs to be built
-      const stats = this.ragPipeline.getStats();
-      if (stats.vectorDB && stats.vectorDB.chunkCount > 0) {
-        this.indexBuilt = true;
-        console.log(`✅ Using existing index with ${stats.vectorDB.chunkCount} chunks`);
+      // Try to load pre-built embeddings from the web data file
+      console.log('📥 Loading pre-built embeddings from /pwa/data/nyla-vector-db.json...');
+      try {
+        const response = await fetch('/pwa/data/nyla-vector-db.json');
+        if (response.ok) {
+          const vectorData = await response.json();
+          
+          // Load the data into the vector database
+          if (this.ragPipeline.vectorDB && typeof this.ragPipeline.vectorDB.loadFromData === 'function') {
+            await this.ragPipeline.vectorDB.loadFromData(vectorData);
+            const stats = this.ragPipeline.getStats();
+            if (stats.vectorDB && stats.vectorDB.chunkCount > 0) {
+              this.indexBuilt = true;
+              console.log(`✅ Loaded pre-built vector database with ${stats.vectorDB.chunkCount} chunks`);
+            } else {
+              console.log('⚠️ Vector database loaded but is empty');
+              this.indexBuilt = false;
+              this.indexBuildFailed = true;
+            }
+          } else {
+            console.log('⚠️ Vector database loadFromData method not available');
+            this.indexBuilt = false;
+            this.indexBuildFailed = true;
+          }
+        } else {
+          console.warn('⚠️ Could not fetch pre-built embeddings:', response.status);
+          this.indexBuilt = false;
+          this.indexBuildFailed = true;
+        }
+      } catch (error) {
+        console.warn('⚠️ Failed to load pre-built embeddings:', error);
+        this.indexBuilt = false;
+        this.indexBuildFailed = true;
       }
       
       this.initialized = true;
@@ -101,7 +130,7 @@ class NYLARAGIntegration {
     console.log('🏗️ Building RAG index...');
     
     try {
-      const knowledgeBase = this.conversationManager.kb.knowledgeBase;
+      const knowledgeBase = this.conversationManager.kb;
       
       // Show progress in UI if callback provided
       const progressWrapper = onProgress ? (progress) => {
@@ -132,9 +161,31 @@ class NYLARAGIntegration {
    * Process a question using RAG
    */
   async processQuestion(questionId, questionText, options = {}) {
-    // Check if RAG is enabled and ready
-    if (!this.config.enableRAG || !this.initialized || !this.indexBuilt) {
-      console.log('⚠️ RAG not available, falling back to keyword search');
+    // Check if RAG is enabled and initialized
+    if (!this.config.enableRAG || !this.initialized) {
+      console.log('⚠️ RAG not enabled or initialized, falling back to keyword search');
+      return this.fallbackToKeywordSearch(questionId, questionText, options);
+    }
+    
+    // Build index if not already built (with circuit breaker)
+    if (!this.indexBuilt && !this.indexBuildFailed) {
+      console.log('🔨 Building vector index on first query...');
+      try {
+        await this.buildIndex((progress) => {
+          console.log(`Building index: ${progress.percentage}%`);
+        });
+        console.log('✅ Vector index built successfully');
+      } catch (error) {
+        console.error('❌ Failed to build vector index:', error);
+        this.indexBuildFailed = true; // Circuit breaker: don't retry index building
+        console.log('⚠️ Index build failed permanently - disabling RAG for this session');
+        return this.fallbackToKeywordSearch(questionId, questionText, options);
+      }
+    }
+    
+    // If index build failed previously, skip RAG
+    if (this.indexBuildFailed) {
+      console.log('⚠️ RAG disabled due to previous index build failure - using keyword search');
       return this.fallbackToKeywordSearch(questionId, questionText, options);
     }
     
@@ -199,14 +250,22 @@ class NYLARAGIntegration {
    * Fallback to keyword search
    */
   async fallbackToKeywordSearch(questionId, questionText, options) {
-    console.log('🔍 Using keyword search fallback');
+    console.log('🔍 Using keyword search fallback - bypassing RAG completely');
     
-    // Use existing conversation manager's question processing
-    return await this.conversationManager.processQuestionWithKeywords(
-      questionId,
-      questionText,
-      options
-    );
+    // Generate a simple "don't know" response since we don't have rule-based fallback
+    return {
+      text: "Sorry, I don't know about this. My knowledge system is temporarily unavailable. Please try asking about basic NYLAGo features like sending transfers, generating QR codes, or blockchain information.",
+      sentiment: 'informative',
+      followUpSuggestions: [
+        "How do I send tokens with NYLAGo?",
+        "How do I generate a QR code?", 
+        "What blockchains does NYLAGo support?"
+      ],
+      llmUsed: false,
+      sources: [],
+      timestamp: new Date().toISOString(),
+      questionId: questionId
+    };
   }
 
   /**
@@ -395,26 +454,46 @@ class NYLARAGIntegration {
 
 // Enhance existing conversation manager with RAG
 function enhanceConversationManagerWithRAG(conversationManager) {
+  console.log('🔌 Starting RAG enhancement of conversation manager...');
+  
   // Create RAG integration
   const ragIntegration = new NYLARAGIntegration(conversationManager);
   
   // Store reference
   conversationManager.ragIntegration = ragIntegration;
+  console.log('✅ RAG integration object created and attached to conversation manager');
   
   // Override processQuestion method
   const originalProcessQuestion = conversationManager.processQuestion.bind(conversationManager);
   
   conversationManager.processQuestion = async function(questionId, questionText, primaryTopic, options = {}) {
-    // Try RAG first if available
-    if (ragIntegration.initialized && ragIntegration.config.enableRAG) {
+    console.log('🔍 Processing question with RAG-enhanced manager. RAG initialized:', ragIntegration.initialized);
+    
+    // Initialize RAG if not already done
+    if (!ragIntegration.initialized) {
+      console.log('⚡ Initializing RAG integration on first query...');
       try {
-        return await ragIntegration.processQuestion(questionId, questionText, options);
+        await ragIntegration.initialize();
+        console.log('✅ RAG integration initialization completed successfully');
       } catch (error) {
-        console.warn('RAG processing failed, falling back to original method:', error);
+        console.error('❌ RAG integration initialization failed:', error);
       }
     }
     
+    // Try RAG first if available and enabled
+    if (ragIntegration.initialized && ragIntegration.config.enableRAG) {
+      console.log('🚀 Using RAG-powered query processing');
+      try {
+        return await ragIntegration.processQuestion(questionId, questionText, options);
+      } catch (error) {
+        console.warn('❌ RAG processing failed, falling back to original method:', error);
+      }
+    } else {
+      console.log('⚠️ RAG not available - using original method. Initialized:', ragIntegration.initialized, 'Enabled:', ragIntegration.config.enableRAG);
+    }
+    
     // Fallback to original method
+    console.log('📝 Using original processQuestion method');
     return originalProcessQuestion(questionId, questionText, primaryTopic, options);
   };
   

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i18next Migration Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        .language-selector { 
+            margin: 10px 0; 
+            padding: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        
+        .test-elements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .test-element {
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 i18next Migration Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Detection & Selection</h2>
+        <select id="testLangSelector" class="language-selector">
+            <option value="en">English</option>
+            <option value="zh">中文 (Chinese)</option>
+        </select>
+        <div id="langDetectionResult" class="test-result">Testing language detection...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>PWA Translation Test</h2>
+        <button class="test-button" onclick="testPWATranslations()">Test PWA i18next</button>
+        <div id="pwaTestResult" class="test-result">Click button to test PWA translations</div>
+        
+        <!-- Sample PWA elements with data-i18n attributes -->
+        <div class="test-elements">
+            <div class="test-element">
+                <strong>Tab:</strong><br>
+                <span data-i18n="tab.send">Send</span>
+            </div>
+            <div class="test-element">
+                <strong>Header:</strong><br>
+                <span data-i18n="header.tagline">Your AI agent for payments and community</span>
+            </div>
+            <div class="test-element">
+                <strong>Button:</strong><br>
+                <span data-i18n="send.button">💸 Send to X.com</span>
+            </div>
+            <div class="test-element">
+                <strong>QR Instruction:</strong><br>
+                <span id="qrInstruction" data-i18n="receive.qr.instruction">📱 Share this QR code to receive NYLA payments</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Extension Translation Test</h2>
+        <button class="test-button" onclick="testExtensionTranslations()">Test Extension i18next</button>
+        <div id="extensionTestResult" class="test-result">Click button to test Extension translations</div>
+        
+        <!-- Sample extension elements -->
+        <div class="test-elements">
+            <div class="test-element">
+                <strong>Form Label:</strong><br>
+                <span data-i18n="send.recipient.label">Recipient Username on X</span>
+            </div>
+            <div class="test-element">
+                <strong>Settings:</strong><br>
+                <span data-i18n="settings.title">⚙️ Settings</span>
+            </div>
+            <div class="test-element">
+                <strong>Blockchain:</strong><br>
+                <span data-i18n="blockchain.ethereum">Ethereum</span>
+            </div>
+            <div class="test-element">
+                <strong>Version:</strong><br>
+                <span id="versionTest">NYLA Go v2.4.0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Interpolation Test</h2>
+        <button class="test-button" onclick="testInterpolation()">Test Variable Interpolation</button>
+        <div id="interpolationResult" class="test-result">Click button to test interpolation</div>
+        
+        <div class="test-elements">
+            <div class="test-element">
+                <strong>Dynamic QR:</strong><br>
+                <span id="dynamicQR">Will be updated with token</span>
+            </div>
+            <div class="test-element">
+                <strong>Version String:</strong><br>
+                <span id="dynamicVersion">Will be updated with version</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Results Summary</h2>
+        <div id="testSummary" class="test-result">
+            <ul id="testSummaryList">
+                <li class="warning">Tests not run yet</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Load i18next CDN Dependencies -->
+    <script src="https://unpkg.com/i18next@23.7.16/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@2.4.2/dist/umd/i18nextHttpBackend.min.js"></script>
+    
+    <!-- Load NYLA i18next Integration -->
+    <script src="pwa/js/nyla-i18n-next.js"></script>
+    <script src="pwa/js/nyla-ui-translator-next.js"></script>
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let pwaI18n = null;
+        let pwaTrans = null;
+        let extI18n = null;
+        let testResults = [];
+        
+        // Initialize test
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeTest();
+            setupLanguageSelector();
+        });
+        
+        async function initializeTest() {
+            try {
+                // Test PWA i18n initialization
+                pwaI18n = getNYLAi18n();
+                const pwaInit = await pwaI18n.initialize();
+                
+                if (pwaInit) {
+                    pwaTrans = getNYLAUITranslator(pwaI18n);
+                    pwaTrans.initialize();
+                    testResults.push({ test: 'PWA i18n Init', result: 'success', message: 'PWA i18next initialized successfully' });
+                } else {
+                    testResults.push({ test: 'PWA i18n Init', result: 'error', message: 'PWA i18next failed to initialize' });
+                }
+                
+                // Test Extension i18n initialization
+                extI18n = getExtensionI18n();
+                const extInit = await extI18n.initialize();
+                
+                if (extInit) {
+                    testResults.push({ test: 'Extension i18n Init', result: 'success', message: 'Extension i18next initialized successfully' });
+                } else {
+                    testResults.push({ test: 'Extension i18n Init', result: 'error', message: 'Extension i18next failed to initialize' });
+                }
+                
+                updateTestSummary();
+                
+            } catch (error) {
+                document.getElementById('langDetectionResult').innerHTML = `<span class="error">Initialization failed: ${error.message}</span>`;
+                testResults.push({ test: 'Initialization', result: 'error', message: error.message });
+                updateTestSummary();
+            }
+        }
+        
+        function setupLanguageSelector() {
+            const selector = document.getElementById('testLangSelector');
+            selector.addEventListener('change', async (e) => {
+                const newLang = e.target.value;
+                
+                try {
+                    // Change PWA language
+                    if (pwaI18n) {
+                        await pwaI18n.changeLanguage(newLang);
+                    }
+                    
+                    // Change Extension language
+                    if (extI18n) {
+                        await extI18n.changeLanguage(newLang);
+                        extI18n.translatePage();
+                    }
+                    
+                    document.getElementById('langDetectionResult').innerHTML = 
+                        `<span class="success">Language changed to: ${newLang}</span>`;
+                        
+                    testResults.push({ test: 'Language Switch', result: 'success', message: `Changed to ${newLang}` });
+                    updateTestSummary();
+                    
+                } catch (error) {
+                    document.getElementById('langDetectionResult').innerHTML = 
+                        `<span class="error">Language change failed: ${error.message}</span>`;
+                        
+                    testResults.push({ test: 'Language Switch', result: 'error', message: error.message });
+                    updateTestSummary();
+                }
+            });
+        }
+        
+        function testPWATranslations() {
+            const result = document.getElementById('pwaTestResult');
+            let testsPassed = 0;
+            let testsTotal = 0;
+            
+            try {
+                // Test basic translation
+                testsTotal++;
+                const tabTest = pwaI18n.t('tab.send');
+                if (tabTest && tabTest !== 'tab.send') {
+                    testsPassed++;
+                    result.innerHTML += `<div class="success">✅ Basic translation: ${tabTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ Basic translation failed</div>`;
+                }
+                
+                // Test nested key translation
+                testsTotal++;
+                const headerTest = pwaI18n.t('header.tagline');
+                if (headerTest && headerTest !== 'header.tagline') {
+                    testsPassed++;
+                    result.innerHTML += `<div class="success">✅ Nested key: ${headerTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ Nested key translation failed</div>`;
+                }
+                
+                // Test UI translator
+                testsTotal++;
+                if (pwaTrans) {
+                    pwaTrans.translatePage();
+                    testsPassed++;
+                    result.innerHTML += `<div class="success">✅ UI Translator working</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ UI Translator not available</div>`;
+                }
+                
+                testResults.push({ 
+                    test: 'PWA Translations', 
+                    result: testsPassed === testsTotal ? 'success' : 'warning', 
+                    message: `${testsPassed}/${testsTotal} tests passed` 
+                });
+                
+            } catch (error) {
+                result.innerHTML = `<span class="error">PWA test failed: ${error.message}</span>`;
+                testResults.push({ test: 'PWA Translations', result: 'error', message: error.message });
+            }
+            
+            updateTestSummary();
+        }
+        
+        function testExtensionTranslations() {
+            const result = document.getElementById('extensionTestResult');
+            let testsPassed = 0;
+            let testsTotal = 0;
+            
+            try {
+                // Test basic translation
+                testsTotal++;
+                const labelTest = extI18n.t('send.recipient.label');
+                if (labelTest && labelTest !== 'send.recipient.label') {
+                    testsPassed++;
+                    result.innerHTML += `<div class="success">✅ Form label: ${labelTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ Form label translation failed</div>`;
+                }
+                
+                // Test blockchain translation
+                testsTotal++;
+                const blockchainTest = extI18n.t('blockchain.ethereum');
+                if (blockchainTest && blockchainTest !== 'blockchain.ethereum') {
+                    testsPassed++;
+                    result.innerHTML += `<div class="success">✅ Blockchain: ${blockchainTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ Blockchain translation failed</div>`;
+                }
+                
+                // Test page translation
+                testsTotal++;
+                extI18n.translatePage();
+                testsPassed++;
+                result.innerHTML += `<div class="success">✅ Page translation completed</div>`;
+                
+                testResults.push({ 
+                    test: 'Extension Translations', 
+                    result: testsPassed === testsTotal ? 'success' : 'warning', 
+                    message: `${testsPassed}/${testsTotal} tests passed` 
+                });
+                
+            } catch (error) {
+                result.innerHTML = `<span class="error">Extension test failed: ${error.message}</span>`;
+                testResults.push({ test: 'Extension Translations', result: 'error', message: error.message });
+            }
+            
+            updateTestSummary();
+        }
+        
+        function testInterpolation() {
+            const result = document.getElementById('interpolationResult');
+            let testsPassed = 0;
+            let testsTotal = 0;
+            
+            try {
+                // Test PWA interpolation
+                testsTotal++;
+                const qrTest = pwaI18n.t('receive.qr.instruction_dynamic', { token: 'SOL' });
+                if (qrTest && qrTest.includes('SOL')) {
+                    testsPassed++;
+                    document.getElementById('dynamicQR').textContent = qrTest;
+                    result.innerHTML += `<div class="success">✅ PWA interpolation: ${qrTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ PWA interpolation failed</div>`;
+                }
+                
+                // Test Extension interpolation
+                testsTotal++;
+                const versionTest = extI18n.t('footer.version', { version: '2.4.0' });
+                if (versionTest && versionTest.includes('2.4.0')) {
+                    testsPassed++;
+                    document.getElementById('dynamicVersion').textContent = versionTest;
+                    result.innerHTML += `<div class="success">✅ Extension interpolation: ${versionTest}</div>`;
+                } else {
+                    result.innerHTML += `<div class="error">❌ Extension interpolation failed</div>`;
+                }
+                
+                testResults.push({ 
+                    test: 'Interpolation', 
+                    result: testsPassed === testsTotal ? 'success' : 'warning', 
+                    message: `${testsPassed}/${testsTotal} tests passed` 
+                });
+                
+            } catch (error) {
+                result.innerHTML = `<span class="error">Interpolation test failed: ${error.message}</span>`;
+                testResults.push({ test: 'Interpolation', result: 'error', message: error.message });
+            }
+            
+            updateTestSummary();
+        }
+        
+        function updateTestSummary() {
+            const summaryList = document.getElementById('testSummaryList');
+            summaryList.innerHTML = '';
+            
+            testResults.forEach(test => {
+                const li = document.createElement('li');
+                li.className = test.result;
+                
+                const icon = test.result === 'success' ? '✅' : 
+                           test.result === 'error' ? '❌' : '⚠️';
+                           
+                li.innerHTML = `${icon} <strong>${test.test}:</strong> ${test.message}`;
+                summaryList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

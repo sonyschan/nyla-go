@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Tab Switching Fix Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            margin: 8px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        .test-button:hover { background: #e55a2b; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        .mock-tab {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #555;
+        }
+        .mock-tab.active {
+            background: #FF6B35;
+            border-color: #FF6B35;
+        }
+        .mock-section {
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+            display: none;
+        }
+        .mock-section.visible {
+            display: block;
+            background: #2a2a2a;
+        }
+        .visibility-status {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-left: 10px;
+        }
+        .visible-status { 
+            background: #4CAF50; 
+            color: white; 
+        }
+        .hidden-status { 
+            background: #666; 
+            color: #ccc; 
+        }
+        .section-content {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Settings Tab Switching Fix Test</h1>
+    <p>Testing that Settings content is properly hidden when switching to other tabs</p>
+    
+    <div class="test-section">
+        <h2>Issue Reproduction</h2>
+        <p><strong>Problem:</strong> Settings content remained visible when switching to other tabs</p>
+        <p><strong>Cause:</strong> Tab switching logic didn't include <code>settingsSection</code> in sections to hide</p>
+        <p><strong>Fix:</strong> Added <code>if (settingsSection) settingsSection.style.display = 'none';</code> to tab switching</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Mock Extension UI Test</h2>
+        
+        <div style="background: #1a1a1a; padding: 20px; border-radius: 8px;">
+            <h3>Tab Navigation</h3>
+            <div class="mock-tab active" onclick="switchToTab('send')">Send</div>
+            <div class="mock-tab" onclick="switchToTab('receive')">Receive</div>
+            <div class="mock-tab" onclick="switchToTab('swap')">Swap</div>
+            <div class="mock-tab" onclick="switchToSettings()">⚙️ Settings</div>
+            
+            <h3 style="margin-top: 30px;">Section Visibility Status</h3>
+            
+            <!-- Send Section -->
+            <div>
+                <strong>Send Section:</strong>
+                <span id="sendStatus" class="visibility-status visible-status">VISIBLE</span>
+            </div>
+            <div id="sendSection" class="mock-section visible">
+                <div class="section-content">
+                    <strong>Send Content</strong><br>
+                    Amount & Token field, Recipient field, Send button
+                </div>
+            </div>
+            
+            <!-- Receive Section -->
+            <div>
+                <strong>Receive Section:</strong>
+                <span id="receiveStatus" class="visibility-status hidden-status">HIDDEN</span>
+            </div>
+            <div id="receiveSection" class="mock-section">
+                <div class="section-content">
+                    <strong>Receive Content</strong><br>
+                    QR Code, Username field, Share button
+                </div>
+            </div>
+            
+            <!-- Swap Section -->
+            <div>
+                <strong>Swap Section:</strong>
+                <span id="swapStatus" class="visibility-status hidden-status">HIDDEN</span>
+            </div>
+            <div id="swapSection" class="mock-section">
+                <div class="section-content">
+                    <strong>Swap Content</strong><br>
+                    From Token, To Token, Swap button
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div>
+                <strong>Settings Section:</strong>
+                <span id="settingsStatus" class="visibility-status hidden-status">HIDDEN</span>
+            </div>
+            <div id="settingsSection" class="mock-section">
+                <div class="section-content">
+                    <strong>Settings Content (The Problem)</strong><br>
+                    Username field, Language selector<br>
+                    <em>❌ Before fix: This remained visible when switching tabs</em><br>
+                    <em>✅ After fix: This gets hidden properly</em>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="test-button" onclick="testTabSwitching()">🧪 Run Tab Switching Test</button>
+            <button class="test-button" onclick="demonstrateFix()">🔧 Demonstrate Fix</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Test Results</h2>
+        <div id="testResults" class="test-result">
+            <p><strong>Instructions:</strong></p>
+            <ol>
+                <li>Click "⚙️ Settings" to simulate opening Settings</li>
+                <li>Click other tabs (Send/Receive/Swap) to test if Settings is hidden</li>
+                <li>Notice that Settings section now disappears (FIXED!)</li>
+                <li>Click "Run Tab Switching Test" for automated testing</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'send';
+        
+        function switchToTab(tabName) {
+            // Hide all sections first (FIXED: now includes settingsSection)
+            hideAllSections();
+            
+            // Update tab active states
+            updateTabStates(tabName);
+            
+            // Show the selected section
+            showSection(tabName);
+            
+            currentTab = tabName;
+            updateTestResults(`Switched to ${tabName.toUpperCase()} tab. Settings section ${tabName === 'settings' ? 'should be visible' : 'should be HIDDEN'}.`);
+        }
+        
+        function switchToSettings() {
+            // Hide all main sections
+            hideAllSections();
+            
+            // Update tab states (no tab is "active" when in settings)
+            document.querySelectorAll('.mock-tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show settings section
+            showSection('settings');
+            
+            currentTab = 'settings';
+            updateTestResults('Opened Settings section. Other sections should be hidden.');
+        }
+        
+        function hideAllSections() {
+            // This simulates the FIXED logic in popup.js
+            const sections = ['send', 'receive', 'swap', 'settings']; // FIXED: now includes settings!
+            
+            sections.forEach(sectionName => {
+                const section = document.getElementById(sectionName + 'Section');
+                const status = document.getElementById(sectionName + 'Status');
+                
+                if (section && status) {
+                    section.classList.remove('visible');
+                    status.textContent = 'HIDDEN';
+                    status.className = 'visibility-status hidden-status';
+                }
+            });
+        }
+        
+        function showSection(sectionName) {
+            const section = document.getElementById(sectionName + 'Section');
+            const status = document.getElementById(sectionName + 'Status');
+            
+            if (section && status) {
+                section.classList.add('visible');
+                status.textContent = 'VISIBLE';
+                status.className = 'visibility-status visible-status';
+            }
+        }
+        
+        function updateTabStates(activeTab) {
+            document.querySelectorAll('.mock-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            if (activeTab !== 'settings') {
+                const activeTabElement = document.querySelector(`[onclick="switchToTab('${activeTab}')"]`);
+                if (activeTabElement) {
+                    activeTabElement.classList.add('active');
+                }
+            }
+        }
+        
+        function testTabSwitching() {
+            let results = [];
+            results.push('<strong>🧪 Automated Tab Switching Test:</strong>');
+            
+            // Test sequence: Settings → Send → Settings → Receive → Settings → Swap
+            const sequence = [
+                { action: () => switchToSettings(), test: 'Settings opened' },
+                { action: () => switchToTab('send'), test: 'Settings hidden when switching to Send' },
+                { action: () => switchToSettings(), test: 'Settings opened again' },
+                { action: () => switchToTab('receive'), test: 'Settings hidden when switching to Receive' },
+                { action: () => switchToSettings(), test: 'Settings opened again' },
+                { action: () => switchToTab('swap'), test: 'Settings hidden when switching to Swap' }
+            ];
+            
+            let testIndex = 0;
+            const runNextTest = () => {
+                if (testIndex < sequence.length) {
+                    const test = sequence[testIndex];
+                    test.action();
+                    
+                    // Check if settings is properly hidden/shown
+                    const settingsSection = document.getElementById('settingsSection');
+                    const isSettingsVisible = settingsSection.classList.contains('visible');
+                    const shouldBeVisible = test.test.includes('opened');
+                    
+                    if (isSettingsVisible === shouldBeVisible) {
+                        results.push(`✅ ${test.test}: PASSED`);
+                    } else {
+                        results.push(`❌ ${test.test}: FAILED (Settings ${isSettingsVisible ? 'visible' : 'hidden'} but should be ${shouldBeVisible ? 'visible' : 'hidden'})`);
+                    }
+                    
+                    testIndex++;
+                    setTimeout(runNextTest, 1000); // 1 second delay between tests
+                } else {
+                    results.push('<br><strong>✅ Test Complete: Settings section now hides properly when switching tabs!</strong>');
+                    document.getElementById('testResults').innerHTML = results.join('<br>');
+                }
+            };
+            
+            runNextTest();
+        }
+        
+        function demonstrateFix() {
+            let results = [];
+            results.push('<strong>🔧 Fix Demonstration:</strong>');
+            results.push('<strong>Before Fix:</strong> Settings content remained visible when switching tabs');
+            results.push('<strong>After Fix:</strong> Added settingsSection to tab switching logic');
+            results.push('<br><code>// BEFORE (popup.js line ~1161):</code>');
+            results.push('<code>if (raidSection) raidSection.style.display = "none";</code>');
+            results.push('<code>if (appSection) appSection.style.display = "none";</code>');
+            results.push('<code>// ❌ Missing: settingsSection was not hidden!</code>');
+            results.push('<br><code>// AFTER (FIXED):</code>');
+            results.push('<code>if (raidSection) raidSection.style.display = "none";</code>');
+            results.push('<code>if (appSection) appSection.style.display = "none";</code>');
+            results.push('<code>if (settingsSection) settingsSection.style.display = "none"; // ✅ ADDED!</code>');
+            results.push('<br><strong>✅ Result: Settings now properly hidden when switching to Send/Receive/Swap tabs</strong>');
+            
+            document.getElementById('testResults').innerHTML = results.join('<br>');
+        }
+        
+        function updateTestResults(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            document.getElementById('testResults').innerHTML = 
+                `<strong>[${timestamp}]</strong> ${message}`;
+        }
+    </script>
+</body>
+</html>

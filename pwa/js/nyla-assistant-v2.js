@@ -40,21 +40,29 @@ class NYLAAssistantV2 {
       console.log('NYLA Assistant V2: === Starting Phase 2 initialization ===');
       
       // Initialize structured knowledge base (RAG-based)
-      console.log('NYLA Assistant V2: Step 1 - Using structured KB from RAG system...');
-      // Legacy NYLAKnowledgeBase removed - using RAG system for knowledge retrieval
-      this.knowledgeBase = {
-        // Minimal compatibility interface
-        getStaticKnowledgeBase: () => ({ message: 'Using structured KB via RAG system' }),
-        getKnowledge: (topic) => {
-          // Return null for all topics since we use RAG for knowledge retrieval now
-          console.log(`NYLA Assistant V2: getKnowledge('${topic}') called - using RAG system instead`);
-          return null;
-        },
-        topics: { transfers: true, qrCodes: true, blockchains: true },
-        sources: {},
-        lastUpdated: new Date().toISOString(),
-        staticData: { message: 'Using structured KB via RAG system' }
-      };
+      console.log('NYLA Assistant V2: Step 1 - Loading structured KB from /pwa/kb directory...');
+      try {
+        if (typeof NYLAUtils !== 'undefined' && NYLAUtils.loadKnowledgeBase) {
+          this.knowledgeBase = await NYLAUtils.loadKnowledgeBase();
+          console.log('NYLA Assistant V2: ✅ Structured KB loaded:', Object.keys(this.knowledgeBase || {}).length, 'chunks');
+        } else {
+          throw new Error('NYLAUtils.loadKnowledgeBase not available');
+        }
+      } catch (error) {
+        console.error('NYLA Assistant V2: ❌ Failed to load structured KB:', error);
+        // Fallback compatibility interface
+        this.knowledgeBase = {
+          getStaticKnowledgeBase: () => ({ message: 'KB loading failed, using RAG fallback' }),
+          getKnowledge: (topic) => {
+            console.log(`NYLA Assistant V2: getKnowledge('${topic}') called - using RAG system instead`);
+            return null;
+          },
+          topics: { transfers: true, qrCodes: true, blockchains: true },
+          sources: {},
+          lastUpdated: new Date().toISOString(),
+          staticData: { message: 'Using structured KB via RAG system' }
+        };
+      }
       this.features.knowledgeBase = true;
       console.log('NYLA Assistant V2: ✅ Structured knowledge base ready (RAG-based)');
       

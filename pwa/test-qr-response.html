@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test QR Response Fix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        h1 { color: #FF6B35; text-align: center; }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #e55a2b; }
+        .test-result {
+            background: #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .success { border-left: 4px solid #44ff44; }
+        .error { border-left: 4px solid #ff4444; }
+        .warning { border-left: 4px solid #ffa500; }
+    </style>
+</head>
+<body>
+    <h1>🧪 QR Code Response Fix Test</h1>
+    
+    <div class="container">
+        <p>This test verifies the fixes for QR code instruction truncation:</p>
+        <ul>
+            <li>✅ Increased max_tokens from 300 to 600</li>
+            <li>✅ Added JSON formatting rules for newlines</li>
+            <li>✅ Added detailed QR code steps to knowledge base</li>
+            <li>✅ Updated knowledge extraction logic</li>
+            <li>✅ Regenerated embeddings with new content</li>
+        </ul>
+        
+        <button onclick="testKnowledgeExtraction()">Test Knowledge Extraction</button>
+        <button onclick="testJSONParsing()">Test JSON Parsing</button>
+        <button onclick="simulateResponse()">Simulate Full Response</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="js/nyla-knowledge-base.js"></script>
+    <script src="js/nyla-llm-engine.js"></script>
+
+    <script>
+        function addResult(title, content, type = 'success') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<h3>${title}</h3><pre>${content}</pre>`;
+            results.appendChild(div);
+        }
+        
+        async function testKnowledgeExtraction() {
+            addResult('🔍 Testing Knowledge Extraction', 'Starting test...', 'warning');
+            
+            try {
+                // Initialize knowledge base
+                const kb = new NYLAKnowledgeBase();
+                await kb.initialize();
+                
+                // Test LLM engine knowledge extraction
+                const llmEngine = new NYLALLMEngine();
+                const query = "How do I create payment requests with QR codes?";
+                const knowledgeContext = kb.knowledgeBase;
+                
+                const relevantInfo = llmEngine.extractRelevantKnowledge(query, knowledgeContext);
+                
+                addResult(
+                    '✅ Knowledge Extraction Results',
+                    `Query: ${query}\n\nRelevant Knowledge Found:\n${relevantInfo}\n\nLength: ${relevantInfo.length} characters`,
+                    relevantInfo.includes('Step 1') ? 'success' : 'error'
+                );
+                
+                // Check if QR steps are included
+                if (relevantInfo.includes('Step 1') && relevantInfo.includes('Receive tab')) {
+                    addResult('🎯 QR Steps Found', 'Step-by-step instructions are properly extracted!', 'success');
+                } else {
+                    addResult('❌ QR Steps Missing', 'Step-by-step instructions not found in extraction', 'error');
+                }
+                
+            } catch (error) {
+                addResult('❌ Knowledge Extraction Failed', error.message, 'error');
+            }
+        }
+        
+        function testJSONParsing() {
+            addResult('🧮 Testing JSON Parsing', 'Testing improved JSON parsing...', 'warning');
+            
+            const llmEngine = new NYLALLMEngine();
+            
+            // Test cases with newlines and quotes
+            const testCases = [
+                {
+                    name: "QR Steps with newlines",
+                    input: `{"text": "Step 1: Go to 'Receive' tab\\nStep 2: Enter amount\\nStep 3: Click 'Generate QR'", "sentiment": "helpful", "followUpSuggestions": []}`,
+                    expected: "Step 1: Go to 'Receive' tab\nStep 2: Enter amount\nStep 3: Click 'Generate QR'"
+                },
+                {
+                    name: "Mixed quotes",
+                    input: `{"text": "Use the \\"Generate\\" button in the 'Receive' tab", "sentiment": "helpful", "followUpSuggestions": []}`,
+                    expected: 'Use the "Generate" button in the \'Receive\' tab'
+                }
+            ];
+            
+            testCases.forEach(testCase => {
+                try {
+                    const result = llmEngine.parseResponse(testCase.input, {}, "test");
+                    const success = result.text.includes("Step 1") || result.text.includes("Generate");
+                    
+                    addResult(
+                        `${success ? '✅' : '❌'} ${testCase.name}`,
+                        `Input: ${testCase.input}\nOutput: ${result.text}\nExpected: ${testCase.expected}`,
+                        success ? 'success' : 'error'
+                    );
+                } catch (error) {
+                    addResult(`❌ ${testCase.name} - Parse Error`, error.message, 'error');
+                }
+            });
+        }
+        
+        function simulateResponse() {
+            addResult('🎭 Simulating Full Response', 'Testing complete response flow...', 'warning');
+            
+            // Simulate what the LLM would generate with proper formatting
+            const simulatedResponse = `{
+  "text": "Creating payment requests with QR codes is easy! Step 1: Go to 'Receive' tab\\nStep 2: Enter the amount you want to request\\nStep 3: Select blockchain (Solana, Ethereum, or Algorand)\\nStep 4: Click 'Generate QR Code'\\nStep 5: Share with others to scan",
+  "sentiment": "helpful",
+  "followUpSuggestions": []
+}`;
+            
+            try {
+                const llmEngine = new NYLALLMEngine();
+                const result = llmEngine.parseResponse(simulatedResponse, {}, "test query");
+                
+                const hasSteps = result.text.includes("Step 1") && result.text.includes("Step 5");
+                const hasProperNewlines = result.text.includes("\\n") || result.text.includes("\n");
+                
+                addResult(
+                    `${hasSteps ? '✅' : '❌'} Simulated Complete Response`,
+                    `Raw Response:\n${simulatedResponse}\n\nParsed Text:\n${result.text}\n\nHas Steps: ${hasSteps}\nHas Newlines: ${hasProperNewlines}`,
+                    hasSteps ? 'success' : 'error'
+                );
+                
+                if (hasSteps) {
+                    addResult('🎉 Fix Verification', 'The QR code response truncation issue appears to be fixed!', 'success');
+                }
+                
+            } catch (error) {
+                addResult('❌ Response Simulation Failed', error.message, 'error');
+            }
+        }
+        
+        // Auto-run tests on page load
+        setTimeout(() => {
+            addResult('🚀 Starting Tests', 'Running automated tests for QR code response fixes...', 'warning');
+        }, 500);
+    </script>
+</body>
+</html>

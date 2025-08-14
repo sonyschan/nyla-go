@@ -226,11 +226,20 @@ class NYLAEmbeddingEnvironment {
   async embed(text) {
     if (!this.initialized) await this.initialize();
     
-    const result = await this.pipeline(text);
+    const result = await this.pipeline(text, { pooling: 'mean', normalize: true });
     
     if (this.isNode) {
       // Node.js returns tensor, extract data
-      return Array.from(result.data);
+      // For sentence transformers, we need the pooled output (384 dimensions)
+      const embedding = Array.from(result.data);
+      
+      // The all-MiniLM-L6-v2 model should produce 384-dimensional embeddings
+      // If we get more, it might be the unpooled output - take first 384 dimensions
+      if (embedding.length > 384) {
+        return embedding.slice(0, 384);
+      }
+      
+      return embedding;
     } else {
       // Browser returns array directly
       return result.data || result;

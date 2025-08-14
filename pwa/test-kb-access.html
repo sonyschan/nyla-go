@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KB Access Test</title>
+</head>
+<body>
+    <h2>Knowledge Base Access Test</h2>
+    <div id="results"></div>
+    
+    <script>
+    async function testKBAccess() {
+        const results = document.getElementById('results');
+        const testFiles = [
+            '/kb/schema.json',
+            '/kb/glossary/terms.json', 
+            '/kb/facts/networks.json',
+            '/kb/howto/transfers.json',
+            '/kb/faq/common.json'
+        ];
+        
+        results.innerHTML = '<h3>Testing KB file access...</h3>';
+        
+        for (const filePath of testFiles) {
+            try {
+                console.log(`Testing: ${filePath}`);
+                const response = await fetch(filePath);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<p>✅ ${filePath} - OK (${Object.keys(data).length} keys)</p>`;
+                } else {
+                    results.innerHTML += `<p>❌ ${filePath} - Failed (${response.status})</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ ${filePath} - Error: ${error.message}</p>`;
+            }
+        }
+        
+        results.innerHTML += '<h3>Test completed!</h3>';
+    }
+    
+    // Run test when page loads
+    window.addEventListener('load', testKBAccess);
+    </script>
+</body>
+</html>

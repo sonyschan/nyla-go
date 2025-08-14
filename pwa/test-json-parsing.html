@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test JSON Parsing Fix</title>
+</head>
+<body>
+    <h1>NYLA LLM Engine - JSON Parsing Test</h1>
+    <div id="results"></div>
+    
+    <script src="js/nyla-llm-engine.js"></script>
+    <script>
+        // Test cases for the improved JSON parsing
+        const testCases = [
+            {
+                name: "Simple JSON with quotes in text",
+                input: `{"text": "To create a transfer, use the 'Send' tab in NYLAGo", "sentiment": "helpful", "followUpSuggestions": []}`,
+                expected: "To create a transfer, use the 'Send' tab in NYLAGo"
+            },
+            {
+                name: "JSON with escaped quotes",
+                input: `{"text": "Click \\"Generate\\" to create your command", "sentiment": "helpful", "followUpSuggestions": []}`,
+                expected: 'Click "Generate" to create your command'
+            },
+            {
+                name: "Incomplete JSON with quotes",
+                input: `{"text": "Use the 'Send' tab to create commands", "sentiment": "helpful"`,
+                expected: "Use the 'Send' tab to create commands..."
+            },
+            {
+                name: "Malformed JSON with mixed quotes",
+                input: `{"text": "NYLA's 'Send' feature is great", "sentiment":`,
+                expected: "NYLA's 'Send' feature is great..."
+            },
+            {
+                name: "Complex JSON with multiple escaped characters",
+                input: `{"text": "Step 1: Click \\"Send\\"\\nStep 2: Enter recipient's username\\nStep 3: Click 'Generate'", "sentiment": "helpful"}`,
+                expected: 'Step 1: Click "Send"\nStep 2: Enter recipient\'s username\nStep 3: Click \'Generate\''
+            }
+        ];
+        
+        async function runTests() {
+            const engine = new NYLALLMEngine();
+            const results = document.getElementById('results');
+            
+            for (const testCase of testCases) {
+                const testDiv = document.createElement('div');
+                testDiv.style.margin = '20px';
+                testDiv.style.padding = '10px';
+                testDiv.style.border = '1px solid #ccc';
+                
+                const title = document.createElement('h3');
+                title.textContent = testCase.name;
+                testDiv.appendChild(title);
+                
+                const inputDiv = document.createElement('div');
+                inputDiv.innerHTML = `<strong>Input:</strong> <pre>${testCase.input}</pre>`;
+                testDiv.appendChild(inputDiv);
+                
+                const expectedDiv = document.createElement('div');
+                expectedDiv.innerHTML = `<strong>Expected:</strong> ${testCase.expected}`;
+                testDiv.appendChild(expectedDiv);
+                
+                try {
+                    // Test the parseResponse method
+                    const parsed = engine.parseResponse(testCase.input, {}, "test");
+                    
+                    const actualDiv = document.createElement('div');
+                    actualDiv.innerHTML = `<strong>Actual:</strong> ${parsed.text}`;
+                    testDiv.appendChild(actualDiv);
+                    
+                    const statusDiv = document.createElement('div');
+                    if (parsed.text === testCase.expected || parsed.text === testCase.expected + '...') {
+                        statusDiv.innerHTML = '<strong style="color: green;">✓ PASSED</strong>';
+                    } else {
+                        statusDiv.innerHTML = `<strong style="color: red;">✗ FAILED</strong><br>Difference: "${parsed.text}" vs "${testCase.expected}"`;
+                    }
+                    testDiv.appendChild(statusDiv);
+                    
+                } catch (error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.innerHTML = `<strong style="color: red;">ERROR:</strong> ${error.message}`;
+                    testDiv.appendChild(errorDiv);
+                }
+                
+                results.appendChild(testDiv);
+            }
+        }
+        
+        // Run tests when page loads
+        runTests();
+    </script>
+</body>
+</html>

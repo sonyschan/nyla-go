@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension i18n Language Fix Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+        }
+        .test-button { 
+            background: #FF6B35; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: #2a2a2a; 
+            border-radius: 4px; 
+        }
+        .ui-element {
+            padding: 10px;
+            margin: 5px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .language-selector {
+            padding: 5px 10px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Extension Language Detection Fix Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Storage Test</h2>
+        <button class="test-button" onclick="setChineseInStorage()">Set Chinese in Storage</button>
+        <button class="test-button" onclick="setEnglishInStorage()">Set English in Storage</button>
+        <button class="test-button" onclick="clearStorage()">Clear Storage</button>
+        <div id="storageResult" class="test-result">Storage actions will appear here</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Extension Elements Test</h2>
+        <div class="ui-element">
+            <span>Header:</span>
+            <span id="headerTagline" data-i18n="header.tagline">Your AI agent for payments and community</span>
+        </div>
+        <div class="ui-element">
+            <span>Tab Send:</span>
+            <span id="tabSend" data-i18n="ext.tab.send">Send</span>
+        </div>
+        <div class="ui-element">
+            <span>Tab Receive:</span>
+            <span id="tabReceive" data-i18n="ext.tab.receive">Receive</span>
+        </div>
+        <div class="ui-element">
+            <span>Recipient Label:</span>
+            <span id="recipientLabel" data-i18n="send.recipient.label">Recipient Username on X</span>
+        </div>
+        <div class="ui-element">
+            <span>Amount Token:</span>
+            <span id="amountToken" data-i18n="send.amount.token">Amount & Token</span>
+        </div>
+        <div class="ui-element">
+            <span>Blockchain:</span>
+            <span id="blockchain" data-i18n="ext.blockchain">Blockchain</span>
+        </div>
+        <div class="ui-element">
+            <span>Send Button:</span>
+            <span id="sendButton" data-i18n="send.button">💸 Send to X.com</span>
+        </div>
+        
+        <button class="test-button" onclick="reinitializeExtension()">Reinitialize Extension i18n</button>
+        <div id="elementsResult" class="test-result">Click to reinitialize and test translations</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Detection Test</h2>
+        <select id="langSelector" class="language-selector">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+        </select>
+        <button class="test-button" onclick="switchLanguage()">Switch Language</button>
+        <div id="detectionResult" class="test-result">Language detection info will appear here</div>
+    </div>
+
+    <script src="extension-i18n-next.js"></script>
+    
+    <script>
+        let extensionI18n = null;
+        let initializationCount = 0;
+        
+        // Mock chrome.storage for testing
+        if (typeof chrome === 'undefined') {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        set: function(data, callback) {
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem('chrome_storage_' + key, data[key]);
+                            });
+                            if (callback) callback();
+                            console.log('Mock chrome.storage.sync.set:', data);
+                        },
+                        get: function(keys, callback) {
+                            const result = {};
+                            if (Array.isArray(keys)) {
+                                keys.forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    if (value) result[key] = value;
+                                });
+                            } else if (typeof keys === 'string') {
+                                const value = localStorage.getItem('chrome_storage_' + keys);
+                                if (value) result[keys] = value;
+                            } else if (typeof keys === 'object') {
+                                Object.keys(keys).forEach(key => {
+                                    const value = localStorage.getItem('chrome_storage_' + key);
+                                    result[key] = value || keys[key];
+                                });
+                            }
+                            console.log('Mock chrome.storage.sync.get:', keys, '=>', result);
+                            callback(result);
+                        }
+                    }
+                }
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeTest();
+        });
+        
+        async function initializeTest() {
+            try {
+                initializationCount++;
+                extensionI18n = getExtensionI18n();
+                const success = await extensionI18n.initialize();
+                
+                const currentLang = extensionI18n.getCurrentLanguage();
+                document.getElementById('detectionResult').innerHTML = 
+                    `<span class="success">✅ Initialized (#${initializationCount}) - Language: ${currentLang}</span>`;
+                    
+                // Update language selector to match detected language
+                document.getElementById('langSelector').value = currentLang;
+                
+            } catch (error) {
+                document.getElementById('detectionResult').innerHTML = 
+                    `<span class="error">❌ Initialization failed: ${error.message}</span>`;
+            }
+        }
+        
+        function setChineseInStorage() {
+            chrome.storage.sync.set({ language: 'zh' }, () => {
+                document.getElementById('storageResult').innerHTML = 
+                    '<span class="success">✅ Set language to Chinese in storage</span>';
+            });
+        }
+        
+        function setEnglishInStorage() {
+            chrome.storage.sync.set({ language: 'en' }, () => {
+                document.getElementById('storageResult').innerHTML = 
+                    '<span class="success">✅ Set language to English in storage</span>';
+            });
+        }
+        
+        function clearStorage() {
+            localStorage.removeItem('chrome_storage_language');
+            localStorage.removeItem('nylago-language');
+            document.getElementById('storageResult').innerHTML = 
+                '<span class="warning">⚠️ Cleared all language storage</span>';
+        }
+        
+        async function reinitializeExtension() {
+            try {
+                // Create fresh instance
+                extensionI18n = new ExtensionI18nNext();
+                const success = await extensionI18n.initialize();
+                
+                const currentLang = extensionI18n.getCurrentLanguage();
+                
+                let results = [];
+                results.push(`Language detected: ${currentLang}`);
+                
+                // Test key translations
+                const tests = [
+                    { id: 'headerTagline', key: 'header.tagline' },
+                    { id: 'tabSend', key: 'ext.tab.send' },
+                    { id: 'recipientLabel', key: 'send.recipient.label' },
+                    { id: 'amountToken', key: 'send.amount.token' },
+                    { id: 'blockchain', key: 'ext.blockchain' },
+                    { id: 'sendButton', key: 'send.button' }
+                ];
+                
+                tests.forEach(test => {
+                    const translation = extensionI18n.t(test.key);
+                    const element = document.getElementById(test.id);
+                    if (element) {
+                        element.textContent = translation;
+                    }
+                    
+                    if (translation !== test.key) {
+                        results.push(`✅ ${test.key}: ${translation}`);
+                    } else {
+                        results.push(`❌ ${test.key}: Translation failed`);
+                    }
+                });
+                
+                document.getElementById('elementsResult').innerHTML = results.join('<br>');
+                
+            } catch (error) {
+                document.getElementById('elementsResult').innerHTML = 
+                    `<span class="error">❌ Reinitialization failed: ${error.message}</span>`;
+            }
+        }
+        
+        function switchLanguage() {
+            const selectedLang = document.getElementById('langSelector').value;
+            
+            if (extensionI18n) {
+                extensionI18n.changeLanguage(selectedLang).then(() => {
+                    document.getElementById('detectionResult').innerHTML = 
+                        `<span class="success">✅ Language changed to: ${selectedLang}</span>`;
+                    
+                    // Trigger reinitialize to see the changes
+                    setTimeout(() => reinitializeExtension(), 100);
+                });
+            } else {
+                document.getElementById('detectionResult').innerHTML = 
+                    '<span class="error">❌ Extension i18n not initialized</span>';
+            }
+        }
+    </script>
+</body>
+</html>
