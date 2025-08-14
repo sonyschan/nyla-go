@@ -68,6 +68,7 @@ Follow semantic versioning (X.Y.Z) to determine appropriate version increments:
 
 - [ ] **1. Update Version Tag in ALL Files** - Bump version number following semantic versioning:
   - [ ] `manifest.json` - Extension version
+  - [ ] `package.json` - **CRITICAL**: Must match release tag version for consistency
   - [ ] `popup.html` - Extension UI version display (fallback only)
   - [ ] `pwa/index.html` - PWA version display (fallback only)
   - [ ] `pwa/js/app.js` - **CRITICAL**: PWA APP_VERSION hardcoded value
@@ -138,31 +139,35 @@ echo "1. Extension manifest.json:"
 grep -n "\"version\":" manifest.json
 
 echo ""
-echo "2. PWA hardcoded version (MUST match release):"
+echo "2. Package.json version (MUST match release tag):"
+grep -n "\"version\":" package.json
+
+echo ""
+echo "3. PWA hardcoded version (MUST match release):"
 grep -n "APP_VERSION = " pwa/js/app.js
 
 echo ""
-echo "3. PWA Service Worker cache version (CRITICAL for cache refresh):"
+echo "4. PWA Service Worker cache version (CRITICAL for cache refresh):"
 grep -n "CACHE_NAME = " pwa/sw.js
 
 echo ""
-echo "4. Extension fallback version:"
+echo "5. Extension fallback version:"
 grep -n "NYLA Go v0\." popup.js
 
 echo ""
-echo "5. PWA fallback version:"
+echo "6. PWA fallback version:"
 grep -n "NYLA Go v0\." pwa/index.html
 
 echo ""
-echo "6. README version badge:"
+echo "7. README version badge:"
 grep -n "Version-" README.md
 
 echo ""
-echo "7. README download link:"
+echo "8. README download link:"
 grep -n "nyla-go-v" README.md
 
 echo ""
-echo "8. CLAUDE.md version reference:"
+echo "9. CLAUDE.md version reference:"
 grep -n "Latest Release" CLAUDE.md
 
 echo ""
