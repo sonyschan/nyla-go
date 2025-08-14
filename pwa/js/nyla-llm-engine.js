@@ -779,7 +779,30 @@ class NYLALLMEngine {
       return null;
     }
     
-    // Handle V2 search results structure
+    // Handle RAG context structure (new format from RAG pipeline)
+    if (knowledgeContext.context || knowledgeContext.prompt) {
+      console.log('NYLA LLM: Processing RAG context structure');
+      
+      // Extract the formatted context from RAG pipeline
+      if (knowledgeContext.prompt && knowledgeContext.prompt.user) {
+        // Extract knowledge from the user prompt - it's between "Knowledge Base Information:" and "Current Question:"
+        const userPrompt = knowledgeContext.prompt.user;
+        const knowledgeMatch = userPrompt.match(/Knowledge Base Information:\n([\s\S]*?)\n\nCurrent Question:/);
+        if (knowledgeMatch && knowledgeMatch[1]) {
+          const knowledge = knowledgeMatch[1].trim();
+          console.log(`NYLA LLM: Extracted ${knowledge.length} chars of knowledge from RAG prompt`);
+          return knowledge;
+        }
+      }
+      
+      // Fallback to formatted context
+      if (knowledgeContext.context) {
+        console.log(`NYLA LLM: Using formatted context directly (${knowledgeContext.context.length} chars)`);
+        return knowledgeContext.context;
+      }
+    }
+    
+    // Handle V2 search results structure (legacy)
     if (knowledgeContext.searchResults && Array.isArray(knowledgeContext.searchResults)) {
       console.log('NYLA LLM: Processing V2 search results structure');
       
