@@ -336,6 +336,7 @@ class NYLAUtils {
         'facts/supported-networks.solana.json',
         'faq/common.json',
         'glossary/terms.json',
+        'howto/basics/send-tokens-guide.json',
         'howto/qr/create.json',
         'howto/qr/troubleshoot.json',
         'howto/raids/participate.json',
@@ -396,12 +397,70 @@ class NYLAUtils {
         legacyKB[category] = {};
       }
       
-      // Create a section entry using chunk data
+      // Build comprehensive content from all available fields
+      let fullContent = [];
+      
+      // Start with title and body/summary
+      if (chunk.title) {
+        fullContent.push(`# ${chunk.title}`);
+      }
+      
+      if (chunk.body) {
+        fullContent.push(chunk.body);
+      } else if (chunk.summary_en) {
+        fullContent.push(chunk.summary_en);
+      }
+      
+      // Extract detailed steps if available (critical for how-to guides)
+      if (chunk.steps && Array.isArray(chunk.steps)) {
+        fullContent.push('\n## Step-by-Step Instructions:');
+        chunk.steps.forEach(step => {
+          fullContent.push(`\n**Step ${step.number}: ${step.action}**`);
+          if (step.details) {
+            fullContent.push(step.details);
+          }
+        });
+      }
+      
+      // Include prerequisites
+      if (chunk.prerequisites && Array.isArray(chunk.prerequisites)) {
+        fullContent.push('\n## Prerequisites:');
+        chunk.prerequisites.forEach(req => {
+          fullContent.push(`- ${req}`);
+        });
+      }
+      
+      // Include common pitfalls and solutions
+      if (chunk.pitfalls && Array.isArray(chunk.pitfalls)) {
+        fullContent.push('\n## Common Issues and Solutions:');
+        chunk.pitfalls.forEach(pitfall => {
+          fullContent.push(`\n**Issue**: ${pitfall.issue}`);
+          if (pitfall.solution) {
+            fullContent.push(`**Solution**: ${pitfall.solution}`);
+          }
+        });
+      }
+      
+      // Include glossary terms for better semantic matching
+      if (chunk.glossary_terms && Array.isArray(chunk.glossary_terms)) {
+        fullContent.push(`\n## Related Terms: ${chunk.glossary_terms.join(', ')}`);
+      }
+      
+      // Include additional context fields
+      if (chunk.difficulty) {
+        fullContent.push(`\n**Difficulty**: ${chunk.difficulty}`);
+      }
+      
+      if (chunk.estimated_time) {
+        fullContent.push(`**Estimated Time**: ${chunk.estimated_time}`);
+      }
+      
+      // Create a section entry using enriched content
       const sectionKey = chunk.id || chunk.source_id || 'item';
       legacyKB[category][sectionKey] = {
         title: chunk.title || '',
-        body: chunk.body || chunk.summary_en || '',
-        summary: chunk.summary_en || '',
+        body: fullContent.join('\n'),
+        summary: chunk.summary_en || chunk.body || '',
         tags: chunk.tags || [],
         priority: chunk.priority || 5,
         lastUpdated: chunk.as_of || new Date().toISOString()

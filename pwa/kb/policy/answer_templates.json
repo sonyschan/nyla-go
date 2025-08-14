@@ -36,37 +36,6 @@
       }
     },
     {
-      "id": "policy_cross_chain_limitations",
-      "source_id": "answer_templates", 
-      "type": "policy",
-      "lang": "bilingual",
-      "title": "Cross-Chain Limitation Templates",
-      "section": "limitation_templates",
-      "tags": ["cross-chain", "limitations", "networks", "bridging"],
-      "as_of": "2025-01-15",
-      "stability": "stable",
-      "source_url": "internal://policy/limitations",
-      "hash": "pol002_cc",
-      "body": "Standard responses for cross-chain limitation queries.",
-      "summary_en": "Templates explaining NYLA's within-network-only operations.",
-      "summary_zh": "解释NYLA仅限网络内操作的模板。",
-      "priority": 10,
-      "templates": {
-        "no_cross_chain_short": {
-          "en": "NYLA operations work within the same blockchain network only. No cross-chain bridging is supported.",
-          "zh": "NYLA操作仅在同一区块链网络内工作。不支持跨链桥接。"
-        },
-        "no_cross_chain_detailed": {
-          "en": "NYLA supports transfers and swaps within individual networks (Solana↔Solana, Ethereum↔Ethereum, Algorand↔Algorand), but cannot transfer between different networks (Solana↔Ethereum). Each network operates independently.",
-          "zh": "NYLA支持在单个网络内进行转账和交换（Solana↔Solana、Ethereum↔Ethereum、Algorand↔Algorand），但无法在不同网络之间转账（Solana↔Ethereum）。每个网络独立运行。"
-        },
-        "bridge_alternative": {
-          "en": "For cross-chain transfers, you would need to use dedicated bridge services outside of NYLA. NYLA focuses on within-network operations for security and simplicity.",
-          "zh": "对于跨链转账，您需要使用NYLA之外的专门桥接服务。NYLA专注于网络内操作以确保安全性和简便性。"
-        }
-      }
-    },
-    {
       "id": "policy_language_output_rules",
       "source_id": "answer_templates",
       "type": "policy", 

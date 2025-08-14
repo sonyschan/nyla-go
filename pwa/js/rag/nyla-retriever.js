@@ -50,8 +50,8 @@ class NYLARetriever {
         processedQuery.filter
       );
       
-      // Apply hybrid scoring
-      const hybridResults = this.applyHybridScoring(
+      // Apply semantic scoring (RAG-only)
+      const scoredResults = this.applySemanticScoring(
         semanticResults,
         processedQuery,
         config
@@ -59,8 +59,8 @@ class NYLARetriever {
       
       // Rerank if enabled
       const rerankedResults = config.reranking
-        ? this.rerankResults(hybridResults, processedQuery)
-        : hybridResults;
+        ? this.rerankResults(scoredResults, processedQuery)
+        : scoredResults;
       
       // Filter by minimum score
       const filteredResults = rerankedResults.filter(r => r.finalScore >= config.minScore);
@@ -262,29 +262,19 @@ class NYLARetriever {
   }
 
   /**
-   * Apply hybrid scoring
+   * Apply semantic scoring (RAG-only, no keyword rules)
    */
-  applyHybridScoring(semanticResults, processedQuery, config) {
+  applySemanticScoring(semanticResults, processedQuery, config) {
     return semanticResults.map(result => {
-      // Semantic score (already normalized 0-1)
+      // RAG-only: Use purely semantic scoring (no keyword rules)
       const semanticScore = result.score;
-      
-      // Calculate keyword score
-      const keywordScore = this.calculateKeywordScore(
-        result,
-        processedQuery.keywords
-      );
-      
-      // Combine scores
-      const finalScore = 
-        (semanticScore * config.semanticWeight) +
-        (keywordScore * config.keywordWeight);
+      const finalScore = semanticScore;
       
       return {
         ...result,
         semanticScore,
-        keywordScore,
         finalScore
+        // keywordScore removed - RAG-only semantic scoring
       };
     }).sort((a, b) => b.finalScore - a.finalScore);
   }
