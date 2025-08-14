@@ -587,6 +587,8 @@ class NYLAConversationManagerV2 {
     
     // Debug LLM response before generating followups
     console.log('NYLA Conversation V2: LLM followup suggestions before generateIntelligentFollowUps:', llmResponse.followUpSuggestions);
+    console.log('NYLA Conversation V2: Full LLM response keys:', Object.keys(llmResponse));
+    console.log('NYLA Conversation V2: LLM response type:', typeof llmResponse.followUpSuggestions);
     
     const followUps = this.generateIntelligentFollowUps(llmResponse, primaryTopic, questionText);
     

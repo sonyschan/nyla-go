@@ -1523,7 +1523,8 @@ class NYLAAssistantUIV2 {
           text: response.answer,
           sentiment: response.sentiment || 'neutral',
           confidence: response.confidence || 0,
-          followUpSuggestions: response.followUpSuggestions || []
+          followUpSuggestions: response.followUpSuggestions || [],
+          isLLMGenerated: response.isLLMGenerated
         };
       } else {
         // Legacy format: response.answer.text
@@ -1531,7 +1532,8 @@ class NYLAAssistantUIV2 {
           text: response.answer.text || 'No response available',
           sentiment: response.answer.sentiment || 'neutral',
           confidence: response.answer.confidence || 0,
-          followUpSuggestions: response.answer.followUpSuggestions || []
+          followUpSuggestions: response.answer.followUpSuggestions || [],
+          isLLMGenerated: response.isLLMGenerated
         };
       }
     } else if (response.text) {
@@ -1540,7 +1542,8 @@ class NYLAAssistantUIV2 {
         text: response.text,
         sentiment: response.sentiment || 'neutral',
         confidence: response.confidence || 0,
-        followUpSuggestions: response.followUpSuggestions || []
+        followUpSuggestions: response.followUpSuggestions || [],
+        isLLMGenerated: response.isLLMGenerated
       };
     } else {
       // Fallback
