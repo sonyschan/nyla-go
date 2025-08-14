@@ -15,10 +15,7 @@ class NYLARAGIntegration {
     // Configuration
     this.config = {
       enableRAG: true,
-      fallbackToKeyword: true,
-      hybridMode: true,  // Use both RAG and keyword matching
-      ragWeight: 0.8,
-      keywordWeight: 0.2
+      minConfidenceThreshold: 0.3  // Minimum confidence required for RAG responses
     };
   }
 
@@ -115,8 +112,9 @@ class NYLARAGIntegration {
       
     } catch (error) {
       console.error('❌ RAG integration initialization failed:', error);
-      // Don't throw - allow fallback to keyword search
-      this.config.enableRAG = false;
+      // Mark as failed but keep RAG enabled - we'll handle errors gracefully
+      this.initialized = false;
+      console.warn('⚠️ RAG will provide fallback responses when processing fails');
     }
   }
 
@@ -162,10 +160,16 @@ class NYLARAGIntegration {
    * Process a question using RAG
    */
   async processQuestion(questionId, questionText, options = {}) {
-    // Check if RAG is enabled and initialized
-    if (!this.config.enableRAG || !this.initialized) {
-      console.log('⚠️ RAG not enabled or initialized, falling back to keyword search');
-      return this.fallbackToKeywordSearch(questionId, questionText, options);
+    // Check if RAG is enabled
+    if (!this.config.enableRAG) {
+      console.log('⚠️ RAG disabled in config, providing generic fallback');
+      return this.createGenericFallbackResponse(questionId, questionText);
+    }
+
+    // Check if initialized
+    if (!this.initialized) {
+      console.log('⚠️ RAG not initialized, providing initialization fallback');
+      return this.createInitializationFallbackResponse(questionId, questionText);
     }
     
     // Build index if not already built (with circuit breaker)
@@ -179,15 +183,15 @@ class NYLARAGIntegration {
       } catch (error) {
         console.error('❌ Failed to build vector index:', error);
         this.indexBuildFailed = true; // Circuit breaker: don't retry index building
-        console.log('⚠️ Index build failed permanently - disabling RAG for this session');
-        return this.fallbackToKeywordSearch(questionId, questionText, options);
+        console.log('⚠️ Index build failed permanently - providing fallback responses');
+        return this.createIndexFailureFallbackResponse(questionId, questionText, error);
       }
     }
     
-    // If index build failed previously, skip RAG
+    // If index build failed previously, provide fallback
     if (this.indexBuildFailed) {
-      console.log('⚠️ RAG disabled due to previous index build failure - using keyword search');
-      return this.fallbackToKeywordSearch(questionId, questionText, options);
+      console.log('⚠️ RAG disabled due to previous index build failure');
+      return this.createIndexFailureFallbackResponse(questionId, questionText);
     }
     
     try {
@@ -197,13 +201,32 @@ class NYLARAGIntegration {
       const ragResult = await this.ragPipeline.query(questionText, {
         streaming: options.streaming,
         topK: 3,
-        minScore: 0.6
+        minScore: 0.5  // Semantic similarity threshold
       });
       
-      // Check confidence
-      if (ragResult.metrics.confidence < 0.5 && this.config.fallbackToKeyword) {
-        console.log('⚠️ Low confidence RAG result, enhancing with keyword search');
-        return this.enhanceWithKeywordSearch(ragResult, questionId, questionText, options);
+      // Debug: Log RAG results
+      console.log('🔍 RAG Query Results:', {
+        question: questionText,
+        confidence: ragResult.metrics.confidence,
+        threshold: this.config.minConfidenceThreshold,
+        chunksFound: ragResult.sources ? ragResult.sources.length : 0,
+        topChunk: ragResult.sources?.[0]?.title || 'none',
+        ragMetrics: ragResult.metrics,
+        topChunkScore: ragResult.sources?.[0]?.score || 'none'
+      });
+      
+      // Additional debug: Check if chunks were retrieved but filtered out
+      if (ragResult.metrics.chunksRetrieved > 0 && (!ragResult.sources || ragResult.sources.length === 0)) {
+        console.log('⚠️ RAG Debug: Chunks were retrieved but filtered out', {
+          retrieved: ragResult.metrics.chunksRetrieved,
+          afterFiltering: ragResult.sources ? ragResult.sources.length : 0
+        });
+      }
+
+      // Check confidence against minimum threshold
+      if (ragResult.metrics.confidence < this.config.minConfidenceThreshold) {
+        console.log(`⚠️ Low confidence RAG result (${ragResult.metrics.confidence.toFixed(3)} < ${this.config.minConfidenceThreshold}), providing low-confidence response`);
+        return this.createLowConfidenceFallbackResponse(ragResult, questionId, questionText);
       }
       
       // Format response
@@ -211,12 +234,7 @@ class NYLARAGIntegration {
       
     } catch (error) {
       console.error('❌ RAG processing failed:', error);
-      
-      if (this.config.fallbackToKeyword) {
-        return this.fallbackToKeywordSearch(questionId, questionText, options);
-      }
-      
-      throw error;
+      return this.createProcessingErrorFallbackResponse(questionId, questionText, error);
     }
   }
 
@@ -238,7 +256,18 @@ class NYLARAGIntegration {
     // Generate contextual follow-up suggestions based on the response
     const followUpSuggestions = this.generateRAGFollowUps(ragResult, questionText);
     
-    return {
+    // Convert followUpSuggestions to the format expected by UI
+    const followUps = followUpSuggestions.map((suggestion, index) => ({
+      id: `rag-followup-${Date.now()}-${index}`,
+      text: suggestion,
+      source: 'rag',
+      topic: questionText.includes('transfer') || questionText.includes('send') ? 'transfers' : 
+             questionText.includes('receive') || questionText.includes('QR') ? 'receiving' :
+             questionText.includes('raid') || questionText.includes('community') ? 'community' : 'general'
+    }));
+
+    // Successful RAG responses are always RAG+LLM hybrid - no generation flags needed
+    const response = {
       questionId,
       question: questionText,
       answer,
@@ -248,8 +277,19 @@ class NYLARAGIntegration {
       sources: ragResult.sources,
       metrics: ragResult.metrics,
       streaming: ragResult.streaming,
-      followUpSuggestions: followUpSuggestions
+      followUpSuggestions: followUpSuggestions,
+      followUps: followUps,  // Add the property expected by UI
+      timestamp: Date.now()
     };
+    
+    console.log('🔍 RAG Integration: Formatted RAG+LLM hybrid response:', {
+      hasFollowUps: !!response.followUps,
+      followUpsCount: response.followUps ? response.followUps.length : 0,
+      confidence: response.confidence,
+      hasSource: !!response.sources && response.sources.length > 0
+    });
+    
+    return response;
   }
 
   /**
@@ -307,65 +347,138 @@ class NYLARAGIntegration {
   }
 
   /**
-   * Fallback to keyword search
+   * Create generic fallback response when RAG is disabled
    */
-  async fallbackToKeywordSearch(questionId, questionText, options) {
-    console.log('🔍 Using keyword search fallback - bypassing RAG completely');
+  createGenericFallbackResponse(questionId, questionText) {
+    const followUpSuggestions = [
+      "How do I send tokens with NYLAGo?",
+      "How do I generate a QR code?", 
+      "What blockchains does NYLAGo support?"
+    ];
     
-    // Generate a simple "don't know" response since we don't have rule-based fallback
-    return {
-      text: "Sorry, I don't know about this. My knowledge system is temporarily unavailable. Please try asking about basic NYLAGo features like sending transfers, generating QR codes, or blockchain information.",
-      sentiment: 'informative',
-      followUpSuggestions: [
-        "How do I send tokens with NYLAGo?",
-        "How do I generate a QR code?", 
-        "What blockchains does NYLAGo support?"
-      ],
-      llmUsed: false,
-      sources: [],
-      timestamp: new Date().toISOString(),
-      questionId: questionId
-    };
-  }
-
-  /**
-   * Enhance RAG result with keyword search
-   */
-  async enhanceWithKeywordSearch(ragResult, questionId, questionText, options) {
-    // Get keyword search result
-    const keywordResult = await this.fallbackToKeywordSearch(
-      questionId,
+    return this.createFallbackResponseBase(
+      questionId, 
       questionText,
-      options
+      "I'm currently unable to access my knowledge base. Please try asking about basic NYLAGo features.",
+      followUpSuggestions,
+      'generic-fallback'
     );
-    
-    // Combine results based on weights
-    const combinedAnswer = this.combineAnswers(
-      ragResult.response,
-      keywordResult.answer,
-      this.config.ragWeight,
-      this.config.keywordWeight
-    );
-    
-    return {
-      ...ragResult,
-      answer: combinedAnswer,
-      enhanced: true,
-      keywordSources: keywordResult.sources
-    };
   }
 
   /**
-   * Combine RAG and keyword answers
+   * Create fallback response when RAG initialization failed
    */
-  combineAnswers(ragAnswer, keywordAnswer, ragWeight, keywordWeight) {
-    // Simple combination for now
-    // TODO: Implement more sophisticated answer fusion
-    if (ragWeight >= 0.8) {
-      return ragAnswer;
-    }
+  createInitializationFallbackResponse(questionId, questionText) {
+    const followUpSuggestions = [
+      "What is NYLAGo?",
+      "How do transfers work?", 
+      "What are the main features?"
+    ];
     
-    return `${ragAnswer}\n\nAdditional information: ${keywordAnswer}`;
+    return this.createFallbackResponseBase(
+      questionId, 
+      questionText,
+      "I'm still initializing my knowledge base. Please try again in a moment, or ask about basic NYLAGo concepts.",
+      followUpSuggestions,
+      'initialization-fallback'
+    );
+  }
+
+  /**
+   * Create fallback response when index building fails
+   */
+  createIndexFailureFallbackResponse(questionId, questionText, error = null) {
+    const followUpSuggestions = [
+      "How do I use the Send tab?",
+      "How do I use the Receive tab?", 
+      "What is the Raid feature?"
+    ];
+    
+    const message = error 
+      ? "I'm having trouble building my knowledge index. Please try basic questions about NYLAGo features."
+      : "My knowledge index is temporarily unavailable. I can help with basic NYLAGo questions.";
+    
+    return this.createFallbackResponseBase(
+      questionId, 
+      questionText,
+      message,
+      followUpSuggestions,
+      'index-failure-fallback'
+    );
+  }
+
+  /**
+   * Create fallback response for low confidence results
+   */
+  createLowConfidenceFallbackResponse(ragResult, questionId, questionText) {
+    const followUpSuggestions = [
+      "Can you rephrase your question?",
+      "What specific NYLAGo feature interests you?", 
+      "Would you like to know about transfers or receiving?"
+    ];
+    
+    return this.createFallbackResponseBase(
+      questionId, 
+      questionText,
+      `I'm not quite sure about that. Could you rephrase your question or be more specific? (Confidence: ${(ragResult.metrics.confidence * 100).toFixed(1)}%)`,
+      followUpSuggestions,
+      'low-confidence-fallback'
+    );
+  }
+
+  /**
+   * Create fallback response for processing errors
+   */
+  createProcessingErrorFallbackResponse(questionId, questionText, error) {
+    const followUpSuggestions = [
+      "Try asking again in a moment",
+      "What is NYLAGo?", 
+      "How do I get started?"
+    ];
+    
+    return this.createFallbackResponseBase(
+      questionId, 
+      questionText,
+      "I encountered an error while processing your question. Please try again or ask about basic NYLAGo features.",
+      followUpSuggestions,
+      'processing-error-fallback'
+    );
+  }
+
+  /**
+   * Base method for creating fallback responses
+   */
+  createFallbackResponseBase(questionId, questionText, message, followUpSuggestions, source) {
+    // Convert to UI-expected format
+    const followUps = followUpSuggestions.map((suggestion, index) => ({
+      id: `${source}-${Date.now()}-${index}`,
+      text: suggestion,
+      source: source,
+      topic: 'general'
+    }));
+    
+    const response = {
+      questionId,
+      question: questionText,
+      answer: message,
+      text: message, // Also include as 'text' for compatibility
+      sentiment: 'informative',
+      confidence: 0.1, // Low confidence for fallback responses
+      followUpSuggestions: followUpSuggestions,
+      followUps: followUps,
+      sources: [],
+      timestamp: Date.now(),
+      isFallback: true,
+      fallbackReason: source
+    };
+    
+    console.log(`🔍 RAG Fallback (${source}): Generated response with followUps:`, {
+      hasFollowUps: !!response.followUps,
+      followUpsCount: response.followUps ? response.followUps.length : 0,
+      message: message.substring(0, 50) + '...'
+    });
+    
+    return response;
   }
 
   /**

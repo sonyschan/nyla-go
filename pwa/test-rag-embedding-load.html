@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAG Embedding Load Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>RAG Embedding Load Test</h1>
+    <p>Testing if PWA can load the enhanced vector database...</p>
+    
+    <div id="logs"></div>
+    
+    <script>
+        const logs = document.getElementById('logs');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(div);
+            console.log(message);
+        }
+        
+        async function testVectorDatabaseLoad() {
+            try {
+                log('🔄 Fetching vector database...', 'info');
+                
+                // Add cache-busting parameter
+                const timestamp = Date.now();
+                const response = await fetch(`data/nyla-vector-db.json?t=${timestamp}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                log(`✅ Response received: ${response.status} ${response.statusText}`, 'success');
+                log(`📊 Content-Length: ${response.headers.get('content-length') || 'unknown'} bytes`, 'info');
+                log(`⏰ Last-Modified: ${response.headers.get('last-modified') || 'unknown'}`, 'info');
+                
+                const vectorData = await response.json();
+                log(`✅ JSON parsed successfully`, 'success');
+                log(`📦 Total chunks: ${vectorData.chunks.length}`, 'info');
+                log(`🔢 Total embeddings: ${vectorData.embeddings.length}`, 'info');
+                
+                // Search for our enhanced content
+                const sendTokensChunks = vectorData.chunks.filter(chunk => 
+                    chunk.metadata && 
+                    chunk.metadata.section === 'faq_send_tokens_natural'
+                );
+                
+                if (sendTokensChunks.length > 0) {
+                    log(`✅ Found enhanced send tokens content: ${sendTokensChunks.length} chunks`, 'success');
+                    sendTokensChunks.forEach((chunk, index) => {
+                        log(`  📝 Chunk ${index + 1}: ${chunk.text.substring(0, 100)}...`, 'info');
+                    });
+                } else {
+                    log(`❌ Enhanced send tokens content NOT found!`, 'error');
+                }
+                
+                // Test manual embedding search
+                log('🔍 Testing manual semantic search...', 'info');
+                await testManualSearch(vectorData);
+                
+            } catch (error) {
+                log(`❌ Error loading vector database: ${error.message}`, 'error');
+                console.error('Full error:', error);
+            }
+        }
+        
+        async function testManualSearch(vectorData) {
+            try {
+                // Import the embedding service (simplified version)
+                const query = "How do I send tokens?";
+                log(`🔍 Manual search for: "${query}"`, 'info');
+                
+                // Simple text matching as fallback
+                const matches = vectorData.chunks.filter(chunk => {
+                    const text = chunk.text.toLowerCase();
+                    const query_lower = query.toLowerCase();
+                    return text.includes('send') && text.includes('tokens');
+                });
+                
+                if (matches.length > 0) {
+                    log(`✅ Found ${matches.length} text matches for "send tokens"`, 'success');
+                    matches.slice(0, 3).forEach((match, index) => {
+                        log(`  📝 Match ${index + 1}: ${match.metadata?.title || 'Untitled'}`, 'info');
+                        log(`      Content: ${match.text.substring(0, 150)}...`, 'info');
+                    });
+                } else {
+                    log(`❌ No text matches found for "send tokens"`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Error in manual search: ${error.message}`, 'error');
+            }
+        }
+        
+        // Run the test
+        testVectorDatabaseLoad();
+    </script>
+</body>
+</html>

@@ -65,6 +65,21 @@ class NYLARetriever {
       // Filter by minimum score
       const filteredResults = rerankedResults.filter(r => r.finalScore >= config.minScore);
       
+      // Debug: Log retrieval results
+      console.log('🔍 Retrieval Debug:', {
+        query: query,
+        totalResults: semanticResults.length,
+        scoredResults: scoredResults.length,
+        rerankedResults: rerankedResults.length,
+        filteredResults: filteredResults.length,
+        minScore: config.minScore,
+        topScores: rerankedResults.slice(0, 3).map(r => ({
+          score: r.finalScore,
+          title: r.metadata?.title || 'untitled',
+          passedFilter: r.finalScore >= config.minScore
+        }))
+      });
+      
       // Apply MMR reranking if enabled
       let finalResults = filteredResults;
       if (config.mmrEnabled && typeof NYLAMMRReranker !== 'undefined') {
