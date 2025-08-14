@@ -214,7 +214,7 @@ class NYLARAGIntegration {
       const ragResult = await this.ragPipeline.query(questionText, {
         streaming: options.streaming,
         topK: 3,
-        minScore: 0.5  // Semantic similarity threshold
+        minScore: 0.43  // Semantic similarity threshold (lowered to accept quality 48%+ matches)
       });
       
       // Debug: Log RAG results
