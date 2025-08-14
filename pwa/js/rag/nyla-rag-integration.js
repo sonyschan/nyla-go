@@ -235,16 +235,75 @@ class NYLARAGIntegration {
     // Determine response type
     const responseType = this.determineResponseType(ragResult.metrics.confidence);
     
+    // Generate contextual follow-up suggestions based on the response
+    const followUpSuggestions = this.generateRAGFollowUps(ragResult, questionText);
+    
     return {
       questionId,
       question: questionText,
       answer,
+      sentiment: 'helpful',
       type: responseType,
       confidence: ragResult.metrics.confidence,
       sources: ragResult.sources,
       metrics: ragResult.metrics,
-      streaming: ragResult.streaming
+      streaming: ragResult.streaming,
+      followUpSuggestions: followUpSuggestions
     };
+  }
+
+  /**
+   * Generate contextual follow-up suggestions based on RAG response
+   */
+  generateRAGFollowUps(ragResult, questionText) {
+    const responseText = ragResult.response.toLowerCase();
+    const question = questionText.toLowerCase();
+    
+    // Default follow-ups
+    let followUps = [];
+    
+    // For "What is NYLA?" responses
+    if (question.includes('what is nyla') || question.includes('what is nylago')) {
+      followUps = [
+        "How do I send tokens?",
+        "How do I receive payments?", 
+        "What blockchains are supported?"
+      ];
+    }
+    // For transfer-related responses
+    else if (responseText.includes('transfer') || responseText.includes('send') || responseText.includes('command')) {
+      followUps = [
+        "How do I create a transfer command?",
+        "What happens after I post the command?",
+        "Can I transfer between different blockchains?"
+      ];
+    }
+    // For receive/QR related responses
+    else if (responseText.includes('receive') || responseText.includes('qr') || responseText.includes('payment')) {
+      followUps = [
+        "How do I share my payment QR code?",
+        "Can I request specific amounts?",
+        "What wallets support QR scanning?"
+      ];
+    }
+    // For blockchain/network responses
+    else if (responseText.includes('blockchain') || responseText.includes('network') || responseText.includes('solana') || responseText.includes('ethereum') || responseText.includes('algorand')) {
+      followUps = [
+        "Tell me about different network capabilities",
+        "How do fees compare between networks?",
+        "Which network should I use?"
+      ];
+    }
+    // Generic fallback
+    else {
+      followUps = [
+        "How do I get started with NYLA?",
+        "Show me the main features",
+        "What can NYLA help me with?"
+      ];
+    }
+    
+    return followUps;
   }
 
   /**
