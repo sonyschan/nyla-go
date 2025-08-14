@@ -787,78 +787,11 @@ class NYLALLMEngine {
   }
 
   /**
-   * Extract relevant knowledge based on user query
-   * Updated for V2 dynamic search results structure
+   * Extract relevant knowledge (deprecated - now using RAG context directly)
+   * Kept for backward compatibility but not used in current flow
    */
   extractRelevantKnowledge(userMessage, knowledgeContext) {
-    const originalQuery = userMessage.toLowerCase();
-    const query = this.preprocessQuery(userMessage); // Preprocess the query
-    let relevantInfo = [];
-    
-    if (!knowledgeContext || typeof knowledgeContext !== 'object') {
-      return null;
-    }
-    
-    // Handle RAG context structure (new format from RAG pipeline)
-    if (knowledgeContext.context || knowledgeContext.prompt) {
-      console.log('NYLA LLM: Processing RAG context structure');
-      
-      // Extract the formatted context from RAG pipeline
-      if (knowledgeContext.prompt && knowledgeContext.prompt.user) {
-        // Extract knowledge from the user prompt - it's between "Knowledge Base Information:" and "Current Question:"
-        const userPrompt = knowledgeContext.prompt.user;
-        const knowledgeMatch = userPrompt.match(/Knowledge Base Information:\n([\s\S]*?)\n\nCurrent Question:/);
-        if (knowledgeMatch && knowledgeMatch[1]) {
-          const knowledge = knowledgeMatch[1].trim();
-          console.log(`NYLA LLM: Extracted ${knowledge.length} chars of knowledge from RAG prompt`);
-          return knowledge;
-        }
-      }
-      
-      // Fallback to formatted context
-      if (knowledgeContext.context) {
-        console.log(`NYLA LLM: Using formatted context directly (${knowledgeContext.context.length} chars)`);
-        return knowledgeContext.context;
-      }
-    }
-    
-    // Handle V2 search results structure (legacy)
-    if (knowledgeContext.searchResults && Array.isArray(knowledgeContext.searchResults)) {
-      console.log('NYLA LLM: Processing V2 search results structure');
-      
-      // Deduplicate and prioritize results
-      const uniqueSources = new Set();
-      const prioritizedResults = [];
-      
-      for (const result of knowledgeContext.searchResults) {
-        if (!uniqueSources.has(result.source) && result.data && typeof result.data === 'object') {
-          uniqueSources.add(result.source);
-          const content = this.extractContentFromSearchResult(result.data, query);
-          if (content) {
-            prioritizedResults.push(content);
-          }
-          // Always include securityFeatures if query is about security/safety
-          if ((query.includes('security') || query.includes('safe') || query.includes('safety')) && result.data.securityFeatures) {
-            if (Array.isArray(result.data.securityFeatures)) {
-              prioritizedResults.push('Security Features: ' + result.data.securityFeatures.join('; '));
-            } else if (typeof result.data.securityFeatures === 'string') {
-              prioritizedResults.push('Security Features: ' + result.data.securityFeatures);
-            }
-          }
-        }
-      }
-      
-      if (prioritizedResults.length > 0) {
-        // Limit total knowledge to ~300 tokens
-        const combined = prioritizedResults.join(' | ');
-        const result = combined.length > 1200 ? combined.substring(0, 1200) + '...' : combined;
-        console.log(`NYLA LLM: Extracted knowledge (~${Math.ceil(result.length/4)} tokens):`, result.substring(0, 100) + '...');
-        return result;
-      }
-    }
-    
-    // Legacy V1 structure handling removed - using structured KB via RAG system only
-    
+    console.log('⚠️ NYLA LLM: extractRelevantKnowledge called but deprecated - RAG context should be used directly');
     return null;
   }
 
@@ -1325,17 +1258,13 @@ class NYLALLMEngine {
    */
   buildPrompt(userMessage, context) {
     const {
-      timezone = 'UTC',
-      localTime = new Date().toISOString(),
-      conversationHistory = [],
-      userProfile = {},
       knowledgeContext = null
     } = context;
 
     console.log('\n📚 NYLA LLM: Building prompt with knowledge context');
     console.log('  - Original user message:', userMessage);
     
-    // Check if we have a RAG-formatted prompt ready to use
+    // Only use RAG-formatted prompts - no legacy fallback
     if (knowledgeContext && knowledgeContext.prompt && knowledgeContext.prompt.user) {
       console.log('  ✅ Using RAG-formatted prompt from context builder');
       const ragPrompt = knowledgeContext.prompt.user;
@@ -1356,49 +1285,19 @@ class NYLALLMEngine {
       return finalPrompt;
     }
 
-    // Fallback to legacy prompt building for compatibility
-    console.log('  ⚠️ No RAG prompt available, using legacy prompt building');
+    // No knowledge available - create "I don't know" prompt
+    console.log('  ⚠️ No RAG prompt available - using no-knowledge template');
     
-    let prompt = '';
-    
-    // Preprocess the user message to remove greetings and NYLA-related terms
     const preprocessedMessage = this.preprocessQuery(userMessage);
-    console.log('  - Preprocessed message:', preprocessedMessage);
-    
-    if (knowledgeContext) {
-      console.log('  - Knowledge sources available:', 
-        knowledgeContext.searchResults ? `${knowledgeContext.searchResults.length} search results` : 'Legacy KB structure');
-      
-      const relevantInfo = this.extractRelevantKnowledge(userMessage, knowledgeContext);
-      if (relevantInfo) {
-        const knowledgeTokens = this.estimateTokens(relevantInfo);
-        console.log(`  ✅ Extracted relevant knowledge (${relevantInfo.length} chars, ~${knowledgeTokens} tokens):`);
-        console.log(`     "${relevantInfo.substring(0, 150)}${relevantInfo.length > 150 ? '...' : ''}"`);
-        prompt += `Knowledge: ${relevantInfo}\n`;
-      } else {
-        console.log('  ⚠️ No relevant knowledge found for this query');
-      }
-    } else {
-      console.log('  ⚠️ No knowledge context provided');
-    }
+    const noKnowledgePrompt = `Current Question: ${preprocessedMessage || userMessage}
 
-    // Use the preprocessed message for the question to avoid confusion
-    const questionToUse = preprocessedMessage || userMessage;
-    prompt += `Question: "${questionToUse}"\n\n`;
-    prompt += `CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start with { and end with }. Do NOT use plain text.`;
+Please respond that you don't have information about this topic and suggest asking about NYLAGo's main features like transfers, QR codes, or blockchain support.
 
-    // Estimate token count (rough: 1 token ≈ 4 characters)
-    const estimatedTokens = this.estimateTokens(prompt);
-    const systemPromptTokens = this.estimateTokens(this.systemPrompt);
-    const totalTokens = estimatedTokens + systemPromptTokens;
+CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start with { and end with }. Do NOT use plain text.`;
+
+    console.log(`🧠 NYLA LLM: Using no-knowledge template (${this.estimateTokens(noKnowledgePrompt)} tokens)`);
     
-    console.log(`🧠 NYLA LLM: Token breakdown:`);
-    console.log(`  - Knowledge content: ~${this.estimateTokens(prompt.split('Knowledge:')[1]?.split('\n')[0] || '0')} tokens`);
-    console.log(`  - Question + instructions: ~${this.estimateTokens(prompt.split('Knowledge:')[1]?.split('\n').slice(1).join('\n') || prompt)} tokens`);
-    console.log(`  - System prompt: ~${systemPromptTokens} tokens`);
-    console.log(`  - Total estimated: ${totalTokens}/4096 (${Math.round(totalTokens/4096*100)}% of context)`);
-    
-    return prompt;
+    return noKnowledgePrompt;
   }
 
   /**
