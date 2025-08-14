@@ -1332,10 +1332,34 @@ class NYLALLMEngine {
       knowledgeContext = null
     } = context;
 
-    let prompt = '';
-
     console.log('\n📚 NYLA LLM: Building prompt with knowledge context');
     console.log('  - Original user message:', userMessage);
+    
+    // Check if we have a RAG-formatted prompt ready to use
+    if (knowledgeContext && knowledgeContext.prompt && knowledgeContext.prompt.user) {
+      console.log('  ✅ Using RAG-formatted prompt from context builder');
+      const ragPrompt = knowledgeContext.prompt.user;
+      
+      // Add JSON formatting instruction to RAG prompt
+      const finalPrompt = ragPrompt + '\n\nCRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start with { and end with }. Do NOT use plain text.';
+      
+      // Estimate token count
+      const estimatedTokens = this.estimateTokens(finalPrompt);
+      const systemPromptTokens = this.estimateTokens(this.systemPrompt);
+      const totalTokens = estimatedTokens + systemPromptTokens;
+      
+      console.log(`🧠 NYLA LLM: Token breakdown:`);
+      console.log(`  - RAG formatted prompt: ~${estimatedTokens} tokens`);
+      console.log(`  - System prompt: ~${systemPromptTokens} tokens`);
+      console.log(`  - Total estimated: ${totalTokens}/4096 (${Math.round(totalTokens/4096*100)}% of context)`);
+      
+      return finalPrompt;
+    }
+
+    // Fallback to legacy prompt building for compatibility
+    console.log('  ⚠️ No RAG prompt available, using legacy prompt building');
+    
+    let prompt = '';
     
     // Preprocess the user message to remove greetings and NYLA-related terms
     const preprocessedMessage = this.preprocessQuery(userMessage);
