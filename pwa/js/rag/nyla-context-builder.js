@@ -104,6 +104,16 @@ class NYLAContextBuilder {
       // Build complete prompt with conversation context
       const prompt = this.buildPrompt(formattedContext, query, conversationContext);
       
+      // Debug: Log context sent to LLM for duplication investigation
+      console.log('🔍 CONTEXT BUILDER: Context sent to LLM:');
+      console.log('🔍 CONTEXT BUILDER: Selected chunks:', selectedChunks.map(c => ({
+        title: c.title,
+        source_id: c.source_id,
+        body_preview: c.body?.substring(0, 100) + '...'
+      })));
+      console.log('🔍 CONTEXT BUILDER: Formatted context length:', formattedContext.length);
+      console.log('🔍 CONTEXT BUILDER: Full prompt preview:', prompt.full.substring(0, 500) + '...');
+      
       // Validate token count
       const tokenCount = this.estimateTokens(prompt.full);
       if (tokenCount > this.options.maxTokens) {
