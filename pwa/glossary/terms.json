@@ -1,0 +1,132 @@
+{
+  "blockchain": {
+    "zh": ["区块链", "链", "分布式账本"],
+    "en": ["blockchain", "distributed ledger", "chain"],
+    "abbr": ["BC"]
+  },
+  "smart contract": {
+    "zh": ["智能合约", "合约"],
+    "en": ["smart contract", "contract", "dapp contract"],
+    "abbr": ["SC"]
+  },
+  "token": {
+    "zh": ["代币", "币", "加密货币"],
+    "en": ["token", "coin", "cryptocurrency"],
+    "abbr": ["TKN"]
+  },
+  "wallet": {
+    "zh": ["钱包", "地址", "账户"],
+    "en": ["wallet", "address", "account"],
+    "abbr": ["WLT"]
+  },
+  "transfer": {
+    "zh": ["转账", "发送", "支付", "转移"],
+    "en": ["transfer", "send", "transaction", "payment", "move tokens"],
+    "abbr": ["TXN", "TX"]
+  },
+  "swap": {
+    "zh": ["交换", "兑换", "交易"],
+    "en": ["swap", "exchange", "trade"],
+    "abbr": ["SWP"]
+  },
+  "fee": {
+    "zh": ["手续费", "费用", "燃料费"],
+    "en": ["fee", "gas", "transaction cost", "network fee", "cost"],
+    "abbr": ["FEE"]
+  },
+  "allowlist": {
+    "zh": ["白名单", "允许列表"],
+    "en": ["allowlist", "whitelist", "approved list"],
+    "abbr": ["WL"]
+  },
+  "NYLA": {
+    "zh": ["尼拉", "尼拉AI", "智能代理"],
+    "en": ["NYLA", "Agent NYLA", "NYLA AI", "AI agent"],
+    "abbr": ["NYLA"]
+  },
+  "NYLAGo": {
+    "zh": ["尼拉围棋", "尼拉Go", "界面"],
+    "en": ["NYLAGo", "NYLA Go", "interface", "app"],
+    "abbr": ["NYLAGo"]
+  },
+  "social payment": {
+    "zh": ["社交支付", "社交转账"],
+    "en": ["social payment", "social transfer", "social crypto"],
+    "abbr": ["SP"]
+  },
+  "QR code": {
+    "zh": ["二维码", "扫码", "付款码"],
+    "en": ["QR code", "QR", "quick response code", "payment code"],
+    "abbr": ["QR"]
+  },
+  "raid": {
+    "zh": ["突击", "社区活动", "支持活动"],
+    "en": ["raid", "community engagement", "social boost", "community support"],
+    "abbr": ["RAID"]
+  },
+  "command": {
+    "zh": ["命令", "指令", "指示"],
+    "en": ["command", "instruction", "order", "directive"],
+    "abbr": ["CMD"]
+  },
+  "Solana": {
+    "zh": ["索拉纳", "SOL网络"],
+    "en": ["Solana", "SOL network", "SOL blockchain"],
+    "abbr": ["SOL"]
+  },
+  "Ethereum": {
+    "zh": ["以太坊", "ETH网络"],
+    "en": ["Ethereum", "ETH network", "Ethereum network", "ETH blockchain"],
+    "abbr": ["ETH"]
+  },
+  "Algorand": {
+    "zh": ["阿尔戈兰德", "ALGO网络"],
+    "en": ["Algorand", "ALGO network", "ALGO blockchain"],
+    "abbr": ["ALGO"]
+  },
+  "cross-chain": {
+    "zh": ["跨链", "跨网络", "桥接"],
+    "en": ["cross-chain", "cross-network", "bridge", "interchain"],
+    "abbr": ["CC"]
+  },
+  "send": {
+    "zh": ["发送", "转出", "支付"],
+    "en": ["send", "transfer out", "pay", "transmit"],
+    "abbr": []
+  },
+  "receive": {
+    "zh": ["接收", "收款", "接受"],
+    "en": ["receive", "get payment", "accept", "collect"],
+    "abbr": []
+  },
+  "settings": {
+    "zh": ["设置", "配置", "偏好"],
+    "en": ["settings", "configuration", "preferences", "config"],
+    "abbr": ["CFG"]
+  },
+  "language": {
+    "zh": ["语言", "语言设置"],
+    "en": ["language", "locale", "lang"],
+    "abbr": ["LANG"]
+  },
+  "embedding": {
+    "zh": ["嵌入", "向量嵌入", "语义向量"],
+    "en": ["embedding", "vector embedding", "semantic vector"],
+    "abbr": ["EMB"]
+  },
+  "retrieval": {
+    "zh": ["检索", "搜索", "查找"],
+    "en": ["retrieval", "search", "lookup", "query", "find"],
+    "abbr": ["RET"]
+  },
+  "semantic search": {
+    "zh": ["语义搜索", "智能搜索", "意义搜索"],
+    "en": ["semantic search", "meaning-based search", "AI search", "intelligent search"],
+    "abbr": ["SS"]
+  },
+  "reranking": {
+    "zh": ["重排序", "重新排序", "相关性评分"],
+    "en": ["reranking", "reordering", "relevance scoring"],
+    "abbr": ["RR"]
+  }
+}

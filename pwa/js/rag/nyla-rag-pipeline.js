@@ -80,8 +80,14 @@ class NYLARAGPipeline {
         await this.versionManager.initialize();
       }
       
-      // Initialize retriever after dependencies
-      this.retriever = new NYLARetriever(this.vectorDB, this.embeddingService);
+      // Initialize semantic retriever after dependencies
+      this.retriever = new NYLASemanticRetriever(this.vectorDB, this.embeddingService, {
+        topK: 20,
+        finalTopK: 8,
+        minScore: 0.3,
+        mmrEnabled: true,
+        mmrLambda: 0.5
+      });
       
       // Check if index needs building/rebuilding
       const stats = this.vectorDB.getStats();
