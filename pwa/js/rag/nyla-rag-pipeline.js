@@ -299,6 +299,14 @@ class NYLARAGPipeline {
         query,
         {
           knowledgeContext: context,
+          sourceMetadata: context.metadata?.sources || [],
+          contextStats: {
+            chunksUsed: context.metadata?.chunksUsed || 0,
+            totalChunks: context.metadata?.totalChunks || 0,
+            estimatedTokens: context.metadata?.estimatedTokens || 0,
+            conversationTokens: context.metadata?.conversationTokens || 0,
+            hasConversationContext: context.metadata?.hasConversationContext || false
+          },
           ...options
         },
         options.onChunk // Pass chunk callback if provided
@@ -316,6 +324,14 @@ class NYLARAGPipeline {
       query,
       {
         knowledgeContext: context,
+        sourceMetadata: context.metadata?.sources || [],
+        contextStats: {
+          chunksUsed: context.metadata?.chunksUsed || 0,
+          totalChunks: context.metadata?.totalChunks || 0,
+          estimatedTokens: context.metadata?.estimatedTokens || 0,
+          conversationTokens: context.metadata?.conversationTokens || 0,
+          hasConversationContext: context.metadata?.hasConversationContext || false
+        },
         ...options
       }
     );
