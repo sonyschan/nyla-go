@@ -1513,13 +1513,24 @@ class NYLAAssistantUIV2 {
 
     // Handle different response formats
     if (response.answer) {
-      // Legacy format: response.answer.text
-      return {
-        text: response.answer.text || 'No response available',
-        sentiment: response.answer.sentiment || 'neutral',
-        confidence: response.answer.confidence || 0,
-        followUpSuggestions: response.answer.followUpSuggestions || []
-      };
+      // Check if answer is a string (new RAG format) or object (legacy format)
+      if (typeof response.answer === 'string') {
+        // New format: response.answer is the text directly
+        return {
+          text: response.answer,
+          sentiment: response.sentiment || 'neutral',
+          confidence: response.confidence || 0,
+          followUpSuggestions: response.followUpSuggestions || []
+        };
+      } else {
+        // Legacy format: response.answer.text
+        return {
+          text: response.answer.text || 'No response available',
+          sentiment: response.answer.sentiment || 'neutral',
+          confidence: response.answer.confidence || 0,
+          followUpSuggestions: response.answer.followUpSuggestions || []
+        };
+      }
     } else if (response.text) {
       // Direct format: response.text
       return {
