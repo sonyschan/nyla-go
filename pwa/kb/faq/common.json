@@ -242,6 +242,41 @@
         "How to make a transfer?",
         "Token sending instructions"
       ]
+    },
+    {
+      "id": "faq_what_happens_after_post",
+      "source_id": "common_questions",
+      "type": "faq",
+      "lang": "bilingual",
+      "title": "What happens after I post the command?",
+      "section": "workflow_process",
+      "tags": ["FAQ", "what happens", "after post", "workflow", "process", "automatic", "sequence"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://faq/post-command-workflow",
+      "hash": "faq013_workflow",
+      "body": "Q: What happens after I post the command? A: Here's the complete automated workflow after posting your NYLA command on X.com: 1) NYLA automatically detects your post within seconds. 2) NYLA processes and validates the command format and details. 3) NYLA executes the blockchain transaction (transfer/swap) on the specified network. 4) NYLA replies to your X.com post with confirmation details including transaction hash. 5) The entire process completes in 30-60 seconds depending on network congestion. 6) You can verify the transaction in your wallet or blockchain explorer. The whole workflow is fully automated - you just post the command and wait for NYLA's confirmation reply.",
+      "summary_en": "After posting: NYLA detects → validates → executes transaction → replies with confirmation. Complete automated workflow in 30-60 seconds.",
+      "summary_zh": "发布后：NYLA检测→验证→执行交易→回复确认。在30-60秒内完成自动化工作流程。",
+      "priority": 10,
+      "related_chunks": ["faq_transaction_status", "howto_transfers_send_guide", "faq_how_to_send"],
+      "glossary_terms": ["what happens after", "post command", "workflow", "automatic process", "NYLA detects", "validates command", "executes transaction", "confirmation reply", "30-60 seconds", "automated workflow"],
+      "query_variations": [
+        "What happens after I post the command?",
+        "What occurs after posting the command?",
+        "Post command workflow",
+        "What's next after posting?",
+        "Command posting process",
+        "After I submit the command",
+        "What happens when I post?",
+        "Post-command sequence",
+        "What happens after posting on X.com?",
+        "Command execution process",
+        "After posting workflow",
+        "What does NYLA do after I post?",
+        "Next steps after posting command",
+        "Command processing workflow"
+      ]
     }
   ]
 }

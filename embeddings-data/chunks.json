@@ -1,10 +1,10 @@
 [
   {
     "id": "chunk_1",
-    "text": "@shax_btc - NYLA Founder and Architecturer. Founded the NYLA project, handles smart contracts, backend systems, and core NYLA functionality. Contact: https://x.com/shax_btc. Responsible for the AI agent that executes blockchain operations.",
-    "tokens": 60,
+    "text": "# NYLA Founder - @shax_btc\n@shax_btc - NYLA Founder and Architecturer. Founded the NYLA project, handles smart contracts, backend systems, and core NYLA functionality. Contact: https://x.com/shax_btc. Responsible for the AI agent that executes blockchain operations.\n\n## Related Terms: founder, NYLA, smart contract, backend",
+    "tokens": 81,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.604Z",
       "category": "team_nyla",
       "section": "about_team_nyla_founder",
       "subsection": "body",
@@ -15,7 +15,7 @@
         "about_team_nyla_founder"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.548Z"
+      "updated_at": "2025-08-14T14:39:38.604Z"
     }
   },
   {
@@ -23,7 +23,7 @@
     "text": "NYLA founder @shax_btc - handles smart contracts, backend systems, and core AI agent functionality.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.604Z",
       "category": "team_nyla",
       "section": "about_team_nyla_founder",
       "subsection": "summary",
@@ -34,15 +34,15 @@
         "about_team_nyla_founder"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.604Z"
     }
   },
   {
     "id": "chunk_3",
-    "text": "@btcberries - NYLA Co-Founder, Social and Marketing Manager. Co-founded NYLA, manages community engagement, social presence, marketing, and user feedback. Contact: https://x.com/btcberries. Focuses on community building and social outreach.",
-    "tokens": 60,
+    "text": "# NYLA Co-Founder - @btcberries\n@btcberries - NYLA Co-Founder, Social and Marketing Manager. Co-founded NYLA, manages community engagement, social presence, marketing, and user feedback. Contact: https://x.com/btcberries. Focuses on community building and social outreach.\n\n## Related Terms: co-founder, NYLA, community, marketing, social",
+    "tokens": 85,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.604Z",
       "category": "team_nyla",
       "section": "about_team_nyla_cofounder",
       "subsection": "body",
@@ -53,7 +53,7 @@
         "about_team_nyla_cofounder"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.604Z"
     }
   },
   {
@@ -61,7 +61,7 @@
     "text": "NYLA co-founder @btcberries - manages community engagement, social presence, and marketing efforts.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.604Z",
       "category": "team_nyla",
       "section": "about_team_nyla_cofounder",
       "subsection": "summary",
@@ -72,15 +72,15 @@
         "about_team_nyla_cofounder"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.604Z"
     }
   },
   {
     "id": "chunk_5",
-    "text": "@ChiefZ_SOL - NYLA Lead Developer. Handles project development and technical implementation. Contact: https://x.com/ChiefZ_SOL. Works on the core NYLA AI agent development and technical architecture.",
-    "tokens": 50,
+    "text": "# NYLA Lead Developer - @ChiefZ_SOL\n@ChiefZ_SOL - NYLA Lead Developer. Handles project development and technical implementation. Contact: https://x.com/ChiefZ_SOL. Works on the core NYLA AI agent development and technical architecture.\n\n## Related Terms: developer, NYLA, technical, AI agent",
+    "tokens": 73,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_nyla",
       "section": "about_team_nyla_dev",
       "subsection": "body",
@@ -91,7 +91,7 @@
         "about_team_nyla_dev"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -99,7 +99,7 @@
     "text": "NYLA lead developer @ChiefZ_SOL - handles technical development and AI agent implementation.",
     "tokens": 23,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_nyla",
       "section": "about_team_nyla_dev",
       "subsection": "summary",
@@ -110,15 +110,15 @@
         "about_team_nyla_dev"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_7",
-    "text": "@Noir0883 - NYLA Visual Designer and Brand Artist. Creates visual branding, graphics, stickers, and artistic elements for the NYLA ecosystem. Contact: https://x.com/Noir0883. Specializes in visual design, digital art, and brand identity.",
-    "tokens": 60,
+    "text": "# NYLA Visual Designer - @Noir0883\n@Noir0883 - NYLA Visual Designer and Brand Artist. Creates visual branding, graphics, stickers, and artistic elements for the NYLA ecosystem. Contact: https://x.com/Noir0883. Specializes in visual design, digital art, and brand identity.\n\n## Related Terms: designer, NYLA, visual, branding, art",
+    "tokens": 83,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_nyla",
       "section": "about_team_nyla_designer",
       "subsection": "body",
@@ -129,7 +129,7 @@
         "about_team_nyla_designer"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -137,7 +137,7 @@
     "text": "NYLA visual designer @Noir0883 - creates branding, graphics, stickers, and artistic elements.",
     "tokens": 24,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.549Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_nyla",
       "section": "about_team_nyla_designer",
       "subsection": "summary",
@@ -148,15 +148,15 @@
         "about_team_nyla_designer"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.549Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_9",
-    "text": "CRITICAL DISTINCTION: NYLA Team (AI agent) vs NYLAGo (interface). NYLA Team: @shax_btc (founder), @btcberries (co-founder), @ChiefZ_SOL (lead dev), @Noir0883 (visual designer). NYLA = AI agent that executes blockchain operations. NYLAGo = Interface tool for creating commands. Projects collaborate but have distinct roles and teams.",
-    "tokens": 83,
+    "text": "# Team Project Distinction\nCRITICAL DISTINCTION: NYLA Team (AI agent) vs NYLAGo (interface). NYLA Team: @shax_btc (founder), @btcberries (co-founder), @ChiefZ_SOL (lead dev), @Noir0883 (visual designer). NYLA = AI agent that executes blockchain operations. NYLAGo = Interface tool for creating commands. Projects collaborate but have distinct roles and teams.\n\n## Related Terms: NYLA, NYLAGo, AI agent, interface, collaboration",
+    "tokens": 107,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_collaboration",
       "section": "about_team_distinction",
       "subsection": "body",
@@ -167,7 +167,7 @@
         "about_team_distinction"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -175,7 +175,7 @@
     "text": "Clear team distinction: NYLA team builds AI agent, NYLAGo provides interface. Separate but collaborative projects.",
     "tokens": 29,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "team_collaboration",
       "section": "about_team_distinction",
       "subsection": "summary",
@@ -186,15 +186,15 @@
         "about_team_distinction"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_11",
-    "text": "⚠️ WARNING: Always verify Asset IDs on AlgoExplorer.io before use. Algorand Standard Asset (ASA) IDs, decimals, and technical specifications for popular tokens. These Asset IDs require verification and may change over time.",
-    "tokens": 56,
+    "text": "# Algorand Token Assets and Technical Specifications\n⚠️ WARNING: Always verify Asset IDs on AlgoExplorer.io before use. Algorand Standard Asset (ASA) IDs, decimals, and technical specifications for popular tokens. These Asset IDs require verification and may change over time.\n\n## Related Terms: Algorand, ASA, asset ID, decimals, token",
+    "tokens": 84,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_algorand_tokens",
       "subsection": "body",
@@ -205,7 +205,7 @@
         "facts_contracts_algorand_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -213,7 +213,7 @@
     "text": "Authoritative Algorand ASA token IDs with decimals and technical specifications for accurate transfers.",
     "tokens": 26,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_algorand_tokens",
       "subsection": "summary",
@@ -224,7 +224,7 @@
         "facts_contracts_algorand_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -232,7 +232,7 @@
     "text": "Ethereum Token Contracts and Technical Specifications",
     "tokens": 14,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_ethereum_tokens",
       "subsection": "title",
@@ -243,15 +243,15 @@
         "facts_contracts_ethereum_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_14",
-    "text": "⚠️ WARNING: Always verify contract addresses on Etherscan.io before use. Ethereum token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.",
-    "tokens": 58,
+    "text": "# Ethereum Token Contracts and Technical Specifications\n⚠️ WARNING: Always verify contract addresses on Etherscan.io before use. Ethereum token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.\n\n## Related Terms: Ethereum, contract, address, decimals, ERC-20",
+    "tokens": 88,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_ethereum_tokens",
       "subsection": "body",
@@ -262,7 +262,7 @@
         "facts_contracts_ethereum_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -270,7 +270,7 @@
     "text": "Authoritative Ethereum token contract addresses with decimals and technical specifications for accurate transfers.",
     "tokens": 29,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_ethereum_tokens",
       "subsection": "summary",
@@ -281,7 +281,7 @@
         "facts_contracts_ethereum_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -289,7 +289,7 @@
     "text": "Solana Token Contracts and Technical Specifications",
     "tokens": 13,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_solana_tokens",
       "subsection": "title",
@@ -300,15 +300,15 @@
         "facts_contracts_solana_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_17",
-    "text": "⚠️ WARNING: Always verify contract addresses on Solscan.io before use. Solana token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.",
-    "tokens": 57,
+    "text": "# Solana Token Contracts and Technical Specifications\n⚠️ WARNING: Always verify contract addresses on Solscan.io before use. Solana token contract addresses, decimals, and technical specifications for popular tokens. These addresses require verification and may change over time.\n\n## Related Terms: Solana, contract, address, decimals, SPL token",
+    "tokens": 87,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_solana_tokens",
       "subsection": "body",
@@ -319,7 +319,7 @@
         "facts_contracts_solana_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -327,7 +327,7 @@
     "text": "Authoritative Solana token contract addresses with decimals and technical specifications for accurate transfers.",
     "tokens": 28,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "contracts",
       "section": "facts_contracts_solana_tokens",
       "subsection": "summary",
@@ -338,15 +338,15 @@
         "facts_contracts_solana_tokens"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_19",
-    "text": "CRITICAL: NYLA operations work within same blockchain network ONLY. NO cross-network bridging supported. Examples: Solana→Solana (✅), Ethereum→Ethereum (✅), Algorand→Algorand (✅), but Solana→Ethereum (❌), Ethereum→Algorand (❌), any cross-network operations (❌).",
-    "tokens": 66,
+    "text": "# Network Operation Limitations\nCRITICAL: NYLA operations work within same blockchain network ONLY. NO cross-network bridging supported. Examples: Solana→Solana (✅), Ethereum→Ethereum (✅), Algorand→Algorand (✅), but Solana→Ethereum (❌), Ethereum→Algorand (❌), any cross-network operations (❌). NYLA supports transfers and swaps within individual networks only. For cross-chain transfers, users need dedicated bridge services outside of NYLA. NYLA focuses on within-network operations for security and simplicity.\n\n## Related Terms: cross-chain, bridging, network",
+    "tokens": 141,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "limitations",
       "section": "facts_network_limitations",
       "subsection": "body",
@@ -357,7 +357,7 @@
         "facts_network_limitations"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -365,7 +365,7 @@
     "text": "All NYLA operations are within-network only. No cross-chain bridging between different blockchains.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "limitations",
       "section": "facts_network_limitations",
       "subsection": "summary",
@@ -376,15 +376,15 @@
         "facts_network_limitations"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_21",
-    "text": "Algorand Network: Energy-efficient blockchain with Pure Proof of Stake (PPoS). ~6,000 TPS with 4-5 second finality. Carbon-negative, ~$0.001 USD average fee. Founded by Turing Award winner Silvio Micali. 100% uptime since 2019. Native token: ALGO. NYLA supports transfers and swaps within Algorand network only.",
-    "tokens": 78,
+    "text": "# Algorand Network Support\nAlgorand Network: Energy-efficient blockchain with Pure Proof of Stake (PPoS). ~6,000 TPS with 4-5 second finality. Carbon-negative, ~$0.001 USD average fee. Founded by Turing Award winner Silvio Micali. 100% uptime since 2019. Native token: ALGO. NYLA supports transfers and swaps within Algorand network only.\n\n## Related Terms: Algorand, Pure Proof of Stake, carbon-negative, finality",
+    "tokens": 104,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_algorand_overview",
       "subsection": "body",
@@ -395,7 +395,7 @@
         "facts_supported_networks_algorand_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -403,7 +403,7 @@
     "text": "Energy-efficient blockchain with PPoS consensus. ~$0.001 fees, 6k TPS, carbon-negative.",
     "tokens": 22,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_algorand_overview",
       "subsection": "summary",
@@ -414,15 +414,15 @@
         "facts_supported_networks_algorand_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_23",
-    "text": "Ethereum Network: Most established blockchain platform, foundational to smart contracts, DeFi, and NFTs. Uses Proof of Stake consensus since The Merge. ~15-30 TPS mainnet speed. Variable gas fees $5-$50+ USD per transaction. Native token: ETH. NYLA supports transfers and swaps within Ethereum network only.",
-    "tokens": 77,
+    "text": "# Ethereum Network Support\nEthereum Network: Most established blockchain platform, foundational to smart contracts, DeFi, and NFTs. Uses Proof of Stake consensus since The Merge. ~15-30 TPS mainnet speed. Variable gas fees $5-$50+ USD per transaction. Native token: ETH. NYLA supports transfers and swaps within Ethereum network only.\n\n## Related Terms: Ethereum, smart contract, DeFi, gas fee, Proof of Stake",
+    "tokens": 103,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_ethereum_overview",
       "subsection": "body",
@@ -433,7 +433,7 @@
         "facts_supported_networks_ethereum_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -441,7 +441,7 @@
     "text": "Most established blockchain with smart contracts. PoS consensus, $5-50+ variable fees, 15-30 TPS.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_ethereum_overview",
       "subsection": "summary",
@@ -452,15 +452,15 @@
         "facts_supported_networks_ethereum_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_25",
-    "text": "Solana Network: Independent blockchain known for being one of the fastest and lowest-cost networks. Uses Proof of History + Proof of Stake consensus. Up to 65,000 TPS theoretical speed. Average transaction fee ~$0.0001 USD. Native token: SOL. NYLA supports transfers and swaps within Solana network only.",
-    "tokens": 76,
+    "text": "# Solana Network Support\nSolana Network: Independent blockchain known for being one of the fastest and lowest-cost networks. Uses Proof of History + Proof of Stake consensus. Up to 65,000 TPS theoretical speed. Average transaction fee ~$0.0001 USD. Native token: SOL. NYLA supports transfers and swaps within Solana network only.\n\n## Related Terms: Solana, Proof of History, transaction fee, TPS",
+    "tokens": 99,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_solana_overview",
       "subsection": "body",
@@ -471,7 +471,7 @@
         "facts_supported_networks_solana_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -479,7 +479,7 @@
     "text": "Ultra-fast, low-cost blockchain network with PoH+PoS consensus. ~$0.0001 fees, 65k TPS capacity.",
     "tokens": 24,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "supported_networks",
       "section": "facts_supported_networks_solana_overview",
       "subsection": "summary",
@@ -490,15 +490,15 @@
         "facts_supported_networks_solana_overview"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_27",
-    "text": "Q: How do I send tokens using NYLA? A: Use the Send tab in NYLAGo, enter recipient username (without @), choose amount and token type, select blockchain network, then click 'Send to X.com' to generate transfer command. Post the command on X.com and NYLA will execute the transfer.",
-    "tokens": 70,
+    "text": "# How do I send tokens using NYLA?\nQ: How do I send tokens using NYLA? A: Use the Send tab in NYLAGo, enter recipient username (without @), choose amount and token type, select blockchain network, then click 'Send to X.com' to generate transfer command. Post the command on X.com and NYLA will execute the transfer.\n\n## Related Terms: send, tokens, NYLA, NYLAGo, X.com, transfer command",
+    "tokens": 97,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "basic_usage",
       "section": "faq_how_to_send",
       "subsection": "body",
@@ -509,7 +509,7 @@
         "faq_how_to_send"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
@@ -517,7 +517,7 @@
     "text": "Send tokens via NYLAGo Send tab: enter recipient, amount, token, network, then post generated command on X.com.",
     "tokens": 28,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "basic_usage",
       "section": "faq_how_to_send",
       "subsection": "summary",
@@ -528,15 +528,53 @@
         "faq_how_to_send"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
     "id": "chunk_29",
-    "text": "Q: What are the transaction fees? A: Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.0001, Ethereum: $5-$50+ (varies with gas), Algorand: ~$0.001. NYLA doesn't charge extra fees beyond standard network costs.",
-    "tokens": 59,
+    "text": "# How do I send tokens?\nTo send tokens using NYLAGo: 1) Open NYLAGo and click the Send tab. 2) Enter the recipient's X.com username (no @ symbol needed). 3) Choose the token amount and type (SOL, ETH, ALGO, etc.). 4) Select the blockchain network that matches your token. 5) Click 'Send to X.com' to generate the transfer command. 6) Copy and post the generated command on X.com. 7) NYLA will execute the transfer and reply with confirmation. The whole process takes about 2-3 minutes including transaction confirmation.\n\n## Related Terms: send tokens, how do I, tokens, send, transfer, NYLAGo, Send tab, X.com, username, step by step",
+    "tokens": 159,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
+      "category": "basic_usage",
+      "section": "faq_send_tokens_natural",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "basic_usage - faq_send_tokens_natural - body",
+      "tags": [
+        "basic_usage",
+        "faq_send_tokens_natural"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.605Z"
+    }
+  },
+  {
+    "id": "chunk_30",
+    "text": "Send tokens through NYLAGo: use Send tab, enter recipient username, choose amount/token/network, generate command, post on X.com for execution.",
+    "tokens": 36,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.605Z",
+      "category": "basic_usage",
+      "section": "faq_send_tokens_natural",
+      "subsection": "summary",
+      "source": "knowledge_base",
+      "title": "basic_usage - faq_send_tokens_natural - summary",
+      "tags": [
+        "basic_usage",
+        "faq_send_tokens_natural"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.605Z"
+    }
+  },
+  {
+    "id": "chunk_31",
+    "text": "# What are the transaction fees?\nQ: What are the transaction fees? A: Only blockchain network fees apply - no additional NYLA fees. Solana: ~$0.0001, Ethereum: $5-$50+ (varies with gas), Algorand: ~$0.001. NYLA doesn't charge extra fees beyond standard network costs.\n\n## Related Terms: transaction fees, network fees, Solana, Ethereum, Algorand, gas",
+    "tokens": 88,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "fees_costs",
       "section": "faq_transaction_fees",
       "subsection": "body",
@@ -547,15 +585,15 @@
         "faq_transaction_fees"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_30",
+    "id": "chunk_32",
     "text": "No NYLA fees, only network costs: Solana ~$0.0001, Ethereum $5-50+, Algorand ~$0.001.",
     "tokens": 22,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "fees_costs",
       "section": "faq_transaction_fees",
       "subsection": "summary",
@@ -566,15 +604,15 @@
         "faq_transaction_fees"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_31",
-    "text": "Q: What are the fees for each blockchain? A: Each blockchain has different fee structures. Solana: ~$0.0001 USD (ultra-low, fixed), Ethereum: $5-$50+ USD (variable gas fees, depends on network congestion), Algorand: ~$0.001 USD (very low, stable). NYLA doesn't add any additional fees - you only pay the standard blockchain network fees.",
-    "tokens": 85,
+    "id": "chunk_33",
+    "text": "# What are the fees for each blockchain?\nQ: What are the fees for each blockchain? A: Each blockchain has different fee structures. Solana: ~$0.0001 USD (ultra-low, fixed), Ethereum: $5-$50+ USD (variable gas fees, depends on network congestion), Algorand: ~$0.001 USD (very low, stable). NYLA doesn't add any additional fees - you only pay the standard blockchain network fees.\n\n## Related Terms: blockchain fees, network fees, Solana, Ethereum, Algorand, gas fees, comparison",
+    "tokens": 120,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "fees_costs",
       "section": "faq_blockchain_fees",
       "subsection": "body",
@@ -585,15 +623,15 @@
         "faq_blockchain_fees"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_32",
+    "id": "chunk_34",
     "text": "Blockchain fees vary: Solana ~$0.0001 (lowest), Ethereum $5-50+ (highest, variable), Algorand ~$0.001 (low, stable). No NYLA fees added.",
     "tokens": 34,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "fees_costs",
       "section": "faq_blockchain_fees",
       "subsection": "summary",
@@ -604,15 +642,15 @@
         "faq_blockchain_fees"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_33",
-    "text": "Q: How do I check transaction status? A: After posting your NYLA command on X.com, NYLA will comment on your post with the transaction result. This usually takes about 1 minute to complete. Check your X.com post for NYLA's response with transaction hash and status.",
-    "tokens": 67,
+    "id": "chunk_35",
+    "text": "# How do I check transaction status?\nQ: How do I check transaction status? A: After posting your NYLA command on X.com, NYLA will comment on your post with the transaction result. This usually takes about 1 minute to complete. Check your X.com post for NYLA's response with transaction hash and status.\n\n## Related Terms: transaction status, X.com, NYLA, response, transaction hash",
+    "tokens": 96,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "status_tracking",
       "section": "faq_transaction_status",
       "subsection": "body",
@@ -623,15 +661,15 @@
         "faq_transaction_status"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_34",
+    "id": "chunk_36",
     "text": "Check status via NYLA's comment responses on your X.com posts. Processing takes ~1 minute.",
     "tokens": 23,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "status_tracking",
       "section": "faq_transaction_status",
       "subsection": "summary",
@@ -642,15 +680,15 @@
         "faq_transaction_status"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_35",
-    "text": "Q: Is NYLA secure? A: Yes! NYLA generates transfer commands but never handles your private keys. You maintain full control over your assets. Command-based transfers are transparent and verifiable. NYLAGo is open source for community review and operates without custodial services.",
-    "tokens": 70,
+    "id": "chunk_37",
+    "text": "# Is NYLA secure?\nQ: Is NYLA secure? A: Yes! NYLA generates transfer commands but never handles your private keys. You maintain full control over your assets. Command-based transfers are transparent and verifiable. NYLAGo is open source for community review and operates without custodial services.\n\n## Related Terms: security, private keys, transparent, open source, non-custodial",
+    "tokens": 96,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "security_safety",
       "section": "faq_security",
       "subsection": "body",
@@ -661,15 +699,15 @@
         "faq_security"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_36",
+    "id": "chunk_38",
     "text": "NYLA is secure: no private key handling, transparent commands, open source, non-custodial design.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.605Z",
       "category": "security_safety",
       "section": "faq_security",
       "subsection": "summary",
@@ -680,15 +718,15 @@
         "faq_security"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_37",
-    "text": "Q: Which blockchains are supported? A: Currently Solana, Ethereum, and Algorand networks with operations within each network only. No cross-chain bridging supported. More networks may be added based on community demand and technical feasibility.",
-    "tokens": 62,
+    "id": "chunk_39",
+    "text": "# Which blockchains are supported?\nQ: Which blockchains are supported? A: Currently Solana, Ethereum, and Algorand networks with operations within each network only. No cross-chain bridging supported. More networks may be added based on community demand and technical feasibility.\n\n## Related Terms: blockchains, networks, Solana, Ethereum, Algorand, cross-chain",
+    "tokens": 91,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "networks_support",
       "section": "faq_supported_blockchains",
       "subsection": "body",
@@ -699,15 +737,15 @@
         "faq_supported_blockchains"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.605Z"
     }
   },
   {
-    "id": "chunk_38",
+    "id": "chunk_40",
     "text": "Supports 3 networks: Solana, Ethereum, Algorand. Operations within-network only, no cross-chain.",
     "tokens": 24,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "networks_support",
       "section": "faq_supported_blockchains",
       "subsection": "summary",
@@ -718,15 +756,15 @@
         "faq_supported_blockchains"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_39",
-    "text": "Q: What can NYLAGo do? A: NYLAGo generates commands for cryptocurrency operations through X.com: 1) Transfer tokens using usernames within Solana, Ethereum, or Algorand networks. 2) Swap tokens within the same blockchain network (no cross-chain swaps). 3) Generate QR codes for receiving payments. 4) Create X.com posts that execute transactions when posted. 5) Provide community engagement features like raid lists. All blockchain actions require posting generated commands on X.com.",
-    "tokens": 121,
+    "id": "chunk_41",
+    "text": "# What can NYLAGo do?\nQ: What can NYLAGo do? A: NYLAGo generates commands for cryptocurrency operations through X.com: 1) Transfer tokens using usernames within Solana, Ethereum, or Algorand networks. 2) Swap tokens within the same blockchain network (no cross-chain swaps). 3) Generate QR codes for receiving payments. 4) Create X.com posts that execute transactions when posted. 5) Provide community engagement features like raid lists. All blockchain actions require posting generated commands on X.com.\n\n## Related Terms: capabilities, features, transfers, swaps, QR codes, X.com, commands, community",
+    "tokens": 151,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "capabilities",
       "section": "faq_what_can_nyla_do",
       "subsection": "body",
@@ -737,15 +775,15 @@
         "faq_what_can_nyla_do"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_40",
+    "id": "chunk_42",
     "text": "NYLAGo generates commands for transfers, same-network swaps, QR payments, and X.com execution. Includes community features.",
     "tokens": 31,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "capabilities",
       "section": "faq_what_can_nyla_do",
       "subsection": "summary",
@@ -756,15 +794,15 @@
         "faq_what_can_nyla_do"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_41",
-    "text": "Q: What else can NYLAGo do? A: Beyond basic transfers and swaps, NYLAGo offers additional helpful features: 1) Username-based transfers - Send tokens using X.com usernames instead of complex wallet addresses. 2) QR code generation - Create payment QR codes for receiving cryptocurrency on any supported network. 3) Same-network token swaps - Trade tokens within Solana, Ethereum, or Algorand networks (no cross-chain). 4) X.com integration - All transactions happen through posting generated commands on X.com where NYLA executes them. 5) Community engagement tools - Access raid lists and social features for community interaction. 6) Multi-network support - Works across three major blockchain networks while maintaining simplicity.",
-    "tokens": 184,
+    "id": "chunk_43",
+    "text": "# What else can NYLAGo do?\nQ: What else can NYLAGo do? A: Beyond basic transfers and swaps, NYLAGo offers additional helpful features: 1) Username-based transfers - Send tokens using X.com usernames instead of complex wallet addresses. 2) QR code generation - Create payment QR codes for receiving cryptocurrency on any supported network. 3) Same-network token swaps - Trade tokens within Solana, Ethereum, or Algorand networks (no cross-chain). 4) X.com integration - All transactions happen through posting generated commands on X.com where NYLA executes them. 5) Community engagement tools - Access raid lists and social features for community interaction. 6) Multi-network support - Works across three major blockchain networks while maintaining simplicity.\n\n## Related Terms: what else, additional, username transfers, QR codes, same-network swaps, X.com integration, community tools",
+    "tokens": 222,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "additional_capabilities",
       "section": "faq_what_else_can_nyla_do",
       "subsection": "body",
@@ -775,15 +813,15 @@
         "faq_what_else_can_nyla_do"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_42",
+    "id": "chunk_44",
     "text": "NYLAGo provides username-based transfers, QR payment requests, same-network swaps, X.com integration, and community tools beyond basic cryptocurrency operations.",
     "tokens": 41,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "additional_capabilities",
       "section": "faq_what_else_can_nyla_do",
       "subsection": "summary",
@@ -794,15 +832,15 @@
         "faq_what_else_can_nyla_do"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_43",
-    "text": "Q: Which blockchain is fastest? A: Among supported networks, Solana is the fastest with up to 65,000 TPS theoretical capacity, followed by Algorand with ~6,000 TPS, and Ethereum with ~15-30 TPS on mainnet. Performance varies based on network conditions and congestion. Solana is known for being one of the fastest blockchains globally.",
-    "tokens": 84,
+    "id": "chunk_45",
+    "text": "# Which blockchain is fastest?\nQ: Which blockchain is fastest? A: Among supported networks, Solana is the fastest with up to 65,000 TPS theoretical capacity, followed by Algorand with ~6,000 TPS, and Ethereum with ~15-30 TPS on mainnet. Performance varies based on network conditions and congestion. Solana is known for being one of the fastest blockchains globally.\n\n## Related Terms: fastest, speed, TPS, Solana, Ethereum, Algorand, blockchain speed, performance",
+    "tokens": 116,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "performance_comparison",
       "section": "faq_blockchain_speed",
       "subsection": "body",
@@ -813,15 +851,15 @@
         "faq_blockchain_speed"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_44",
+    "id": "chunk_46",
     "text": "Solana is fastest (65,000 TPS), followed by Algorand (6,000 TPS), then Ethereum (15-30 TPS). Performance varies with network conditions.",
     "tokens": 34,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "performance_comparison",
       "section": "faq_blockchain_speed",
       "subsection": "summary",
@@ -832,15 +870,15 @@
         "faq_blockchain_speed"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_45",
-    "text": "Q: How do I get started with NYLAGo? A: Getting started is simple: 1) Visit https://sonyschan.github.io/nyla-go/ or load the NYLAGo extension. 2) Choose the Send, Receive, or Raid tab depending on what you want to do. 3) For transfers: Enter recipient's X.com username, amount, and network, then click 'Send to X.com'. 4) Post the generated command on X.com and NYLA will execute it. No account setup, registration, or security questions required - just an active X.com account and wallet with tokens.",
-    "tokens": 126,
+    "id": "chunk_47",
+    "text": "# How do I get started with NYLAGo?\nQ: How do I get started with NYLAGo? A: Getting started is simple: 1) Visit https://sonyschan.github.io/nyla-go/ or load the NYLAGo extension. 2) Choose the Send, Receive, or Raid tab depending on what you want to do. 3) For transfers: Enter recipient's X.com username, amount, and network, then click 'Send to X.com'. 4) Post the generated command on X.com and NYLA will execute it. No account setup, registration, or security questions required - just an active X.com account and wallet with tokens.\n\n## Related Terms: getting started, start, setup, no registration, X.com account, simple",
+    "tokens": 157,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "getting_started",
       "section": "faq_getting_started",
       "subsection": "body",
@@ -851,15 +889,15 @@
         "faq_getting_started"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_46",
+    "id": "chunk_48",
     "text": "Start using NYLAGo immediately: visit the site/extension, choose Send/Receive/Raid tab, generate commands, post on X.com. No registration required.",
     "tokens": 37,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "getting_started",
       "section": "faq_getting_started",
       "subsection": "summary",
@@ -870,15 +908,15 @@
         "faq_getting_started"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_47",
-    "text": "Q: How do I share my payment QR code? A: First, generate your QR code in NYLAGo's Receive tab by connecting your wallet and clicking 'Generate QR Code'. Then download the QR image or display it on screen for others to scan. You can share the QR image via text, email, social media, or show it in person. The QR code is created within NYLAGo, not on X.com - X.com is only used for executing transfer commands.",
-    "tokens": 102,
+    "id": "chunk_49",
+    "text": "# How do I share my payment QR code?\nQ: How do I share my payment QR code? A: First, generate your QR code in NYLAGo's Receive tab by connecting your wallet and clicking 'Generate QR Code'. Then download the QR image or display it on screen for others to scan. You can share the QR image via text, email, social media, or show it in person. The QR code is created within NYLAGo, not on X.com - X.com is only used for executing transfer commands.\n\n## Related Terms: QR code, share, payment, receive, NYLAGo, download, display",
+    "tokens": 131,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_sharing",
       "section": "faq_share_qr_code",
       "subsection": "body",
@@ -889,15 +927,15 @@
         "faq_share_qr_code"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_48",
+    "id": "chunk_50",
     "text": "Generate QR codes in NYLAGo's Receive tab, then share the image via text, email, or display on screen. QR creation happens in NYLAGo, not X.com.",
     "tokens": 36,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_sharing",
       "section": "faq_share_qr_code",
       "subsection": "summary",
@@ -908,15 +946,114 @@
         "faq_share_qr_code"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_49",
-    "text": "Complete guide for creating payment QR codes with NYLA. Perfect for receiving payments in person or sharing payment links.",
-    "tokens": 31,
+    "id": "chunk_51",
+    "text": "# What happens after I post the command?\nQ: What happens after I post the command? A: Here's the complete automated workflow after posting your NYLA command on X.com: 1) NYLA automatically detects your post within seconds. 2) NYLA processes and validates the command format and details. 3) NYLA executes the blockchain transaction (transfer/swap) on the specified network. 4) NYLA replies to your X.com post with confirmation details including transaction hash. 5) The entire process completes in 30-60 seconds depending on network congestion. 6) You can verify the transaction in your wallet or blockchain explorer. The whole workflow is fully automated - you just post the command and wait for NYLA's confirmation reply.\n\n## Related Terms: what happens after, post command, workflow, automatic process, NYLA detects, validates command, executes transaction, confirmation reply, 30-60 seconds, automated workflow",
+    "tokens": 229,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "workflow_process",
+      "section": "faq_what_happens_after_post",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "workflow_process - faq_what_happens_after_post - body",
+      "tags": [
+        "workflow_process",
+        "faq_what_happens_after_post"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z"
+    }
+  },
+  {
+    "id": "chunk_52",
+    "text": "After posting: NYLA detects → validates → executes transaction → replies with confirmation. Complete automated workflow in 30-60 seconds.",
+    "tokens": 35,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "workflow_process",
+      "section": "faq_what_happens_after_post",
+      "subsection": "summary",
+      "source": "knowledge_base",
+      "title": "workflow_process - faq_what_happens_after_post - summary",
+      "tags": [
+        "workflow_process",
+        "faq_what_happens_after_post"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z"
+    }
+  },
+  {
+    "id": "chunk_chunk_53_1",
+    "text": "# Send Tokens - Complete Guide\nComplete guide for sending tokens (cryptocurrencies) using NYLAGo.  When users ask 'How do I send tokens. ' they want to transfer cryptocurrency to another person using NYLAGo interface. \n\n## Step-by-Step Instructions:\n\n**Step 1: Open NYLAGo application**\nLaunch NYLAGo either through the browser extension or visit https://sonyschan. github. io/nyla-go/ in your web browser.  NYLAGo is your interface for creating cryptocurrency transfer commands. \n\n**Step 2: Click on the Send tab**\nIn NYLAGo interface, locate and click the 'Send' tab.  This is where you create transfer commands to send tokens to other people.  The Send tab contains form fields for recipient, amount, and network selection. \n\n**Step 3: Enter recipient's username**\nType the recipient's X. com (Twitter) username in the recipient field.  Important: Enter ONLY the username without the @ symbol.  For example, if sending to @alice, just type 'alice'.  This username-based system makes transfers much easier than using long wallet addresses. \n\n**Step 4: Choose token amount and type**\nEnter the exact amount of tokens you want to send in the amount field.  Then select the token type from the dropdown (SOL for Solana, ETH for Ethereum, ALGO for Algorand, etc. ).  Double-check the amount is correct before proceeding. \n\n**Step 5: Select blockchain network**\nChoose the blockchain network that matches your token type.  CRITICAL: Network must match token (SOL=Solana, ETH=Ethereum, ALGO=Algorand).  Cross-chain transfers are NOT supported - you can only send within the same network",
+    "tokens": 396,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "basic_guide",
+      "section": "howto_send_tokens_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "basic_guide - howto_send_tokens_guide - body",
+      "tags": [
+        "basic_guide",
+        "howto_send_tokens_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_53",
+      "chunk_part": 1
+    }
+  },
+  {
+    "id": "chunk_chunk_53_2",
+    "text": "**Step 6: Generate transfer command**\nClick the 'Send to X. com' or 'Generate Command' button to create your transfer command.  NYLAGo will generate a specially formatted command that NYLA can understand and execute.  This command contains all your transfer details in a secure format. \n\n**Step 7: Copy and post command on X. com**\nCopy the generated command to your clipboard, then go to X. com (Twitter) and create a new post.  Paste the command exactly as generated - do not edit or modify it.  Post the command publicly so NYLA can see and process it. \n\n**Step 8: Wait for NYLA confirmation**\nAfter posting your command, NYLA will automatically detect it and execute the transfer.  NYLA will reply to your post with confirmation details including transaction hash and status.  This usually takes 30-60 seconds depending on network congestion. \n\n## Prerequisites:\n- Active X. com (Twitter) account\n- Wallet with sufficient token balance\n- Internet connection\n- Recipient's X. com username\n\n## Common Issues and Solutions:\n\n**Issue**: Using @ symbol in username\n**Solution**: Enter username without @.  Use 'alice' not '@alice'. \n\n**Issue**: Wrong network selected\n**Solution**: Always match network to token type.  SOL=Solana, ETH=Ethereum, ALGO=Algorand. \n\n**Issue**: Editing the generated command\n**Solution**: Copy and paste command exactly as generated.  Do not modify the text. \n\n## Related Terms: send tokens, send cryptocurrency, transfer tokens, how to send, token transfer, cryptocurrency transfer, NYLAGo\n\n**Difficulty**: beginner\n**Estimated Time**: 2-3 minutes",
+    "tokens": 394,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "basic_guide",
+      "section": "howto_send_tokens_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "basic_guide - howto_send_tokens_guide - body",
+      "tags": [
+        "basic_guide",
+        "howto_send_tokens_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_53",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_54",
+    "text": "Step-by-step instructions for sending tokens/cryptocurrency using NYLAGo interface through X.com integration.",
+    "tokens": 28,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "basic_guide",
+      "section": "howto_send_tokens_guide",
+      "subsection": "summary",
+      "source": "knowledge_base",
+      "title": "basic_guide - howto_send_tokens_guide - summary",
+      "tags": [
+        "basic_guide",
+        "howto_send_tokens_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z"
+    }
+  },
+  {
+    "id": "chunk_chunk_55_1",
+    "text": "# How to Create Payment QR Codes\nComplete guide for creating payment QR codes with NYLA.  Perfect for receiving payments in person or sharing payment links. \n\n## Step-by-Step Instructions:\n\n**Step 1: Open NYLAGo Receive tab**\nNavigate to NYLAGo and click the 'Receive' tab to access QR code generation tools. \n\n**Step 2: Select blockchain network**\nChoose which blockchain network for the payment (Solana, Ethereum, or Algorand).  This determines which tokens can be received. \n\n**Step 3: Connect your wallet**\nConnect your wallet extension (Phantom/MetaMask/Pera) to display your receiving address in the QR code. \n\n**Step 4: Enter payment amount (optional)**\nSpecify exact amount if you want a pre-filled payment request.  Leave blank for flexible amount QR code. \n\n**Step 5: Select token type (optional)**\nChoose specific token (SOL, ETH, USDC, etc. ) if you want to request a particular token type. \n\n**Step 6: Click 'Generate QR Code'**\nClick the generate button to create your payment QR code with your wallet address and optional amount/token. \n\n**Step 7: Download or share QR code**\nSave the QR code image to your device or display it on screen for others to scan. \n\n**Step 8: Test the QR code**\nScan with a QR reader or wallet app to verify it contains correct payment information. \n\n## Prerequisites:\n- Wallet extension installed and funded\n- NYLAGo account access\n- Understanding of which network to use\n\n## Common Issues and Solutions:\n\n**Issue**: QR code too small to scan\n**Solution**: Increase screen brightness and zoom in on QR code.  Ensure clear display without glare",
+    "tokens": 397,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_codes",
       "section": "howto_qr_create_guide",
       "subsection": "body",
@@ -927,15 +1064,38 @@
         "howto_qr_create_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_55",
+      "chunk_part": 1
     }
   },
   {
-    "id": "chunk_50",
+    "id": "chunk_chunk_55_2",
+    "text": "**Issue**: Wrong wallet address in QR\n**Solution**: Reconnect your wallet and regenerate the QR code.  Always verify address matches your wallet. \n\n**Issue**: Amount not pre-filled when scanned\n**Solution**: Some wallets don't support amount pre-filling.  Recipients may need to enter amount manually. \n\n**Issue**: QR code won't generate\n**Solution**: Check wallet connection and network selection.  Try refreshing the page and reconnecting wallet. \n\n**Issue**: Scanner can't read QR code\n**Solution**: Ensure good lighting, steady hands, and proper distance.  Try different QR scanner apps. \n\n## Related Terms: QR code, payment, mobile, scan, receive\n\n**Difficulty**: beginner\n**Estimated Time**: 1-2 minutes",
+    "tokens": 178,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "qr_codes",
+      "section": "howto_qr_create_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "qr_codes - howto_qr_create_guide - body",
+      "tags": [
+        "qr_codes",
+        "howto_qr_create_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_55",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_56",
     "text": "Step-by-step guide for creating payment QR codes for easy token receiving via mobile scanning.",
     "tokens": 24,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_codes",
       "section": "howto_qr_create_guide",
       "subsection": "summary",
@@ -946,15 +1106,15 @@
         "howto_qr_create_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_51",
-    "text": "Common QR code problems and solutions for scanning, generating, and sharing payment QR codes with NYLA.",
-    "tokens": 26,
+    "id": "chunk_chunk_57_1",
+    "text": "# Troubleshoot QR Code Issues\nCommon QR code problems and solutions for scanning, generating, and sharing payment QR codes with NYLA. \n\n## Step-by-Step Instructions:\n\n**Step 1: Check screen brightness and clarity**\nIncrease screen brightness to maximum and ensure the QR code is displayed clearly without glare or reflections. \n\n**Step 2: Clean camera lens and improve lighting**\nClean your device camera lens and ensure good lighting conditions for optimal QR code scanning. \n\n**Step 3: Adjust scanning distance and angle**\nHold device 6-8 inches from QR code, keep steady hands, and scan straight-on rather than at an angle. \n\n**Step 4: Try different QR scanner apps**\nIf default camera app fails, try dedicated QR scanner apps or wallet apps with built-in QR scanners. \n\n**Step 5: Regenerate the QR code**\nGo back to NYLAGo, check wallet connection, and generate a fresh QR code with correct network and amount. \n\n**Step 6: Verify wallet address manually**\nCopy the wallet address from NYLAGo and compare it to what the QR scanner detected to ensure accuracy. \n\n## Common Issues and Solutions:\n\n**Issue**: QR code too small or pixelated\n**Solution**: Zoom in on the QR code display or request a larger version.  Avoid screenshots that reduce quality. \n\n**Issue**: Screen glare making QR unreadable\n**Solution**: Tilt device to avoid glare, use matte screen protector, or scan in different lighting conditions. \n\n**Issue**: Camera won't focus on QR code\n**Solution**: Tap screen to focus manually, clean camera lens, or try scanning from different distances",
+    "tokens": 390,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_codes",
       "section": "howto_qr_troubleshoot_guide",
       "subsection": "body",
@@ -965,15 +1125,38 @@
         "howto_qr_troubleshoot_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_57",
+      "chunk_part": 1
     }
   },
   {
-    "id": "chunk_52",
+    "id": "chunk_chunk_57_2",
+    "text": "**Issue**: QR scanner reads wrong information\n**Solution**: Regenerate QR code in NYLAGo and verify wallet connection.  Always double-check scanned address. \n\n**Issue**: Amount not pre-filled from QR code\n**Solution**: Some wallets don't support amount encoding.  Manually enter the amount displayed with the QR code. \n\n## Related Terms: QR code, troubleshoot, scanning, brightness, camera\n\n**Difficulty**: beginner\n**Estimated Time**: 2-5 minutes",
+    "tokens": 112,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "qr_codes",
+      "section": "howto_qr_troubleshoot_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "qr_codes - howto_qr_troubleshoot_guide - body",
+      "tags": [
+        "qr_codes",
+        "howto_qr_troubleshoot_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_57",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_58",
     "text": "Troubleshooting guide for common QR code scanning and generation problems with step-by-step solutions.",
     "tokens": 26,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_codes",
       "section": "howto_qr_troubleshoot_guide",
       "subsection": "summary",
@@ -984,15 +1167,15 @@
         "howto_qr_troubleshoot_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_53",
-    "text": "Complete guide for participating in community raids using NYLA's engagement features. Learn how to find, join, and contribute to community raids effectively.",
-    "tokens": 40,
+    "id": "chunk_chunk_59_1",
+    "text": "# How to Participate in Community Raids\nComplete guide for participating in community raids using NYLA's engagement features.  Learn how to find, join, and contribute to community raids effectively. \n\n## Step-by-Step Instructions:\n\n**Step 1: Open NYLAGo and click Raid tab**\nNavigate to NYLAGo interface and select the 'Raid' tab to access community engagement features. \n\n**Step 2: Find active raid campaigns**\nBrowse the list of active community raids.  Look for campaigns with high engagement and clear objectives. \n\n**Step 3: Select a raid to join**\nClick on a raid that interests you.  Read the description, goals, and participation requirements carefully. \n\n**Step 4: Review raid objectives**\nUnderstand what the raid is trying to achieve: likes, retweets, comments, or specific engagement targets. \n\n**Step 5: Click 'Join Raid' button**\nConfirm your participation by clicking the join button.  This adds you to the raid participant list. \n\n**Step 6: Access target posts via three dots**\nClick the three dots (⋯) button to get direct links to posts that need engagement from raid participants. \n\n**Step 7: Engage with target content**\nLike, retweet, and comment on the target posts.  Provide meaningful engagement, not spam comments. \n\n**Step 8: Track your contribution**\nMonitor your engagement activity in the raid dashboard to see your contribution to the campaign goals. \n\n## Prerequisites:\n- Active X",
+    "tokens": 353,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "raids",
       "section": "howto_raids_participate_guide",
       "subsection": "body",
@@ -1003,15 +1186,38 @@
         "howto_raids_participate_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_59",
+      "chunk_part": 1
     }
   },
   {
-    "id": "chunk_54",
+    "id": "chunk_chunk_59_2",
+    "text": "com account with good standing\n- NYLAGo account access\n- Understanding of appropriate social media behavior\n\n## Common Issues and Solutions:\n\n**Issue**: Spammy or low-quality comments\n**Solution**: Always provide meaningful, relevant comments.  Avoid generic responses like 'nice' or emoji-only comments. \n\n**Issue**: Engaging with wrong posts\n**Solution**: Always use the three dots (⋯) feature to get correct target posts.  Don't guess which posts to engage with. \n\n**Issue**: Over-engagement appears botlike\n**Solution**: Space out your engagement over time.  Don't like/comment on everything at once. \n\n**Issue**: Raid objectives not clear\n**Solution**: Ask questions in the raid discussion or contact raid organizers for clarification before participating. \n\n**Issue**: Account flagged for suspicious activity\n**Solution**: Vary your engagement patterns and always provide genuine interactions.  Avoid repetitive behavior. \n\n## Related Terms: raid, community, engagement, social, three dots\n\n**Difficulty**: beginner\n**Estimated Time**: 5-15 minutes per raid",
+    "tokens": 266,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "raids",
+      "section": "howto_raids_participate_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "raids - howto_raids_participate_guide - body",
+      "tags": [
+        "raids",
+        "howto_raids_participate_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_59",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_60",
     "text": "Step-by-step guide for joining and participating in community raids through NYLA's social engagement system.",
     "tokens": 27,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "raids",
       "section": "howto_raids_participate_guide",
       "subsection": "summary",
@@ -1022,15 +1228,15 @@
         "howto_raids_participate_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_55",
-    "text": "Complete guide for receiving tokens through NYLA. Learn how to share your wallet address and verify incoming transfers.",
-    "tokens": 30,
+    "id": "chunk_chunk_61_1",
+    "text": "# How to Receive Tokens\nComplete guide for receiving tokens through NYLA.  Learn how to share your wallet address and verify incoming transfers. \n\n## Step-by-Step Instructions:\n\n**Step 1: Open NYLAGo and click Receive tab**\nNavigate to NYLAGo interface and select the 'Receive' tab to access wallet address and QR code generation. \n\n**Step 2: Select blockchain network**\nChoose the network you want to receive tokens on (Solana, Ethereum, or Algorand).  Make sure sender uses the same network. \n\n**Step 3: Connect your wallet**\nConnect your wallet (Phantom for Solana, MetaMask for Ethereum, Pera for Algorand) to display your receiving address. \n\n**Step 4: Copy wallet address**\nCopy your wallet address from the display.  This is the address senders need to send tokens to you. \n\n**Step 5: Share address with sender**\nSend your wallet address to the person sending you tokens.  You can share via DM, email, or generate a QR code. \n\n**Step 6: Monitor for incoming transfers**\nWatch your wallet balance and transaction history for incoming transfers.  NYLA will post confirmation when transfer completes. \n\n**Step 7: Verify transaction details**\nCheck the transaction hash, amount, and sender details match what you expected to receive. \n\n## Prerequisites:\n- Wallet extension installed and set up\n- Active X. com account (for NYLA notifications)\n- Basic understanding of blockchain networks\n\n## Common Issues and Solutions:\n\n**Issue**: Wrong network address shared\n**Solution**: Always verify the network matches what sender will use.  Solana addresses are different from Ethereum addresses",
+    "tokens": 398,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfers",
       "section": "howto_transfers_receive_guide",
       "subsection": "body",
@@ -1041,15 +1247,38 @@
         "howto_transfers_receive_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_61",
+      "chunk_part": 1
     }
   },
   {
-    "id": "chunk_56",
+    "id": "chunk_chunk_61_2",
+    "text": "**Issue**: Wallet not connected\n**Solution**: Ensure your wallet extension is installed, unlocked, and connected to NYLAGo. \n\n**Issue**: Address copied incorrectly\n**Solution**: Always use the copy button rather than manually selecting text to avoid errors. \n\n**Issue**: Transfer doesn't appear\n**Solution**: Check blockchain explorer with your wallet address.  Network congestion may delay appearance in wallet. \n\n**Issue**: Wrong token type received\n**Solution**: Confirm with sender they selected correct token.  Some wallets don't display all token types by default. \n\n## Related Terms: transfer, receive, wallet, address, NYLA\n\n**Difficulty**: beginner\n**Estimated Time**: 1-2 minutes",
+    "tokens": 173,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "transfers",
+      "section": "howto_transfers_receive_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "transfers - howto_transfers_receive_guide - body",
+      "tags": [
+        "transfers",
+        "howto_transfers_receive_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_61",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_62",
     "text": "Step-by-step guide for receiving tokens through NYLA with wallet address sharing and verification.",
     "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfers",
       "section": "howto_transfers_receive_guide",
       "subsection": "summary",
@@ -1060,15 +1289,15 @@
         "howto_transfers_receive_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_57",
-    "text": "Complete guide for sending tokens using NYLA through social media. Follow these steps to transfer tokens securely via X.com posts.",
-    "tokens": 33,
+    "id": "chunk_chunk_63_1",
+    "text": "# How to Send Tokens\nComplete guide for sending tokens using NYLA through social media.  Follow these steps to transfer tokens securely via X. com posts. \n\n## Step-by-Step Instructions:\n\n**Step 1: Open NYLAGo and click Send tab**\nNavigate to NYLAGo interface and select the 'Send' tab to access the transfer form with recipient, amount, and network fields. \n\n**Step 2: Enter recipient's X. com username**\nType the recipient's X. com username WITHOUT the @ symbol.  For example, if sending to @alice, just enter 'alice'. \n\n**Step 3: Select token and amount**\nChoose the token type (SOL, ETH, ALGO, etc. ) and enter the exact amount you want to send.  Double-check the amount is correct. \n\n**Step 4: Choose blockchain network**\nSelect the blockchain network that matches your token (Solana for SOL, Ethereum for ETH, Algorand for ALGO).  Network MUST match token type. \n\n**Step 5: Review transfer details**\nVerify recipient username, token amount, network selection, and estimated fees.  Make sure all details are correct before proceeding. \n\n**Step 6: Generate NYLA command**\nClick 'Generate Command' to create the NYLA transfer command.  Copy the generated command text to your clipboard. \n\n**Step 7: Post command on X. com**\nGo to X. com, create a new post, paste the NYLA command, and publish the post.  The transfer will be processed automatically. \n\n**Step 8: Wait for NYLA confirmation**\nNYLA will reply to your post with transfer confirmation and transaction details.  This usually takes 30-60 seconds. \n\n## Prerequisites:\n- Active X",
+    "tokens": 385,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfers",
       "section": "howto_transfers_send_guide",
       "subsection": "body",
@@ -1079,15 +1308,38 @@
         "howto_transfers_send_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_63",
+      "chunk_part": 1
     }
   },
   {
-    "id": "chunk_58",
+    "id": "chunk_chunk_63_2",
+    "text": "com account\n- Wallet with sufficient token balance\n- Recipient has valid X. com username\n\n## Common Issues and Solutions:\n\n**Issue**: Wrong network selected\n**Solution**: Always match network to token type (SOL→Solana, ETH→Ethereum, ALGO→Algorand).  Cross-chain transfers are not supported. \n\n**Issue**: Username includes @ symbol\n**Solution**: Enter username without @ symbol.  Use 'alice' not '@alice'. \n\n**Issue**: Insufficient balance\n**Solution**: Check wallet balance includes amount + network fees.  Add more funds if needed. \n\n**Issue**: Command not recognized by NYLA\n**Solution**: Ensure command is copied exactly as generated.  Avoid editing the command text. \n\n**Issue**: Transfer takes too long\n**Solution**: Network congestion may delay transfers.  Wait up to 10 minutes or check transaction hash on blockchain explorer. \n\n## Related Terms: transfer, send, NYLA, X. com, tokens\n\n**Difficulty**: beginner\n**Estimated Time**: 2-3 minutes",
+    "tokens": 238,
+    "metadata": {
+      "created_at": "2025-08-14T14:39:38.606Z",
+      "category": "transfers",
+      "section": "howto_transfers_send_guide",
+      "subsection": "body",
+      "source": "knowledge_base",
+      "title": "transfers - howto_transfers_send_guide - body",
+      "tags": [
+        "transfers",
+        "howto_transfers_send_guide"
+      ],
+      "chunk_type": "general_info",
+      "updated_at": "2025-08-14T14:39:38.606Z",
+      "parent_chunk": "chunk_63",
+      "chunk_part": 2
+    }
+  },
+  {
+    "id": "chunk_64",
     "text": "Step-by-step guide for sending tokens through NYLA with social verification on X.com.",
     "tokens": 22,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfers",
       "section": "howto_transfers_send_guide",
       "subsection": "summary",
@@ -1098,15 +1350,15 @@
         "howto_transfers_send_guide"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_59",
-    "text": "NYLA brand voice emphasizes innovation, accessibility, and trust in AI-powered DeFi. Tone: Professional yet approachable, technically accurate but user-friendly. Key messages: AI democratizes DeFi access, non-custodial security, cross-chain interoperability. Avoid: Overly technical jargon, financial advice implications, competitive disparagement. Voice personality: Knowledgeable guide, innovative pioneer, trusted advisor. Use active voice, clear explanations, and inclusive language.",
-    "tokens": 122,
+    "id": "chunk_65",
+    "text": "# NYLA Brand Voice Guidelines\nNYLA brand voice emphasizes innovation, accessibility, and trust in AI-powered DeFi. Tone: Professional yet approachable, technically accurate but user-friendly. Key messages: AI democratizes DeFi access, non-custodial security, cross-chain interoperability. Avoid: Overly technical jargon, financial advice implications, competitive disparagement. Voice personality: Knowledgeable guide, innovative pioneer, trusted advisor. Use active voice, clear explanations, and inclusive language.\n\n## Related Terms: brand voice, tone, messaging, DeFi, AI",
+    "tokens": 144,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "brand",
       "section": "marketing_brand_voice_guidelines",
       "subsection": "body",
@@ -1117,15 +1369,15 @@
         "marketing_brand_voice_guidelines"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_60",
+    "id": "chunk_66",
     "text": "NYLA brand guidelines emphasizing innovation, accessibility, and trust with professional yet approachable tone.",
     "tokens": 28,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "brand",
       "section": "marketing_brand_voice_guidelines",
       "subsection": "summary",
@@ -1136,15 +1388,15 @@
         "marketing_brand_voice_guidelines"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_61",
-    "text": "Security templates and required disclaimers for all security-related responses.",
-    "tokens": 20,
+    "id": "chunk_67",
+    "text": "# Security Disclaimers and Stance\nSecurity templates and required disclaimers for all security-related responses.",
+    "tokens": 29,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "security_templates",
       "section": "policy_security_disclaimers",
       "subsection": "body",
@@ -1155,15 +1407,15 @@
         "policy_security_disclaimers"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_62",
+    "id": "chunk_68",
     "text": "Standard security disclaimers and non-custodial stance templates.",
     "tokens": 17,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "security_templates",
       "section": "policy_security_disclaimers",
       "subsection": "summary",
@@ -1174,53 +1426,15 @@
         "policy_security_disclaimers"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_63",
-    "text": "Standard responses for cross-chain limitation queries.",
-    "tokens": 14,
+    "id": "chunk_69",
+    "text": "# Language Output Rules\nRules and templates for determining response language and format.",
+    "tokens": 23,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
-      "category": "limitation_templates",
-      "section": "policy_cross_chain_limitations",
-      "subsection": "body",
-      "source": "knowledge_base",
-      "title": "limitation_templates - policy_cross_chain_limitations - body",
-      "tags": [
-        "limitation_templates",
-        "policy_cross_chain_limitations"
-      ],
-      "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
-    }
-  },
-  {
-    "id": "chunk_64",
-    "text": "Templates explaining NYLA's within-network-only operations.",
-    "tokens": 15,
-    "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
-      "category": "limitation_templates",
-      "section": "policy_cross_chain_limitations",
-      "subsection": "summary",
-      "source": "knowledge_base",
-      "title": "limitation_templates - policy_cross_chain_limitations - summary",
-      "tags": [
-        "limitation_templates",
-        "policy_cross_chain_limitations"
-      ],
-      "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
-    }
-  },
-  {
-    "id": "chunk_65",
-    "text": "Rules and templates for determining response language and format.",
-    "tokens": 17,
-    "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "language_templates",
       "section": "policy_language_output_rules",
       "subsection": "body",
@@ -1231,15 +1445,15 @@
         "policy_language_output_rules"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_66",
+    "id": "chunk_70",
     "text": "Guidelines for language detection and response formatting in bilingual contexts.",
     "tokens": 20,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "language_templates",
       "section": "policy_language_output_rules",
       "subsection": "summary",
@@ -1250,15 +1464,15 @@
         "policy_language_output_rules"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_67",
-    "text": "Templates for handling time-sensitive and potentially outdated information.",
-    "tokens": 19,
+    "id": "chunk_71",
+    "text": "# Volatile Information Handling\nTemplates for handling time-sensitive and potentially outdated information.",
+    "tokens": 27,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "volatility_templates",
       "section": "policy_volatility_handling",
       "subsection": "body",
@@ -1269,15 +1483,15 @@
         "policy_volatility_handling"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_68",
+    "id": "chunk_72",
     "text": "Guidelines for presenting volatile data without specific outdated numbers.",
     "tokens": 19,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "volatility_templates",
       "section": "policy_volatility_handling",
       "subsection": "summary",
@@ -1288,15 +1502,15 @@
         "policy_volatility_handling"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_69",
-    "text": "CRITICAL DISTINCTION: Blockchain NETWORKS are infrastructure (Solana, Ethereum, Algorand). FEATURES are operations (transfer, swap, QR codes). NEVER say 'NYLA supports 3 blockchain features' - ALWAYS say 'NYLA supports 3 blockchain networks' or 'NYLA operates on 3 blockchains'.",
-    "tokens": 70,
+    "id": "chunk_73",
+    "text": "# Features vs Networks - Critical Distinction\nCRITICAL DISTINCTION: Blockchain NETWORKS are infrastructure (Solana, Ethereum, Algorand). FEATURES are operations (transfer, swap, QR codes). NEVER say 'NYLA supports 3 blockchain features' - ALWAYS say 'NYLA supports 3 blockchain networks' or 'NYLA operates on 3 blockchains'.\n\n## Related Terms: blockchain, features, networks",
+    "tokens": 94,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "terminology",
       "section": "policy_wording_features_vs_networks",
       "subsection": "body",
@@ -1307,15 +1521,15 @@
         "policy_wording_features_vs_networks"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_70",
+    "id": "chunk_74",
     "text": "Clear distinction between blockchain networks (infrastructure) and features (operations). Always use correct terminology.",
     "tokens": 31,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "terminology",
       "section": "policy_wording_features_vs_networks",
       "subsection": "summary",
@@ -1326,15 +1540,15 @@
         "policy_wording_features_vs_networks"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_71",
-    "text": "NYLA and NYLAGo are separate entities with distinct roles. NYLA is the AI agent that executes blockchain transactions on X.com social platform. NYLAGo is the interface tool that generates commands for users. The relationship works as follows: NYLAGo creates commands, users post them, and NYLA executes the transactions.",
-    "tokens": 80,
+    "id": "chunk_75",
+    "text": "# NYLA vs NYLAGo Identity Distinction\nNYLA and NYLAGo are separate entities with distinct roles. NYLA is the AI agent that executes blockchain transactions on X.com social platform. NYLAGo is the interface tool that generates commands for users. The relationship works as follows: NYLAGo creates commands, users post them, and NYLA executes the transactions.\n\n## Related Terms: NYLA, NYLAGo",
+    "tokens": 98,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "identity",
       "section": "policy_wording_nyla_identity",
       "subsection": "body",
@@ -1345,15 +1559,15 @@
         "policy_wording_nyla_identity"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_72",
+    "id": "chunk_76",
     "text": "Maintain clear identity distinction between NYLA (AI agent) and NYLAGo (interface) especially for security discussions.",
     "tokens": 30,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "identity",
       "section": "policy_wording_nyla_identity",
       "subsection": "summary",
@@ -1364,15 +1578,15 @@
         "policy_wording_nyla_identity"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_73",
-    "text": "NYLA officially supports exactly 3 blockchain networks: (1) Solana Network, (2) Ethereum Network, (3) Algorand Network. Each operates independently with no cross-network bridging. NOT supported: Base, Polygon, Arbitrum, Optimism, BSC, or any other networks.",
-    "tokens": 65,
+    "id": "chunk_77",
+    "text": "# Authoritative Supported Networks List\nNYLA officially supports exactly 3 blockchain networks: (1) Solana Network, (2) Ethereum Network, (3) Algorand Network. Each operates independently with no cross-network bridging. NOT supported: Base, Polygon, Arbitrum, Optimism, BSC, or any other networks.\n\n## Related Terms: Solana, Ethereum, Algorand, cross-chain",
+    "tokens": 89,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "networks",
       "section": "policy_wording_supported_networks",
       "subsection": "body",
@@ -1383,15 +1597,15 @@
         "policy_wording_supported_networks"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_74",
+    "id": "chunk_78",
     "text": "Definitive list of 3 supported blockchain networks with explicit exclusions. No cross-chain operations.",
     "tokens": 26,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "networks",
       "section": "policy_wording_supported_networks",
       "subsection": "summary",
@@ -1402,15 +1616,15 @@
         "policy_wording_supported_networks"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_75",
-    "text": "Critical phrases that must NEVER be used and their required corrections.",
-    "tokens": 18,
+    "id": "chunk_79",
+    "text": "# Forbidden Phrases and Corrections\nCritical phrases that must NEVER be used and their required corrections.",
+    "tokens": 27,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "forbidden_corrections",
       "section": "policy_forbidden_phrases",
       "subsection": "body",
@@ -1421,15 +1635,15 @@
         "policy_forbidden_phrases"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_76",
+    "id": "chunk_80",
     "text": "Mandatory phrase corrections to maintain accuracy and prevent confusion.",
     "tokens": 18,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "forbidden_corrections",
       "section": "policy_forbidden_phrases",
       "subsection": "summary",
@@ -1440,15 +1654,15 @@
         "policy_forbidden_phrases"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_77",
-    "text": "Required qualifiers that must accompany certain statements.",
-    "tokens": 15,
+    "id": "chunk_81",
+    "text": "# Required Qualifiers and Disclaimers\nRequired qualifiers that must accompany certain statements.",
+    "tokens": 25,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "required_qualifiers",
       "section": "policy_required_qualifiers",
       "subsection": "body",
@@ -1459,15 +1673,15 @@
         "policy_required_qualifiers"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_78",
+    "id": "chunk_82",
     "text": "Mandatory qualifiers for financial, security, and technical statements.",
     "tokens": 18,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "required_qualifiers",
       "section": "policy_required_qualifiers",
       "subsection": "summary",
@@ -1478,15 +1692,15 @@
         "policy_required_qualifiers"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_79",
-    "text": "Symptom: Posted transfer command on X.com but NYLA didn't respond or transfer didn't execute.",
-    "tokens": 24,
+    "id": "chunk_83",
+    "text": "# Transfer Command Not Working\nSymptom: Posted transfer command on X.com but NYLA didn't respond or transfer didn't execute.",
+    "tokens": 31,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfer_problems",
       "section": "troubleshoot_transfer_not_working",
       "subsection": "body",
@@ -1497,15 +1711,15 @@
         "troubleshoot_transfer_not_working"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_80",
+    "id": "chunk_84",
     "text": "Transfer command posted but no NYLA response - diagnostic steps and fixes.",
     "tokens": 19,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "transfer_problems",
       "section": "troubleshoot_transfer_not_working",
       "subsection": "summary",
@@ -1516,15 +1730,15 @@
         "troubleshoot_transfer_not_working"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_81",
-    "text": "Symptom: Generated QR code but mobile devices can't scan or recognize it.",
-    "tokens": 19,
+    "id": "chunk_85",
+    "text": "# QR Code Won't Scan\nSymptom: Generated QR code but mobile devices can't scan or recognize it.",
+    "tokens": 24,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_problems",
       "section": "troubleshoot_qr_not_scanning",
       "subsection": "body",
@@ -1535,15 +1749,15 @@
         "troubleshoot_qr_not_scanning"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_82",
+    "id": "chunk_86",
     "text": "QR code scanning problems - diagnostic steps and mobile compatibility fixes.",
     "tokens": 19,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "qr_problems",
       "section": "troubleshoot_qr_not_scanning",
       "subsection": "summary",
@@ -1554,15 +1768,15 @@
         "troubleshoot_qr_not_scanning"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_83",
-    "text": "Symptom: NYLAGo browser extension won't load or shows blank page.",
-    "tokens": 17,
+    "id": "chunk_87",
+    "text": "# Extension Not Loading\nSymptom: NYLAGo browser extension won't load or shows blank page.",
+    "tokens": 23,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "extension_problems",
       "section": "troubleshoot_extension_not_loading",
       "subsection": "body",
@@ -1573,15 +1787,15 @@
         "troubleshoot_extension_not_loading"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_84",
+    "id": "chunk_88",
     "text": "Browser extension loading problems - troubleshooting steps and fixes.",
     "tokens": 18,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "extension_problems",
       "section": "troubleshoot_extension_not_loading",
       "subsection": "summary",
@@ -1592,15 +1806,15 @@
         "troubleshoot_extension_not_loading"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_85",
+    "id": "chunk_89",
     "text": "NYLA x Algorand Integration Launch Campaign - July 26, 2025",
     "tokens": 15,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "network_launches",
       "section": "ecosystem_campaigns_algorand_launch_july_2025",
       "subsection": "title",
@@ -1611,15 +1825,15 @@
         "ecosystem_campaigns_algorand_launch_july_2025"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_86",
-    "text": "MAJOR MILESTONE: NYLA's collaboration with Algorand successfully went live on July 26, 2025, as announced in NYLA's weekly update. This integration makes Algorand the third blockchain network officially supported by NYLA, joining Solana and Ethereum. Key features include ALGO transfers, ASA token support, Pera Wallet integration, and sustainability tracking capabilities. This launch represents NYLA's first carbon-negative blockchain integration, aligning with Algorand's environmental commitments.",
-    "tokens": 126,
+    "id": "chunk_90",
+    "text": "# NYLA x Algorand Integration Launch Campaign - July 26, 2025\nMAJOR MILESTONE: NYLA's collaboration with Algorand successfully went live on July 26, 2025, as announced in NYLA's weekly update. This integration makes Algorand the third blockchain network officially supported by NYLA, joining Solana and Ethereum. Key features include ALGO transfers, ASA token support, Pera Wallet integration, and sustainability tracking capabilities. This launch represents NYLA's first carbon-negative blockchain integration, aligning with Algorand's environmental commitments.\n\n## Related Terms: NYLA, Algorand, carbon-negative, ASA tokens, Pera Wallet, sustainability",
+    "tokens": 164,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "network_launches",
       "section": "ecosystem_campaigns_algorand_launch_july_2025",
       "subsection": "body",
@@ -1630,15 +1844,15 @@
         "ecosystem_campaigns_algorand_launch_july_2025"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_87",
+    "id": "chunk_91",
     "text": "NYLA x Algorand integration launch campaign culminated in July 26, 2025 go-live, adding carbon-negative blockchain support.",
     "tokens": 31,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "network_launches",
       "section": "ecosystem_campaigns_algorand_launch_july_2025",
       "subsection": "summary",
@@ -1649,15 +1863,15 @@
         "ecosystem_campaigns_algorand_launch_july_2025"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_88",
-    "text": "NYLA's canonical Algorand integration supporting ALGO transfers, ASA tokens, and sustainability tracking since July 26, 2025.",
-    "tokens": 32,
+    "id": "chunk_92",
+    "text": "# NYLA Algorand Core Support\nNYLA's canonical Algorand integration supporting ALGO transfers, ASA tokens, and sustainability tracking since July 26, 2025.\n\n## Related Terms: NYLA, Algorand, integration, live, sustainability",
+    "tokens": 56,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "algorand/core-support",
       "subsection": "body",
@@ -1668,15 +1882,15 @@
         "algorand/core-support"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_89",
+    "id": "chunk_93",
     "text": "NYLA's canonical Algorand integration supporting ALGO transfers, ASA tokens, and sustainability tracking since July 26, 2025.",
     "tokens": 32,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "algorand/core-support",
       "subsection": "summary",
@@ -1687,15 +1901,15 @@
         "algorand/core-support"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_90",
-    "text": "Live wallet integration for ALGO transfers, ASA tokens, and QR code generation.",
-    "tokens": 20,
+    "id": "chunk_94",
+    "text": "# Pera Wallet Integration\nLive wallet integration for ALGO transfers, ASA tokens, and QR code generation.\n\n## Related Terms: Pera Wallet, WalletConnect, ASA, Algorand",
+    "tokens": 42,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "algorand/pera-wallet",
       "subsection": "body",
@@ -1706,15 +1920,15 @@
         "algorand/pera-wallet"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_91",
+    "id": "chunk_95",
     "text": "Live wallet integration for ALGO transfers, ASA tokens, and QR code generation.",
     "tokens": 20,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "algorand/pera-wallet",
       "subsection": "summary",
@@ -1725,15 +1939,15 @@
         "algorand/pera-wallet"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_92",
-    "text": "Live DEX protocol integration with concentrated liquidity and flash loan capabilities.",
-    "tokens": 22,
+    "id": "chunk_96",
+    "text": "Live DEX protocol integration with concentrated liquidity and flash loan capabilities.\n\n## Related Terms: Uniswap V3, concentrated liquidity, flash loans, fee tiers",
+    "tokens": 41,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "ethereum/uniswap-v3",
       "subsection": "body",
@@ -1744,15 +1958,15 @@
         "ethereum/uniswap-v3"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_93",
+    "id": "chunk_97",
     "text": "Live DEX protocol integration with concentrated liquidity and flash loan capabilities.",
     "tokens": 22,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "ethereum/uniswap-v3",
       "subsection": "summary",
@@ -1763,15 +1977,15 @@
         "ethereum/uniswap-v3"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_94",
-    "text": "Live DEX aggregator for optimal Solana token routing across 20+ exchanges.",
-    "tokens": 19,
+    "id": "chunk_98",
+    "text": "# Jupiter DEX Aggregator Integration\nLive DEX aggregator for optimal Solana token routing across 20+ exchanges.\n\n## Related Terms: Jupiter, DEX aggregator, routing, Solana, MEV",
+    "tokens": 44,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "solana/jupiter-routing",
       "subsection": "body",
@@ -1782,15 +1996,15 @@
         "solana/jupiter-routing"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_95",
+    "id": "chunk_99",
     "text": "Live DEX aggregator for optimal Solana token routing across 20+ exchanges.",
     "tokens": 19,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "integrations",
       "section": "solana/jupiter-routing",
       "subsection": "summary",
@@ -1801,15 +2015,15 @@
         "solana/jupiter-routing"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_96",
-    "text": "Partnership with Algorand Foundation focused on sustainable blockchain AI agents and carbon-negative DeFi solutions. Algorand Foundation supports NYLA's expansion into environmentally conscious blockchain operations. Partnership includes grant funding for Algorand integration development, sustainability reporting tools, and green DeFi protocol access. Collaboration emphasizes Algorand's proof-of-stake efficiency and carbon-negative network properties.",
-    "tokens": 114,
+    "id": "chunk_100",
+    "text": "# Algorand Foundation Partnership\nPartnership with Algorand Foundation focused on sustainable blockchain AI agents and carbon-negative DeFi solutions. Algorand Foundation supports NYLA's expansion into environmentally conscious blockchain operations. Partnership includes grant funding for Algorand integration development, sustainability reporting tools, and green DeFi protocol access. Collaboration emphasizes Algorand's proof-of-stake efficiency and carbon-negative network properties.\n\n## Related Terms: Algorand Foundation, carbon-negative, proof-of-stake, sustainability, green DeFi",
+    "tokens": 148,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "partners",
       "section": "ecosystem_partners_algorand_foundation",
       "subsection": "body",
@@ -1820,15 +2034,15 @@
         "ecosystem_partners_algorand_foundation"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_97",
+    "id": "chunk_101",
     "text": "Algorand Foundation partnership emphasizing sustainable, carbon-negative AI agents and green DeFi solutions.",
     "tokens": 27,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "partners",
       "section": "ecosystem_partners_algorand_foundation",
       "subsection": "summary",
@@ -1839,15 +2053,15 @@
         "ecosystem_partners_algorand_foundation"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_98",
-    "text": "Strategic partnership with Solana Foundation establishing NYLA as a key AI agent in the Solana ecosystem. Partnership includes developer grant funding, technical advisory support, and co-marketing opportunities. Solana Foundation provides guidance on best practices, security reviews, and access to core development teams. Collaboration includes Breakpoint conference presence, hackathon sponsorship, and ecosystem tool integration priority.",
-    "tokens": 111,
+    "id": "chunk_102",
+    "text": "# Solana Foundation Strategic Partnership\nStrategic partnership with Solana Foundation establishing NYLA as a key AI agent in the Solana ecosystem. Partnership includes developer grant funding, technical advisory support, and co-marketing opportunities. Solana Foundation provides guidance on best practices, security reviews, and access to core development teams. Collaboration includes Breakpoint conference presence, hackathon sponsorship, and ecosystem tool integration priority.\n\n## Related Terms: Solana Foundation, grants, ecosystem, partnership, Breakpoint",
+    "tokens": 141,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "partners",
       "section": "ecosystem_partners_solana_foundation",
       "subsection": "body",
@@ -1858,15 +2072,15 @@
         "ecosystem_partners_solana_foundation"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   },
   {
-    "id": "chunk_99",
+    "id": "chunk_103",
     "text": "Strategic Solana Foundation partnership providing grants, technical advisory, and ecosystem integration priority for NYLA.",
     "tokens": 31,
     "metadata": {
-      "created_at": "2025-08-14T07:36:54.550Z",
+      "created_at": "2025-08-14T14:39:38.606Z",
       "category": "partners",
       "section": "ecosystem_partners_solana_foundation",
       "subsection": "summary",
@@ -1877,7 +2091,7 @@
         "ecosystem_partners_solana_foundation"
       ],
       "chunk_type": "general_info",
-      "updated_at": "2025-08-14T07:36:54.550Z"
+      "updated_at": "2025-08-14T14:39:38.606Z"
     }
   }
 ]
