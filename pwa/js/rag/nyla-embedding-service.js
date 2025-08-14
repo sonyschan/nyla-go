@@ -127,10 +127,19 @@ class NYLAEmbeddingService {
   async embed(text) {
     await this.initialize();
     
+    console.log('🔍 Embedding Debug:', {
+      initialized: this.modelLoaded,
+      hasPipeline: !!this.pipeline,
+      textLength: text?.length,
+      textPreview: text?.substring(0, 50) + '...'
+    });
+    
     // Check cache first
     if (this.options.cacheEnabled && this.embeddingCache.has(text)) {
       this.performanceMetrics.cacheHits++;
-      return this.embeddingCache.get(text);
+      const cached = this.embeddingCache.get(text);
+      console.log('✅ Using cached embedding, dimension:', cached.length);
+      return cached;
     }
     
     const startTime = performance.now();
@@ -149,6 +158,12 @@ class NYLAEmbeddingService {
       
       // Extract embedding array
       const embedding = Array.from(output.data);
+      
+      console.log('✅ Generated embedding:', {
+        dimension: embedding.length,
+        sampleValues: embedding.slice(0, 5),
+        embeddingTime: (performance.now() - startTime).toFixed(2) + 'ms'
+      });
       
       // Track performance
       const embeddingTime = performance.now() - startTime;

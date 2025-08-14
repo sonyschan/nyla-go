@@ -175,13 +175,29 @@ class NYLAVectorDB {
   async search(queryEmbedding, k = 5, filter = null) {
     if (!this.initialized) await this.initialize();
     
+    console.log('🔍 Vector DB Search Debug:', {
+      initialized: this.initialized,
+      hasIndex: !!this.index,
+      chunksCount: this.chunks.size,
+      queryEmbeddingLength: queryEmbedding?.length,
+      expectedDimension: this.options.dimension,
+      requestedK: k,
+      filter: filter
+    });
+    
     // Validate query embedding
     if (!queryEmbedding || queryEmbedding.length !== this.options.dimension) {
-      throw new Error('Invalid query embedding');
+      const error = `Invalid query embedding: expected ${this.options.dimension} dimensions, got ${queryEmbedding?.length || 'undefined'}`;
+      console.error('❌', error);
+      throw new Error(error);
     }
     
     // Perform search
     const results = this.index.search(queryEmbedding, k * 2); // Get extra results for filtering
+    console.log('🔍 Vector DB Search Results:', {
+      rawResultsCount: results.length,
+      topSimilarities: results.slice(0, 3).map(r => ({ id: r.id, similarity: r.similarity }))
+    });
     
     // Apply filters and get chunk data
     const filteredResults = [];
