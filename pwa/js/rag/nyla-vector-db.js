@@ -509,11 +509,31 @@ class SimpleVectorIndex {
   }
 
   add(vector, id) {
+    if (this.vectors.length < 3) {
+      console.log(`🔍 Adding vector ${this.vectors.length + 1} to index:`, {
+        id: id,
+        vectorLength: vector.length,
+        sampleValues: vector.slice(0, 3)
+      });
+    }
     this.vectors.push(vector);
     this.ids.push(id);
   }
 
   search(queryVector, k) {
+    console.log('🔍 SimpleVectorIndex Search Debug:', {
+      vectorCount: this.vectors.length,
+      idsCount: this.ids.length,
+      queryVectorLength: queryVector.length,
+      dimension: this.dimension,
+      requestedK: k
+    });
+    
+    if (this.vectors.length === 0) {
+      console.log('❌ No vectors in index to search!');
+      return [];
+    }
+    
     const similarities = [];
     
     // Calculate similarities
@@ -524,10 +544,20 @@ class SimpleVectorIndex {
         similarity: similarity,
         distance: 1 - similarity
       });
+      
+      // Debug first few similarities
+      if (i < 3) {
+        console.log(`  Vector ${i} (${this.ids[i]}): similarity ${similarity.toFixed(4)}`);
+      }
     }
     
     // Sort by similarity (descending)
     similarities.sort((a, b) => b.similarity - a.similarity);
+    
+    console.log('🔍 Top similarities:', similarities.slice(0, 3).map(s => ({
+      id: s.id,
+      similarity: s.similarity.toFixed(4)
+    })));
     
     // Return top k
     return similarities.slice(0, k);
