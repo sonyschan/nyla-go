@@ -282,6 +282,12 @@ class NYLAConversationManagerV2 {
           console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
         }
         response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
+        console.log('NYLA Conversation V2: 🔍 Response from processWithLLM:', {
+          hasAnswer: !!response.answer,
+          hasFollowUps: !!response.followUps,
+          isLLMGenerated: response.isLLMGenerated,
+          responseKeys: Object.keys(response)
+        });
       } else {
         console.log('NYLA Conversation V2: ⚠️ LLM not ready - using fallback response');
         console.log('NYLA Conversation V2: 🚨 LLM Status:', {
@@ -374,6 +380,13 @@ class NYLAConversationManagerV2 {
           return response;
         }
       }
+      
+      console.log('NYLA Conversation V2: 🔍 Final response before return:', {
+        hasAnswer: !!response.answer,
+        hasFollowUps: !!response.followUps,
+        isLLMGenerated: response.isLLMGenerated,
+        responseKeys: Object.keys(response)
+      });
       
       return response;
 
