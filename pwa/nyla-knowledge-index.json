@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "chunks": [],
+  "metadata": {
+    "generated_at": "2025-08-13T16:31:55.377Z",
+    "model": "all-MiniLM-L6-v2",
+    "dimension": 384,
+    "total_chunks": 99
+  }
+}
