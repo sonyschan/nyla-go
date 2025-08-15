@@ -52,7 +52,8 @@
       "Bash(npm run rag:status:*)",
       "Bash(npm run rag:verify:*)",
       "Bash(npm run rag:test:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git mv:*)"
     ],
     "deny": []
   }
