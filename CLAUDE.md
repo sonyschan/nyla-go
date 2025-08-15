@@ -869,3 +869,49 @@ console.log('KB Stats:', conversationManager.ragIntegration.getStatus());
 - Critical architectural decisions and their reasoning
 - Debugging approaches for common issues
 - File structure and environment configurations
+
+## 📁 **Documentation Organization**
+
+### **Root Directory Files**
+Essential files remain in the root for standard conventions:
+- `README.md` - Main project documentation
+- `SECURITY.md` - Security documentation
+- `privacy_policy.md` - Privacy policy
+- `CLAUDE.md` - This file (Claude AI memory)
+- `TESTING-GUIDE.md` - Primary testing reference
+
+### **Organized Documentation Structure**
+Technical documentation is organized in `/docs/` subdirectories:
+
+```
+/docs/
+├── architecture/          # System architecture & technical docs
+│   ├── NYLA-AI-ARCHITECTURE-FLOW.md
+│   ├── EMBEDDING-BUILD-SYSTEM.md
+│   └── SEMANTIC-FIRST-MIGRATION.md
+│
+├── chrome-store/         # Chrome Web Store submission docs
+│   ├── CHROME_STORE_DESCRIPTION.md
+│   ├── CHROME_STORE_DESCRIPTION_OPTIMIZED.md
+│   ├── CHROME_STORE_RESPONSE.md
+│   ├── CHROME_STORE_RESPONSE_CONCISE.md
+│   ├── ACTIVETAB_USAGE_JUSTIFICATION.md
+│   └── store_listing_template.md
+│
+├── i18n/                 # Internationalization documentation
+│   ├── I18N-IMPLEMENTATION.md
+│   ├── I18N-CONSOLIDATION-ANALYSIS.md
+│   ├── I18NEXT-MIGRATION-SUMMARY.md
+│   └── EXTENSION-I18N-FIX-SUMMARY.md
+│
+└── testing/              # Testing & performance docs
+    ├── FUNCTIONAL-TESTS.md
+    └── PERFORMANCE-COMPARISON.md
+```
+
+### **Accessing Documentation**
+Claude can access organized docs using:
+- `ls docs/architecture/` - List architecture docs
+- `find docs -name "*RAG*"` - Find specific topics
+- `grep -r "pattern" docs/` - Search across all docs
+- `Read tool with path: /Users/sonyschan/NYLAgo/docs/category/file.md`
