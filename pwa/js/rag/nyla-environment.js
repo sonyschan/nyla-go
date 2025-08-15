@@ -255,53 +255,6 @@ class NYLAEmbeddingEnvironment {
   }
 }
 
-/**
- * Environment-aware console logging
- */
-class NYLALogger {
-  constructor(prefix = 'NYLA') {
-    this.prefix = prefix;
-    this.isNode = isNode;
-  }
-  
-  log(message, data = null) {
-    if (this.isNode) {
-      console.log(`[${this.prefix}] ${message}`);
-      if (data) console.log(JSON.stringify(data, null, 2));
-    } else {
-      console.log(`%c[${this.prefix}]%c ${message}`, 'color: #FF6B35; font-weight: bold;', 'color: inherit;');
-      if (data) console.log(data);
-    }
-  }
-  
-  error(message, error = null) {
-    if (this.isNode) {
-      console.error(`[${this.prefix}] ERROR: ${message}`);
-      if (error) console.error(error);
-    } else {
-      console.error(`%c[${this.prefix}] ERROR:%c ${message}`, 'color: #FF6B35; font-weight: bold;', 'color: red;');
-      if (error) console.error(error);
-    }
-  }
-  
-  warn(message) {
-    if (this.isNode) {
-      console.warn(`[${this.prefix}] WARNING: ${message}`);
-    } else {
-      console.warn(`%c[${this.prefix}] WARNING:%c ${message}`, 'color: #FF6B35; font-weight: bold;', 'color: orange;');
-    }
-  }
-  
-  success(message, data = null) {
-    if (this.isNode) {
-      console.log(`[${this.prefix}] ✅ ${message}`);
-      if (data) console.log(JSON.stringify(data, null, 2));
-    } else {
-      console.log(`%c[${this.prefix}] ✅%c ${message}`, 'color: #FF6B35; font-weight: bold;', 'color: green;');
-      if (data) console.log(data);
-    }
-  }
-}
 
 /**
  * Environment-aware utilities
