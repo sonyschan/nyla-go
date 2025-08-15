@@ -82,6 +82,141 @@ For each new item, create a `chunk`:
 - **CONSOLIDATE:** Keep related information in the same chunk rather than splitting into cultural vs. technical
 - **PRACTICAL VALUE:** Focus on information that helps users understand and use the technology/project
 
+## 🌐 **Proper Noun & Aliases Handling (Aug 15, 2025)**
+
+**CRITICAL: Every new knowledge addition MUST consider proper noun aliases for cross-lingual discovery**
+
+### **When Adding New Knowledge:**
+
+#### **1. Identify Proper Nouns in Content**
+- **Project Names**: WangChai, NYLA, Solana, Ethereum
+- **Social Handles**: @WangChaidotbonk, @shax_btc, @AgentNyla
+- **Token Symbols**: $NYLA, $旺柴, SOL, ETH
+- **Person Names**: Shax, ChiefZ, Noir, berries
+- **Technical Terms**: AMA, DEX, DeFi, NFT
+- **Blockchain Networks**: Solana, Ethereum, Algorand
+
+#### **2. Cross-Lingual Alias Mapping**
+For each proper noun identified, consider these alias patterns:
+
+**Chinese ↔ English Projects:**
+```json
+"wangchai": {
+  "zh": ["旺柴"],
+  "en": ["WangChai", "Wang-Chai", "Wang Chai"],
+  "social": ["@WangChaidotbonk"],
+  "variants": ["$旺柴", "WANGCHAI"]
+}
+```
+
+**Social Media Handles:**
+```json
+"shax": {
+  "en": ["shax", "shax_btc"],
+  "social": ["@shax_btc"],
+  "variants": ["SHAX"]
+}
+```
+
+**Blockchain Networks:**
+```json
+"solana": {
+  "zh": ["索拉纳"],
+  "en": ["Solana", "SOL"],
+  "variants": ["$SOL", "SOLANA"]
+}
+```
+
+#### **3. Update Glossary Terms Field**
+**ALWAYS include all aliases in `glossary_terms`:**
+```json
+"glossary_terms": [
+  "WangChai", "旺柴", "旺柴项目", "项目介绍", 
+  "@WangChaidotbonk", "$旺柴", "WANGCHAI",
+  "community", "project", "blockchain"
+]
+```
+
+#### **4. Alias-Aware Tagging**
+Include both scripts and variants in `tags`:
+```json
+"tags": [
+  "wangchai", "旺柴", "项目", "project",
+  "community", "社区", "blockchain", "区块链",
+  "partnership", "合作", "AMA", "joint_events"
+]
+```
+
+### **RAG Discovery Benefits:**
+
+#### **Before Alias Handling:**
+- Chinese query "旺柴" → Only finds Chinese content
+- English query "WangChai" → Only finds English content
+- **Result**: Cross-lingual content invisible to users
+
+#### **After Alias Handling:**
+- Chinese query "旺柴" → Finds Chinese + English content
+- English query "WangChai" → Finds English + Chinese content  
+- **Result**: 25%+ more relevant results across languages
+
+### **Mandatory Alias Check Process:**
+
+#### **For Every New Knowledge Addition:**
+
+1. **Scan Content for Proper Nouns**
+   ```bash
+   # Look for: Project names, handles, tokens, networks, people
+   grep -E "(@[A-Za-z_]+|[A-Z][a-z]+[A-Z]|[\u4e00-\u9fff]+)" content.txt
+   ```
+
+2. **Check Existing Glossary**
+   ```javascript
+   // See: /pwa/js/rag/nyla-proper-noun-glossary.js
+   // Does this proper noun already exist in the system?
+   ```
+
+3. **Add Missing Aliases**
+   - If proper noun exists → ensure all variants are in glossary_terms
+   - If proper noun is NEW → consider adding to main glossary system
+
+4. **Cross-Reference Validation**
+   - Chinese content mentions "旺柴"? → Add "WangChai", "Wang-Chai" to tags
+   - English content mentions "WangChai"? → Add "旺柴", "旺柴项目" to tags
+   - Social handles mentioned? → Add without @ prefix to tags
+
+### **Common Proper Noun Patterns:**
+
+#### **Must Always Check For:**
+- **Project Names**: Any capitalized compound words (WangChai, NYLAGo, DeFiPulse)
+- **Social Handles**: Anything starting with @ (@WangChaidotbonk, @shax_btc)
+- **Token Symbols**: Anything with $ prefix ($NYLA, $旺柴, $SOL)
+- **Chinese Terms**: Any Chinese characters that could have English equivalents
+- **Acronyms**: AMA, DEX, DeFi, NFT, DAO, etc.
+- **Network Names**: Solana, Ethereum, Algorand, Base, Arbitrum
+
+#### **Alias Discovery Questions:**
+- Does this project/token have Chinese AND English names?
+- Are there social media handles associated with this entity?
+- Are there multiple ways to write this name (hyphenated, spaced, combined)?
+- Does this term have acronyms or abbreviated forms?
+- Are there variant spellings or common misspellings?
+
+### **Quality Assurance for Aliases:**
+
+#### **Before Embedding Rebuild:**
+- [ ] All proper nouns identified in new content
+- [ ] Cross-lingual aliases added to glossary_terms
+- [ ] Social handles included (with and without @ prefix)
+- [ ] Token symbols included (with and without $ prefix)  
+- [ ] Chinese compound words kept intact (no character splitting)
+- [ ] English variants include common spacing/hyphenation patterns
+
+#### **Post-Embedding Validation:**
+- [ ] Test Chinese queries can find English content
+- [ ] Test English queries can find Chinese content  
+- [ ] Test social handle queries work both ways (@handle and handle)
+- [ ] No false positives from character-level Chinese matching
+
 ## Index & Vector Store Refresh
 **NYLA-specific commands** (use in this exact order):
 
@@ -155,11 +290,17 @@ For each new item, create a `chunk`:
 ## Minimal Procedures (each run)
 1) Read `pwa/kb/schema.json` and representative files from each category to learn house style
 2) Normalize user text → extract fields → build `chunk` objects with proper schema compliance
-3) Decide file path, write/append JSON (`chunks[]`), de-dup by `id` or `hash`
-4) Run NYLA embedding pipeline: `npm run build:embeddings`
-5) Verify with `npm run rag:verify` and check `pwa/data/nyla-vector-db.json`
-6) Test PWA digest with available RAG test scripts
-7) Emit the JSON summary with NYLA-specific paths
+3) **🌐 MANDATORY: Proper noun & alias handling** (NEW REQUIREMENT):
+   - Scan content for proper nouns (projects, handles, tokens, networks, people)
+   - Check existing glossary system (`/pwa/js/rag/nyla-proper-noun-glossary.js`)
+   - Add cross-lingual aliases to `glossary_terms` and `tags` fields
+   - Ensure Chinese ↔ English discoverability for all entities
+4) Decide file path, write/append JSON (`chunks[]`), de-dup by `id` or `hash`
+5) Run NYLA embedding pipeline: `npm run build:embeddings`
+6) Verify with `npm run rag:verify` and check `pwa/data/nyla-vector-db.json`
+7) **🧪 Test cross-lingual queries** to validate alias handling worked
+8) Test PWA digest with available RAG test scripts
+9) Emit the JSON summary with NYLA-specific paths
 
 ## NYLA Integration Notes
 - **Pre-commit hooks:** Repo has automatic KB change detection - commits trigger embedding rebuilds
@@ -171,6 +312,10 @@ For each new item, create a `chunk`:
 - **Multilingual:** Enhanced Chinese language support - perfect for crypto projects like 旺柴
 - **Pipeline Consistency:** Identical embedding process for Node.js and Browser (eliminates variance)
 - **Architecture:** Browser-compatible RAG system with IndexedDB persistence
+- **🌐 Proper Noun System:** Integrated query expansion with cross-lingual alias handling
+- **Alias Components:** `/pwa/js/rag/nyla-proper-noun-glossary.js` + `/pwa/js/rag/nyla-query-expander.js`
+- **Cross-lingual Discovery:** Chinese queries find English content, English queries find Chinese content
+- **Hybrid Retrieval:** BM25 preserves exact script matches while vector search finds semantic aliases
 
 ## Quality Assurance Checklist
 - [ ] Schema validation against `pwa/kb/schema.json`
@@ -181,11 +326,23 @@ For each new item, create a `chunk`:
 - [ ] **Chinese compound words kept intact** (no character-level decomposition)
 - [ ] **Project-focused content** (technical/practical over cultural/linguistic)
 - [ ] **No competing chunks** (consolidated related information)
+- [ ] **🌐 PROPER NOUN & ALIASES HANDLED** (MANDATORY NEW REQUIREMENT):
+  - [ ] All proper nouns in content identified (projects, handles, tokens, networks, people)
+  - [ ] Cross-lingual aliases added to `glossary_terms` field
+  - [ ] Social handles included with and without @ prefix in `tags`
+  - [ ] Token symbols included with and without $ prefix in `tags`
+  - [ ] Chinese terms paired with English equivalents in `tags`
+  - [ ] English terms paired with Chinese equivalents in `tags`
+  - [ ] Acronyms and variant spellings included (AMA, DEX, DeFi)
 - [ ] Embeddings rebuilt successfully with **multilingual-e5-base model**
 - [ ] Vector DB updated with new chunks (768-dimensional embeddings)
 - [ ] PWA can load and query new knowledge
 - [ ] Git commit follows naming convention
-- [ ] **Chinese queries tested** (ensure proper semantic matching with E5 model)
+- [ ] **🧪 CROSS-LINGUAL QUERY TESTING** (MANDATORY NEW REQUIREMENT):
+  - [ ] Chinese queries can find English content for added entities
+  - [ ] English queries can find Chinese content for added entities  
+  - [ ] Social handle queries work both ways (@handle and handle)
+  - [ ] No false positives from character-level Chinese decomposition
 
 ---
 

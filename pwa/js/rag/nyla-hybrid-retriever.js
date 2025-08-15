@@ -16,15 +16,18 @@ class NYLAHybridRetriever {
       minScore: 0.1,        // Minimum score threshold
       crossEncoderModel: 'Xenova/multilingual-e5-small', // For reranking
       queryRewriteEnabled: true,
+      properNounExpansion: true,  // Enable proper noun alias expansion
+      maxQueryExpansions: 3,      // Maximum expanded queries to use
       ...options
     };
     
     this.bm25Index = null;
     this.glossary = null;
+    this.queryExpander = null;    // NEW: Query expander for proper nouns
     this.crossEncoder = null;
     this.initialized = false;
     
-    console.log('🔍 Hybrid Retriever initialized');
+    console.log('🔍 Hybrid Retriever initialized with proper noun expansion');
   }
 
   /**
@@ -35,6 +38,31 @@ class NYLAHybridRetriever {
     
     this.bm25Index = bm25Index;
     this.glossary = glossary;
+    
+    // Initialize query expander with proper noun glossary
+    if (this.options.properNounExpansion) {
+      try {
+        // Create proper noun glossary if not provided
+        const properNounGlossary = window.NYLAProperNounGlossary ? 
+          new window.NYLAProperNounGlossary() : null;
+          
+        if (properNounGlossary) {
+          this.queryExpander = window.NYLAQueryExpander ? 
+            new window.NYLAQueryExpander(properNounGlossary, {
+              maxExpansions: this.options.maxQueryExpansions,
+              debug: false
+            }) : null;
+            
+          console.log('✅ Query expander initialized');
+        } else {
+          console.warn('⚠️ Proper noun glossary not available, disabling expansion');
+          this.options.properNounExpansion = false;
+        }
+      } catch (error) {
+        console.warn('⚠️ Query expander initialization failed:', error);
+        this.options.properNounExpansion = false;
+      }
+    }
     
     // Initialize cross-encoder for reranking (simplified - using same embedding service)
     this.crossEncoder = this.embeddingService;
@@ -60,30 +88,63 @@ class NYLAHybridRetriever {
     console.log(`🔍 Hybrid retrieval for query: "${query}"`);
     
     try {
-      // Step 1: Query preprocessing and rewriting
-      const processedQuery = await this.preprocessQuery(query, config);
-      console.log(`📝 Processed query: "${processedQuery.rewritten}"`);
+      // Step 1: Query expansion with proper nouns (NEW!)
+      let expandedQueries = [query];
+      let expansionInfo = null;
       
-      // Step 2: Parallel dense and BM25 search
-      const [denseResults, bm25Results] = await Promise.all([
-        this.denseSearch(processedQuery, config.denseTopK),
-        this.bm25Search(processedQuery, config.bm25TopK)
-      ]);
+      if (this.options.properNounExpansion && this.queryExpander) {
+        try {
+          const expansion = await this.queryExpander.expandQuery(query, {
+            maxExpansions: config.maxQueryExpansions
+          });
+          
+          if (expansion.hasExpansions) {
+            expandedQueries = expansion.expandedQueries;
+            expansionInfo = expansion;
+            console.log(`🌐 Query expanded to ${expandedQueries.length} variants:`, 
+              expandedQueries.map((q, i) => `${i+1}. ${q}`));
+          }
+        } catch (error) {
+          console.warn('⚠️ Query expansion failed, using original query:', error);
+        }
+      }
       
-      console.log(`🎯 Dense: ${denseResults.length}, BM25: ${bm25Results.length} results`);
+      // Step 2: Execute retrieval for all expanded queries
+      const allResults = [];
       
-      // Step 3: Merge and deduplicate results
-      const mergedResults = this.mergeAndDeduplicate(
-        denseResults, 
-        bm25Results, 
+      for (const [index, expandedQuery] of expandedQueries.entries()) {
+        const isOriginal = index === 0;
+        console.log(`🔍 ${isOriginal ? 'Original' : 'Expanded'} query ${index + 1}: "${expandedQuery}"`);
+        
+        // Step 2a: Query preprocessing (per expanded query)
+        const processedQuery = await this.preprocessQuery(expandedQuery, config);
+        
+        // Step 2b: Parallel dense and BM25 search
+        const [denseResults, bm25Results] = await Promise.all([
+          this.denseSearch(processedQuery, config.denseTopK),
+          this.bm25Search(processedQuery, config.bm25TopK)
+        ]);
+        
+        // Mark results with query source for debugging
+        const markedDense = denseResults.map(r => ({ ...r, queryIndex: index, queryType: 'dense' }));
+        const markedBM25 = bm25Results.map(r => ({ ...r, queryIndex: index, queryType: 'bm25' }));
+        
+        allResults.push(...markedDense, ...markedBM25);
+        
+        console.log(`🎯 Query ${index + 1} - Dense: ${denseResults.length}, BM25: ${bm25Results.length} results`);
+      }
+      
+      // Step 3: Merge and deduplicate results from all expanded queries
+      const mergedResults = this.mergeAndDeduplicateExpanded(
+        allResults, 
         config.fusionAlpha
       );
       
-      console.log(`🔗 Merged to ${mergedResults.length} unique results`);
+      console.log(`🔗 Merged ${allResults.length} results from ${expandedQueries.length} queries to ${mergedResults.length} unique results`);
       
-      // Step 4: Cross-encoder reranking
+      // Step 4: Cross-encoder reranking (use original query for relevance scoring)
       const rerankedResults = await this.crossEncoderRerank(
-        processedQuery.rewritten,
+        query, // Use original query for reranking relevance
         mergedResults,
         config.rerankTopK
       );
@@ -371,6 +432,74 @@ class NYLAHybridRetriever {
     for (const result of mergedMap.values()) {
       results.push(result);
     }
+    return results.sort((a, b) => b.fusion_score - a.fusion_score);
+  }
+
+  /**
+   * Merge results from multiple expanded queries with deduplication
+   * NEW: Handles results from query expansion (proper noun aliases)
+   */
+  mergeAndDeduplicateExpanded(allResults, fusionAlpha) {
+    const mergedMap = new Map();
+    
+    // Group results by type and query
+    const denseResults = allResults.filter(r => r.queryType === 'dense');
+    const bm25Results = allResults.filter(r => r.queryType === 'bm25');
+    
+    // Process dense results
+    for (const result of denseResults) {
+      const id = result.id || result.hash;
+      const score = (result.dense_score || 0) * fusionAlpha;
+      const queryBoost = result.queryIndex === 0 ? 1.0 : 0.8; // Slight preference for original query
+      
+      if (mergedMap.has(id)) {
+        // Take the highest scoring version
+        const existing = mergedMap.get(id);
+        const boostedScore = score * queryBoost;
+        if (boostedScore > existing.fusion_score) {
+          existing.fusion_score = boostedScore;
+          existing.dense_score = result.dense_score || 0;
+          existing.search_method = 'hybrid';
+          existing.querySource = result.queryIndex === 0 ? 'original' : 'expanded';
+        }
+      } else {
+        mergedMap.set(id, {
+          ...result,
+          fusion_score: score * queryBoost,
+          dense_score: result.dense_score || 0,
+          bm25_score: 0,
+          search_method: 'dense',
+          querySource: result.queryIndex === 0 ? 'original' : 'expanded'
+        });
+      }
+    }
+    
+    // Process BM25 results
+    for (const result of bm25Results) {
+      const id = result.id || result.hash;
+      const score = (result.bm25_score || 0) * (1 - fusionAlpha);
+      const queryBoost = result.queryIndex === 0 ? 1.0 : 0.8;
+      
+      if (mergedMap.has(id)) {
+        // Add to existing result
+        const existing = mergedMap.get(id);
+        existing.fusion_score += score * queryBoost;
+        existing.bm25_score = Math.max(existing.bm25_score || 0, result.bm25_score || 0);
+        existing.search_method = 'hybrid';
+      } else {
+        mergedMap.set(id, {
+          ...result,
+          fusion_score: score * queryBoost,
+          dense_score: 0,
+          bm25_score: result.bm25_score || 0,
+          search_method: 'bm25',
+          querySource: result.queryIndex === 0 ? 'original' : 'expanded'
+        });
+      }
+    }
+    
+    // Convert to array and sort by fusion score
+    const results = Array.from(mergedMap.values());
     return results.sort((a, b) => b.fusion_score - a.fusion_score);
   }
 
