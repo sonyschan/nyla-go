@@ -77,6 +77,112 @@
         "geographic_target": "eastern_markets",
         "partnership_strengthening": true
       }
+    },
+    {
+      "id": "facts_wangchai_contract_specs",
+      "source_id": "wangchai_technical_specifications",
+      "type": "facts",
+      "lang": "bilingual",
+      "title": "WangChai (旺柴) Contract Address & Technical Specifications",
+      "section": "technical_specifications",
+      "tags": ["wangchai", "旺柴", "contract", "address", "solana", "token", "bonk_fun", "verification", "ticker"],
+      "as_of": "2025-08-15",
+      "stability": "stable",
+      "source_url": "https://x.com/WangChaidotbonk",
+      "hash": "facts_wangchai_contract_001",
+      "body": "WangChai (旺柴) is a Solana-based token with the ticker symbol $旺柴. The official contract address is 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk. The token was launched on bonk.fun platform and is identified as the 'No.1 Chinese Ticker' and 'Born CTO on @bonk_fun'. WangChai is recognized as one of the most popular emoji expressions on WeChat. The project slogan is '命里有柴，命里有财！' which represents good fortune and wealth in Chinese culture. All technical specifications and contract details can be verified through the official X account and linked resources.",
+      "summary_en": "WangChai ($旺柴) is a Solana token at contract address 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk, launched on bonk.fun as the No.1 Chinese ticker.",
+      "summary_zh": "旺柴 ($旺柴) 是索拉納代幣，合約地址為 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk，在 bonk.fun 上推出，為第一中文股票代碼。",
+      "priority": 9,
+      "related_chunks": ["ecosystem_partners_wangchai_collaboration"],
+      "glossary_terms": ["contract address", "Solana token", "ticker symbol", "bonk.fun", "verification"],
+      "technical_specs": {
+        "blockchain": "solana",
+        "contract_address": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+        "ticker_symbol": "$旺柴",
+        "launch_platform": "bonk_fun",
+        "token_standard": "solana_token",
+        "verification_required": true,
+        "official_designation": "No.1 Chinese Ticker",
+        "cultural_significance": "top_wechat_emoji"
+      }
+    },
+    {
+      "id": "facts_wangchai_official_links",
+      "source_id": "wangchai_official_channels",
+      "type": "facts",
+      "lang": "bilingual", 
+      "title": "WangChai (旺柴) Official Links & Community Channels",
+      "section": "official_channels",
+      "tags": ["wangchai", "旺柴", "official", "links", "x", "telegram", "linktree", "community", "verification"],
+      "as_of": "2025-08-15",
+      "stability": "stable",
+      "source_url": "https://x.com/WangChaidotbonk",
+      "hash": "facts_wangchai_links_001",
+      "body": "WangChai (旺柴) maintains official presence across multiple platforms for community engagement and verification. The official X (Twitter) account is @WangChaidotbonk (https://x.com/WangChaidotbonk). The centralized link hub is available at linktr.ee/WangchaiDoge. The project has an official X Community at https://x.com/i/communities/1941027470058434674 for discussions and updates. Telegram community can be found at https://t.me/wechatdogesol for real-time communication. These channels serve as the primary verification points for authentic WangChai information and community engagement.",
+      "summary_en": "WangChai's official channels include X account @WangChaidotbonk, Linktree hub at linktr.ee/WangchaiDoge, X Community, and Telegram at https://t.me/wechatdogesol.",
+      "summary_zh": "旺柴官方渠道包括X賬戶@WangChaidotbonk、Linktree中心linktr.ee/WangchaiDoge、X社區和Telegram https://t.me/wechatdogesol。",
+      "priority": 8,
+      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "facts_wangchai_contract_specs"],
+      "glossary_terms": ["official links", "verification", "X Community", "Telegram", "Linktree"],
+      "official_channels": {
+        "x_account": {
+          "handle": "@WangChaidotbonk",
+          "url": "https://x.com/WangChaidotbonk",
+          "purpose": "primary_official_communication"
+        },
+        "linktree": {
+          "url": "linktr.ee/WangchaiDoge",
+          "purpose": "centralized_link_hub"
+        },
+        "x_community": {
+          "url": "https://x.com/i/communities/1941027470058434674",
+          "purpose": "community_discussions"
+        },
+        "telegram": {
+          "url": "https://t.me/wechatdogesol", 
+          "purpose": "real_time_communication"
+        },
+        "verification_status": "official_verified"
+      }
+    },
+    {
+      "id": "glossary_wangchai_cultural_terms",
+      "source_id": "wangchai_cultural_context",
+      "type": "glossary",
+      "lang": "bilingual",
+      "title": "WangChai Cultural Terms & Chinese Context",
+      "section": "cultural_definitions",
+      "tags": ["wangchai", "旺柴", "chinese", "culture", "slogan", "emoji", "wechat", "fortune", "wealth"],
+      "as_of": "2025-08-15",
+      "stability": "stable", 
+      "source_url": "internal://nyla/glossary/chinese-crypto-culture",
+      "hash": "gloss_wangchai_culture_001",
+      "body": "命里有柴，命里有财！ (mìng lǐ yǒu chái, mìng lǐ yǒu cái) - WangChai's official slogan meaning 'Destiny has dogs, destiny has wealth!' This represents the belief that having a loyal companion (symbolized by the dog/chai) brings good fortune and financial prosperity. The term '旺柴' (wàng chái) combines '旺' meaning prosperous/flourishing and '柴' referring to Shiba Inu dogs. WangChai is recognized as one of the most popular emoji expressions on WeChat, China's dominant messaging platform, making it culturally significant beyond cryptocurrency. This cultural context is essential for understanding WangChai's appeal in Chinese-speaking communities.",
+      "summary_en": "WangChai's slogan '命里有柴，命里有财！' means 'Destiny has dogs, destiny has wealth!' representing prosperity through loyalty, with deep cultural significance as a popular WeChat emoji.",
+      "summary_zh": "旺柴的口號「命里有柴，命里有财！」意為「命中注定有狗，命中注定有財富！」象徵忠誠帶來繁榮，作為微信熱門表情包具有深厚文化意義。",
+      "priority": 6,
+      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "facts_wangchai_contract_specs"],
+      "glossary_terms": ["命里有柴命里有财", "旺柴", "WeChat emoji", "Chinese fortune", "Shiba Inu", "cultural significance"],
+      "cultural_definitions": {
+        "slogan": {
+          "chinese": "命里有柴，命里有财！",
+          "pinyin": "mìng lǐ yǒu chái, mìng lǐ yǒu cái",
+          "english": "Destiny has dogs, destiny has wealth!",
+          "meaning": "loyalty_brings_prosperity"
+        },
+        "name_meaning": {
+          "旺": "prosperous, flourishing",
+          "柴": "shiba_inu_dog",
+          "combined": "prosperous_dog"
+        },
+        "cultural_context": {
+          "platform": "wechat",
+          "significance": "popular_emoji_expression",
+          "region": "chinese_speaking_communities",
+          "symbolism": "fortune_through_loyalty"
+        }
+      }
     }
   ]
 }
