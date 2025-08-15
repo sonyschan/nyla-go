@@ -19,6 +19,10 @@ class NYLALLMEngine {
       temperature: 0.3,
       max_tokens: 600,
       top_p: 0.8,
+      top_k: 40,                    // Fix undefined top_k (common default)
+      repetition_penalty: 1.15,     // CRITICAL: Prevent token repetition loops
+      frequency_penalty: 0.3,       // Additional repetition control
+      presence_penalty: 0.1         // Encourage topic diversity
     };
     this.systemPrompt = this.createSystemPrompt();
     
@@ -28,6 +32,10 @@ class NYLALLMEngine {
       temperature: this.modelConfig.temperature,
       max_tokens: this.modelConfig.max_tokens,
       top_p: this.modelConfig.top_p,
+      top_k: this.modelConfig.top_k,
+      repetition_penalty: this.modelConfig.repetition_penalty,
+      frequency_penalty: this.modelConfig.frequency_penalty,
+      presence_penalty: this.modelConfig.presence_penalty,
       device: this.deviceInfo
     });
     
@@ -537,7 +545,10 @@ class NYLALLMEngine {
         temperature: this.modelConfig.temperature,
         max_tokens: this.modelConfig.max_tokens,
         top_p: this.modelConfig.top_p,
-        top_k: this.modelConfig.top_k
+        top_k: this.modelConfig.top_k,
+        repetition_penalty: this.modelConfig.repetition_penalty,
+        frequency_penalty: this.modelConfig.frequency_penalty,
+        presence_penalty: this.modelConfig.presence_penalty
       });
       const inferenceTime = performance.now() - inferenceStart;
 
@@ -635,14 +646,36 @@ class NYLALLMEngine {
         max_tokens: this.modelConfig.max_tokens,
         top_p: this.modelConfig.top_p,
         top_k: this.modelConfig.top_k,
+        repetition_penalty: this.modelConfig.repetition_penalty,
+        frequency_penalty: this.modelConfig.frequency_penalty,
+        presence_penalty: this.modelConfig.presence_penalty,
         stream: true
       });
 
-      // Process streaming chunks
+      // Process streaming chunks with repetition monitoring
+      let repetitionWarningCount = 0;
+      const REPETITION_CHECK_INTERVAL = 50; // Check every 50 characters
+      
       for await (const chunk of stream) {
         if (chunk.choices?.[0]?.delta?.content) {
           const content = chunk.choices[0].delta.content;
           fullResponse += content;
+          
+          // CRITICAL: Monitor for repetition during streaming
+          if (fullResponse.length % REPETITION_CHECK_INTERVAL === 0) {
+            const recentText = fullResponse.slice(-200); // Last 200 chars
+            const hasRepetition = /(.{5,20})\1{3,}/.test(recentText);
+            
+            if (hasRepetition) {
+              repetitionWarningCount++;
+              NYLALogger.debug(`🚨 NYLA LLM: Streaming repetition detected (warning ${repetitionWarningCount})`);
+              
+              if (repetitionWarningCount >= 3) {
+                NYLALogger.debug('🚨 NYLA LLM: Multiple repetition warnings - stopping stream early');
+                break; // Stop streaming to prevent infinite loops
+              }
+            }
+          }
           
           // Call the chunk callback if provided
           if (onChunk && typeof onChunk === 'function') {
@@ -1317,6 +1350,78 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   }
 
   /**
+   * Detect and fix repetitive text patterns - CRITICAL for Chinese text
+   */
+  detectAndFixRepetition(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    const originalText = text;
+
+    // Pattern 1: Detect simple token repetition (like "旺柴旺柴旺柴")
+    const simpleRepeatPattern = /(.{1,20})\1{3,}/g; // Same pattern repeated 3+ times
+    if (simpleRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected simple repetition pattern, truncating...');
+      text = text.replace(simpleRepeatPattern, '$1');
+    }
+
+    // Pattern 2: Detect phrase repetition with spaces/punctuation (English phrases)
+    const phraseRepeatPattern = /([^.!?]{10,50}[.!?]?\s*)\1{2,}/g; // Sentences/phrases repeated 2+ times
+    if (phraseRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected phrase repetition, truncating...');
+      text = text.replace(phraseRepeatPattern, '$1');
+    }
+
+    // Pattern 3: Detect Chinese character/word loops specifically  
+    const chineseRepeatPattern = /([\u4e00-\u9fff]{1,10})\1{4,}/g; // Chinese chars repeated 4+ times (lowered threshold)
+    if (chineseRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected Chinese character repetition, fixing...');
+      text = text.replace(chineseRepeatPattern, '$1');
+    }
+
+    // Pattern 4: Detect URL repetition (common in LLM loops)
+    const urlRepeatPattern = /(https?:\/\/[^\s]+)\s+\1{2,}/g;
+    if (urlRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected URL repetition, fixing...');
+      text = text.replace(urlRepeatPattern, '$1');
+    }
+
+    // Pattern 5: Detect JSON field repetition
+    const jsonRepeatPattern = /("[\w]+"\s*:\s*"[^"]*",?\s*)\1{2,}/g;
+    if (jsonRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected JSON field repetition, fixing...');
+      text = text.replace(jsonRepeatPattern, '$1');
+    }
+
+    // Pattern 6: Detect word-level repetition (for mixed Chinese/English)
+    const wordRepeatPattern = /(\b[\u4e00-\u9fff\w]{2,20}\b\s*)\1{4,}/g;
+    if (wordRepeatPattern.test(text)) {
+      NYLALogger.debug('🚨 NYLA LLM: Detected word-level repetition, fixing...');
+      text = text.replace(wordRepeatPattern, '$1');
+    }
+
+    // Pattern 7: Emergency brake - if text is >80% repetitive characters
+    const uniqueChars = new Set(text.split('')).size;
+    const repetitionRatio = uniqueChars / text.length;
+    if (repetitionRatio < 0.2 && text.length > 100) {
+      NYLALogger.debug('🚨 NYLA LLM: Text >80% repetitive, emergency truncation');
+      // Find the first complete sentence and cut there
+      const sentences = text.match(/[^.!?]*[.!?]/g);
+      if (sentences && sentences.length > 0) {
+        text = sentences[0];
+      } else {
+        text = text.substring(0, Math.min(200, text.length)) + '...';
+      }
+    }
+
+    // Log if any fixes were applied
+    if (text !== originalText) {
+      NYLALogger.debug(`🚨 NYLA LLM: Repetition fix applied - reduced from ${originalText.length} to ${text.length} chars`);
+    }
+
+    return text;
+  }
+
+  /**
    * Parse LLM response - Memory-safe version
    */
   parseResponse(generatedText, context, userMessage) {
@@ -1358,6 +1463,15 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       NYLALogger.debug('🔍 NYLA LLM: === RAW LLM RESPONSE END ===');
       // === END RAW RESPONSE LOGGING ===
       
+      // CRITICAL: Check for repetition BEFORE size limits
+      if (generatedText) {
+        const originalLength = generatedText.length;
+        generatedText = this.detectAndFixRepetition(generatedText);
+        if (generatedText.length !== originalLength) {
+          NYLALogger.debug(`🚨 NYLA LLM: Fixed repetition - reduced from ${originalLength} to ${generatedText.length} chars`);
+        }
+      }
+
       // Input size limit to prevent memory issues
       const MAX_RESPONSE_SIZE = 50000; // 50KB limit
       if (generatedText && generatedText.length > MAX_RESPONSE_SIZE) {
@@ -1993,6 +2107,99 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   }
 
   /**
+   * Detect and fix repetitive text patterns (CRITICAL for Chinese queries)
+   */
+  detectAndFixRepetition(text) {
+    if (!text || typeof text !== 'string') return text;
+    
+    let fixedText = text;
+    let warnings = 0;
+    const maxWarnings = 3;
+    
+    // Pattern 1: Exact phrase repetition (most common issue)
+    const phraseRepetition = /(.{10,50}?)\1{2,}/gi;
+    if (phraseRepetition.test(fixedText)) {
+      fixedText = fixedText.replace(phraseRepetition, '$1');
+      warnings++;
+      NYLALogger.warn('🔄 NYLA LLM: Fixed phrase repetition pattern');
+    }
+    
+    // Pattern 2: Chinese character repetition (旺柴旺柴旺柴...)
+    const chineseRepetition = /([\u4e00-\u9fff]{1,10})\1{3,}/g;
+    if (chineseRepetition.test(fixedText)) {
+      fixedText = fixedText.replace(chineseRepetition, '$1');
+      warnings++;
+      NYLALogger.warn('🔄 NYLA LLM: Fixed Chinese character repetition');
+    }
+    
+    // Pattern 3: Word repetition (word word word...)
+    const wordRepetition = /\b(\w{2,})\s+\1\s+\1\b/gi;
+    if (wordRepetition.test(fixedText)) {
+      fixedText = fixedText.replace(wordRepetition, '$1');
+      warnings++;
+      NYLALogger.warn('🔄 NYLA LLM: Fixed word repetition pattern');
+    }
+    
+    // Pattern 4: Sentence repetition
+    const sentenceRepetition = /([^.!?]{20,}[.!?])\s*\1\s*\1/gi;
+    if (sentenceRepetition.test(fixedText)) {
+      fixedText = fixedText.replace(sentenceRepetition, '$1');
+      warnings++;
+      NYLALogger.warn('🔄 NYLA LLM: Fixed sentence repetition pattern');
+    }
+    
+    // Pattern 5: Token density check (catch subtle loops)
+    const tokens = fixedText.split(/\s+/);
+    if (tokens.length > 50) {
+      const tokenCounts = {};
+      tokens.forEach(token => {
+        tokenCounts[token] = (tokenCounts[token] || 0) + 1;
+      });
+      
+      let totalTokens = tokens.length;
+      let redundantTokens = 0;
+      
+      Object.values(tokenCounts).forEach(count => {
+        if (count > 3) redundantTokens += count - 3;
+      });
+      
+      const redundancyRatio = redundantTokens / totalTokens;
+      if (redundancyRatio > 0.4) {
+        // High redundancy detected - truncate to first reasonable section
+        const sentences = fixedText.split(/[.!?]+/);
+        fixedText = sentences.slice(0, Math.max(1, Math.floor(sentences.length / 3))).join('.') + '.';
+        warnings++;
+        NYLALogger.warn('🔄 NYLA LLM: Fixed high token redundancy', { ratio: redundancyRatio.toFixed(2) });
+      }
+    }
+    
+    // Pattern 6: Emergency brake for extreme cases
+    if (fixedText.length > 1000) {
+      const repetitivePortion = /((.{1,100}?)\2{4,})/g;
+      if (repetitivePortion.test(fixedText)) {
+        fixedText = fixedText.substring(0, fixedText.indexOf(fixedText.match(repetitivePortion)[0]));
+        warnings++;
+        NYLALogger.warn('🔄 NYLA LLM: Emergency brake - truncated extreme repetition');
+      }
+    }
+    
+    // Pattern 7: Final safety check - if >80% repetitive, truncate
+    const uniqueChars = new Set(fixedText).size;
+    const totalChars = fixedText.length;
+    if (totalChars > 100 && uniqueChars / totalChars < 0.2) {
+      fixedText = fixedText.substring(0, Math.min(200, fixedText.length / 2));
+      warnings++;
+      NYLALogger.warn('🔄 NYLA LLM: Safety truncation - low character diversity');
+    }
+    
+    if (warnings >= maxWarnings) {
+      NYLALogger.error('🚨 NYLA LLM: Multiple repetition patterns detected - response may be corrupted');
+    }
+    
+    return fixedText;
+  }
+
+  /**
    * Validate and normalize response
    */
   validateResponse(response, context, userMessage) {
@@ -2003,6 +2210,9 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     } else {
       // Clean up the text - remove extra whitespace and ensure it's a string
       response.text = response.text.trim();
+      
+      // CRITICAL: Detect and fix repetitive text patterns
+      response.text = this.detectAndFixRepetition(response.text);
       
       // URL validation and enhancement
       response.text = this.enhanceUrls(response.text);
