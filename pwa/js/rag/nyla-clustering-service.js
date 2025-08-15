@@ -308,13 +308,16 @@ class NYLAClusteringService {
       }
     }
     
-    // Create cluster objects
-    const clusters = Array.from(clusterMap.entries()).map(([id, chunkList]) => ({
-      id: id,
-      chunks: chunkList,
-      centroid: this.calculateCentroid(chunkList),
-      size: chunkList.length
-    }));
+    // Optimize: single loop instead of Array.from + map  
+    const clusters = [];
+    for (const [id, chunkList] of clusterMap.entries()) {
+      clusters.push({
+        id: id,
+        chunks: chunkList,
+        centroid: this.calculateCentroid(chunkList),
+        size: chunkList.length
+      });
+    }
     
     const processingTime = Date.now() - startTime;
     console.log(`🎯 DBSCAN completed in ${processingTime}ms: ${clusters.length} clusters, ${noisyChunks.length} noise points`);

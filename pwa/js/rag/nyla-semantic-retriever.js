@@ -146,22 +146,19 @@ class NYLASemanticRetriever {
       signals.push({ type: 'solana_address', value: query.match(this.exactPatterns.solanaAddress)[0] });
     }
     
-    // X handles
-    const handleMatches = Array.from(query.matchAll(this.exactPatterns.xHandle));
-    for (const match of handleMatches) {
+    // X handles - optimize: direct iteration without Array.from
+    for (const match of query.matchAll(this.exactPatterns.xHandle)) {
       signals.push({ type: 'x_handle', value: match[1] });
     }
     
-    // Tickers/symbols
-    const tickerMatches = Array.from(query.matchAll(this.exactPatterns.ticker));
-    for (const match of tickerMatches) {
+    // Tickers/symbols - optimize: direct iteration
+    for (const match of query.matchAll(this.exactPatterns.ticker)) {
       signals.push({ type: 'ticker', value: match[1] });
     }
     
-    // Numbers with units
-    const numberMatches = Array.from(query.matchAll(this.exactPatterns.numberWithUnit));
-    for (const match of numberMatches) {
-      signals.push({ type: 'number_unit', value: match[0], number: match[1], unit: match[2] });
+    // Numbers with units - optimize: direct iteration
+    for (const match of query.matchAll(this.exactPatterns.numberWithUnit)) {
+      signals.push({ type: 'number_with_unit', value: match[0], number: match[1], unit: match[2] });
     }
     
     return signals;
@@ -195,7 +192,7 @@ class NYLASemanticRetriever {
     
     // Append expansions to original query
     if (expansions.size > 0) {
-      expanded = query + ' ' + Array.from(expansions).join(' ');
+      expanded = query + ' ' + [...expansions].join(' ');
       console.log('🔄 Query expanded:', { original: query, expanded: expanded });
     }
     
@@ -315,7 +312,12 @@ class NYLASemanticRetriever {
     }
     
     // Return sorted by final score
-    const sortedResults = Array.from(merged.values()).sort((a, b) => b.finalScore - a.finalScore);
+    // Optimize: collect and sort in single operation
+    const sortedResults = [];
+    for (const result of merged.values()) {
+      sortedResults.push(result);
+    }
+    sortedResults.sort((a, b) => b.finalScore - a.finalScore);
     
     console.log('🔍 Merge Debug - Output:', {
       mergedCount: sortedResults.length,

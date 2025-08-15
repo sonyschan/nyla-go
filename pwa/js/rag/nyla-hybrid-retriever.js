@@ -366,9 +366,12 @@ class NYLAHybridRetriever {
       }
     }
     
-    // Convert to array and sort by fusion score
-    return Array.from(mergedMap.values())
-      .sort((a, b) => b.fusion_score - a.fusion_score);
+    // Optimize: collect and sort in single operation
+    const results = [];
+    for (const result of mergedMap.values()) {
+      results.push(result);
+    }
+    return results.sort((a, b) => b.fusion_score - a.fusion_score);
   }
 
   /**
