@@ -84,7 +84,7 @@ class NYLARAGPipeline {
       this.retriever = new NYLASemanticRetriever(this.vectorDB, this.embeddingService, {
         topK: 20,
         finalTopK: 8,
-        minScore: 0.3,
+        minScore: 0.3,         // Maintain proper quality threshold
         mmrEnabled: true,
         mmrLambda: 0.5
       });

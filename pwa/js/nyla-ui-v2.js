@@ -72,7 +72,7 @@ class NYLAAssistantUIV2 {
           await this.showEnhancedWelcomeMessage();
         }
       } else {
-        console.log('NYLA UI V2: Step 4 - WebLLM not initialized, starting with rule-based...');
+        console.log('NYLA UI V2: Step 4 - WebLLM not initialized, starting with RAG-only...');
         if (!this.isWelcomeMessageShown) {
           await this.showEnhancedWelcomeMessage();
         }
@@ -1419,7 +1419,7 @@ class NYLAAssistantUIV2 {
       console.log('NYLA UI V2: Normalized response:', {
         text: normalizedResponse.text.substring(0, 100) + '...',
         sentiment: normalizedResponse.sentiment,
-        isLLMGenerated: response.isLLMGenerated
+        isFallback: response.isFallback || false
       });
       
       // Check if this response contains personal care
@@ -1523,8 +1523,7 @@ class NYLAAssistantUIV2 {
           text: response.answer,
           sentiment: response.sentiment || 'neutral',
           confidence: response.confidence || 0,
-          followUpSuggestions: response.followUpSuggestions || [],
-          isLLMGenerated: response.isLLMGenerated
+          followUpSuggestions: response.followUpSuggestions || []
         };
       } else {
         // Legacy format: response.answer.text
@@ -1532,8 +1531,7 @@ class NYLAAssistantUIV2 {
           text: response.answer.text || 'No response available',
           sentiment: response.answer.sentiment || 'neutral',
           confidence: response.answer.confidence || 0,
-          followUpSuggestions: response.answer.followUpSuggestions || [],
-          isLLMGenerated: response.isLLMGenerated
+          followUpSuggestions: response.answer.followUpSuggestions || []
         };
       }
     } else if (response.text) {
@@ -1542,8 +1540,7 @@ class NYLAAssistantUIV2 {
         text: response.text,
         sentiment: response.sentiment || 'neutral',
         confidence: response.confidence || 0,
-        followUpSuggestions: response.followUpSuggestions || [],
-        isLLMGenerated: response.isLLMGenerated
+        followUpSuggestions: response.followUpSuggestions || []
       };
     } else {
       // Fallback

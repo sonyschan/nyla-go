@@ -101,12 +101,12 @@ class NYLALLMEngine {
       if (isAndroid) {
         return {
           supported: false,
-          reason: 'Android WebGPU not available - Chrome for Android with WebGPU flag required. LLM will use rule-based responses.'
+          reason: 'Android WebGPU not available - Chrome for Android with WebGPU flag required. Will use RAG-only responses.'
         };
       } else if (isMobile) {
         return {
           supported: false,
-          reason: 'Mobile WebGPU not supported - LLM requires WebGPU for inference. Using rule-based responses.'
+          reason: 'Mobile WebGPU not supported - LLM requires WebGPU for inference. Using RAG-only responses.'
         };
       } else {
         return {
@@ -122,7 +122,7 @@ class NYLALLMEngine {
       if (!adapter) {
         return {
           supported: false,
-          reason: 'WebGPU adapter not available - GPU may not support required features. Using rule-based responses.'
+          reason: 'WebGPU adapter not available - GPU may not support required features. Using RAG-only responses.'
         };
       }
       
@@ -170,7 +170,7 @@ class NYLALLMEngine {
             if (errorMessage.includes('f16')) {
               return {
                 supported: false,
-                reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using rule-based responses instead.`
+                reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using RAG-only responses instead.`
               };
             } else if (errorMessage.includes('WGSL') || errorMessage.includes('shader')) {
               return {
@@ -180,7 +180,7 @@ class NYLALLMEngine {
             } else {
               return {
                 supported: false,
-                reason: `Android WebGPU compatibility issue: ${errorMessage}. Using rule-based responses.`
+                reason: `Android WebGPU compatibility issue: ${errorMessage}. Using RAG-only responses.`
               };
             }
           }
@@ -195,7 +195,7 @@ class NYLALLMEngine {
           if (shaderError.message.includes('f16')) {
             return {
               supported: false,
-              reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using rule-based responses instead.`
+              reason: `Android WebGPU f16 extension not supported. This device cannot run WebLLM models that require f16 floating-point precision. Using RAG-only responses instead.`
             };
           } else if (shaderError.message.includes('WGSL') || shaderError.message.includes('shader')) {
             return {
@@ -205,7 +205,7 @@ class NYLALLMEngine {
           } else {
             return {
               supported: false,
-              reason: `Android WebGPU compatibility issue: ${shaderError.message}. Using rule-based responses.`
+              reason: `Android WebGPU compatibility issue: ${shaderError.message}. Using RAG-only responses.`
             };
           }
         }
@@ -217,7 +217,7 @@ class NYLALLMEngine {
       console.warn('NYLA LLM: WebGPU compatibility test failed:', error.message);
       return {
         supported: false,
-        reason: `WebGPU compatibility issue - ${error.message}. Using rule-based responses.`
+        reason: `WebGPU compatibility issue - ${error.message}. Using RAG-only responses.`
       };
     }
   }
@@ -599,7 +599,7 @@ class NYLALLMEngine {
         enhancedError.isModelCompatibilityError = true;
         throw enhancedError;
       } else if (error.name === 'ExitStatus' && error.status === 1) {
-        const enhancedError = new Error('AI model crashed during inference. This appears to be a model compatibility issue with your device. The system will fall back to rule-based responses.');
+        const enhancedError = new Error('AI model crashed during inference. This appears to be a model compatibility issue with your device. The system will fall back to RAG-only responses.');
         enhancedError.originalError = error;
         enhancedError.isModelCompatibilityError = true;
         throw enhancedError;
@@ -1962,6 +1962,9 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     // Personal care disabled for now
     response.personalCare = { shouldAsk: false };
     response.followUpSuggestions = response.followUpSuggestions || [];
+    
+    // Note: LLM responses are always part of RAG+LLM hybrid - no generation flags needed
+    console.log('🔍 NYLA LLM: Response validated and ready for RAG integration');
 
     // Simple character limit enforcement
     const maxLength = 800;

@@ -73,14 +73,14 @@ class NYLAAssistantV2 {
       }
       this.conversationManager = new NYLAConversationManagerV2(this.knowledgeBase);
       
-      // Enhance with RAG capabilities for semantic search (replaces rule-based preprocessing)
+      // Enhance with RAG capabilities for semantic search and knowledge retrieval
       console.log('NYLA Assistant V2: Step 2a - Enhancing with RAG-based semantic search...');
       if (typeof enhanceConversationManagerWithRAG !== 'undefined') {
         this.conversationManager = enhanceConversationManagerWithRAG(this.conversationManager);
         console.log('NYLA Assistant V2: ✅ RAG integration enabled - all queries will use semantic search');
         this.features.rag = true;
       } else {
-        console.warn('NYLA Assistant V2: ⚠️ RAG integration not available, using rule-based fallback');
+        console.warn('NYLA Assistant V2: ⚠️ RAG integration not available, using generic fallback responses');
         this.features.rag = false;
       }
       
@@ -381,7 +381,7 @@ class NYLAAssistantV2 {
       },
       features: this.features,
       buildDate: new Date().toISOString().split('T')[0],
-      llmModel: this.llmEnabled ? 'Phi-3-mini-4k-instruct' : 'Rule-based'
+      llmModel: this.llmEnabled ? 'Phi-3-mini-4k-instruct' : 'RAG-only'
     };
   }
 

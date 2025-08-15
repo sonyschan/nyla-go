@@ -45,7 +45,13 @@
       "Bash(open test-fab-extension.html)",
       "Bash(node:*)",
       "Bash(touch:*)",
-      "Bash(npm run build:embeddings:*)"
+      "Bash(npm run build:embeddings:*)",
+      "Bash(jq:*)",
+      "Bash(RELEASE_VERSION=\"2.5.0\")",
+      "Bash(# Create extension package directory\nmkdir -p extension-package\n\n# Copy ONLY extension files (exclude PWA directory) \ncp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png extension-package/\ncp -r icons extension-package/\ncp nylago-data.js extension-package/\n\n# Create Chrome Store ZIP package - IMPORTANT: Create directly in releases directory\ncd extension-package\nzip -r ../releases/nyla-go-v2.5.0-extension-only.zip . -x \"\"*.DS_Store\"\"\ncd ..\n\n# Clean up temporary directory\nrm -rf extension-package)",
+      "Bash(npm run rag:status:*)",
+      "Bash(npm run rag:verify:*)",
+      "Bash(npm run rag:test:*)"
     ],
     "deny": []
   }
