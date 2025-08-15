@@ -16,7 +16,7 @@ class NYLARAGIntegration {
     // Configuration
     this.config = {
       enableRAG: true,
-      minConfidenceThreshold: 0.3  // Minimum confidence required for RAG responses
+      minConfidenceThreshold: 0.5  // Minimum confidence required for RAG responses (raised with better embeddings)
     };
   }
 
@@ -223,7 +223,7 @@ class NYLARAGIntegration {
       const ragResult = await this.ragPipeline.query(questionText, {
         streaming: options.streaming,
         topK: 3,
-        minScore: 0.25  // Semantic similarity threshold (lowered to accept quality 25%+ matches)
+        minScore: 0.5   // Semantic similarity threshold (raised back to 50% with improved multilingual embeddings)
       });
       
       // Debug: Log RAG results
