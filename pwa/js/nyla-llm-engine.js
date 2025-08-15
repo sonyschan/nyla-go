@@ -17,7 +17,7 @@ class NYLALLMEngine {
     this.modelConfig = {
       model: this.selectModel(),
       temperature: 0.3,
-      max_tokens: 600,
+      max_tokens: 1200,
       top_p: 0.8,
       top_k: 40,                    // Fix undefined top_k (common default)
       repetition_penalty: 1.3,      // INCREASED: More aggressive prevention (was 1.15)
@@ -774,10 +774,10 @@ LANGUAGE: Priority order: 1) User request 2) {{OUTPUT_LANG}} 3) Mirror user 4) E
 
 KNOWLEDGE: Use only provided context. Do NOT invent facts. Be factual, on-topic.
 
-URLs: Include full URLs for accounts/resources from knowledge context when relevant.
+URLs: Include full URLs for accounts/resources from knowledge context when relevant. When discussing projects/communities, ALWAYS include social handles & links if available.
 
 FORMAT (JSON ONLY):
-{"text":"<=600 chars, escape \\n/\\\", URLs ok","sentiment":"helpful|excited|friendly","followUpSuggestions":[]}
+{"text":"<=1200 chars, escape \\n/\\\", URLs ok","sentiment":"helpful|excited|friendly","followUpSuggestions":[]}
 Must start { end }. Example: {"text":"Step 1...\\nStep 2...","sentiment":"helpful","followUpSuggestions":[]}
 
 RULES:
@@ -821,10 +821,11 @@ TONE: Accurate, helpful. Light sass only for silly questions.`;
       - Always provide complete, clickable URLs (e.g., https://x.com/WangChaidotbonk).
       - URLs should be accurate and sourced from the provided knowledge context.
       - Include URLs when users ask about community links, social media, or official channels.
+      - When discussing projects or communities, ALWAYS include relevant social media handles and links if available in context.
 
       FORMAT (MANDATORY JSON ONLY)
       {
-        "text": "<=600 chars, plain text with URLs allowed, escape \\n and \\\"; no HTML tags except URLs>",
+        "text": "<=1200 chars, plain text with URLs allowed, escape \\n and \\\"; no HTML tags except URLs>",
         "sentiment": "helpful|excited|friendly",
         "followUpSuggestions": []
       }
@@ -2289,7 +2290,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     NYLALogger.debug('🔍 NYLA LLM: Response validated and ready for RAG integration');
 
     // Simple character limit enforcement
-    const maxLength = 800;
+    const maxLength = 1500;
     
     if (response.text && response.text.length > maxLength) {
       NYLALogger.debug(`NYLA LLM: Response too long (${response.text.length} chars), truncating to ${maxLength}...`);
