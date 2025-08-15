@@ -15,7 +15,7 @@ python3 -m http.server 8080
 ### **Option 2: Isolated Gesture Test**
 ```bash
 # Open the dedicated test file
-open test-gestures.html
+open tests/manual/gestures.test.html
 # Or serve it: python3 -m http.server 8081
 ```
 
