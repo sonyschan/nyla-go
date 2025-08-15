@@ -53,6 +53,25 @@ For each new item, create a `chunk`:
 - Derive `topic_slug` from nouns/verbs; avoid stopwords.
 - If user text is only EN (or only ZH), still produce both summaries (LLM translate), but set `lang` truthfully.
 
+## Chinese Language Processing Rules
+**CRITICAL: Avoid character-level decomposition of Chinese compound words**
+- When adding knowledge about Chinese terms (e.g., '旺柴', '区块链', '代币'), treat them as **complete semantic units**
+- **DO NOT** create separate explanations for individual characters ('旺', '柴', '区', '块', '链', '代', '币')
+- **DO NOT** add etymology or character-by-character breakdowns unless specifically requested
+- **FOCUS** on the compound word's meaning and usage in the crypto/blockchain context
+- **EXAMPLE:** For '旺柴' → focus on the project/token, NOT on '旺' (prosperous) + '柴' (Shiba Inu) etymology
+- **RAG EFFICIENCY:** Character-level explanations create noise that reduces semantic search quality
+- **GLOSSARY TERMS:** Use complete compound words in tags, not constituent characters
+
+## Content Focus Guidelines
+**Semantic Search Optimization**
+- **PROJECT-FOCUSED:** When adding knowledge about blockchain projects, prioritize practical information over cultural/linguistic explanations
+- **TECHNICAL OVER CULTURAL:** Contract addresses, features, partnerships > word origins, cultural significance
+- **USER INTENT:** Users asking about '旺柴项目' want project details, not Chinese language lessons
+- **AVOID COMPETING CHUNKS:** Don't create cultural/definitional content that competes with main project information
+- **CONSOLIDATE:** Keep related information in the same chunk rather than splitting into cultural vs. technical
+- **PRACTICAL VALUE:** Focus on information that helps users understand and use the technology/project
+
 ## Index & Vector Store Refresh
 **NYLA-specific commands** (use in this exact order):
 
@@ -142,6 +161,9 @@ For each new item, create a `chunk`:
 - [ ] Deduplication by `id` and `hash`
 - [ ] Both EN and ZH summaries provided
 - [ ] Appropriate tags and related_chunks populated
+- [ ] **Chinese compound words kept intact** (no character-level decomposition)
+- [ ] **Project-focused content** (technical/practical over cultural/linguistic)
+- [ ] **No competing chunks** (consolidated related information)
 - [ ] Embeddings rebuilt successfully
 - [ ] Vector DB updated with new chunks
 - [ ] PWA can load and query new knowledge

@@ -439,7 +439,6 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     NYLAStorage,
     NYLAEmbeddingEnvironment,
-    NYLALogger,
     NYLAUtils,
     isNode,
     isBrowser

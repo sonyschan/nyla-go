@@ -5,19 +5,19 @@
       "source_id": "wangchai_nyla_partnership",
       "type": "ecosystem",
       "lang": "bilingual",
-      "title": "WangChai (旺柴) Project Partnership & Cross-Community Bridge",
+      "title": "WangChai (旺柴) Project Introduction & Partnership Overview",
       "section": "community_partnerships",
-      "tags": ["wangchai", "旺柴", "community", "ama", "chinese", "eastern", "western", "bridge", "collaboration", "partnership", "cross-cultural"],
+      "tags": ["wangchai", "旺柴", "项目介绍", "项目", "介绍", "旺柴项目", "旺柴是什么", "跟我说说旺柴", "说说旺柴", "关于旺柴", "旺柴这个项目", "区块链项目", "社区项目", "community", "ama", "chinese", "eastern", "western", "bridge", "collaboration", "partnership", "cross-cultural", "what_is", "about", "project_info", "introduction", "overview", "description"],
       "as_of": "2025-08-15",
       "stability": "evolving",
       "source_url": "internal://nyla/ecosystem/partnerships/wangchai",
       "hash": "eco_part_wangchai_001",
-      "body": "WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise. As of August 2025, WangChai has grown to 4,820 Twitter members and 3,000 Telegram members. The project has released version 1.0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages. WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025. WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach.",
+      "body": "跟我說說旺柴這個項目：关于旺柴项目，旺柴是什么？说说旺柴这个项目的详细信息。旺柴 (WangChai) 是什么项目？旺柴项目介绍如下：旺柴是一个社区驱动的区块链项目，专注于建设强大的社区参与度并交付计划中的里程碑。关于旺柴项目，你应该知道这是一个社区驱动的区块链项目，拥有强大的社区基础。旺柴项目的主要特点包括：社区驱动、区块链技术、跨文化合作。旺柴项目现状：截至2025年8月，旺柴已发展至4,820个推特成员和3,000个电报成员（总计7,820个社区成员）。WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise. The project has released version 1.0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages. WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025. WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach.",
       "summary_en": "WangChai (旺柴) is a growing blockchain community project with 7,800+ members that maintains a deep partnership with NYLA through joint AMAs and serves as a bridge between Eastern and Western crypto communities.",
       "summary_zh": "旺柴是一個不斷增長的區塊鏈社區項目，擁有7,800+成員，通過聯合AMA與NYLA保持深度合作，作為東西方加密社區之間的橋樑。",
       "priority": 7,
       "related_chunks": ["ecosystem_partnerships_mifenggou", "ecosystem_campaigns_chinese_community_outreach"],
-      "glossary_terms": ["WangChai", "旺柴", "Chai cards", "柴卡", "cross-community bridge", "AMA", "Eastern-Western communities"],
+      "glossary_terms": ["WangChai", "旺柴", "旺柴项目", "项目介绍", "Chai cards", "柴卡", "cross-community bridge", "AMA", "Eastern-Western communities", "区块链项目", "社区项目"],
       "partnership": {
         "type": "community_collaboration",
         "status": "active",
@@ -85,7 +85,7 @@
       "lang": "bilingual",
       "title": "WangChai (旺柴) Contract Address & Technical Specifications",
       "section": "technical_specifications",
-      "tags": ["wangchai", "旺柴", "contract", "address", "solana", "token", "bonk_fun", "verification", "ticker"],
+      "tags": ["wangchai", "旺柴", "contract", "address", "solana", "token", "bonk_fun", "verification", "ticker", "合约地址", "代币", "技术规格", "技术", "technical", "specs", "blockchain", "crypto"],
       "as_of": "2025-08-15",
       "stability": "stable",
       "source_url": "https://x.com/WangChaidotbonk",
@@ -114,17 +114,17 @@
       "lang": "bilingual", 
       "title": "WangChai (旺柴) Official Links & Community Channels",
       "section": "official_channels",
-      "tags": ["wangchai", "旺柴", "official", "links", "x", "telegram", "linktree", "community", "verification"],
+      "tags": ["wangchai", "旺柴", "official", "links", "x", "telegram", "linktree", "community", "verification", "社区", "社交媒体", "社交", "官方链接", "官方", "链接", "联系", "联系方式", "X账户", "推特", "电报", "社区在哪", "旺柴的社区", "旺柴社区", "怎么联系", "如何联系", "在哪里找到", "官方渠道", "旺柴X", "旺柴Telegram", "contact", "social", "where", "find", "channels", "community_links", "social_media", "join", "follow", "connect", "加入", "关注", "连接", "在哪", "思的社区"],
       "as_of": "2025-08-15",
       "stability": "stable",
       "source_url": "https://x.com/WangChaidotbonk",
       "hash": "facts_wangchai_links_001",
-      "body": "WangChai (旺柴) maintains official presence across multiple platforms for community engagement and verification. The official X (Twitter) account is @WangChaidotbonk (https://x.com/WangChaidotbonk). The centralized link hub is available at linktr.ee/WangchaiDoge. The project has an official X Community at https://x.com/i/communities/1941027470058434674 for discussions and updates. Telegram community can be found at https://t.me/wechatdogesol for real-time communication. These channels serve as the primary verification points for authentic WangChai information and community engagement.",
-      "summary_en": "WangChai's official channels include X account @WangChaidotbonk, Linktree hub at linktr.ee/WangchaiDoge, X Community, and Telegram at https://t.me/wechatdogesol.",
-      "summary_zh": "旺柴官方渠道包括X賬戶@WangChaidotbonk、Linktree中心linktr.ee/WangchaiDoge、X社區和Telegram https://t.me/wechatdogesol。",
+      "body": "WangChai (旺柴) Official Community Channels & Contact Information: 旺柴官方社区和联系方式指南。如何联系旺柴？旺柴的社区在哪里？以下是旺柴所有官方渠道的完整列表。旺柴官方渠道包括四个主要平台： 1) 官方 X 账户：@WangChaidotbonk (https://x.com/WangChaidotbonk) - 这是旺柴的主要官方社交媒体账户，用于发布最新消息和公告。 2) 旺柴中心化链接平台：linktr.ee/WangchaiDoge - 提供所有官方链接的集中访问点。 3) 旺柴官方 X 社区：https://x.com/i/communities/1941027470058434674 - 专门用于社区讨论和项目更新。 4) 旺柴 Telegram 社区：https://t.me/wechatdogesol - 提供实时交流和即时通讯。这些渠道是旺柴官方信息发布和社区参与的主要验证点。想要加入旺柴社区或获取最新信息，请通过以上官方渠道进行联系和关注。",
+      "summary_en": "WangChai's official community channels include X account @WangChaidotbonk, Linktree hub at linktr.ee/WangchaiDoge, X Community, and Telegram at https://t.me/wechatdogesol for community engagement and contact.",
+      "summary_zh": "旺柴官方社区渠道包括X账户@WangChaidotbonk、Linktree中心linktr.ee/WangchaiDoge、X社区和Telegram https://t.me/wechatdogesol，用于社区交流和联系。",
       "priority": 8,
       "related_chunks": ["ecosystem_partners_wangchai_collaboration", "facts_wangchai_contract_specs"],
-      "glossary_terms": ["official links", "verification", "X Community", "Telegram", "Linktree"],
+      "glossary_terms": ["official links", "verification", "X Community", "Telegram", "Linktree", "community channels", "social media", "contact WangChai", "旺柴社区", "旺柴官方", "旺柴联系", "community links", "where to find", "join community"],
       "official_channels": {
         "x_account": {
           "handle": "@WangChaidotbonk",
@@ -144,44 +144,6 @@
           "purpose": "real_time_communication"
         },
         "verification_status": "official_verified"
-      }
-    },
-    {
-      "id": "glossary_wangchai_cultural_terms",
-      "source_id": "wangchai_cultural_context",
-      "type": "glossary",
-      "lang": "bilingual",
-      "title": "WangChai Cultural Terms & Chinese Context",
-      "section": "cultural_definitions",
-      "tags": ["wangchai", "旺柴", "chinese", "culture", "slogan", "emoji", "wechat", "fortune", "wealth"],
-      "as_of": "2025-08-15",
-      "stability": "stable", 
-      "source_url": "internal://nyla/glossary/chinese-crypto-culture",
-      "hash": "gloss_wangchai_culture_001",
-      "body": "命里有柴，命里有财！ (mìng lǐ yǒu chái, mìng lǐ yǒu cái) - WangChai's official slogan meaning 'Destiny has dogs, destiny has wealth!' This represents the belief that having a loyal companion (symbolized by the dog/chai) brings good fortune and financial prosperity. The term '旺柴' (wàng chái) combines '旺' meaning prosperous/flourishing and '柴' referring to Shiba Inu dogs. WangChai is recognized as one of the most popular emoji expressions on WeChat, China's dominant messaging platform, making it culturally significant beyond cryptocurrency. This cultural context is essential for understanding WangChai's appeal in Chinese-speaking communities.",
-      "summary_en": "WangChai's slogan '命里有柴，命里有财！' means 'Destiny has dogs, destiny has wealth!' representing prosperity through loyalty, with deep cultural significance as a popular WeChat emoji.",
-      "summary_zh": "旺柴的口號「命里有柴，命里有财！」意為「命中注定有狗，命中注定有財富！」象徵忠誠帶來繁榮，作為微信熱門表情包具有深厚文化意義。",
-      "priority": 6,
-      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "facts_wangchai_contract_specs"],
-      "glossary_terms": ["命里有柴命里有财", "旺柴", "WeChat emoji", "Chinese fortune", "Shiba Inu", "cultural significance"],
-      "cultural_definitions": {
-        "slogan": {
-          "chinese": "命里有柴，命里有财！",
-          "pinyin": "mìng lǐ yǒu chái, mìng lǐ yǒu cái",
-          "english": "Destiny has dogs, destiny has wealth!",
-          "meaning": "loyalty_brings_prosperity"
-        },
-        "name_meaning": {
-          "旺": "prosperous, flourishing",
-          "柴": "shiba_inu_dog",
-          "combined": "prosperous_dog"
-        },
-        "cultural_context": {
-          "platform": "wechat",
-          "significance": "popular_emoji_expression",
-          "region": "chinese_speaking_communities",
-          "symbolism": "fortune_through_loyalty"
-        }
       }
     }
   ]

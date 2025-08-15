@@ -16,9 +16,31 @@ const fs = require('fs').promises;
 const { 
   NYLAStorage, 
   NYLAEmbeddingEnvironment, 
-  NYLALogger, 
   NYLAUtils 
 } = require('./nyla-environment.js');
+
+// Simple Node.js compatible logger
+class NYLALogger {
+  constructor(component = 'System') {
+    this.component = component;
+  }
+  
+  log(message, ...args) {
+    console.log(`[${this.component}] ${message}`, ...args);
+  }
+  
+  success(message, ...args) {
+    console.log(`[${this.component}] ✅ ${message}`, ...args);
+  }
+  
+  error(message, ...args) {
+    console.error(`[${this.component}] ❌ ${message}`, ...args);
+  }
+  
+  warn(message, ...args) {
+    console.warn(`[${this.component}] ⚠️ ${message}`, ...args);
+  }
+}
 
 class NYLANodeEmbeddingBuilder {
   constructor() {
