@@ -59,7 +59,7 @@ Git integration that:
 
 **Tracked Files**:
 - `pwa/js/nyla-knowledge-base.js`
-- `nylago-data.js` (if contains KB data)
+- `pwa/kb/*.json (knowledge base files, NOT UI data))
 
 ### 3. Runtime Integration
 **Location**: `pwa/js/rag/nyla-rag-pipeline.js`
@@ -455,7 +455,7 @@ NYLAgo/
 │   │       └── nyla-rag-pipeline.js        # Runtime integration
 │   ├── nyla-knowledge-index.json           # Generated embeddings
 │   └── nyla-knowledge-index.json.gz        # Compressed version
-└── nylago-data.js                          # Additional KB data (tracked)
+└── pwa/kb/*.json (knowledge base files, NOT UI data) (tracked)
 ```
 
 ## 🔮 Future Enhancements

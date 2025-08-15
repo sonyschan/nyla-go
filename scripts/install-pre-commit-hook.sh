@@ -41,7 +41,7 @@ pre-commit run --all-files kb-changes-and-rag-check || echo -e "${YELLOW}ℹ️ 
 echo -e "${GREEN}✅ Pre-commit hook installed successfully!${NC}"
 echo ""
 echo -e "${BLUE}📋 How it works:${NC}"
-echo "  • Detects changes to KB files (pwa/kb/*.json, nylago-data.js)"
+echo "  • Detects changes to KB files (pwa/kb/*.json only)"
 echo "  • Checks if embeddings need rebuilding"
 echo "  • Prompts to rebuild when KB changes are detected"
 echo ""
