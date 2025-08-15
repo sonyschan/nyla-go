@@ -107,9 +107,10 @@ class NYLAContextBuilder {
       // Debug: Log context sent to LLM for duplication investigation
       console.log('🔍 CONTEXT BUILDER: Context sent to LLM:');
       console.log('🔍 CONTEXT BUILDER: Selected chunks:', selectedChunks.map(c => ({
-        title: c.title,
-        source_id: c.source_id,
-        body_preview: c.body?.substring(0, 100) + '...'
+        id: c.id,
+        title: c.metadata?.title || c.title || 'undefined',
+        source_id: c.metadata?.source || c.source_id || 'undefined', 
+        body_preview: (c.text || c.body || 'undefined').substring(0, 100) + '...'
       })));
       console.log('🔍 CONTEXT BUILDER: Formatted context length:', formattedContext.length);
       console.log('🔍 CONTEXT BUILDER: Full prompt preview:', prompt.full.substring(0, 500) + '...');
