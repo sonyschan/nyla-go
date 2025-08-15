@@ -43,7 +43,6 @@ Successfully replaced heavyweight "pattern logic" with semantic-first retrieval 
 
 1. **`nyla-semantic-retriever.js`**: Core semantic-first retrieval engine
 2. **`/glossary/terms.json`**: Simplified bilingual term expansion (CN↔EN)
-3. **`test-semantic-retrieval.html`**: Validation testing interface
 
 ## 🔧 **Modified Files**
 
