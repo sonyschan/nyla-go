@@ -76,8 +76,8 @@ function checkRAGSystem() {
     // Check knowledge base files
     log('\n📚 Knowledge Base Files:');
     const kbFiles = [
-        'nylago-ui-data.js',
-        'pwa/js/nyla-knowledge-base.js'
+        'pwa/kb/',  // Primary KB directory
+        // Note: nylago-ui-data.js removed - UI files, not knowledge base
     ];
     
     for (const file of kbFiles) {
