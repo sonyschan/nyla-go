@@ -29,21 +29,12 @@ repos:
   # NYLA-specific hooks
   - repo: local
     hooks:
-      # Knowledge Base Change Detection
-      - id: detect-kb-changes
-        name: Detect Knowledge Base Changes
+      # Knowledge Base Change Detection & RAG Status Check (CONSOLIDATED)
+      - id: kb-changes-and-rag-check
+        name: KB Changes Detection & RAG Status Check
         entry: hooks/detect-kb-changes.sh
         language: script
-        files: '^(nylago-data\.js|pwa/js/nyla-knowledge-base\.js|pwa/data/.*\.js|pwa/data/.*\.json)$'
-        pass_filenames: true
-        always_run: false
-        
-      # RAG Embedding Status Check  
-      - id: check-rag-status
-        name: Check RAG Embedding Status
-        entry: hooks/check-rag-status.sh
-        language: script
-        files: '^(nylago-data\.js|pwa/js/nyla-knowledge-base\.js|pwa/data/.*\.(js|json)|CLAUDE\.md)$'
+        files: '^(nylago-data\.js|pwa/nylago-data\.js|pwa/kb/.*\.json|pwa/data/nyla-vector-db\.json|CLAUDE\.md)$'
         pass_filenames: true
         always_run: false
         

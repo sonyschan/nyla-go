@@ -12,11 +12,11 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Knowledge base file patterns
+# Knowledge base file patterns (CORRECTED TO ACTUAL STRUCTURE)
 KB_FILES=(
     "nylago-data.js"
-    "pwa/js/nyla-knowledge-base.js"
-    "pwa/data/"
+    "pwa/nylago-data.js"
+    "pwa/kb/"
 )
 
 echo -e "${BLUE}🔍 NYLA Go: Detecting Knowledge Base Changes...${NC}"

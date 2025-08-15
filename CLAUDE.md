@@ -639,33 +639,53 @@ npm run rag:test
 2. **Consider RAG Update** → If user-facing fix, rebuild embeddings
 3. **Test Query Coverage** → Ensure users can find the fix via NYLA chat
 
-### 🪝 **Pre-commit Hook for KB Changes**
+### 🪝 **Streamlined Pre-commit Hook System**
 
-#### **Installation:**
+#### **Installation (One-time Setup):**
 ```bash
-# Install the pre-commit hook (one-time setup)
+# Install pre-commit framework and hooks
 ./scripts/install-pre-commit-hook.sh
 ```
 
 #### **How it Works:**
-- Automatically detects changes to KB files during commit
-- Checks if embeddings need rebuilding
-- Prompts user to rebuild embeddings when KB changes are detected
-- Prevents accidentally committing KB changes without updating embeddings
+- **Single Consolidated Check**: Combines KB change detection + RAG status
+- **Smart File Tracking**: Only checks actual KB files that exist
+- **Embedding Validation**: Ensures vector DB is updated when KB changes
+- **No Redundancy**: Eliminates duplicate checks and builds
 
-#### **Configuration Options:**
-```bash
-# Skip embedding check for this commit
-NYLA_SKIP_EMBEDDINGS=true git commit
+#### **Tracked Files (Corrected Patterns):**
+- `pwa/kb/**/*.json` - Knowledge base files (primary)
+- `nylago-data.js` - Root community data  
+- `pwa/nylago-data.js` - PWA community data
+- `pwa/data/nyla-vector-db.json` - Vector database
+- `CLAUDE.md` - Project documentation
 
-# Auto-proceed without prompting
-NYLA_AUTO_REGENERATE=true git commit
-```
+#### **Automatic Actions:**
+✅ **Before Each Commit**: Checks if KB files changed  
+✅ **Embedding Check**: Verifies vector DB is current  
+✅ **Build Reminder**: Shows exact commands to run if rebuild needed  
+❌ **No Duplicate Builds**: Eliminates redundant embedding generation
 
-#### **Tracked KB Files:**
-- `pwa/kb/**/*.json` - All knowledge base JSON files
-- `nylago-data.js` - Community data
-- `pwa/js/nyla-knowledge-base.js` - Legacy KB file
+### ⚡ **Optimized Release Workflow**
+
+#### **Removed Redundancies:**
+- ❌ **Duplicate Git Hooks**: Consolidated 3 different KB detection systems into 1
+- ❌ **Wrong File Patterns**: Fixed patterns to match actual directory structure  
+- ❌ **Manual Hook Creation**: Replaced with pre-commit framework
+- ❌ **Redundant RAG Checks**: Combined KB detection + RAG status into single hook
+
+#### **Current Workflow (Streamlined):**
+1. **Modify KB Files** → Pre-commit hook automatically detects
+2. **Hook Prompts** → Shows exact `npm run build:embeddings` command
+3. **Run Build** → Generate embeddings once 
+4. **Commit All** → KB changes + vector DB updates together
+5. **Release** → No additional embedding checks needed
+
+#### **Performance Improvements:**
+- 🚀 **Faster Commits**: Single check instead of 3 redundant ones
+- 🚀 **No Duplicate Builds**: Embeddings built once when needed
+- 🚀 **Accurate Detection**: Only checks files that actually exist
+- 🚀 **Clear Instructions**: Exact commands shown when rebuild needed
 
 ### 📋 **RAG Maintenance Commands**
 
