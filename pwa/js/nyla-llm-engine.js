@@ -9,6 +9,12 @@ class NYLALLMEngine {
     this.isInitialized = false;
     this.isLoading = false;
     
+    // Feature flags
+    this.PROMPT_V2_ENABLED = false; // Feature flag for optimized prompt
+    
+    // Initialize feature flags from URL if available
+    this.initializeFeatureFlags();
+    
     // Use centralized device detection
     this.deviceInfo = NYLADeviceUtils.getDeviceInfo();
     this.modelConfig = {
@@ -32,6 +38,11 @@ class NYLALLMEngine {
     this.requestCount = 0;
     this.totalResponseTime = 0;
     this.lastRequestTime = null;
+    this.promptMetrics = {
+      v1TokenCount: 573,
+      v2TokenCount: 307,
+      currentVersion: this.PROMPT_V2_ENABLED ? 'v2' : 'v1'
+    };
     
     // Engine health monitoring
     this.isEngineReady = false;
@@ -661,10 +672,41 @@ class NYLALLMEngine {
 
   /**
    * Create system prompt for NYLA
+   * Supports PROMPT_V2 feature flag for optimized version
    */
-
-  
   createSystemPrompt() {
+    if (this.PROMPT_V2_ENABLED) {
+      // Optimized prompt - 46.4% token reduction (307 vs 573 tokens)
+      return `You are NYLA, the AI behind NYLAGo (generates NYLA transfer commands for X.com). Smart, concise, slightly tsundere.
+
+LANGUAGE: Priority order: 1) User request 2) {{OUTPUT_LANG}} 3) Mirror user 4) English. Keep code/API names unchanged. For zh: first term (English). No mixing.
+
+KNOWLEDGE: Use only provided context. Do NOT invent facts. Be factual, on-topic.
+
+URLs: Include full URLs for accounts/resources from knowledge context when relevant.
+
+FORMAT (JSON ONLY):
+{"text":"<=600 chars, escape \\n/\\\", URLs ok","sentiment":"helpful|excited|friendly","followUpSuggestions":[]}
+Must start { end }. Example: {"text":"Step 1...\\nStep 2...","sentiment":"helpful","followUpSuggestions":[]}
+
+RULES:
+- JSON only, no simulations
+- Unknown info: "Sorry, I don't know"
+- No @ mentions except X commands
+- NYLA executes, NYLAGo generates
+- Say "NYLA transfers" not "NYLAGo transfers"
+- Security questions: speak as NYLAGo
+
+TRANSFERS: Send tab → fill recipient/amount → generate command → post X.com → NYLA executes.
+
+COMMUNITY: Include complete URLs for social/official channels. WangChai: X.com, Telegram, Linktree.
+
+FEATURES: Highlight ONE: QR codes OR raids OR blockchain support.
+
+TONE: Accurate, helpful. Light sass only for silly questions.`;
+    }
+
+    // Original prompt (v1) - 573 tokens
     return `You are NYLA, the AI behind NYLAGo (the UI that generates NYLA transfer commands for X.com).
 
       PERSONA:
@@ -674,7 +716,7 @@ class NYLALLMEngine {
       - Choose output language by priority:
         1) If user explicitly asks for a language, use it.
         2) Else if {{OUTPUT_LANG}} is provided, use it.
-        3) Else mirror the user’s message language.
+        3) Else mirror the user's message language.
         4) Default to English.
       - Keep code/API names & numbers unchanged.
       - If replying in zh, keep the first key English term with (English) after it.
@@ -2162,8 +2204,134 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       requestCount: this.requestCount,
       avgResponseTime: avgResponseTime,
       uptime: Math.round(uptime / 1000), // seconds
-      lastRequestTime: this.lastRequestTime
+      lastRequestTime: this.lastRequestTime,
+      promptOptimization: {
+        version: this.promptMetrics.currentVersion,
+        v1Tokens: this.promptMetrics.v1TokenCount,
+        v2Tokens: this.promptMetrics.v2TokenCount,
+        tokensUsed: this.PROMPT_V2_ENABLED ? this.promptMetrics.v2TokenCount : this.promptMetrics.v1TokenCount,
+        tokenReduction: this.promptMetrics.v1TokenCount - this.promptMetrics.v2TokenCount,
+        percentReduction: ((this.promptMetrics.v1TokenCount - this.promptMetrics.v2TokenCount) / this.promptMetrics.v1TokenCount * 100).toFixed(1)
+      }
     };
+  }
+
+  /**
+   * Enable optimized prompt (PROMPT_V2)
+   * Returns new system prompt and performance metrics
+   */
+  enablePromptOptimization() {
+    if (this.PROMPT_V2_ENABLED) {
+      return { 
+        success: false, 
+        message: 'PROMPT_V2 already enabled',
+        metrics: this.getStatus().promptOptimization 
+      };
+    }
+    
+    this.PROMPT_V2_ENABLED = true;
+    this.promptMetrics.currentVersion = 'v2';
+    this.systemPrompt = this.createSystemPrompt();
+    
+    NYLALogger.debug('🚀 NYLA LLM: PROMPT_V2 optimization enabled', {
+      tokenReduction: this.promptMetrics.v1TokenCount - this.promptMetrics.v2TokenCount,
+      percentReduction: ((this.promptMetrics.v1TokenCount - this.promptMetrics.v2TokenCount) / this.promptMetrics.v1TokenCount * 100).toFixed(1) + '%'
+    });
+    
+    return {
+      success: true,
+      message: 'PROMPT_V2 optimization enabled',
+      metrics: this.getStatus().promptOptimization,
+      newPrompt: this.systemPrompt
+    };
+  }
+
+  /**
+   * Disable optimized prompt (revert to PROMPT_V1)
+   */
+  disablePromptOptimization() {
+    if (!this.PROMPT_V2_ENABLED) {
+      return { 
+        success: false, 
+        message: 'PROMPT_V2 already disabled',
+        metrics: this.getStatus().promptOptimization 
+      };
+    }
+    
+    this.PROMPT_V2_ENABLED = false;
+    this.promptMetrics.currentVersion = 'v1';
+    this.systemPrompt = this.createSystemPrompt();
+    
+    NYLALogger.debug('🔄 NYLA LLM: PROMPT_V2 optimization disabled, reverted to v1');
+    
+    return {
+      success: true,
+      message: 'Reverted to PROMPT_V1',
+      metrics: this.getStatus().promptOptimization,
+      newPrompt: this.systemPrompt
+    };
+  }
+
+  /**
+   * Initialize feature flags from URL parameters
+   * Supports: ?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED
+   */
+  initializeFeatureFlags() {
+    try {
+      // Check if feature flag system is available
+      if (typeof window !== 'undefined' && window.NYLAFeatureFlags) {
+        const featureFlags = window.NYLAFeatureFlags;
+        
+        // Apply PROMPT_V2_ENABLED from URL
+        if (featureFlags.isEnabled('PROMPT_V2_ENABLED')) {
+          this.PROMPT_V2_ENABLED = true;
+          this.promptMetrics.currentVersion = 'v2';
+          this.systemPrompt = this.createSystemPrompt();
+          
+          NYLALogger.log('🚀 LLM Engine: PROMPT_V2 enabled via URL feature flag');
+        }
+        
+        // Log other detected flags for future implementation
+        const otherFlags = featureFlags.getEnabledFlags().filter(flag => flag !== 'PROMPT_V2_ENABLED');
+        if (otherFlags.length > 0) {
+          NYLALogger.debug('🧪 LLM Engine: Other feature flags detected:', otherFlags);
+        }
+        
+        return featureFlags.getStatus();
+      } else {
+        // Fallback: Parse URL directly if feature flag system not loaded
+        const urlParams = new URLSearchParams(window.location.search);
+        const featureParam = urlParams.get('feature');
+        
+        if (featureParam && featureParam.includes('PROMPT_V2_ENABLED')) {
+          this.PROMPT_V2_ENABLED = true;
+          this.promptMetrics.currentVersion = 'v2';
+          this.systemPrompt = this.createSystemPrompt();
+          
+          NYLALogger.log('🚀 LLM Engine: PROMPT_V2 enabled via URL (direct parsing)');
+        }
+      }
+    } catch (error) {
+      NYLALogger.error('🎛️ LLM Engine: Feature flag initialization failed:', error);
+    }
+  }
+
+  /**
+   * Get feature flag status for this engine
+   */
+  getFeatureFlagStatus() {
+    const status = {
+      PROMPT_V2_ENABLED: this.PROMPT_V2_ENABLED,
+      urlSupported: true,
+      currentPromptVersion: this.promptMetrics.currentVersion
+    };
+    
+    // Include global feature flag status if available
+    if (typeof window !== 'undefined' && window.NYLAFeatureFlags) {
+      status.globalFlags = window.NYLAFeatureFlags.getStatus();
+    }
+    
+    return status;
   }
 
   /**

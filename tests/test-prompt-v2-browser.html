@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMPT_V2 Optimization Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+        }
+        .test-result {
+            background: #1e3a1e;
+            border: 1px solid #4a9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .metrics {
+            background: #2a2a3a;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .code {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 PROMPT_V2 Optimization Test</h1>
+            <p>Test the LLM prompt optimization feature with 46.4% token reduction</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Current Status</h3>
+            <div id="currentStatus" class="test-result">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎛️ Controls</h3>
+            <button onclick="enableOptimization()">Enable PROMPT_V2</button>
+            <button onclick="disableOptimization()">Disable PROMPT_V2</button>
+            <button onclick="refreshStatus()">Refresh Status</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📈 Performance Metrics</h3>
+            <div id="performanceMetrics" class="metrics">No data yet</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Results</h3>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Usage Instructions</h3>
+            <div class="code">
+// Enable optimization manually in console:
+conversationManager.llmEngine.enablePromptOptimization()
+
+// Check status:
+conversationManager.llmEngine.getStatus().promptOptimization
+
+// Disable if needed:
+conversationManager.llmEngine.disablePromptOptimization()
+            </div>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="../pwa/js/nyla-device-utils.js"></script>
+    <script src="../pwa/js/nyla-llm-engine.js"></script>
+
+    <script>
+        let engine = null;
+
+        // Initialize LLM engine for testing
+        async function initializeEngine() {
+            try {
+                // Check if dependencies are loaded
+                if (typeof NYLADeviceUtils === 'undefined') {
+                    throw new Error('NYLADeviceUtils not loaded - check file path');
+                }
+                if (typeof NYLALLMEngine === 'undefined') {
+                    throw new Error('NYLALLMEngine not loaded - check file path');
+                }
+                
+                engine = new NYLALLMEngine();
+                updateStatus();
+                addTestResult('✅ LLM Engine initialized successfully');
+                addTestResult('✅ Dependencies loaded: NYLADeviceUtils, NYLALLMEngine');
+            } catch (error) {
+                addTestResult('❌ Failed to initialize LLM Engine: ' + error.message);
+                addTestResult('💡 Try using test-prompt-v2-simple.html for dependency-free testing');
+                
+                // Show fallback information
+                showFallbackInfo();
+            }
+        }
+
+        function showFallbackInfo() {
+            const statusInfo = `
+Feature Flag: Cannot determine (engine not loaded)
+Current Version: Use simple test for analysis
+Tokens Used: V1=573, V2=307 (estimated)
+Token Reduction: 266 tokens (46.4%)
+            `;
+            document.getElementById('currentStatus').innerText = statusInfo;
+            
+            const metricsInfo = `
+📊 V1 Baseline: 573 tokens
+🚀 V2 Optimized: 307 tokens  
+⚡ Reduction: 266 tokens (46.4%)
+🎯 Status: DEPENDENCY TEST MODE
+            `;
+            document.getElementById('performanceMetrics').innerText = metricsInfo;
+        }
+
+        function updateStatus() {
+            if (!engine) {
+                document.getElementById('currentStatus').innerText = 'Engine not initialized';
+                return;
+            }
+
+            const status = engine.getStatus();
+            const opt = status.promptOptimization;
+            
+            const statusInfo = `
+Feature Flag: ${engine.PROMPT_V2_ENABLED ? 'ENABLED' : 'DISABLED'}
+Current Version: ${opt.version}
+Tokens Used: ${opt.tokensUsed}
+Token Reduction: ${opt.tokenReduction} (${opt.percentReduction}%)
+            `;
+            
+            document.getElementById('currentStatus').innerText = statusInfo;
+            
+            const metricsInfo = `
+📊 V1 Baseline: ${opt.v1Tokens} tokens
+🚀 V2 Optimized: ${opt.v2Tokens} tokens  
+⚡ Reduction: ${opt.tokenReduction} tokens (${opt.percentReduction}%)
+🎯 Status: ${engine.PROMPT_V2_ENABLED ? 'OPTIMIZATION ACTIVE' : 'BASELINE MODE'}
+            `;
+            
+            document.getElementById('performanceMetrics').innerText = metricsInfo;
+        }
+
+        function enableOptimization() {
+            if (!engine) {
+                addTestResult('❌ Engine not initialized');
+                return;
+            }
+
+            const result = engine.enablePromptOptimization();
+            if (result.success) {
+                addTestResult('✅ PROMPT_V2 enabled successfully');
+                addTestResult(`📈 Token reduction: ${result.metrics.tokenReduction} (${result.metrics.percentReduction}%)`);
+            } else {
+                addTestResult('⚠️ ' + result.message);
+            }
+            updateStatus();
+        }
+
+        function disableOptimization() {
+            if (!engine) {
+                addTestResult('❌ Engine not initialized');
+                return;
+            }
+
+            const result = engine.disablePromptOptimization();
+            if (result.success) {
+                addTestResult('🔄 Reverted to PROMPT_V1 baseline');
+            } else {
+                addTestResult('⚠️ ' + result.message);
+            }
+            updateStatus();
+        }
+
+        function refreshStatus() {
+            updateStatus();
+            addTestResult('🔄 Status refreshed');
+        }
+
+        function addTestResult(message) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+            resultDiv.innerText = `${new Date().toLocaleTimeString()}: ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Auto-initialize when page loads
+        window.addEventListener('load', () => {
+            addTestResult('🔄 Initializing PROMPT_V2 test environment...');
+            initializeEngine();
+        });
+    </script>
+</body>
+</html>

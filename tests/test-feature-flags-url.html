@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Feature Flags Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+        }
+        .test-result {
+            background: #1e3a1e;
+            border: 1px solid #4a9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .url-example {
+            background: #2a2a3a;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .status-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .enabled {
+            border-left: 3px solid #4CAF50;
+        }
+        .disabled {
+            border-left: 3px solid #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎛️ URL Feature Flags Test</h1>
+            <p>Test feature flag activation via URL query parameters</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Current URL & Status</h3>
+            <div class="url-example" id="currentURL">Loading...</div>
+            <div class="status-grid">
+                <div class="status-box" id="featureFlagStatus">
+                    <h4>Feature Flag Status</h4>
+                    <div id="flagDetails">Loading...</div>
+                </div>
+                <div class="status-box" id="llmEngineStatus">
+                    <h4>LLM Engine Status</h4>
+                    <div id="engineDetails">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Test URLs</h3>
+            <p>Click these buttons to test different feature flag combinations:</p>
+            
+            <button onclick="testURL('?feature=PROMPT_V2_ENABLED')">Enable PROMPT_V2</button>
+            <button onclick="testURL('?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED')">Enable Multiple Flags</button>
+            <button onclick="testURL('?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED')">Enable Debug Flags</button>
+            <button onclick="testURL('')">Clear All Flags</button>
+            
+            <div class="url-example">
+                <strong>Example URLs:</strong><br>
+                http://localhost:8080/?feature=PROMPT_V2_ENABLED<br>
+                http://localhost:8080/?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED<br>
+                http://localhost:8080/?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED,PERFORMANCE_MONITOR_ENABLED
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Results</h3>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Supported Feature Flags</h3>
+            <div id="supportedFlags" class="url-example">Loading...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Manual Testing</h3>
+            <p>Open browser console and run:</p>
+            <div class="url-example">
+// Check feature flag status
+console.log('Feature Flags:', NYLAFeatureFlags.getStatus());
+
+// Check if specific flag is enabled
+console.log('PROMPT_V2:', NYLAFeatureFlags.isEnabled('PROMPT_V2_ENABLED'));
+
+// Get LLM engine feature flag status (if engine exists)
+if (window.llmEngine) {
+    console.log('LLM Engine Flags:', llmEngine.getFeatureFlagStatus());
+}
+
+// Enable/disable flags programmatically
+NYLAFeatureFlags.enable('PROMPT_V2_ENABLED');
+NYLAFeatureFlags.disable('PROMPT_V2_ENABLED');
+            </div>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="../pwa/js/nyla-device-utils.js"></script>
+    <script src="../pwa/js/nyla-feature-flags.js"></script>
+    <script src="../pwa/js/nyla-llm-state-manager.js"></script>
+
+    <script>
+        let llmEngine = null;
+
+        function updateStatus() {
+            // Update current URL
+            document.getElementById('currentURL').textContent = window.location.href;
+            
+            // Update feature flag status
+            if (window.NYLAFeatureFlags) {
+                const status = NYLAFeatureFlags.getStatus();
+                const flagsHTML = `
+Enabled Flags: ${status.enabledFlags.length > 0 ? status.enabledFlags.join(', ') : 'None'}
+URL Features: ${status.urlFeatures || 'None'}
+Total Flags: ${status.totalFlags}
+                `;
+                document.getElementById('flagDetails').textContent = flagsHTML;
+                
+                // Update flag status boxes
+                const flagBox = document.getElementById('featureFlagStatus');
+                flagBox.className = status.enabledFlags.length > 0 ? 'status-box enabled' : 'status-box disabled';
+                
+                // Update supported flags
+                document.getElementById('supportedFlags').textContent = status.supportedFlags.join(', ');
+            }
+            
+            // Update LLM engine status
+            if (llmEngine) {
+                const engineStatus = llmEngine.getFeatureFlagStatus();
+                const engineHTML = `
+PROMPT_V2_ENABLED: ${engineStatus.PROMPT_V2_ENABLED}
+Current Version: ${engineStatus.currentPromptVersion}
+URL Supported: ${engineStatus.urlSupported}
+                `;
+                document.getElementById('engineDetails').textContent = engineHTML;
+                
+                const engineBox = document.getElementById('llmEngineStatus');
+                engineBox.className = engineStatus.PROMPT_V2_ENABLED ? 'status-box enabled' : 'status-box disabled';
+            } else {
+                document.getElementById('engineDetails').textContent = 'LLM Engine not initialized (test focuses on feature flag system)';
+            }
+        }
+
+        function testURL(queryString) {
+            const newURL = window.location.origin + window.location.pathname + queryString;
+            addTestResult(`🔄 Navigating to: ${newURL}`);
+            window.location.href = newURL;
+        }
+
+        function addTestResult(message) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+            resultDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            addTestResult('🔄 Feature flags test page loaded');
+            
+            if (window.NYLAFeatureFlags) {
+                const status = NYLAFeatureFlags.getStatus();
+                addTestResult(`✅ Feature flag system initialized with ${status.enabledFlags.length} enabled flags`);
+                
+                if (status.enabledFlags.length > 0) {
+                    addTestResult(`🚀 Active flags: ${status.enabledFlags.join(', ')}`);
+                }
+            } else {
+                addTestResult('❌ Feature flag system not available');
+            }
+            
+            updateStatus();
+            
+            // Try to initialize LLM engine (optional)
+            try {
+                // Note: This would fail due to WebLLM dependencies, but we can test feature flag detection
+                addTestResult('💡 LLM engine initialization skipped (focus on feature flag testing)');
+            } catch (error) {
+                addTestResult('ℹ️ LLM engine not available - testing feature flag system only');
+            }
+        });
+
+        // Update status every few seconds to catch any changes
+        setInterval(updateStatus, 3000);
+    </script>
+</body>
+</html>
