@@ -1,0 +1,82 @@
+{
+  "chunks": [
+    {
+      "id": "ecosystem_partners_wangchai_collaboration",
+      "source_id": "wangchai_nyla_partnership",
+      "type": "ecosystem",
+      "lang": "bilingual",
+      "title": "WangChai (旺柴) Project Partnership & Cross-Community Bridge",
+      "section": "community_partnerships",
+      "tags": ["wangchai", "旺柴", "community", "ama", "chinese", "eastern", "western", "bridge", "collaboration", "partnership", "cross-cultural"],
+      "as_of": "2025-08-15",
+      "stability": "evolving",
+      "source_url": "internal://nyla/ecosystem/partnerships/wangchai",
+      "hash": "eco_part_wangchai_001",
+      "body": "WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise. As of August 2025, WangChai has grown to 4,820 Twitter members and 3,000 Telegram members. The project has released version 1.0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages. WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025. WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach.",
+      "summary_en": "WangChai (旺柴) is a growing blockchain community project with 7,800+ members that maintains a deep partnership with NYLA through joint AMAs and serves as a bridge between Eastern and Western crypto communities.",
+      "summary_zh": "旺柴是一個不斷增長的區塊鏈社區項目，擁有7,800+成員，通過聯合AMA與NYLA保持深度合作，作為東西方加密社區之間的橋樑。",
+      "priority": 7,
+      "related_chunks": ["ecosystem_partnerships_mifenggou", "ecosystem_campaigns_chinese_community_outreach"],
+      "glossary_terms": ["WangChai", "旺柴", "Chai cards", "柴卡", "cross-community bridge", "AMA", "Eastern-Western communities"],
+      "partnership": {
+        "type": "community_collaboration",
+        "status": "active",
+        "established": "2025-07",
+        "focus_areas": ["community_building", "cross_cultural_engagement", "joint_events", "social_media_outreach"],
+        "collaboration_activities": [
+          "joint_ama_sessions",
+          "community_cross_promotion",
+          "cultural_bridge_building",
+          "social_media_cooperation"
+        ],
+        "community_metrics": {
+          "twitter_members": 4820,
+          "telegram_members": 3000,
+          "total_community": 7820,
+          "as_of": "2025-08-12"
+        },
+        "recent_achievements": [
+          "whitepaper_v1_release",
+          "chai_cards_batch_2_completion",
+          "wangchai_avatars_batch_1_completion",
+          "merchandise_gift_packages_procurement",
+          "joint_ama_sessions_with_nyla"
+        ],
+        "geographic_focus": "eastern_markets",
+        "primary_language": "chinese",
+        "bridge_function": "eastern_western_communities"
+      }
+    },
+    {
+      "id": "ecosystem_campaigns_wangchai_nyla_amas",
+      "source_id": "wangchai_nyla_joint_amas",
+      "type": "ecosystem", 
+      "lang": "bilingual",
+      "title": "NYLA x WangChai Joint AMA Series",
+      "section": "joint_events",
+      "tags": ["ama", "wangchai", "旺柴", "chinese", "community", "joint_events", "cross_cultural", "looky", "introduction"],
+      "as_of": "2025-08-15",
+      "stability": "evolving",
+      "source_url": "internal://nyla/campaigns/wangchai-amas",
+      "hash": "camp_wangchai_ama_001",
+      "body": "NYLA and WangChai have conducted a series of joint AMA (Ask Me Anything) sessions to strengthen their partnership and introduce NYLA to the Chinese-speaking community. As of August 12, 2025, two joint AMA sessions have been completed. On August 15, 2025, a Chinese-language AMA was planned where participant 'Looky' was invited to introduce the NYLA project to the WangChai community. These AMAs serve as a key mechanism for deepening ties between the projects and facilitating cross-cultural understanding in the crypto space. The sessions focus on educating WangChai's community about NYLA's capabilities while building stronger collaborative relationships.",
+      "summary_en": "Joint AMA series between NYLA and WangChai featuring Chinese-language sessions to introduce NYLA to Eastern markets, with 'Looky' as a key community bridge.",
+      "summary_zh": "NYLA與旺柴的聯合AMA系列，包含中文場次向東方市場介紹NYLA，'Looky'作為重要的社區橋樑。",
+      "priority": 6,
+      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "ecosystem_campaigns_chinese_market_expansion"],
+      "glossary_terms": ["Joint AMA", "Looky", "Chinese-language", "cross-cultural engagement", "community introduction"],
+      "campaign_details": {
+        "campaign_type": "joint_ama_series",
+        "status": "ongoing",
+        "sessions_completed": 2,
+        "last_session_date": "2025-08-12",
+        "next_session_planned": "2025-08-15",
+        "primary_language": "chinese",
+        "key_participants": ["Looky"],
+        "objective": "nyla_introduction_to_chinese_community",
+        "geographic_target": "eastern_markets",
+        "partnership_strengthening": true
+      }
+    }
+  ]
+}

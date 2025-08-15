@@ -352,7 +352,8 @@ class NYLAUtils {
         'ecosystem/integrations/ethereum/uniswap-v3.json',
         'ecosystem/integrations/solana/jupiter-routing.json',
         'ecosystem/partners/algorand/algorand-foundation.json',
-        'ecosystem/partners/solana/solana-foundation.json'
+        'ecosystem/partners/solana/solana-foundation.json',
+        'ecosystem/partners/multi-chain/wangchai.json'
       ];
       
       for (const filePath of kbFiles) {
