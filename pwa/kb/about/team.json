@@ -96,8 +96,27 @@
       "summary_en": "Clear team distinction: NYLA team builds AI agent, NYLAGo provides interface. Separate but collaborative projects.",
       "summary_zh": "团队区别明确：NYLA团队构建AI代理，NYLAGo提供界面。独立但协作的项目。",
       "priority": 9,
-      "related_chunks": ["policy_wording_nyla_identity"],
+      "related_chunks": ["policy_wording_nyla_identity", "about_nyla_resources"],
       "glossary_terms": ["NYLA", "NYLAGo", "AI agent", "interface", "collaboration"]
+    },
+    {
+      "id": "about_nyla_resources",
+      "source_id": "nyla_official_resources",
+      "type": "about",
+      "lang": "bilingual",
+      "title": "NYLA Official Resources and Links",
+      "section": "resources",
+      "tags": ["resources", "links", "official", "website", "social", "contract", "learn"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "https://www.agentnyla.com/",
+      "hash": "abt006_res",
+      "body": "To learn more about NYLA, visit these official resources: 1) Official Website: https://www.agentnyla.com/ - Main information hub for NYLA project. 2) Lore & Story: https://www.loreagentnyla.com/ - Discover the NYLA universe and backstory. 3) Official X (Twitter): https://x.com/AgentNyla - Latest updates and announcements. 4) $NYLA Token Contract: 3HeUeL8ru8DFfRRQGnE11vGrDdNUzqVwBW8hyYHBbonk (Solana). All official communications and updates come through these channels. Always verify information through official sources.",
+      "summary_en": "Official NYLA resources: website (agentnyla.com), lore site, X.com (@AgentNyla), and $NYLA contract address on Solana.",
+      "summary_zh": "NYLA官方资源：网站(agentnyla.com)、故事网站、X.com (@AgentNyla)和Solana上的$NYLA合约地址。",
+      "priority": 10,
+      "related_chunks": ["about_team_distinction", "about_nylago_overview"],
+      "glossary_terms": ["NYLA", "official", "website", "resources", "$NYLA", "contract address"]
     }
   ]
 }
