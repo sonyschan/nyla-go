@@ -953,18 +953,18 @@ class NYLAKnowledgeTracker {
         this.userKnowledge.lastKnowledgeUpdate = data.lastKnowledgeUpdate || Date.now();
         
         const percentage = this.getKnowledgePercentage();
-        console.log(`NYLA Knowledge: Loaded ${percentage}% progress from ${source}`);
-        console.log(`Keywords: ${this.userKnowledge.mappedKeywords.size}/${this.totalKeywords}`);
+        NYLALogger.debug(`NYLA Knowledge: Loaded ${percentage}% progress from ${source}`);
+        NYLALogger.debug(`Keywords: ${this.userKnowledge.mappedKeywords.size}/${this.totalKeywords}`);
         
         // Check data age
         if (data.savedAt) {
           const hoursSinceSave = (Date.now() - data.savedAt) / (1000 * 60 * 60);
           if (hoursSinceSave > 24) {
-            console.warn(`NYLA Knowledge: Data is ${Math.floor(hoursSinceSave)} hours old`);
+            NYLALogger.warn(`NYLA Knowledge: Data is ${Math.floor(hoursSinceSave)} hours old`);
           }
         }
       } else {
-        console.log('NYLA Knowledge: Starting fresh (no saved data found)');
+        NYLALogger.debug('NYLA Knowledge: Starting fresh (no saved data found)');
       }
     } catch (error) {
       console.error('NYLA Knowledge Tracker: Failed to load from storage', error);
