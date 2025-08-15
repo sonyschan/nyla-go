@@ -13,16 +13,16 @@ NYLA Go is committed to providing a secure browser extension for cryptocurrency 
 
 ### 🔍 Third-Party Verification
 
-#### Latest Release Security Scan (v2.4.0)
-- **VirusTotal**: [Scan Results - Clean ✅](https://www.virustotal.com/gui/file/acdf7bb1eb6f2413839b056be81538962025d8640e1cb72719da34e45deb674d?nocache=1) - 0/71 security vendors flagged this file as malicious
+#### Latest Release Security Scan (v2.5.0)
+- **VirusTotal**: [Scan Results - Pending](https://www.virustotal.com/gui/file/[hash-to-update]) - Awaiting v2.5.0 scan
 - **CRXcavator**: [Extension Analysis](https://crxcavator.io/report/[extension-id]) - Pending Chrome Store approval
 - **GitHub Security**: No vulnerabilities detected in dependencies ✅
 
 #### File Integrity Verification
 ```bash
 # Verify download integrity:
-sha256sum nyla-go-v2.4.0.zip
-# Expected SHA256: 03465f740d2c92139d014d3356224abd486e80f294453fee20a80f66bbdce797
+sha256sum nyla-go-v2.5.0.zip
+# Expected SHA256: [To be updated after v2.5.0 release package generation]
 ```
 
 ### 🔐 What We DON'T Access
@@ -46,6 +46,40 @@ If you discover a security vulnerability, please report it responsibly:
 - Security patches are prioritized and released immediately
 - Users are notified through extension update mechanisms
 - All security fixes are documented in release notes
+
+### 🏪 Chrome Web Store Security Compliance
+
+NYLA Go meets Chrome Web Store security requirements through:
+
+#### **Minimal Permissions Policy**
+- **activeTab**: Only access to currently active tab for X.com integration
+- **storage**: Local preferences and settings storage only
+- **tabs**: Tab management for extension functionality
+- **NO** sensitive permissions: No browsing history, no cross-site access, no file system access
+
+#### **Content Security Policy (CSP)**
+- Strict CSP implementation prevents XSS attacks
+- No inline scripts or unsafe evaluations
+- All resources loaded from extension bundle only
+- No remote code execution or dynamic imports
+
+#### **No Remote Code Loading**
+- All JavaScript bundled with extension
+- No external script loading or dynamic code execution
+- Third-party libraries vetted and included statically
+- External services limited to QR code generation API only
+
+#### **Privacy & Data Protection**
+- No personal data collection beyond form preferences
+- No user tracking or analytics
+- Clear disclosure of external service usage (QR generation)
+- Local storage only - no data transmission to external servers
+
+#### **Regular Security Audits**
+- Quarterly security reviews and dependency updates
+- Automated vulnerability scanning via GitHub Security
+- VirusTotal verification for each release
+- Open source codebase for community security review
 
 ## 🛠️ For Security Researchers
 

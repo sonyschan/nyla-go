@@ -78,4 +78,4 @@ For questions about this privacy policy, please create an issue at our GitHub re
 
 ---
 
-*This privacy policy applies to NYLA Go Chrome Extension version 2.4.0 and later.*
+*This privacy policy applies to NYLA Go Chrome Extension version 2.5.0 and later.*
