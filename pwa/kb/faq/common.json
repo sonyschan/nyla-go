@@ -277,6 +277,37 @@
         "Next steps after posting command",
         "Command processing workflow"
       ]
+    },
+    {
+      "id": "faq_what_is_nyla",
+      "source_id": "common_questions",
+      "type": "faq",
+      "lang": "bilingual",
+      "title": "What is NYLA?",
+      "section": "about_nyla",
+      "tags": ["FAQ", "what is NYLA", "overview", "AI agent", "introduction"],
+      "as_of": "2025-01-15",
+      "stability": "stable",
+      "source_url": "internal://faq/about-nyla",
+      "hash": "faq014_whatnyla",
+      "body": "Q: What is NYLA? A: NYLA is an AI agent that executes blockchain transactions on X.com (formerly Twitter). When you post properly formatted commands on X.com, NYLA automatically detects them and executes cryptocurrency transfers, swaps, and other blockchain operations across Solana, Ethereum, and Algorand networks. NYLA acts as a bridge between social media and blockchain, making cryptocurrency operations as simple as posting a message. The AI agent handles all the complex blockchain interactions while you interact through familiar social media.",
+      "summary_en": "NYLA is an AI agent that executes blockchain transactions through X.com posts. Post commands, NYLA executes them automatically.",
+      "summary_zh": "NYLA是一个通过X.com帖子执行区块链交易的AI代理。发布命令，NYLA会自动执行。",
+      "priority": 10,
+      "related_chunks": ["faq_how_to_send", "faq_what_can_nyla_do", "about_team_distinction"],
+      "glossary_terms": ["NYLA", "AI agent", "blockchain", "X.com", "cryptocurrency", "automatic execution"],
+      "query_variations": [
+        "What is NYLA?",
+        "What is NYLA AI?", 
+        "What does NYLA do?",
+        "Tell me about NYLA",
+        "Explain NYLA",
+        "What is the NYLA agent?",
+        "How does NYLA work?",
+        "What is NYLA for?",
+        "NYLA overview",
+        "Introduction to NYLA"
+      ]
     }
   ]
 }
