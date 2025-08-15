@@ -73,7 +73,7 @@ class NYLAFeatureFlags {
                 });
                 
                 if (features.length > 0) {
-                    NYLALogger.log(`🎛️ Feature Flags: Enabled ${features.length} flags from URL:`, features);
+                    NYLALogger.info(`🎛️ Feature Flags: Enabled ${features.length} flags from URL:`, features);
                 }
             }
         } catch (error) {
@@ -203,7 +203,7 @@ class NYLAFeatureFlags {
         if (this.isEnabled('PROMPT_V2_ENABLED')) {
             if (!llmEngine.PROMPT_V2_ENABLED) {
                 llmEngine.enablePromptOptimization();
-                NYLALogger.log('🚀 Feature Flag: PROMPT_V2 applied to LLM engine');
+                NYLALogger.info('🚀 Feature Flag: PROMPT_V2 applied to LLM engine');
             }
         }
         

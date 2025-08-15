@@ -12,9 +12,6 @@ class NYLALLMEngine {
     // Feature flags
     this.PROMPT_V2_ENABLED = false; // Feature flag for optimized prompt
     
-    // Initialize feature flags from URL if available
-    this.initializeFeatureFlags();
-    
     // Use centralized device detection
     this.deviceInfo = NYLADeviceUtils.getDeviceInfo();
     this.modelConfig = {
@@ -43,6 +40,9 @@ class NYLALLMEngine {
       v2TokenCount: 307,
       currentVersion: this.PROMPT_V2_ENABLED ? 'v2' : 'v1'
     };
+    
+    // Initialize feature flags from URL after promptMetrics is set up
+    this.initializeFeatureFlags();
     
     // Engine health monitoring
     this.isEngineReady = false;
@@ -2288,7 +2288,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
           this.promptMetrics.currentVersion = 'v2';
           this.systemPrompt = this.createSystemPrompt();
           
-          NYLALogger.log('🚀 LLM Engine: PROMPT_V2 enabled via URL feature flag');
+          NYLALogger.info('🚀 LLM Engine: PROMPT_V2 enabled via URL feature flag');
         }
         
         // Log other detected flags for future implementation
@@ -2308,7 +2308,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
           this.promptMetrics.currentVersion = 'v2';
           this.systemPrompt = this.createSystemPrompt();
           
-          NYLALogger.log('🚀 LLM Engine: PROMPT_V2 enabled via URL (direct parsing)');
+          NYLALogger.info('🚀 LLM Engine: PROMPT_V2 enabled via URL (direct parsing)');
         }
       }
     } catch (error) {
