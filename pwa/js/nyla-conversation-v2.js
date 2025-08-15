@@ -7,13 +7,13 @@ class NYLAConversationManagerV2 {
   constructor(knowledgeBase) {
     this.kb = knowledgeBase;
     
-    // Check if mobile device - don't initialize LLM on mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-      console.log('NYLA Conversation V2: Mobile device detected - skipping LLM engine initialization');
+    // Use centralized device detection
+    const device = NYLADeviceUtils.getDeviceInfo();
+    if (device.isMobile) {
+      NYLALogger.debug('NYLA Conversation V2: Mobile device detected - skipping LLM engine initialization');
       this.llmEngine = null; // No LLM engine on mobile
     } else {
-      console.log('NYLA Conversation V2: Desktop device detected - initializing LLM engine');
+      NYLALogger.debug('NYLA Conversation V2: Desktop device detected - initializing LLM engine');
       this.llmEngine = new NYLALLMEngine();
     }
     
@@ -50,7 +50,7 @@ class NYLAConversationManagerV2 {
    */
   setUI(ui) {
     this.ui = ui;
-    console.log('NYLA Conversation V2: UI reference set');
+    NYLALogger.debug('NYLA Conversation V2: UI reference set');
   }
 
   /**
@@ -61,7 +61,7 @@ class NYLAConversationManagerV2 {
     // First try RAG-based semantic search if available
     if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
       try {
-        console.log('NYLA Conversation V2: Using RAG semantic search for topic identification');
+        NYLALogger.debug('NYLA Conversation V2: Using RAG semantic search for topic identification');
         
         // Use RAG pipeline to find semantically similar content
         const ragResult = await this.ragIntegration.ragPipeline.query(userInput, {
@@ -100,7 +100,7 @@ class NYLAConversationManagerV2 {
           .map(([topic]) => topic)
           .slice(0, 3);
         
-        console.log('NYLA Conversation V2: RAG identified topics:', ragTopics);
+        NYLALogger.debug('NYLA Conversation V2: RAG identified topics:', ragTopics);
         return ragTopics.slice(0, 3);
         
       } catch (error) {
@@ -109,7 +109,7 @@ class NYLAConversationManagerV2 {
     }
     
     // Simple fallback: return generic topics when RAG is unavailable
-    console.log('NYLA Conversation V2: RAG unavailable, using generic topics');
+    NYLALogger.debug('NYLA Conversation V2: RAG unavailable, using generic topics');
     const inputLower = userInput.toLowerCase();
     
     // Basic topic inference from common keywords
@@ -131,29 +131,29 @@ class NYLAConversationManagerV2 {
    */
   async initialize() {
     try {
-      console.log('NYLA Conversation V2: === Initializing ===');
+      NYLALogger.debug('NYLA Conversation V2: === Initializing ===');
       
       // Initialize knowledge tracker if available
-      console.log('NYLA Conversation V2: Checking knowledge tracker availability...');
+      NYLALogger.debug('NYLA Conversation V2: Checking knowledge tracker availability...');
       if (typeof NYLAKnowledgeTracker !== 'undefined') {
-        console.log('NYLA Conversation V2: Creating knowledge tracker...');
+        NYLALogger.debug('NYLA Conversation V2: Creating knowledge tracker...');
         this.knowledgeTracker = new NYLAKnowledgeTracker(this.kb);
-        console.log('NYLA Conversation V2: ✅ Knowledge tracker initialized');
+        NYLALogger.debug('NYLA Conversation V2: ✅ Knowledge tracker initialized');
       } else {
         console.warn('NYLA Conversation V2: ⚠️ Knowledge tracker not available, engagement features disabled');
       }
       
       // Initialize LLM engine in background (desktop only)
       if (this.llmEngine) {
-        console.log('NYLA Conversation V2: Initializing LLM engine...');
+        NYLALogger.debug('NYLA Conversation V2: Initializing LLM engine...');
         this.llmEngine.initialize().catch(error => {
           console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to RAG-only system:', error);
         });
       } else {
-        console.log('NYLA Conversation V2: LLM engine disabled (mobile device)');
+        NYLALogger.debug('NYLA Conversation V2: LLM engine disabled (mobile device)');
       }
 
-      console.log('NYLA Conversation V2: ✅ Initialized successfully');
+      NYLALogger.debug('NYLA Conversation V2: ✅ Initialized successfully');
       return true;
     } catch (error) {
       console.error('NYLA Conversation V2: ❌ Initialization failed:', error);
@@ -229,7 +229,7 @@ class NYLAConversationManagerV2 {
    */
   async processQuestion(questionId, questionText) {
     try {
-      console.log('NYLA Conversation V2: Processing question with LLM');
+      NYLALogger.debug('NYLA Conversation V2: Processing question with LLM');
       
       // Identify relevant topics using semantic search (RAG) or keyword fallback
       const identifiedTopics = await this.identifyRelevantKnowledgeKeys(questionText);
@@ -259,15 +259,15 @@ class NYLAConversationManagerV2 {
       
       // Try LLM if available, otherwise fallback to "don't know" response
       const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
-      console.log('NYLA Conversation V2: LLM Status:', llmStatus);
-      console.log('NYLA Conversation V2: LLM Engine isReady():', this.llmEngine ? this.llmEngine.isReady() : false);
+      NYLALogger.debug('NYLA Conversation V2: LLM Status:', llmStatus);
+      NYLALogger.debug('NYLA Conversation V2: LLM Engine isReady():', this.llmEngine ? this.llmEngine.isReady() : false);
       
       // Check for mobile device (LLM engine will be null on mobile)
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const device = NYLADeviceUtils.getDeviceInfo();
       
       // Use LLM if engine is ready, or force attempt on mobile for debugging
       const canUseLLM = llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp;
-      const shouldForceDebug = isMobile && llmStatus.initialized && !llmStatus.loading;
+      const shouldForceDebug = device.isMobile && llmStatus.initialized && !llmStatus.loading;
       
       // Special case: If the user is interacting via conversation box, try LLM even if warmup flag is false
       // This handles race conditions where UI loads before warmup flag is set
@@ -275,11 +275,11 @@ class NYLAConversationManagerV2 {
       
       if (canUseLLM || shouldForceDebug || shouldTryLLMDespiteWarmup) {
         if (shouldForceDebug) {
-          console.log('NYLA Conversation V2: 🔧 MOBILE DEBUG: Forcing LLM attempt even if not warmed up');
+          NYLALogger.debug('NYLA Conversation V2: 🔧 MOBILE DEBUG: Forcing LLM attempt even if not warmed up');
         } else if (shouldTryLLMDespiteWarmup) {
-          console.log('NYLA Conversation V2: ⚡ Trying LLM despite warmup flag being false (race condition handling)');
+          NYLALogger.debug('NYLA Conversation V2: ⚡ Trying LLM despite warmup flag being false (race condition handling)');
         } else {
-          console.log('NYLA Conversation V2: ✅ Using LLM for response generation');
+          NYLALogger.debug('NYLA Conversation V2: ✅ Using LLM for response generation');
         }
         response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
         console.log('NYLA Conversation V2: 🔍 Response from processWithLLM:', {
@@ -289,7 +289,7 @@ class NYLAConversationManagerV2 {
           responseKeys: Object.keys(response)
         });
       } else {
-        console.log('NYLA Conversation V2: ⚠️ LLM not ready - using fallback response');
+        NYLALogger.debug('NYLA Conversation V2: ⚠️ LLM not ready - using fallback response');
         console.log('NYLA Conversation V2: 🚨 LLM Status:', {
           'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
           'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
@@ -299,7 +299,7 @@ class NYLAConversationManagerV2 {
         
         // Special handling when engine is initializing but not warmed up
         if (llmStatus.initialized && !llmStatus.warmedUp) {
-          console.log('NYLA Conversation V2: 🔥 LLM engine warming up GPU buffers...');
+          NYLALogger.debug('NYLA Conversation V2: 🔥 LLM engine warming up GPU buffers...');
         }
         
         // Simplified fallback - just return "don't know" response
@@ -402,11 +402,11 @@ class NYLAConversationManagerV2 {
    * Now uses dynamic topic identification instead of hardcoded topics
    */
   async processWithLLM(questionId, questionText, identifiedTopics, streamCallback = null) {
-    console.log('🚀 NYLA Conversation V2: === processWithLLM CALLED ===');
-    console.log('NYLA Conversation V2: LLM processing started for:', questionText);
-    console.log('NYLA Conversation V2: QuestionId:', questionId);
-    console.log('NYLA Conversation V2: Identified topics:', identifiedTopics);
-    console.log('NYLA Conversation V2: Has stream callback:', !!streamCallback);
+    NYLALogger.debug('🚀 NYLA Conversation V2: === processWithLLM CALLED ===');
+    NYLALogger.debug('NYLA Conversation V2: LLM processing started for:', questionText);
+    NYLALogger.debug('NYLA Conversation V2: QuestionId:', questionId);
+    NYLALogger.debug('NYLA Conversation V2: Identified topics:', identifiedTopics);
+    NYLALogger.debug('NYLA Conversation V2: Has stream callback:', !!streamCallback);
     
     // Check LLM engine status before proceeding
     const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
@@ -427,7 +427,7 @@ class NYLAConversationManagerV2 {
     // Try RAG-based semantic search first
     if (this.ragIntegration && this.ragIntegration.initialized && this.ragIntegration.config.enableRAG) {
       try {
-        console.log('NYLA Conversation V2: Using RAG semantic search for knowledge context');
+        NYLALogger.debug('NYLA Conversation V2: Using RAG semantic search for knowledge context');
         
         const ragResult = await this.ragIntegration.ragPipeline.query(questionText, {
           topK: 5,
@@ -450,7 +450,7 @@ class NYLAConversationManagerV2 {
             searchMethod: 'rag_semantic'
           };
           
-          console.log('NYLA Conversation V2: RAG found', searchResults.length, 'relevant knowledge chunks');
+          NYLALogger.debug('NYLA Conversation V2: RAG found', searchResults.length, 'relevant knowledge chunks');
         }
       } catch (error) {
         console.warn('NYLA Conversation V2: RAG knowledge search failed, using fallback:', error);
@@ -459,7 +459,7 @@ class NYLAConversationManagerV2 {
     
     // Fallback to legacy keyword search if RAG failed or unavailable
     if (!knowledgeContext && this.kb && this.kb.searchKnowledge) {
-      console.log('NYLA Conversation V2: Using legacy keyword search for knowledge context');
+      NYLALogger.debug('NYLA Conversation V2: Using legacy keyword search for knowledge context');
       const searchResults = [];
       
       // Search using the identified keys directly as search terms
@@ -517,10 +517,10 @@ class NYLAConversationManagerV2 {
       knowledgeStats: this.knowledgeTracker ? this.knowledgeTracker.getKnowledgeBreakdown() : null // For plateau detection
     };
 
-    console.log('NYLA Conversation V2: Generating LLM response (timeout: 30s)...');
-    console.log('NYLA Conversation V2: Question:', questionText);
-    console.log('NYLA Conversation V2: Relevant knowledge keys:', relevantKeys);
-    console.log('NYLA Conversation V2: Knowledge retrieved:', conversationContext.knowledgeContext);
+    NYLALogger.debug('NYLA Conversation V2: Generating LLM response (timeout: 30s)...');
+    NYLALogger.debug('NYLA Conversation V2: Question:', questionText);
+    NYLALogger.debug('NYLA Conversation V2: Relevant knowledge keys:', relevantKeys);
+    NYLALogger.debug('NYLA Conversation V2: Knowledge retrieved:', conversationContext.knowledgeContext);
     console.log('NYLA Conversation V2: Enhanced context provided to LLM:', {
       hasKnowledge: !!conversationContext.knowledgeContext,
       hasStructuredKB: !!conversationContext.structuredKnowledge,
@@ -550,7 +550,7 @@ class NYLAConversationManagerV2 {
         : this.llmEngine.generateResponse(questionText, conversationContext);
       
       llmResponse = await Promise.race([llmPromise, timeoutPromise]);
-      console.log('NYLA Conversation V2: ✅ LLM response completed');
+      NYLALogger.debug('NYLA Conversation V2: ✅ LLM response completed');
       console.log('NYLA Conversation V2: LLM Response:', {
         text: llmResponse.text ? llmResponse.text.substring(0, 100) + '...' : 'No text',
         hasFollowUps: !!llmResponse.followUpSuggestions,
@@ -599,15 +599,15 @@ class NYLAConversationManagerV2 {
     const primaryTopic = identifiedTopics && identifiedTopics.length > 0 ? identifiedTopics[0] : 'general';
     
     // Debug LLM response before generating followups
-    console.log('NYLA Conversation V2: LLM followup suggestions before generateIntelligentFollowUps:', llmResponse.followUpSuggestions);
-    console.log('NYLA Conversation V2: Full LLM response keys:', Object.keys(llmResponse));
-    console.log('NYLA Conversation V2: LLM response type:', typeof llmResponse.followUpSuggestions);
+    NYLALogger.debug('NYLA Conversation V2: LLM followup suggestions before generateIntelligentFollowUps:', llmResponse.followUpSuggestions);
+    NYLALogger.debug('NYLA Conversation V2: Full LLM response keys:', Object.keys(llmResponse));
+    NYLALogger.debug('NYLA Conversation V2: LLM response type:', typeof llmResponse.followUpSuggestions);
     
     const followUps = this.generateIntelligentFollowUps(llmResponse, primaryTopic, questionText);
     
     // Debug: Log the generated follow-ups
-    console.log('NYLA Conversation V2: Generated followUps:', followUps);
-    console.log('NYLA Conversation V2: FollowUps count:', followUps ? followUps.length : 0);
+    NYLALogger.debug('NYLA Conversation V2: Generated followUps:', followUps);
+    NYLALogger.debug('NYLA Conversation V2: FollowUps count:', followUps ? followUps.length : 0);
     
     // Select appropriate sticker
     const sticker = this.selectIntelligentSticker(llmResponse.sentiment, llmResponse.text, questionText);
@@ -927,7 +927,7 @@ class NYLAConversationManagerV2 {
     
     // Use LLM suggestions if available
     if (llmResponse.followUpSuggestions && llmResponse.followUpSuggestions.length > 0) {
-      console.log('NYLA Conversation V2: ✅ Using LLM followup suggestions');
+      NYLALogger.debug('NYLA Conversation V2: ✅ Using LLM followup suggestions');
       followUps = llmResponse.followUpSuggestions.map((suggestion, index) => {
         // Handle both old format (strings) and new format (objects)
         let followUp;
@@ -959,7 +959,7 @@ class NYLAConversationManagerV2 {
         return followUp;
       });
     } else {
-      console.log('NYLA Conversation V2: ⚠️ No LLM followups available, using contextual generation');
+      NYLALogger.debug('NYLA Conversation V2: ⚠️ No LLM followups available, using contextual generation');
       // Fallback to contextual generation (topic parameter passed from calling method)
       followUps = this.generateContextualFollowUps({ sentiment: llmResponse.sentiment }, topic, originalQuestion);
     }
@@ -1011,7 +1011,7 @@ class NYLAConversationManagerV2 {
     
     for (const actionPattern of actionPatterns) {
       if (actionPattern.pattern.test(buttonText)) {
-        console.log(`NYLA Conversation V2: Detected actionable button: "${buttonText}" → ${actionPattern.action}`);
+        NYLALogger.debug(`NYLA Conversation V2: Detected actionable button: "${buttonText}" → ${actionPattern.action}`);
         return {
           action: actionPattern.action,
           targetTab: actionPattern.targetTab
@@ -1519,7 +1519,7 @@ class NYLAConversationManagerV2 {
    * Handle tab switching actions
    */
   async handleTabSwitchAction(targetTab, originalButtonText) {
-    console.log(`NYLA Conversation V2: Handling tab switch to ${targetTab}`);
+    NYLALogger.debug(`NYLA Conversation V2: Handling tab switch to ${targetTab}`);
     
     // Generate positive response messages
     const tabSwitchResponses = {

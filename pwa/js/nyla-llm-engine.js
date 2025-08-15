@@ -9,23 +9,24 @@ class NYLALLMEngine {
     this.isInitialized = false;
     this.isLoading = false;
     
-    // Detect device type and select appropriate model
-    this.deviceInfo = this.detectDevice();
+    // Use centralized device detection
+    this.deviceInfo = NYLADeviceUtils.getDeviceInfo();
     this.modelConfig = {
       model: this.selectModel(),
       temperature: 0.3,
-      max_tokens: 600, // Increased from 300 to handle detailed instructions
+      max_tokens: 600,
       top_p: 0.8,
     };
     this.systemPrompt = this.createSystemPrompt();
     
-    // Log model configuration
-    console.log('🎯 NYLA LLM: Model Configuration:');
-    console.log('  - Model:', this.modelConfig.model);
-    console.log('  - Temperature:', this.modelConfig.temperature);
-    console.log('  - Max Tokens:', this.modelConfig.max_tokens);
-    console.log('  - Top P:', this.modelConfig.top_p);
-    console.log('  - Top K:', this.modelConfig.top_k);
+    // Log model configuration (only in debug mode)
+    NYLALogger.debug('🎯 NYLA LLM: Model Configuration:', {
+      model: this.modelConfig.model,
+      temperature: this.modelConfig.temperature,
+      max_tokens: this.modelConfig.max_tokens,
+      top_p: this.modelConfig.top_p,
+      device: this.deviceInfo
+    });
     
     // Performance tracking
     this.requestCount = 0;
@@ -39,71 +40,40 @@ class NYLALLMEngine {
     
     // Follow-up suggestion tracking
     this.previousCategories = [];
-    this.lastUsedFollowUps = new Map(); // Track specific follow-up suggestions used
+    this.lastUsedFollowUps = new Map();
   }
 
-  /**
-   * Detect device type and capabilities
-   */
-  detectDevice() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isAndroid = userAgent.includes('android');
-    const isIOS = /iphone|ipad|ipod/.test(userAgent);
-    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-    
-    // Check if running as PWA
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                  window.navigator.standalone === true ||
-                  document.referrer.includes('android-app://');
-    
-    // Check if mobile browser (not extension)
-    const isMobilePWA = isMobile && (isPWA || !window.chrome?.runtime);
-    
-    
-    return {
-      isAndroid,
-      isIOS,
-      isMobile,
-      isPWA,
-      isMobilePWA,
-      userAgent
-    };
-  }
+  // detectDevice method removed - using centralized NYLADeviceUtils
 
   /**
    * Select appropriate model based on device capabilities
    */
   selectModel() {
-    console.log('🎯 NYLA LLM: Model Selection - Using Qwen2-1.5B-Instruct q4f32_1');
-    console.log('  - Primary Model: Qwen2-1.5B-Instruct-q4f32_1-MLC (1.5B parameters)');
-    console.log('  - Strategy: Qwen2 model optimized for instruction following');
-    console.log('  - Config: GPU inference with conservative parameters');
-    console.log('  - Device info:', this.deviceInfo);
+    NYLALogger.debug('🎯 NYLA LLM: Model Selection - Using Qwen2-1.5B-Instruct q4f32_1', {
+      strategy: 'Qwen2 model optimized for instruction following',
+      device: this.deviceInfo
+    });
     
-    // Store fallback model options - verified models from mlc.ai/models
+    // Store fallback model options
     this.fallbackModels = ["Qwen2-0.5B-Instruct-q4f32_1-MLC", "TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC"];
     
-    // Use Qwen2-1.5B-Instruct q4f32_1 - Balanced size and performance
-    console.log('✅ NYLA LLM: Selected Qwen2-1.5B-Instruct q4f32_1 for balanced performance');
-    return "Qwen2-1.5B-Instruct-q4f32_1-MLC"; // From https://mlc.ai/models
+    return "Qwen2-1.5B-Instruct-q4f32_1-MLC";
   }
 
   /**
    * Check WebGPU compatibility including device-specific issues
    */
   async checkWebGPUCompatibility() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isAndroid = userAgent.includes('android');
-    const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const device = NYLADeviceUtils.getDeviceInfo();
     
     // Basic WebGPU support check
     if (!navigator.gpu) {
-      if (isAndroid) {
+      if (device.isAndroid) {
         return {
           supported: false,
           reason: 'Android WebGPU not available - Chrome for Android with WebGPU flag required. Will use RAG-only responses.'
         };
-      } else if (isMobile) {
+      } else if (device.isMobile) {
         return {
           supported: false,
           reason: 'Mobile WebGPU not supported - LLM requires WebGPU for inference. Using RAG-only responses.'
@@ -185,7 +155,7 @@ class NYLALLMEngine {
             }
           }
           
-          console.log('NYLA LLM: ✅ Android WebGPU compatibility test passed');
+          NYLALogger.debug('NYLA LLM: ✅ Android WebGPU compatibility test passed');
           return { supported: true };
           
         } catch (shaderError) {
@@ -227,7 +197,7 @@ class NYLALLMEngine {
    * Call this when PWA starts to avoid first-click delay
    */
   async preloadInitialize() {
-    console.log('NYLA LLM: 🚀 Starting background preload initialization...');
+    NYLALogger.debug('NYLA LLM: 🚀 Starting background preload initialization...');
     return this.initialize(true);
   }
 
@@ -263,14 +233,14 @@ class NYLALLMEngine {
     }
     
     if (isPreload) {
-      console.log('NYLA LLM: 🔄 Background preload - users can continue using PWA while this loads');
+      NYLALogger.debug('NYLA LLM: 🔄 Background preload - users can continue using PWA while this loads');
     }
     
     try {
-      console.log('NYLA LLM: Initializing WebLLM engine...');
-      console.log('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
-      console.log('NYLA LLM: Device detection:', this.deviceInfo);
-      console.log(`NYLA LLM: Model: ${this.modelConfig.model} (1.5B parameters, conservative config to fix NaN)`);
+      NYLALogger.debug('NYLA LLM: Initializing WebLLM engine...');
+      NYLALogger.debug('NYLA LLM: 💡 To see detailed LLM logs, add ?debug=true to the URL');
+      NYLALogger.debug('NYLA LLM: Device detection:', this.deviceInfo);
+      NYLALogger.debug(`NYLA LLM: Model: ${this.modelConfig.model} (1.5B parameters, conservative config to fix NaN)`);
       
       // Enhanced WebGPU compatibility check
       const webgpuCheckStart = performance.now();
@@ -279,18 +249,18 @@ class NYLALLMEngine {
         throw new Error(compatibilityResult.reason);
       }
       const webgpuCheckTime = performance.now() - webgpuCheckStart;
-      console.log(`NYLA LLM: ✅ WebGPU detected (${webgpuCheckTime.toFixed(2)}ms)`);
+      NYLALogger.debug(`NYLA LLM: ✅ WebGPU detected (${webgpuCheckTime.toFixed(2)}ms)`);
       
       // Load WebLLM dynamically
       if (!window.webllm) {
-        console.log('NYLA LLM: Loading WebLLM library...');
+        NYLALogger.debug('NYLA LLM: Loading WebLLM library...');
         const webllmLoadStart = performance.now();
         const loaded = await this.loadWebLLM();
         if (!loaded) {
           throw new Error('Failed to load WebLLM library');
         }
         webllmLoadTime = performance.now() - webllmLoadStart;
-        console.log(`NYLA LLM: ✅ WebLLM library loaded (${(webllmLoadTime / 1000).toFixed(2)}s)`);
+        NYLALogger.debug(`NYLA LLM: ✅ WebLLM library loaded (${(webllmLoadTime / 1000).toFixed(2)}s)`);
       }
 
       // Double-check library loaded
@@ -299,15 +269,15 @@ class NYLALLMEngine {
       }
 
       // Initialize the engine with GPU enabled
-      console.log('NYLA LLM: Creating MLCEngine instance for GPU inference...');
+      NYLALogger.debug('NYLA LLM: Creating MLCEngine instance for GPU inference...');
       const engineCreateStart = performance.now();
       this.engine = new window.webllm.MLCEngine();
       const engineCreateTime = performance.now() - engineCreateStart;
-      console.log(`NYLA LLM: ✅ MLCEngine created with GPU inference (${engineCreateTime.toFixed(2)}ms)`);
+      NYLALogger.debug(`NYLA LLM: ✅ MLCEngine created with GPU inference (${engineCreateTime.toFixed(2)}ms)`);
       
-      console.log(`NYLA LLM: Loading ${this.modelConfig.model} model...`);
-      console.log('NYLA LLM: ⏳ Qwen2-1.5B expected loading time: 15-25s first time (1.5B params, q4f32_1)');
-      console.log('NYLA LLM: 🧪 Testing Qwen2-1.5B-Instruct q4f32_1 with GPU inference and conservative config');
+      NYLALogger.debug(`NYLA LLM: Loading ${this.modelConfig.model} model...`);
+      NYLALogger.debug('NYLA LLM: ⏳ Qwen2-1.5B expected loading time: 15-25s first time (1.5B params, q4f32_1)');
+      NYLALogger.debug('NYLA LLM: 🧪 Testing Qwen2-1.5B-Instruct q4f32_1 with GPU inference and conservative config');
       
       // Try to initialize model with fallback options
       let modelLoaded = false;
@@ -317,7 +287,7 @@ class NYLALLMEngine {
       for (let i = 0; i < modelAttempts.length; i++) {
         const modelToTry = modelAttempts[i];
         try {
-          console.log(`NYLA LLM: Attempting to load model ${i + 1}/${modelAttempts.length}: ${modelToTry}`);
+          NYLALogger.debug(`NYLA LLM: Attempting to load model ${i + 1}/${modelAttempts.length}: ${modelToTry}`);
           const modelLoadStart = performance.now();
           
           await this.engine.reload(modelToTry, {
@@ -326,7 +296,7 @@ class NYLALLMEngine {
             initProgressCallback: (progress) => {
               if (progress.progress) {
                 const elapsed = ((performance.now() - modelLoadStart) / 1000).toFixed(1);
-                console.log(`NYLA LLM: Loading progress: ${Math.round(progress.progress * 100)}% (${elapsed}s)`);
+                NYLALogger.debug(`NYLA LLM: Loading progress: ${Math.round(progress.progress * 100)}% (${elapsed}s)`);
               }
             }
           });
@@ -335,13 +305,13 @@ class NYLALLMEngine {
           // If we get here, model loaded successfully
           this.modelConfig.model = modelToTry; // Update to successful model
           modelLoaded = true;
-          console.log(`NYLA LLM: ✅ Successfully loaded model: ${modelToTry} (${(modelLoadTime / 1000).toFixed(2)}s)`);
+          NYLALogger.debug(`NYLA LLM: ✅ Successfully loaded model: ${modelToTry} (${(modelLoadTime / 1000).toFixed(2)}s)`);
           break;
           
         } catch (modelError) {
           console.error(`NYLA LLM: Failed to load ${modelToTry}:`, modelError.message);
           if (i < modelAttempts.length - 1) {
-            console.log('NYLA LLM: Trying fallback model...');
+            NYLALogger.debug('NYLA LLM: Trying fallback model...');
           }
         }
       }
@@ -361,25 +331,25 @@ class NYLALLMEngine {
       this.engineCreatedAt = Date.now();
       
       if (isPreload) {
-        console.log('NYLA LLM: ✅ Background preload completed! 🧠✨');
-        console.log('NYLA LLM: 🎯 Qwen2-1.5B-Instruct ready - efficient model with instruction tuning');
+        NYLALogger.debug('NYLA LLM: ✅ Background preload completed! 🧠✨');
+        NYLALogger.debug('NYLA LLM: 🎯 Qwen2-1.5B-Instruct ready - efficient model with instruction tuning');
       } else {
-        console.log('NYLA LLM: ✅ WebLLM engine initialized successfully! 🧠✨');
+        NYLALogger.debug('NYLA LLM: ✅ WebLLM engine initialized successfully! 🧠✨');
       }
-      console.log('NYLA LLM: 🤖 Ready for GPU-based AI inference with Qwen2-1.5B-Instruct (1.5B params - q4f32_1)');
-      console.log('NYLA LLM: 🔥 Engine will stay hot and ready for subsequent requests');
+      NYLALogger.debug('NYLA LLM: 🤖 Ready for GPU-based AI inference with Qwen2-1.5B-Instruct (1.5B params - q4f32_1)');
+      NYLALogger.debug('NYLA LLM: 🔥 Engine will stay hot and ready for subsequent requests');
       
       // Warm up the engine with a tiny test prompt to ensure GPU buffers are allocated
-      console.log('NYLA LLM: Calling warmupEngine...');
+      NYLALogger.debug('NYLA LLM: Calling warmupEngine...');
       const warmupStart = performance.now();
       await this.warmupEngine();
       const warmupTime = performance.now() - warmupStart;
-      console.log(`NYLA LLM: Warmup completed in ${warmupTime.toFixed(2)}ms, isEngineWarmedUp:`, this.isEngineWarmedUp);
+      NYLALogger.debug(`NYLA LLM: Warmup completed in ${warmupTime.toFixed(2)}ms, isEngineWarmedUp:`, this.isEngineWarmedUp);
       
       // Total initialization time
       const totalInitTime = performance.now() - initStartTime;
-      console.log(`NYLA LLM: 🎉 Total initialization time: ${(totalInitTime / 1000).toFixed(2)}s`);
-      console.log(`NYLA LLM: 📊 Breakdown:`);
+      NYLALogger.debug(`NYLA LLM: 🎉 Total initialization time: ${(totalInitTime / 1000).toFixed(2)}s`);
+      NYLALogger.debug(`NYLA LLM: 📊 Breakdown:`);
       console.log(`  - WebGPU check: ${webgpuCheckTime.toFixed(2)}ms`);
       if (webllmLoadTime > 0) {
         console.log(`  - WebLLM library: ${(webllmLoadTime / 1000).toFixed(2)}s`);
@@ -392,14 +362,14 @@ class NYLALLMEngine {
 
     } catch (error) {
       console.error('NYLA LLM: Initialization failed', error);
-      console.log('NYLA LLM: Error details:', error.message);
+      NYLALogger.debug('NYLA LLM: Error details:', error.message);
       this.isLoading = false;
       this.isInitialized = false;
       
       // Show user-friendly message about fallback
-      console.log('NYLA LLM: 💡 Falling back to enhanced static responses');
-      console.log('NYLA LLM: 🔧 WebLLM will be available in future updates');
-      console.log('NYLA LLM: 🔍 For troubleshooting, add ?debug=true to the URL for detailed logs');
+      NYLALogger.debug('NYLA LLM: 💡 Falling back to enhanced static responses');
+      NYLALogger.debug('NYLA LLM: 🔧 WebLLM will be available in future updates');
+      NYLALogger.debug('NYLA LLM: 🔍 For troubleshooting, add ?debug=true to the URL for detailed logs');
       
       return false;
     }
@@ -410,13 +380,13 @@ class NYLALLMEngine {
    */
   async loadWebLLM() {
     try {
-      console.log('NYLA LLM: Loading WebLLM via dynamic import...');
+      NYLALogger.debug('NYLA LLM: Loading WebLLM via dynamic import...');
       
       // Use dynamic import - stable WebLLM version 0.2.79 for consistent model availability
       const webllmModule = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/lib/index.js');
       
-      console.log('NYLA LLM: WebLLM module loaded successfully');
-      console.log('NYLA LLM: Available exports:', Object.keys(webllmModule));
+      NYLALogger.debug('NYLA LLM: WebLLM module loaded successfully');
+      NYLALogger.debug('NYLA LLM: Available exports:', Object.keys(webllmModule));
       
       // Make WebLLM available globally - assign the whole module
       window.webllm = webllmModule;
@@ -427,14 +397,14 @@ class NYLALLMEngine {
         throw new Error('MLCEngine not found in WebLLM module');
       }
       
-      console.log('NYLA LLM: WebLLM library successfully loaded and MLCEngine available');
+      NYLALogger.debug('NYLA LLM: WebLLM library successfully loaded and MLCEngine available');
       return true;
       
     } catch (error) {
       console.error('NYLA LLM: Dynamic import failed:', error);
       
       // Fallback: Try loading WebLLM with a different approach
-      console.log('NYLA LLM: Trying script tag fallback...');
+      NYLALogger.debug('NYLA LLM: Trying script tag fallback...');
       return this.loadWebLLMFallback();
     }
   }
@@ -450,16 +420,16 @@ class NYLALLMEngine {
       script.type = 'module';
       
       script.onload = () => {
-        console.log('NYLA LLM: WebLLM fallback library loaded');
+        NYLALogger.debug('NYLA LLM: WebLLM fallback library loaded');
         // Check multiple times with increasing delays
         let attempts = 0;
         const checkLibrary = () => {
           attempts++;
           if (window.webllm && window.webllm.MLCEngine) {
-            console.log('NYLA LLM: WebLLM found after', attempts, 'attempts');
+            NYLALogger.debug('NYLA LLM: WebLLM found after', attempts, 'attempts');
             resolve();
           } else if (attempts < 10) {
-            console.log('NYLA LLM: Waiting for WebLLM... attempt', attempts);
+            NYLALogger.debug('NYLA LLM: Waiting for WebLLM... attempt', attempts);
             setTimeout(checkLibrary, 500 * attempts); // Exponential backoff
           } else {
             reject(new Error('WebLLM library loaded but not available after multiple attempts'));
@@ -494,13 +464,13 @@ class NYLALLMEngine {
     // Check if engine is ready or needs initialization (including warmup)
     if (!this.isInitialized || !this.isEngineReady || !this.isEngineWarmedUp) {
       if (this.isLoading) {
-        console.log('NYLA LLM: ⏳ Engine is preloading in background, waiting...');
+        NYLALogger.debug('NYLA LLM: ⏳ Engine is preloading in background, waiting...');
         const initialized = await this.waitForInitialization();
         if (!initialized) {
           throw new Error('LLM engine failed to initialize');
         }
       } else {
-        console.log('NYLA LLM: ⚡ Engine not fully ready (init/warmup), initializing now...');
+        NYLALogger.debug('NYLA LLM: ⚡ Engine not fully ready (init/warmup), initializing now...');
         const initialized = await this.initialize();
         if (!initialized) {
           throw new Error('LLM engine not available');
@@ -526,25 +496,25 @@ class NYLALLMEngine {
       
       // Log context statistics if available
       if (contextStats.chunksUsed > 0) {
-        console.log(`📊 NYLA LLM: Context stats - Used ${contextStats.chunksUsed}/${contextStats.totalChunks} chunks (${contextStats.estimatedTokens} tokens)`);
+        NYLALogger.debug(`📊 NYLA LLM: Context stats - Used ${contextStats.chunksUsed}/${contextStats.totalChunks} chunks (${contextStats.estimatedTokens} tokens)`);
         if (contextStats.hasConversationContext) {
-          console.log(`💬 NYLA LLM: Includes conversation context (${contextStats.conversationTokens} tokens)`);
+          NYLALogger.debug(`💬 NYLA LLM: Includes conversation context (${contextStats.conversationTokens} tokens)`);
         }
         if (sourceMetadata.length > 0) {
-          console.log(`📚 NYLA LLM: Sources available:`, sourceMetadata.map(s => s.source).join(', '));
+          NYLALogger.debug(`📚 NYLA LLM: Sources available:`, sourceMetadata.map(s => s.source).join(', '));
         }
       }
       
       const prompt = this.buildPrompt(userMessage, conversationContext);
       const promptTime = performance.now() - promptStart;
       
-      console.log(`NYLA LLM: Generating response #${this.requestCount} for:`, userMessage);
-      console.log('NYLA LLM: 🔥 Using warm engine (no reload required)');
+      NYLALogger.debug(`NYLA LLM: Generating response #${this.requestCount} for:`, userMessage);
+      NYLALogger.debug('NYLA LLM: 🔥 Using warm engine (no reload required)');
       console.log(`⏱️ Prompt preparation: ${promptTime.toFixed(2)}ms`);
       
       // Log the full prompt being sent to LLM
-      console.log('🧠 NYLA LLM: System Prompt:', this.systemPrompt);
-      console.log('🧠 NYLA LLM: User Prompt:', prompt);
+      NYLALogger.debug('🧠 NYLA LLM: System Prompt:', this.systemPrompt);
+      NYLALogger.debug('🧠 NYLA LLM: User Prompt:', prompt);
 
       // Timing: LLM inference
       const inferenceStart = performance.now();
@@ -565,8 +535,8 @@ class NYLALLMEngine {
       const generatedText = response.choices[0].message.content;
 
       // Log the full native LLM response object and raw text for debugging
-      console.log('NYLA LLM: Native raw response object:', response);
-      console.log('NYLA LLM: Native raw response text:', generatedText);
+      NYLALogger.debug('NYLA LLM: Native raw response object:', response);
+      NYLALogger.debug('NYLA LLM: Native raw response text:', generatedText);
 
       const parsedResponse = this.parseResponse(generatedText, conversationContext, userMessage);
       const parseTime = performance.now() - parseStart;
@@ -578,9 +548,9 @@ class NYLALLMEngine {
 
       console.log(`⏱️ LLM inference took ${(inferenceTime / 1000).toFixed(2)}s`);
       console.log(`⏱️ Response parsing: ${parseTime.toFixed(2)}ms`);
-      console.log(`NYLA LLM: ✅ Total response time: ${totalTime}ms (avg: ${avgResponseTime}ms)`);
-      console.log('NYLA LLM: Raw response length:', generatedText.length, 'chars');
-      console.log('NYLA LLM: Raw response:', generatedText);
+      NYLALogger.debug(`NYLA LLM: ✅ Total response time: ${totalTime}ms (avg: ${avgResponseTime}ms)`);
+      NYLALogger.debug('NYLA LLM: Raw response length:', generatedText.length, 'chars');
+      NYLALogger.debug('NYLA LLM: Raw response:', generatedText);
       
       // Check if response might be truncated (more accurate estimate: ~4 chars per token)
       if (generatedText.length >= this.modelConfig.max_tokens * 4) {
@@ -616,7 +586,7 @@ class NYLALLMEngine {
   async generateStreamingResponse(userMessage, conversationContext = {}, onChunk = null) {
     // Ensure engine is ready - same warm engine (including warmup)
     if (!this.isInitialized || !this.isEngineReady || !this.isEngineWarmedUp) {
-      console.log('NYLA LLM: Engine not ready for streaming (init/warmup), initializing...');
+      NYLALogger.debug('NYLA LLM: Engine not ready for streaming (init/warmup), initializing...');
       const initialized = await this.initialize();
       if (!initialized) {
         throw new Error('LLM engine not available');
@@ -633,13 +603,13 @@ class NYLALLMEngine {
       const prompt = this.buildPrompt(userMessage, conversationContext);
       const promptTime = performance.now() - promptStart;
       
-      console.log(`NYLA LLM: Starting streaming response #${this.requestCount} for:`, userMessage);
-      console.log('NYLA LLM: 🔥 Using warm engine for streaming (no reload required)');
+      NYLALogger.debug(`NYLA LLM: Starting streaming response #${this.requestCount} for:`, userMessage);
+      NYLALogger.debug('NYLA LLM: 🔥 Using warm engine for streaming (no reload required)');
       console.log(`⏱️ Streaming prompt preparation: ${promptTime.toFixed(2)}ms`);
       
       // Log the full prompt being sent to LLM (streaming)
-      console.log('🧠 NYLA LLM: System Prompt (Streaming):', this.systemPrompt);
-      console.log('🧠 NYLA LLM: User Prompt (Streaming):', prompt);
+      NYLALogger.debug('🧠 NYLA LLM: System Prompt (Streaming):', this.systemPrompt);
+      NYLALogger.debug('🧠 NYLA LLM: User Prompt (Streaming):', prompt);
 
       let fullResponse = '';
       
@@ -674,17 +644,17 @@ class NYLALLMEngine {
       const totalTime = Date.now() - startTime;
       
       console.log(`⏱️ Streaming inference took ${(streamTime / 1000).toFixed(2)}s`);
-      console.log(`NYLA LLM: ✅ Streaming response completed in ${totalTime}ms`);
-      console.log('NYLA LLM: Final streaming response length:', fullResponse.length);
-      console.log('NYLA LLM: Final streaming response preview:', fullResponse.substring(0, 200) + '...');
-      console.log('NYLA LLM: Final streaming response end:', '...' + fullResponse.substring(Math.max(0, fullResponse.length - 200)));
+      NYLALogger.debug(`NYLA LLM: ✅ Streaming response completed in ${totalTime}ms`);
+      NYLALogger.debug('NYLA LLM: Final streaming response length:', fullResponse.length);
+      NYLALogger.debug('NYLA LLM: Final streaming response preview:', fullResponse.substring(0, 200) + '...');
+      NYLALogger.debug('NYLA LLM: Final streaming response end:', '...' + fullResponse.substring(Math.max(0, fullResponse.length - 200)));
       
       return this.parseResponse(fullResponse, conversationContext, userMessage);
 
     } catch (error) {
       console.error('NYLA LLM: Streaming response failed:', error);
       // Fallback to non-streaming
-      console.log('NYLA LLM: Falling back to non-streaming response');
+      NYLALogger.debug('NYLA LLM: Falling back to non-streaming response');
       return await this.generateResponse(userMessage, conversationContext);
     }
   }
@@ -777,23 +747,16 @@ class NYLALLMEngine {
     
     // Fallback: If preprocessing removed everything, return the original query
     if (!processedQuery || processedQuery.length < 2) {
-      console.log(`NYLA LLM: Query preprocessing resulted in empty/short query, using original: "${query}"`);
+      NYLALogger.debug(`NYLA LLM: Query preprocessing resulted in empty/short query, using original: "${query}"`);
       return query.toLowerCase();
     }
     
-    console.log(`NYLA LLM: Query preprocessing - Original: "${query}" -> Processed: "${processedQuery}"`);
+    NYLALogger.debug(`NYLA LLM: Query preprocessing - Original: "${query}" -> Processed: "${processedQuery}"`);
     
     return processedQuery;
   }
 
-  /**
-   * Extract relevant knowledge (deprecated - now using RAG context directly)
-   * Kept for backward compatibility but not used in current flow
-   */
-  extractRelevantKnowledge(userMessage, knowledgeContext) {
-    console.log('⚠️ NYLA LLM: extractRelevantKnowledge called but deprecated - RAG context should be used directly');
-    return null;
-  }
+  // extractRelevantKnowledge method removed - deprecated, replaced by RAG context
 
   /**
    * Dynamically extract project names from ecosystem highlights for each blockchain
@@ -824,7 +787,7 @@ class NYLALLMEngine {
             if (projectName && projectName.length > 0) {
               const normalizedName = projectName.toLowerCase();
               projectNames.add(normalizedName);
-              console.log(`NYLA LLM: Extracted project name: "${normalizedName}" from:`, highlight.substring(0, 50) + '...');
+              NYLALogger.debug(`NYLA LLM: Extracted project name: "${normalizedName}" from:`, highlight.substring(0, 50) + '...');
             }
           });
         }
@@ -877,8 +840,8 @@ class NYLALLMEngine {
     const projectNames = this.extractProjectNamesFromKB(data);
     const matchedProjects = this.containsProjectName(queryLower, projectNames);
     
-    console.log(`NYLA LLM: Extracted ${projectNames.length} project names from KB:`, projectNames.slice(0, 5) + '...');
-    console.log(`NYLA LLM: Matched projects in query:`, matchedProjects);
+    NYLALogger.debug(`NYLA LLM: Extracted ${projectNames.length} project names from KB:`, projectNames.slice(0, 5) + '...');
+    NYLALogger.debug(`NYLA LLM: Matched projects in query:`, matchedProjects);
     
     // Prioritize most relevant fields based on query
     if (queryLower.includes('blockchain') || queryLower.includes('supported') || 
@@ -902,9 +865,9 @@ class NYLALLMEngine {
                 const matchingProjects = [];
                 const searchTerms = queryLower.split(' ').filter(term => term.length > 1); // Reduced to 1 for better matching
                 
-                console.log(`NYLA LLM: Searching for projects in ${value.name} ecosystem highlights`);
-                console.log(`NYLA LLM: Search terms:`, searchTerms);
-                console.log(`NYLA LLM: Query:`, queryLower);
+                NYLALogger.debug(`NYLA LLM: Searching for projects in ${value.name} ecosystem highlights`);
+                NYLALogger.debug(`NYLA LLM: Search terms:`, searchTerms);
+                NYLALogger.debug(`NYLA LLM: Query:`, queryLower);
                 
                 for (const highlight of value.ecosystemHighlights) {
                   const highlightLower = highlight.toLowerCase();
@@ -917,7 +880,7 @@ class NYLALLMEngine {
                     if (highlightLower.includes(term)) {
                       matchScore += 10;
                       matchedTerms.push(term);
-                      console.log(`NYLA LLM: Found direct match for "${term}" in:`, highlight);
+                      NYLALogger.debug(`NYLA LLM: Found direct match for "${term}" in:`, highlight);
                     } else {
                       // Check for partial matches (e.g., "lizard" in "lizard-themed")
                       const highlightWords = highlightLower.split(/[\s\-\(\)]+/); // Split on spaces, hyphens, parentheses
@@ -925,7 +888,7 @@ class NYLALLMEngine {
                         if (word.includes(term) || term.includes(word)) {
                           matchScore += 5; // Partial match gets lower score
                           matchedTerms.push(term);
-                          console.log(`NYLA LLM: Found partial match for "${term}" in word "${word}" from:`, highlight);
+                          NYLALogger.debug(`NYLA LLM: Found partial match for "${term}" in word "${word}" from:`, highlight);
                           break;
                         }
                       }
@@ -947,7 +910,7 @@ class NYLALLMEngine {
                     if (highlightLower.includes(projectName)) {
                       matchScore += 15; // High bonus for exact project name match
                       matchedTerms.push(projectName);
-                      console.log(`NYLA LLM: Found dynamic project match for "${projectName}" in:`, highlight);
+                      NYLALogger.debug(`NYLA LLM: Found dynamic project match for "${projectName}" in:`, highlight);
                     }
                   }
                   
@@ -957,7 +920,7 @@ class NYLALLMEngine {
                       if (highlightLower.includes(projectName)) {
                         matchScore += 20; // Very high bonus for $ queries
                         matchedTerms.push(projectName);
-                        console.log(`NYLA LLM: Found $ project match for "${projectName}" in:`, highlight);
+                        NYLALogger.debug(`NYLA LLM: Found $ project match for "${projectName}" in:`, highlight);
                       }
                     }
                   }
@@ -983,10 +946,10 @@ class NYLALLMEngine {
                   const maxProjects = isSpecificQuery ? 1 : 3;
                   
                   const bestMatches = matchingProjects.slice(0, maxProjects).map(item => item.project);
-                  console.log(`NYLA LLM: Found ${matchingProjects.length} matching projects for ${value.name}, returning ${bestMatches.length} best matches:`, bestMatches);
+                  NYLALogger.debug(`NYLA LLM: Found ${matchingProjects.length} matching projects for ${value.name}, returning ${bestMatches.length} best matches:`, bestMatches);
                   addContent(`${value.name} Matching Projects: ${bestMatches.join(', ')}`);
                 } else {
-                  console.log(`NYLA LLM: No matching projects found for ${value.name}`);
+                  NYLALogger.debug(`NYLA LLM: No matching projects found for ${value.name}`);
                 }
               }
               
@@ -1062,7 +1025,7 @@ class NYLALLMEngine {
     } else if (queryLower.includes('qr') || queryLower.includes('code') || queryLower.includes('payment request') || 
                (queryLower.includes('receive') && (queryLower.includes('payment') || queryLower.includes('request')))) {
       // For QR code/payment request queries, extract QR-specific content
-      console.log('NYLA LLM: Detected QR code query - extracting QR-specific content');
+      NYLALogger.debug('NYLA LLM: Detected QR code query - extracting QR-specific content');
       
       // Priority 1: QR code creation steps
       if (data.steps?.create && Array.isArray(data.steps.create)) {
@@ -1261,7 +1224,7 @@ class NYLALLMEngine {
       knowledgeContext = null
     } = context;
 
-    console.log('\n📚 NYLA LLM: Building prompt with knowledge context');
+    NYLALogger.debug('\n📚 NYLA LLM: Building prompt with knowledge context');
     console.log('  - Original user message:', userMessage);
     
     // Only use RAG-formatted prompts - no legacy fallback
@@ -1277,7 +1240,7 @@ class NYLALLMEngine {
       const systemPromptTokens = this.estimateTokens(this.systemPrompt);
       const totalTokens = estimatedTokens + systemPromptTokens;
       
-      console.log(`🧠 NYLA LLM: Token breakdown:`);
+      NYLALogger.debug(`🧠 NYLA LLM: Token breakdown:`);
       console.log(`  - RAG formatted prompt: ~${estimatedTokens} tokens`);
       console.log(`  - System prompt: ~${systemPromptTokens} tokens`);
       console.log(`  - Total estimated: ${totalTokens}/4096 (${Math.round(totalTokens/4096*100)}% of context)`);
@@ -1295,7 +1258,7 @@ Please respond that you don't have information about this topic and suggest aski
 
 CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start with { and end with }. Do NOT use plain text.`;
 
-    console.log(`🧠 NYLA LLM: Using no-knowledge template (${this.estimateTokens(noKnowledgePrompt)} tokens)`);
+    NYLALogger.debug(`🧠 NYLA LLM: Using no-knowledge template (${this.estimateTokens(noKnowledgePrompt)} tokens)`);
     
     return noKnowledgePrompt;
   }
@@ -1306,21 +1269,21 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   parseResponse(generatedText, context, userMessage) {
     try {
       // === RAW LLM RESPONSE LOGGING ===
-      console.log('🔍 NYLA LLM: === RAW LLM RESPONSE START ===');
-      console.log('🔍 NYLA LLM: Raw response length:', generatedText ? generatedText.length : 'null');
-      console.log('🔍 NYLA LLM: Raw response type:', typeof generatedText);
+      NYLALogger.debug('🔍 NYLA LLM: === RAW LLM RESPONSE START ===');
+      NYLALogger.debug('🔍 NYLA LLM: Raw response length:', generatedText ? generatedText.length : 'null');
+      NYLALogger.debug('🔍 NYLA LLM: Raw response type:', typeof generatedText);
       
       if (generatedText) {
         // Log complete raw response for debugging
-        console.log('🔍 NYLA LLM: Complete raw response:');
+        NYLALogger.debug('🔍 NYLA LLM: Complete raw response:');
         console.log(generatedText);
         
         // Also log first and last 500 characters for easier scanning
-        console.log('🔍 NYLA LLM: Raw response first 500 chars:');
+        NYLALogger.debug('🔍 NYLA LLM: Raw response first 500 chars:');
         console.log(JSON.stringify(generatedText.substring(0, 500)));
         
         if (generatedText.length > 500) {
-          console.log('🔍 NYLA LLM: Raw response last 500 chars:');
+          NYLALogger.debug('🔍 NYLA LLM: Raw response last 500 chars:');
           console.log(JSON.stringify(generatedText.substring(generatedText.length - 500)));
         }
         
@@ -1330,16 +1293,16 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
         const hasTextField = generatedText.includes('"text"');
         const hasFollowUpField = generatedText.includes('"followUpSuggestions"');
         
-        console.log('🔍 NYLA LLM: Raw response structure analysis:');
+        NYLALogger.debug('🔍 NYLA LLM: Raw response structure analysis:');
         console.log('  - Contains opening brace {:', hasOpenBrace);
         console.log('  - Contains closing brace }:', hasCloseBrace);
         console.log('  - Contains "text" field:', hasTextField);
         console.log('  - Contains "followUpSuggestions" field:', hasFollowUpField);
         console.log('  - Looks like complete JSON:', hasOpenBrace && hasCloseBrace && hasTextField);
       } else {
-        console.log('🔍 NYLA LLM: Raw response is null or undefined');
+        NYLALogger.debug('🔍 NYLA LLM: Raw response is null or undefined');
       }
-      console.log('🔍 NYLA LLM: === RAW LLM RESPONSE END ===');
+      NYLALogger.debug('🔍 NYLA LLM: === RAW LLM RESPONSE END ===');
       // === END RAW RESPONSE LOGGING ===
       
       // Input size limit to prevent memory issues
@@ -1352,16 +1315,16 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       // Clean up the text - remove any markdown code blocks
       let cleanText = generatedText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
       
-      console.log('NYLA LLM: Attempting to parse response of length:', generatedText.length);
-      console.log('NYLA LLM: Clean text preview:', cleanText.substring(0, 300) + '...');
-      console.log('NYLA LLM: Clean text end:', '...' + cleanText.substring(Math.max(0, cleanText.length - 300)));
+      NYLALogger.debug('NYLA LLM: Attempting to parse response of length:', generatedText.length);
+      NYLALogger.debug('NYLA LLM: Clean text preview:', cleanText.substring(0, 300) + '...');
+      NYLALogger.debug('NYLA LLM: Clean text end:', '...' + cleanText.substring(Math.max(0, cleanText.length - 300)));
       
       // Memory-safe JSON extraction using iterative approach
       const jsonObject = this.extractJsonSafely(cleanText);
       if (jsonObject) {
         try {
-          console.log('NYLA LLM: Successfully parsed JSON response');
-          console.log('NYLA LLM: JSON followUpSuggestions:', jsonObject.followUpSuggestions);
+          NYLALogger.debug('NYLA LLM: Successfully parsed JSON response');
+          NYLALogger.debug('NYLA LLM: JSON followUpSuggestions:', jsonObject.followUpSuggestions);
           return this.validateResponse(jsonObject, context, userMessage);
         } catch (parseError) {
           console.warn('NYLA LLM: JSON validation failed:', parseError.message);
@@ -1371,7 +1334,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       }
       
       // If no valid JSON found, extract text content
-      console.log('NYLA LLM: No valid JSON found, attempting to extract partial content');
+      NYLALogger.debug('NYLA LLM: No valid JSON found, attempting to extract partial content');
       
       // Try to extract text field even from incomplete JSON
       // Updated regex to handle escaped quotes and complex patterns
@@ -1391,13 +1354,13 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       // Method 2: If no JSON patterns found, check if response is pure plain text
       let isPureTextResponse = false;
       if (!cleanText.includes('"text":') && !cleanText.includes('{') && cleanText.trim().length > 0) {
-        console.log('NYLA LLM: Detected pure plain text response (no JSON structure)');
+        NYLALogger.debug('NYLA LLM: Detected pure plain text response (no JSON structure)');
         isPureTextResponse = true;
         extractedText = cleanText.trim();
         
         // Clean up the plain text response
         // Let the main validation function handle truncation consistently
-        console.log('NYLA LLM: Plain text response will be processed by main validation logic');
+        NYLALogger.debug('NYLA LLM: Plain text response will be processed by main validation logic');
       }
       
       // Only try JSON patterns if we haven't already detected pure text response
@@ -1424,7 +1387,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
               extractedText += '...';
             }
             
-            console.log('NYLA LLM: Extracted text using JSON pattern:', pattern.source);
+            NYLALogger.debug('NYLA LLM: Extracted text using JSON pattern:', pattern.source);
             break;
           }
         }
@@ -1465,7 +1428,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
                   .replace(/\\\\/g, '\\')
                   .replace(/\\'/g, "'");
                 
-                console.log('NYLA LLM: Extracted text using manual parsing');
+                NYLALogger.debug('NYLA LLM: Extracted text using manual parsing');
               }
             }
           }
@@ -1486,7 +1449,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
               extractedFollowUps.push(match[1]);
             }
           }
-          console.log('NYLA LLM: Extracted partial followUps from incomplete JSON:', extractedFollowUps);
+          NYLALogger.debug('NYLA LLM: Extracted partial followUps from incomplete JSON:', extractedFollowUps);
         } catch (followUpError) {
           console.warn('NYLA LLM: Failed to extract followUps from partial JSON:', followUpError.message);
         }
@@ -1495,7 +1458,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       // If we found some content, return it
       if (extractedText && extractedText.trim().length > 0) {
         const extractionMethod = isPureTextResponse ? 'pure plain text response' : 'partial JSON extraction';
-        console.log('NYLA LLM: Successfully extracted content using', extractionMethod + ':', extractedText.substring(0, 100) + (extractedText.length > 100 ? '...' : ''));
+        NYLALogger.debug('NYLA LLM: Successfully extracted content using', extractionMethod + ':', extractedText.substring(0, 100) + (extractedText.length > 100 ? '...' : ''));
         
         // Create response object that will get proper follow-ups in validateResponse
         const partialResponse = {
@@ -1519,7 +1482,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       (generatedText.length > 500 ? generatedText.substring(0, 500) + '...' : generatedText) :
       "I'm here to help you with NYLA! What would you like to know?";
     
-    console.log('NYLA LLM: Using raw text as fallback');
+    NYLALogger.debug('NYLA LLM: Using raw text as fallback');
     const fallbackResponse = {
       text: safeText,
       sentiment: 'helpful',
@@ -1596,7 +1559,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     }
     
     // If no valid JSON found with brace counting, try alternative approaches
-    console.log('NYLA LLM: No JSON found with brace counting, trying regex approach');
+    NYLALogger.debug('NYLA LLM: No JSON found with brace counting, trying regex approach');
     
     // Try to find JSON-like structures with regex (less accurate but handles some edge cases)
     const jsonMatches = text.match(/\{[^{}]*"text"\s*:\s*"[^"]*"[^{}]*\}/g);
@@ -1605,7 +1568,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
         try {
           const parsed = JSON.parse(match);
           if (parsed.text) {
-            console.log('NYLA LLM: Found valid JSON with regex approach');
+            NYLALogger.debug('NYLA LLM: Found valid JSON with regex approach');
             return parsed;
           }
         } catch (e) {
@@ -1699,7 +1662,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
    * Generate context-aware follow-up based on knowledge
    */
   generateContextAwareFollowUp(userMessage, responseText, knowledgeContext) {
-    console.log('🎯 NYLA LLM: Generating context-aware follow-up');
+    NYLALogger.debug('🎯 NYLA LLM: Generating context-aware follow-up');
     console.log('  - User message:', userMessage);
     console.log('  - Response preview:', responseText.substring(0, 100) + '...');
     
@@ -1797,9 +1760,9 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   generateImprovedFollowUps(context, userMessage, responseText) {
     const categories = this.getFollowUpCategories();
     const currentCategory = this.detectCurrentCategory(userMessage, responseText);
-    console.log('📊 NYLA LLM: Current category detected:', currentCategory);
-    console.log('📊 NYLA LLM: User message for detection:', userMessage);
-    console.log('📊 NYLA LLM: Detection text:', (userMessage + ' ' + responseText).toLowerCase());
+    NYLALogger.debug('📊 NYLA LLM: Current category detected:', currentCategory);
+    NYLALogger.debug('📊 NYLA LLM: User message for detection:', userMessage);
+    NYLALogger.debug('📊 NYLA LLM: Detection text:', (userMessage + ' ' + responseText).toLowerCase());
     
     // Track this category
     this.trackPreviousCategory(currentCategory);
@@ -1881,21 +1844,21 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       Object.keys(categories).filter(cat => cat !== currentCategory);
     
     const nextCategory = otherCategories[Math.floor(Math.random() * otherCategories.length)];
-    console.log('🔄 NYLA LLM: Next category selected:', nextCategory, '(excluded categories:', excludeCategories.join(', ') + ')');
+    NYLALogger.debug('🔄 NYLA LLM: Next category selected:', nextCategory, '(excluded categories:', excludeCategories.join(', ') + ')');
     
     // Filter out recently used specific suggestions
     const categoryFollowUps = categories[nextCategory].suggestions;
-    console.log('🔄 NYLA LLM: Category suggestions for', nextCategory + ':', categoryFollowUps);
-    console.log('🔄 NYLA LLM: Recently used suggestions:', [...this.lastUsedFollowUps.keys()]);
+    NYLALogger.debug('🔄 NYLA LLM: Category suggestions for', nextCategory + ':', categoryFollowUps);
+    NYLALogger.debug('🔄 NYLA LLM: Recently used suggestions:', [...this.lastUsedFollowUps.keys()]);
     
     const availableFollowUps = categoryFollowUps.filter(suggestion => !this.lastUsedFollowUps.has(suggestion));
-    console.log('🔄 NYLA LLM: Available suggestions after filtering:', availableFollowUps);
+    NYLALogger.debug('🔄 NYLA LLM: Available suggestions after filtering:', availableFollowUps);
     
     // If all suggestions in category were recently used, use any from the category
     const finalFollowUps = availableFollowUps.length > 0 ? availableFollowUps : categoryFollowUps;
     const selectedFollowUp = finalFollowUps[Math.floor(Math.random() * finalFollowUps.length)];
     
-    console.log('🔄 NYLA LLM: Selected suggestion:', selectedFollowUp, '(available options:', finalFollowUps.length + ')');
+    NYLALogger.debug('🔄 NYLA LLM: Selected suggestion:', selectedFollowUp, '(available options:', finalFollowUps.length + ')');
     
     // Track this suggestion as used
     this.trackUsedFollowUp(selectedFollowUp);
@@ -1909,7 +1872,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     ];
     followUps.push({ text: changeTopicOptions[Math.floor(Math.random() * changeTopicOptions.length)] });
     
-    console.log('💡 NYLA LLM: Generated follow-ups:', followUps.map(f => f.text));
+    NYLALogger.debug('💡 NYLA LLM: Generated follow-ups:', followUps.map(f => f.text));
     return followUps;
   }
 
@@ -1918,7 +1881,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
    */
   generateDefaultFollowUps(context) {
     // This is now a fallback - should rarely be used
-    console.log('⚠️ NYLA LLM: Using fallback follow-up generation');
+    NYLALogger.debug('⚠️ NYLA LLM: Using fallback follow-up generation');
     return [
       { text: "How do I get started?" },
       { text: "Tell me about other features" }
@@ -1964,13 +1927,13 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     response.followUpSuggestions = response.followUpSuggestions || [];
     
     // Note: LLM responses are always part of RAG+LLM hybrid - no generation flags needed
-    console.log('🔍 NYLA LLM: Response validated and ready for RAG integration');
+    NYLALogger.debug('🔍 NYLA LLM: Response validated and ready for RAG integration');
 
     // Simple character limit enforcement
     const maxLength = 800;
     
     if (response.text && response.text.length > maxLength) {
-      console.log(`NYLA LLM: Response too long (${response.text.length} chars), truncating to ${maxLength}...`);
+      NYLALogger.debug(`NYLA LLM: Response too long (${response.text.length} chars), truncating to ${maxLength}...`);
       // Find last complete sentence within limit
       const buffer = maxLength - 3; // Leave room for ellipsis
       const truncated = response.text.substring(0, buffer);
@@ -1986,8 +1949,8 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
         // Just truncate and add ellipsis
         response.text = truncated + '...';
       }
-      console.log(`NYLA LLM: Truncated to ${response.text.length} characters`);
-      console.log(`NYLA LLM: Final truncated text: "${response.text}"`);
+      NYLALogger.debug(`NYLA LLM: Truncated to ${response.text.length} characters`);
+      NYLALogger.debug(`NYLA LLM: Final truncated text: "${response.text}"`);
     }
 
     // Additional safety check for empty response after truncation
@@ -1997,7 +1960,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     }
 
     // Always use improved follow-up generation (ignore LLM suggestions)
-    console.log('NYLA LLM: Generating contextual follow-up suggestions...');
+    NYLALogger.debug('NYLA LLM: Generating contextual follow-up suggestions...');
     response.followUpSuggestions = this.generateImprovedFollowUps(context, userMessage || '', response.text);
     
     // Add source information if available from RAG pipeline
@@ -2007,7 +1970,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
         id: source.source,
         chunksUsed: source.chunks ? source.chunks.length : 1
       }));
-      console.log(`📚 NYLA LLM: Added ${response.sources.length} source references to response`);
+      NYLALogger.debug(`📚 NYLA LLM: Added ${response.sources.length} source references to response`);
     }
     
     // Add context statistics if available
@@ -2080,22 +2043,22 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
    */
   async warmupEngine() {
     try {
-      console.log('NYLA LLM: 🔥 Warming up engine to ensure GPU buffers are allocated...');
-      console.log('NYLA LLM: Engine instance:', !!this.engine);
+      NYLALogger.debug('NYLA LLM: 🔥 Warming up engine to ensure GPU buffers are allocated...');
+      NYLALogger.debug('NYLA LLM: Engine instance:', !!this.engine);
       
       if (!this.engine) {
         throw new Error('Engine instance not available for warmup');
       }
       
       // Skip warmup for now due to NaN sampling issues with some models
-      console.log('NYLA LLM: ⚠️ Skipping warmup due to potential model compatibility issues');
-      console.log('NYLA LLM: 🔄 Engine will warm up on first real request instead');
+      NYLALogger.debug('NYLA LLM: ⚠️ Skipping warmup due to potential model compatibility issues');
+      NYLALogger.debug('NYLA LLM: 🔄 Engine will warm up on first real request instead');
       this.isEngineWarmedUp = true; // Mark as warmed up to proceed
       return;
       
       // Original warmup code (disabled due to NaN error)
       /*
-      console.log('NYLA LLM: Sending warmup test prompt...');
+      NYLALogger.debug('NYLA LLM: Sending warmup test prompt...');
       const warmupResponse = await this.engine.chat.completions.create({
         messages: [
           { role: "system", content: "You are a helpful AI assistant." },
@@ -2105,11 +2068,11 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
         max_tokens: 5
       });
       
-      console.log('NYLA LLM: ✅ Engine warmed up successfully - GPU buffers ready');
-      console.log('NYLA LLM: 🚀 Subsequent requests will be faster');
-      console.log('NYLA LLM: Warmup response received:', warmupResponse?.choices?.[0]?.message?.content || 'No content');
+      NYLALogger.debug('NYLA LLM: ✅ Engine warmed up successfully - GPU buffers ready');
+      NYLALogger.debug('NYLA LLM: 🚀 Subsequent requests will be faster');
+      NYLALogger.debug('NYLA LLM: Warmup response received:', warmupResponse?.choices?.[0]?.message?.content || 'No content');
       this.isEngineWarmedUp = true;
-      console.log('NYLA LLM: isEngineWarmedUp set to:', this.isEngineWarmedUp);
+      NYLALogger.debug('NYLA LLM: isEngineWarmedUp set to:', this.isEngineWarmedUp);
       */
       
     } catch (error) {
@@ -2127,9 +2090,9 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   isReady() {
     const ready = this.isInitialized && this.isEngineReady && this.isEngineWarmedUp && this.engine;
     if (!ready) {
-      console.log('NYLA LLM: Engine not ready - initialized:', this.isInitialized, 'engineReady:', this.isEngineReady, 'warmedUp:', this.isEngineWarmedUp, 'engine:', !!this.engine);
+      NYLALogger.debug('NYLA LLM: Engine not ready - initialized:', this.isInitialized, 'engineReady:', this.isEngineReady, 'warmedUp:', this.isEngineWarmedUp, 'engine:', !!this.engine);
     } else {
-      console.log('NYLA LLM: ✅ Engine fully ready for inference');
+      NYLALogger.debug('NYLA LLM: ✅ Engine fully ready for inference');
     }
     return ready;
   }
@@ -2167,12 +2130,12 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       return;
     }
     
-    console.log('NYLA LLM: 🔄 Force cleanup requested - unloading model and GPU buffers');
+    NYLALogger.debug('NYLA LLM: 🔄 Force cleanup requested - unloading model and GPU buffers');
     
     if (this.engine) {
       try {
         this.engine.unload();
-        console.log('NYLA LLM: Model unloaded from GPU');
+        NYLALogger.debug('NYLA LLM: Model unloaded from GPU');
       } catch (error) {
         console.warn('NYLA LLM: Error during engine unload:', error);
       }
@@ -2185,7 +2148,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     this.isEngineWarmedUp = false;
     this.engineCreatedAt = null;
     
-    console.log('NYLA LLM: 🧹 Cleanup completed - next request will require full reinitialization');
+    NYLALogger.debug('NYLA LLM: 🧹 Cleanup completed - next request will require full reinitialization');
   }
 }
 
@@ -2201,9 +2164,9 @@ window.NYLALLMEngine = NYLALLMEngine;
 document.addEventListener('visibilitychange', () => {
   if (window.nylaLLMEngine && window.nylaLLMEngine.isReady()) {
     if (document.visibilityState === 'hidden') {
-      console.log('NYLA LLM: 🔥 Tab hidden - keeping engine warm');
+      NYLALogger.debug('NYLA LLM: 🔥 Tab hidden - keeping engine warm');
     } else {
-      console.log('NYLA LLM: 👁️  Tab visible - engine still ready');
+      NYLALogger.debug('NYLA LLM: 👁️  Tab visible - engine still ready');
     }
   }
 });
@@ -2211,7 +2174,7 @@ document.addEventListener('visibilitychange', () => {
 // Prevent cleanup on beforeunload unless user explicitly wants it
 window.addEventListener('beforeunload', (event) => {
   if (window.nylaLLMEngine && window.nylaLLMEngine.isReady()) {
-    console.log('NYLA LLM: 🔥 Page unloading - engine stays in memory for next visit');
+    NYLALogger.debug('NYLA LLM: 🔥 Page unloading - engine stays in memory for next visit');
     // Don't cleanup automatically - let the browser handle memory
     // Only cleanup if memory pressure is detected
   }
