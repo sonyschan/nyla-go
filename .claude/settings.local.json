@@ -53,7 +53,8 @@
       "Bash(npm run rag:verify:*)",
       "Bash(npm run rag:test:*)",
       "Bash(mv:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(git log:*)"
     ],
     "deny": []
   }

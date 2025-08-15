@@ -103,6 +103,9 @@ class NYLAAssistantV2 {
       // Set UI reference in conversation manager for engagement functionality
       this.conversationManager.setUI(this.ui);
       
+      // Make UI globally available for link click handling
+      window.nylaUI = this.ui;
+      
       console.log('NYLA Assistant V2: Calling ui.initialize()...');
       await this.ui.initialize();
       console.log('NYLA Assistant V2: ✅ UI initialized');

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYLA URL Buttons Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000 url('GO-BACKGROUND.png') center/cover no-repeat fixed;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 16px;
+            border: 1px solid #333333;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: rgba(42, 42, 42, 0.5);
+        }
+
+        h1, h2 {
+            color: #FF6B35;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .message-content {
+            background: rgba(42, 42, 42, 0.8);
+            border: 1px solid #555555;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #ffffff;
+            line-height: 1.5;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* Include URL button styles from nyla-assistant.css */
+        .message-content .link-buttons-container {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: flex-start;
+        }
+
+        .message-content .link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #FF6B35, #FF5722);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+            font-family: inherit;
+            line-height: 1.2;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-content .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.35);
+            background: linear-gradient(135deg, #e55a2b, #e54a1f);
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        .link-button .platform-icon {
+            font-size: 14px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .link-button.platform-twitter {
+            background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+        }
+
+        .link-button.platform-twitter:hover {
+            background: linear-gradient(135deg, #0d8bd9, #0a7bc4);
+        }
+
+        .link-button.platform-telegram {
+            background: linear-gradient(135deg, #0088cc, #006ba6);
+        }
+
+        .link-button.platform-telegram:hover {
+            background: linear-gradient(135deg, #006ba6, #005c8f);
+        }
+
+        .link-button.platform-linktree {
+            background: linear-gradient(135deg, #39E09B, #2bc77a);
+        }
+
+        .link-button.platform-linktree:hover {
+            background: linear-gradient(135deg, #2bc77a, #22a863);
+        }
+
+        .link-button.platform-generic {
+            background: linear-gradient(135deg, #FF6B35, #FF5722);
+        }
+
+        .link-button.platform-generic:hover {
+            background: linear-gradient(135deg, #e55a2b, #e54a1f);
+        }
+
+        .test-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(26, 26, 26, 0.4);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #FF6B35, #FF5722);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .test-button:hover {
+            background: linear-gradient(135deg, #e55a2b, #e54a1f);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔗 NYLA URL Buttons Test</h1>
+        
+        <div class="test-section">
+            <h2>Platform-Specific URLs</h2>
+            <div class="message-content" id="test1">
+                Visit our social media: https://x.com/WangChaidotbonk and join our community at https://t.me/wechatdogesol
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Mixed URL Types</h2>
+            <div class="message-content" id="test2">
+                Check out our links: https://linktr.ee/WangchaiDoge and https://example.com/generic-link
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Multiple Same Platform URLs</h2>
+            <div class="message-content" id="test3">
+                Follow us on X: https://x.com/WangChaidotbonk and https://x.com/nylaprotocol
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>URLs with Surrounding Text</h2>
+            <div class="message-content" id="test4">
+                **Welcome to our community!** 🚀<br>
+                • Join Telegram: https://t.me/wechatdogesol<br>
+                • Follow on X: https://x.com/WangChaidotbonk<br>
+                • Links: https://linktr.ee/WangchaiDoge<br>
+                *More updates coming soon!*
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Custom Test</h2>
+            <textarea class="test-input" id="customInput" placeholder="Enter text with URLs to test..." rows="3">
+Check out https://github.com/example/repo and https://t.me/testchannel
+            </textarea>
+            <button class="test-button" onclick="testCustomInput()">Test Custom Input</button>
+            <div class="message-content" id="customResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock NYLAUIv2 class for testing
+        class MockNYLAUI {
+            handleLinkClick(url, event) {
+                if (event) {
+                    event.preventDefault();
+                }
+                console.log('Mock: Opening URL:', url);
+                alert('Mock: Would open ' + url);
+                // In real implementation, this would open the URL
+                // window.open(url, '_blank', 'noopener,noreferrer');
+            }
+
+            convertUrlsToButtons(text) {
+                const urlPatterns = {
+                    twitter: {
+                        regex: /https?:\/\/(www\.)?(twitter\.com|x\.com)\/[\w./?&=%-]+/gi,
+                        icon: '𝕏',
+                        platform: 'twitter',
+                        label: 'X (Twitter)'
+                    },
+                    telegram: {
+                        regex: /https?:\/\/t\.me\/[\w./?&=%-]+/gi,
+                        icon: '💬',
+                        platform: 'telegram', 
+                        label: 'Telegram'
+                    },
+                    linktree: {
+                        regex: /https?:\/\/(www\.)?linktr\.ee\/[\w./?&=%-]+/gi,
+                        icon: '🔗',
+                        platform: 'linktree',
+                        label: 'Linktree'
+                    },
+                    generic: {
+                        regex: /https?:\/\/[^\s<>"']+/gi,
+                        icon: '🌐',
+                        platform: 'generic',
+                        label: 'Link'
+                    }
+                };
+
+                let processedText = text;
+                const foundUrls = new Set();
+
+                // Process platform-specific URLs first
+                ['twitter', 'telegram', 'linktree'].forEach(platformKey => {
+                    const pattern = urlPatterns[platformKey];
+                    let match;
+                    
+                    while ((match = pattern.regex.exec(text)) !== null) {
+                        const url = match[0];
+                        
+                        if (foundUrls.has(url)) {
+                            continue;
+                        }
+                        foundUrls.add(url);
+
+                        const buttonHtml = this.generateUrlButton(url, pattern);
+                        const urlRegex = new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                        processedText = processedText.replace(urlRegex, buttonHtml);
+                    }
+                    
+                    pattern.regex.lastIndex = 0;
+                });
+
+                // Process remaining generic URLs
+                let match;
+                while ((match = urlPatterns.generic.regex.exec(text)) !== null) {
+                    const url = match[0];
+                    
+                    if (foundUrls.has(url)) {
+                        continue;
+                    }
+                    foundUrls.add(url);
+
+                    const buttonHtml = this.generateUrlButton(url, urlPatterns.generic);
+                    const urlRegex = new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    processedText = processedText.replace(urlRegex, buttonHtml);
+                }
+                
+                urlPatterns.generic.regex.lastIndex = 0;
+
+                if (foundUrls.size > 0) {
+                    const parts = processedText.split(/(<a[^>]*class="link-button[^"]*"[^>]*>.*?<\/a>)/);
+                    let result = '';
+                    let buttonBuffer = [];
+
+                    for (let i = 0; i < parts.length; i++) {
+                        const part = parts[i];
+                        
+                        if (part.includes('class="link-button')) {
+                            buttonBuffer.push(part);
+                        } else {
+                            if (buttonBuffer.length > 0) {
+                                result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
+                                buttonBuffer = [];
+                            }
+                            result += part;
+                        }
+                    }
+
+                    if (buttonBuffer.length > 0) {
+                        result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
+                    }
+
+                    return result;
+                }
+
+                return processedText;
+            }
+
+            generateUrlButton(url, pattern) {
+                let displayText = pattern.label;
+                
+                if (pattern.platform === 'twitter') {
+                    const match = url.match(/(?:twitter\.com|x\.com)\/(\w+)/);
+                    if (match && match[1]) {
+                        displayText = `@${match[1]}`;
+                    }
+                } else if (pattern.platform === 'telegram') {
+                    const match = url.match(/t\.me\/(\w+)/);
+                    if (match && match[1]) {
+                        displayText = match[1];
+                    }
+                } else if (pattern.platform === 'linktree') {
+                    const match = url.match(/linktr\.ee\/(\w+)/);
+                    if (match && match[1]) {
+                        displayText = match[1];
+                    }
+                } else if (pattern.platform === 'generic') {
+                    try {
+                        const domain = new URL(url).hostname.replace('www.', '');
+                        displayText = domain;
+                    } catch (e) {
+                        displayText = 'Link';
+                    }
+                }
+
+                return `<a href="${url}" 
+                           class="link-button platform-${pattern.platform}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           onclick="window.nylaUI?.handleLinkClick('${url}', event)"
+                           aria-label="Open ${pattern.label} link">
+                          <span class="platform-icon">${pattern.icon}</span>
+                          ${displayText}
+                        </a>`;
+            }
+
+            formatMessageText(text) {
+                if (!text) return '';
+                
+                const textString = String(text);
+                
+                let formattedText = textString
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/• /g, '<span class="bullet">•</span> ');
+
+                return this.convertUrlsToButtons(formattedText);
+            }
+        }
+
+        // Initialize mock UI
+        window.nylaUI = new MockNYLAUI();
+
+        // Test function
+        function testCustomInput() {
+            const input = document.getElementById('customInput');
+            const result = document.getElementById('customResult');
+            const formatted = window.nylaUI.formatMessageText(input.value);
+            result.innerHTML = formatted;
+        }
+
+        // Initialize test displays
+        document.addEventListener('DOMContentLoaded', function() {
+            const testElements = ['test1', 'test2', 'test3', 'test4'];
+            
+            testElements.forEach(id => {
+                const element = document.getElementById(id);
+                const originalText = element.textContent;
+                element.innerHTML = window.nylaUI.formatMessageText(originalText);
+            });
+        });
+    </script>
+</body>
+</html>

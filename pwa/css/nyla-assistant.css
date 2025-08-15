@@ -1951,3 +1951,130 @@
     gap: 3px;
   }
 }
+
+/* ============================================
+   URL LINK BUTTONS
+   ============================================ */
+
+/* Container for link buttons */
+.message-content .link-buttons-container {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+/* Individual link button styling */
+.message-content .link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #FF6B35, #FF5722);
+  color: #ffffff !important;
+  text-decoration: none !important;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+  font-family: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-content .link-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.35);
+  background: linear-gradient(135deg, #e55a2b, #e54a1f);
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.message-content .link-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 107, 53, 0.3);
+}
+
+.message-content .link-button:focus {
+  outline: 2px solid rgba(255, 107, 53, 0.5);
+  outline-offset: 2px;
+}
+
+/* Platform icons */
+.link-button .platform-icon {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Platform-specific button colors */
+.link-button.platform-twitter {
+  background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+}
+
+.link-button.platform-twitter:hover {
+  background: linear-gradient(135deg, #0d8bd9, #0a7bc4);
+}
+
+.link-button.platform-telegram {
+  background: linear-gradient(135deg, #0088cc, #006ba6);
+}
+
+.link-button.platform-telegram:hover {
+  background: linear-gradient(135deg, #006ba6, #005c8f);
+}
+
+.link-button.platform-linktree {
+  background: linear-gradient(135deg, #39E09B, #2bc77a);
+}
+
+.link-button.platform-linktree:hover {
+  background: linear-gradient(135deg, #2bc77a, #22a863);
+}
+
+/* Generic links keep orange theme */
+.link-button.platform-generic {
+  background: linear-gradient(135deg, #FF6B35, #FF5722);
+}
+
+.link-button.platform-generic:hover {
+  background: linear-gradient(135deg, #e55a2b, #e54a1f);
+}
+
+/* Responsive adjustments for link buttons */
+@media (max-width: 480px) {
+  .message-content .link-button {
+    font-size: 12px;
+    padding: 6px 10px;
+    max-width: 150px;
+  }
+  
+  .link-button .platform-icon {
+    font-size: 12px;
+  }
+  
+  .message-content .link-buttons-container {
+    gap: 4px;
+    margin-top: 6px;
+  }
+}
+
+/* Extension popup specific adjustments */
+@media (max-width: 400px) {
+  .message-content .link-button {
+    font-size: 11px;
+    padding: 5px 8px;
+    max-width: 120px;
+  }
+  
+  .link-button .platform-icon {
+    font-size: 11px;
+  }
+}

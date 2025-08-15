@@ -2614,7 +2614,7 @@ class NYLAAssistantUIV2 {
   }
 
   /**
-   * Format message text with basic markdown-like formatting
+   * Format message text with basic markdown-like formatting and URL buttons
    */
   formatMessageText(text) {
     // Handle undefined or null text
@@ -2625,11 +2625,226 @@ class NYLAAssistantUIV2 {
     // Ensure text is a string
     const textString = String(text);
     
-    return textString
+    // Apply basic formatting first
+    let formattedText = textString
       .replace(/\n/g, '<br>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/• /g, '<span class="bullet">•</span> ');
+
+    // Convert URLs to buttons
+    formattedText = this.convertUrlsToButtons(formattedText);
+    
+    return formattedText;
+  }
+
+  /**
+   * Convert URLs in text to beautiful clickable buttons
+   */
+  convertUrlsToButtons(text) {
+    // URL patterns for different platforms
+    const urlPatterns = {
+      twitter: {
+        regex: /https?:\/\/(www\.)?(twitter\.com|x\.com)\/[\w./?&=%-]+/gi,
+        icon: '𝕏',
+        platform: 'twitter',
+        label: 'X (Twitter)'
+      },
+      telegram: {
+        regex: /https?:\/\/t\.me\/[\w./?&=%-]+/gi,
+        icon: '💬',
+        platform: 'telegram', 
+        label: 'Telegram'
+      },
+      linktree: {
+        regex: /https?:\/\/(www\.)?linktr\.ee\/[\w./?&=%-]+/gi,
+        icon: '🔗',
+        platform: 'linktree',
+        label: 'Linktree'
+      },
+      generic: {
+        regex: /https?:\/\/[^\s<>"']+/gi,
+        icon: '🌐',
+        platform: 'generic',
+        label: 'Link'
+      }
+    };
+
+    let processedText = text;
+    const foundUrls = new Set(); // Track processed URLs to avoid duplicates
+
+    // Process platform-specific URLs first (more specific patterns)
+    ['twitter', 'telegram', 'linktree'].forEach(platformKey => {
+      const pattern = urlPatterns[platformKey];
+      let match;
+      
+      while ((match = pattern.regex.exec(text)) !== null) {
+        const url = match[0];
+        
+        // Skip if already processed
+        if (foundUrls.has(url)) {
+          continue;
+        }
+        foundUrls.add(url);
+
+        // Generate button HTML
+        const buttonHtml = this.generateUrlButton(url, pattern);
+        
+        // Replace the URL with button (escape regex special characters)
+        const urlRegex = new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        processedText = processedText.replace(urlRegex, buttonHtml);
+      }
+      
+      // Reset regex lastIndex for next iteration
+      pattern.regex.lastIndex = 0;
+    });
+
+    // Process remaining generic URLs (less specific pattern)
+    let match;
+    while ((match = urlPatterns.generic.regex.exec(text)) !== null) {
+      const url = match[0];
+      
+      // Skip if already processed by platform-specific patterns
+      if (foundUrls.has(url)) {
+        continue;
+      }
+      foundUrls.add(url);
+
+      // Generate generic button HTML
+      const buttonHtml = this.generateUrlButton(url, urlPatterns.generic);
+      
+      // Replace the URL with button
+      const urlRegex = new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      processedText = processedText.replace(urlRegex, buttonHtml);
+    }
+    
+    // Reset regex lastIndex
+    urlPatterns.generic.regex.lastIndex = 0;
+
+    // If we found URLs, wrap them in a container
+    if (foundUrls.size > 0) {
+      // Split text into parts around buttons and reassemble
+      const parts = processedText.split(/(<a[^>]*class="link-button[^"]*"[^>]*>.*?<\/a>)/);
+      let result = '';
+      let buttonBuffer = [];
+
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        
+        if (part.includes('class="link-button')) {
+          // This is a button, add to buffer
+          buttonBuffer.push(part);
+        } else {
+          // This is regular text
+          if (buttonBuffer.length > 0) {
+            // Add accumulated buttons in a container
+            result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
+            buttonBuffer = [];
+          }
+          result += part;
+        }
+      }
+
+      // Add any remaining buttons
+      if (buttonBuffer.length > 0) {
+        result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
+      }
+
+      return result;
+    }
+
+    return processedText;
+  }
+
+  /**
+   * Generate HTML for a URL button
+   */
+  generateUrlButton(url, pattern) {
+    // Shorten display text for button
+    let displayText = pattern.label;
+    
+    // For specific platforms, try to extract meaningful text
+    if (pattern.platform === 'twitter') {
+      const match = url.match(/(?:twitter\.com|x\.com)\/(\w+)/);
+      if (match && match[1]) {
+        displayText = `@${match[1]}`;
+      }
+    } else if (pattern.platform === 'telegram') {
+      const match = url.match(/t\.me\/(\w+)/);
+      if (match && match[1]) {
+        displayText = match[1];
+      }
+    } else if (pattern.platform === 'linktree') {
+      const match = url.match(/linktr\.ee\/(\w+)/);
+      if (match && match[1]) {
+        displayText = match[1];
+      }
+    } else if (pattern.platform === 'generic') {
+      // For generic links, show domain
+      try {
+        const domain = new URL(url).hostname.replace('www.', '');
+        displayText = domain;
+      } catch (e) {
+        displayText = 'Link';
+      }
+    }
+
+    return `<a href="${url}" 
+               class="link-button platform-${pattern.platform}" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               onclick="window.nylaUI?.handleLinkClick('${url}', event)"
+               aria-label="Open ${pattern.label} link">
+              <span class="platform-icon">${pattern.icon}</span>
+              ${displayText}
+            </a>`;
+  }
+
+  /**
+   * Handle link button clicks with platform-specific logic
+   */
+  handleLinkClick(url, event) {
+    try {
+      // Prevent default link behavior
+      if (event) {
+        event.preventDefault();
+      }
+
+      // Check if we're in an extension environment
+      const isExtension = typeof chrome !== 'undefined' && chrome.tabs;
+      
+      if (isExtension) {
+        // Extension: Use chrome.tabs.create for better user experience
+        chrome.tabs.create({ 
+          url: url,
+          active: true 
+        }, (tab) => {
+          if (chrome.runtime.lastError) {
+            console.warn('NYLA UI: Chrome tabs API failed, falling back to window.open:', chrome.runtime.lastError);
+            // Fallback to window.open
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }
+        });
+      } else {
+        // PWA: Use standard window.open
+        const opened = window.open(url, '_blank', 'noopener,noreferrer');
+        
+        // Check if popup was blocked
+        if (!opened || opened.closed || typeof opened.closed === 'undefined') {
+          console.warn('NYLA UI: Popup blocked, attempting to open in same tab');
+          // As last resort, navigate in same tab
+          window.location.href = url;
+        }
+      }
+
+      // Log for analytics/debugging
+      console.log(`NYLA UI: Opened link - ${url}`);
+      
+    } catch (error) {
+      console.error('NYLA UI: Error handling link click:', error);
+      // Final fallback - let browser handle the original link
+      window.location.href = url;
+    }
   }
 
   /**
