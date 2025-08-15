@@ -34,7 +34,7 @@ repos:
         name: KB Changes Detection & RAG Status Check
         entry: hooks/detect-kb-changes.sh
         language: script
-        files: '^(nylago-data\.js|pwa/nylago-data\.js|pwa/kb/.*\.json|pwa/data/nyla-vector-db\.json|CLAUDE\.md)$'
+        files: '^(pwa/kb/.*\.json|pwa/data/nyla-vector-db\.json|CLAUDE\.md)$'
         pass_filenames: true
         always_run: false
         

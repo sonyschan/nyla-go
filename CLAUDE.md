@@ -195,7 +195,7 @@ Chrome Web Store will **reject packages with multiple manifest.json files**. Our
 
 ### 📦 **Create Extension-Only Package:**
 ```bash
-# NOTE: nylago-data.js is for development only - not needed for release packaging
+# NOTE: nylago-ui-data.js is for development only - not needed for release packaging
 # Create extension package directory
 mkdir -p extension-package
 
@@ -215,7 +215,7 @@ rm -rf extension-package
 ### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4 - v1.4.5)**
 
 #### **Directory Structure & Navigation Issues:**
-1. **Missing nylago-data.js**: Don't forget to include `nylago-data.js` - it's required for community features (Raid/App tabs)
+1. **Missing nylago-ui-data.js**: Don't forget to include `nylago-ui-data.js` - it's required for community features (Raid/App tabs)
 2. **Directory Navigation**: Create ZIP directly in `releases/` to avoid path confusion and nested directory issues
 3. **Git Staging**: The ZIP file path should be `releases/nyla-go-v${VERSION}-extension-only.zip` when adding to git
 4. **Common Error**: Using `../nyla-go-v${VERSION}-extension-only.zip` creates file in wrong location
@@ -248,7 +248,7 @@ find . -name "*v${VERSION}*.zip" -type f
 /Users/sonyschan/NYLAgo/ (PROJECT ROOT - Always work from here)
 ├── manifest.json
 ├── popup.html, popup.js
-├── content.js, qr-simple.js, nylago-data.js
+├── content.js, qr-simple.js, nylago-ui-data.js
 ├── GO-BACKGROUND.png, NYLAGO-Logo-v2.png
 ├── icons/ (directory with all icon files)
 ├── pwa/ (EXCLUDE from extension package)
@@ -261,7 +261,7 @@ find . -name "*v${VERSION}*.zip" -type f
 - ✅ `popup.html` & `popup.js` 
 - ✅ `content.js`
 - ✅ `qr-simple.js`
-- ⚠️ `nylago-data.js` - **Development only** (not included in release packages)
+- ⚠️ `nylago-ui-data.js` - **Development only** (not included in release packages)
 - ✅ `icons/` directory (all icon files)
 - ✅ `GO-BACKGROUND.png` & `NYLAGO-Logo-v2.png`
 - ❌ **EXCLUDE**: `pwa/` directory (contains conflicting manifest)
@@ -373,7 +373,7 @@ releases/
 - **Git Reset Strategy**: Use `git reset --soft HEAD~1` to undo commits while keeping changes staged
 - **Directory Management**: Avoid nested directory confusion by always working from project root
 - **ZIP File Location**: Create ZIP directly in `releases/` directory to avoid path issues
-- **Missing Files**: Include all required files in checklist - `nylago-data.js` is essential for community features
+- **Missing Files**: Include all required files in checklist - `nylago-ui-data.js` is essential for community features
 - **Git Path Issues**: Use relative paths like `releases/filename.zip` when adding to git
 - **Commit Messages**: Use detailed commit messages with proper formatting for release history
 
@@ -573,15 +573,16 @@ Claude should **ACTIVELY REMIND** the user to rebuild RAG embeddings when:
    ```
 
 2. **New Knowledge Added:** When files in these locations are modified:
-   - `nylago-data.js` (community data)
-   - `pwa/js/nyla-knowledge-base.js` (main KB)
-   - Any files in `pwa/data/` directory
+   - `pwa/kb/**/*.json` (knowledge base files)
+   - Any files in `pwa/data/nyla-vector-db.json` (vector database)
    - Documentation updates that affect user guidance
+
+   **Note**: `nylago-ui-data.js` files are UI-only and do NOT trigger embedding rebuilds
 
 3. **Version Control Integration:** Watch for changes using:
    ```bash
    # Claude can check if embeddings need rebuilding:
-   git diff HEAD~1 --name-only | grep -E "(nylago-data|knowledge-base|pwa/data)"
+   git diff HEAD~1 --name-only | grep -E "(pwa/kb|pwa/data/nyla-vector-db)"
    ```
 
 #### **Automatic RAG Rebuild Triggers**
@@ -653,12 +654,14 @@ npm run rag:test
 - **Embedding Validation**: Ensures vector DB is updated when KB changes
 - **No Redundancy**: Eliminates duplicate checks and builds
 
-#### **Tracked Files (Corrected Patterns):**
-- `pwa/kb/**/*.json` - Knowledge base files (primary)
-- `nylago-data.js` - Root community data  
-- `pwa/nylago-data.js` - PWA community data
-- `pwa/data/nyla-vector-db.json` - Vector database
+#### **Tracked Files (KB Only):**
+- `pwa/kb/**/*.json` - Knowledge base files (primary source of truth)
+- `pwa/data/nyla-vector-db.json` - Vector database (generated from KB)
 - `CLAUDE.md` - Project documentation
+
+#### **UI Files (Not Tracked for KB):**
+- `nylago-ui-data.js` - Root UI data (communities, raids)
+- `pwa/nylago-ui-data.js` - PWA UI data (not knowledge base)
 
 #### **Automatic Actions:**
 ✅ **Before Each Commit**: Checks if KB files changed  

@@ -76,7 +76,7 @@ function checkRAGSystem() {
     // Check knowledge base files
     log('\n📚 Knowledge Base Files:');
     const kbFiles = [
-        'nylago-data.js',
+        'nylago-ui-data.js',
         'pwa/js/nyla-knowledge-base.js'
     ];
     

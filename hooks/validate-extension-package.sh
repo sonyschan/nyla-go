@@ -32,7 +32,7 @@ required_files=(
 # Files that should NOT be in extension package
 excluded_files=(
     "pwa/"
-    "nylago-data.js"
+    "nylago-ui-data.js"
     ".git/"
     ".github/"
     "node_modules/"
