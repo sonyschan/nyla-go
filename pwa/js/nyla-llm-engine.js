@@ -683,9 +683,15 @@ class NYLALLMEngine {
       KNOWLEDGE USE
       - Do NOT invent facts. Be concise, factual, on-topic. Use only given context.
 
+      URL POLICY
+      - You may include full URLs when referencing specific accounts, resources, or links.
+      - Always provide complete, clickable URLs (e.g., https://x.com/WangChaidotbonk).
+      - URLs should be accurate and sourced from the provided knowledge context.
+      - Include URLs when users ask about community links, social media, or official channels.
+
       FORMAT (MANDATORY JSON ONLY)
       {
-        "text": "<=400 chars, plain text, escape \\n and \\\"; no HTML>",
+        "text": "<=600 chars, plain text with URLs allowed, escape \\n and \\\"; no HTML tags except URLs>",
         "sentiment": "helpful|excited|friendly",
         "followUpSuggestions": []
       }
@@ -706,7 +712,12 @@ class NYLALLMEngine {
       TRANSFER ANSWERS
       - Steps: Send tab → fill recipient & amount → generate command → post on X.com → NYLA executes.
 
-      “WHAT ELSE / OTHER FEATURES” QUESTIONS
+      COMMUNITY/SOCIAL MEDIA QUERIES
+      - Always include complete URLs when providing social media links or official channels.
+      - For WangChai: provide X.com, Telegram, and Linktree links when asked about community.
+      - Format: "Visit [Platform]: https://[full-url]" or include URLs naturally in context.
+
+      "WHAT ELSE / OTHER FEATURES" QUESTIONS
       - Highlight exactly ONE feature (QR codes OR raids OR blockchain support).
 
       TONE
@@ -1495,6 +1506,40 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
   }
 
   /**
+   * Enhance and validate URLs in response text
+   */
+  enhanceUrls(text) {
+    if (!text || typeof text !== 'string') return text;
+    
+    try {
+      // URL pattern matching (basic validation)
+      const urlPattern = /(https?:\/\/[^\s]+)/g;
+      
+      // Validate URLs are complete and properly formatted
+      const enhancedText = text.replace(urlPattern, (url) => {
+        // Remove trailing punctuation that might not be part of URL
+        const cleanUrl = url.replace(/[.,;:!?]+$/, '');
+        
+        // Basic URL validation
+        try {
+          new URL(cleanUrl);
+          return cleanUrl; // Return clean URL if valid
+        } catch (e) {
+          NYLALogger.debug(`Invalid URL detected and removed: ${url}`);
+          return '[invalid URL removed]'; // Replace invalid URLs
+        }
+      });
+      
+      NYLALogger.debug(`URL enhancement applied. Original length: ${text.length}, Enhanced length: ${enhancedText.length}`);
+      return enhancedText;
+      
+    } catch (error) {
+      NYLALogger.debug('URL enhancement failed:', error.message);
+      return text; // Return original text if enhancement fails
+    }
+  }
+
+  /**
    * Memory-safe JSON extraction without catastrophic backtracking
    */
   extractJsonSafely(text) {
@@ -1917,7 +1962,10 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
       // Clean up the text - remove extra whitespace and ensure it's a string
       response.text = response.text.trim();
       
-      // The LLM should only generate plain text with @ mentions
+      // URL validation and enhancement
+      response.text = this.enhanceUrls(response.text);
+      
+      // The LLM should generate plain text with @ mentions and URLs
     }
     
     response.sentiment = response.sentiment || 'helpful';
