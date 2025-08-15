@@ -166,8 +166,8 @@ function createMockProductionVersion() {
     hash: 'abc123def456' + Math.random().toString(36).substring(7),
     buildTime: new Date().toISOString(),
     chunkCount: Math.floor(Math.random() * 500) + 300,
-    embeddingModel: 'all-MiniLM-L6-v2',
-    embeddingDimension: 384,
+    embeddingModel: 'multilingual-e5-base',
+    embeddingDimension: 768,
     files: {
       compressed: {
         path: 'nyla-knowledge-index.json.gz',

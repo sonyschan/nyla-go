@@ -1821,7 +1821,8 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
     NYLALogger.debug('NYLA LLM: No JSON found with brace counting, trying regex approach');
     
     // Try to find JSON-like structures with regex (less accurate but handles some edge cases)
-    const jsonMatches = text.match(/\{[^{}]*"text"\s*:\s*"[^"]*"[^{}]*\}/g);
+    // Updated regex to handle escaped quotes and longer text fields
+    const jsonMatches = text.match(/\{[^{}]*"text"\s*:\s*"(?:[^"\\]|\\.)*"[^{}]*\}/g);
     if (jsonMatches) {
       for (const match of jsonMatches) {
         try {

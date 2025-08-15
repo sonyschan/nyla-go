@@ -8,12 +8,14 @@ The NYLA RAG system enhances the existing keyword-based search with semantic und
 
 ### Key Features
 
-- **🔍 Semantic Search**: Vector-based similarity search with 384-dimensional embeddings
+- **🔍 Semantic Search**: Vector-based similarity search with 768-dimensional multilingual embeddings
+- **🌐 Multilingual Support**: Enhanced Chinese language understanding with E5 model
 - **🏠 Local-First**: All processing happens client-side (no server calls)
 - **⚡ Fast Retrieval**: Target latency ≤12 seconds end-to-end
 - **💾 Persistent**: IndexedDB storage with automatic recovery
 - **🔄 Hybrid Scoring**: Combines semantic similarity with keyword matching
 - **📊 Evaluation**: Built-in testing and metrics framework
+- **🎯 E5 Instructions**: Query/passage prefixes for optimal embedding performance
 
 ## 🏗️ Architecture
 
@@ -39,8 +41,10 @@ Query → Preprocessor → Parallel Processing:
    - Adds rich metadata and tags
 
 2. **Embedding Service** (`nyla-embedding-service.js`)
-   - Uses Transformers.js with all-MiniLM-L6-v2 model
-   - Generates 384-dimensional embeddings
+   - Uses Transformers.js with multilingual-e5-base model
+   - Generates 768-dimensional multilingual embeddings
+   - E5 instruction prefixes (query:/passage:) for optimal performance
+   - Identical pipeline for Node.js and Browser consistency
    - Batched processing with caching
 
 3. **Vector Database** (`nyla-vector-db.js`)

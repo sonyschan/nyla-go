@@ -51,10 +51,16 @@ User Query → Query Preprocessor → Parallel Processing:
 ### 2. Embedding Configuration
 ```javascript
 {
-  model: "all-MiniLM-L6-v2",  // 384 dimensions, 22.7MB
-  dimension: 384,
-  max_seq_length: 256,
-  normalization: "l2"
+  model: "multilingual-e5-base",  // 768 dimensions, 278MB, multilingual support
+  dimension: 768,
+  max_seq_length: 512,
+  normalization: "l2",
+  instruction_format: {
+    query: "query: <text>",      // E5 instruction prefix for queries
+    passage: "passage: <text>"   // E5 instruction prefix for passages
+  },
+  multilingual: true,            // Enhanced Chinese/multilingual support
+  consistency: "identical_pipeline"  // Same model/pipeline for Node.js & Browser
 }
 ```
 
@@ -62,14 +68,14 @@ User Query → Query Preprocessor → Parallel Processing:
 ```javascript
 {
   version: "1.0.0",
-  model: "all-MiniLM-L6-v2",
-  dimension: 384,
+  model: "multilingual-e5-base",
+  dimension: 768,
   chunks: [
     {
       id: "chunk_001",
-      vector: Float32Array(384),
+      vector: Float32Array(768),  // 768-dimensional embeddings
       metadata: {...},
-      text: "..."
+      text: "passage: ..."  // E5 instruction prefix included
     }
   ],
   index_metadata: {

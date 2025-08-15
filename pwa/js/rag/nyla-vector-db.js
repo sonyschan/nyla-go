@@ -9,7 +9,7 @@ class NYLAVectorDB {
       dbName: 'NYLAVectorDB',
       storeName: 'vectors',
       indexName: 'nyla-faiss-index',
-      dimension: 384,
+      dimension: 768,  // multilingual-e5-base dimensions
       similarity: 'cosine',
       ...options
     };

@@ -136,7 +136,7 @@ https://sonyschan.github.io/NYLAgo/pwa/
   "hash": "a1b2c3d4...",
   "buildTime": "2024-01-15T10:30:00.000Z",
   "chunkCount": 847,
-  "embeddingModel": "all-MiniLM-L6-v2",
+  "embeddingModel": "multilingual-e5-base",
   "files": {
     "compressed": {
       "path": "nyla-knowledge-index.json.gz",

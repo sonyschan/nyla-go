@@ -349,9 +349,9 @@ class NYLANodeEmbeddingBuilder {
       // Save embeddings to storage
       const vectorData = {
         embeddings: embeddings,
-        dimension: embeddings.length > 0 ? embeddings[0].embedding.length : 384,
+        dimension: embeddings.length > 0 ? embeddings[0].embedding.length : 768,
         count: embeddings.length,
-        model: 'all-MiniLM-L6-v2',
+        model: 'multilingual-e5-base',
         version: '1.0.0'
       };
       
@@ -372,7 +372,7 @@ class NYLANodeEmbeddingBuilder {
         metadata: {
           generated_at: new Date().toISOString(),
           version: '1.0.0',
-          model: 'all-MiniLM-L6-v2',
+          model: 'multilingual-e5-base',
           dimension: vectorData.dimension,
           total_chunks: chunks.length
         }

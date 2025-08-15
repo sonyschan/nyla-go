@@ -1,14 +1,14 @@
 /**
  * NYLA Embedding Service
- * Generates embeddings using Transformers.js with all-MiniLM-L6-v2 model
+ * Generates embeddings using Transformers.js with multilingual-e5-base model
  */
 
 class NYLAEmbeddingService {
   constructor(options = {}) {
     this.options = {
-      modelName: 'Xenova/all-MiniLM-L6-v2',
-      dimension: 384,
-      maxSequenceLength: 256,
+      modelName: 'Xenova/multilingual-e5-base',
+      dimension: 768,
+      maxSequenceLength: 512,
       batchSize: 32,
       cacheEnabled: true,
       performanceLogging: true,
@@ -124,17 +124,27 @@ class NYLAEmbeddingService {
   /**
    * Generate embedding for a single text
    */
-  async embed(text) {
+  async embed(text, isQuery = false) {
     await this.initialize();
+    
+    // Apply E5 instruction prefixes for optimal performance
+    let processedText = text;
+    if (this.isE5Model()) {
+      const prefix = isQuery ? 'query: ' : 'passage: ';
+      processedText = prefix + text;
+    }
     
     console.log('🔍 Embedding Debug:', {
       initialized: this.modelLoaded,
       hasPipeline: !!this.pipeline,
       textLength: text?.length,
-      textPreview: text?.substring(0, 50) + '...'
+      processedLength: processedText?.length,
+      isE5Model: this.isE5Model(),
+      prefix: this.isE5Model() ? (isQuery ? 'query: ' : 'passage: ') : 'none',
+      textPreview: processedText?.substring(0, 50) + '...'
     });
     
-    // Check cache first
+    // Check cache first (use original text for cache key)
     if (this.options.cacheEnabled && this.embeddingCache.has(text)) {
       this.performanceMetrics.cacheHits++;
       const cached = this.embeddingCache.get(text);
@@ -146,11 +156,11 @@ class NYLAEmbeddingService {
     this.performanceMetrics.cacheMisses++;
     
     try {
-      // Truncate text if too long
-      const truncatedText = this.truncateText(text);
+      // Truncate processed text if too long
+      const truncatedText = this.truncateText(processedText);
       const tokenCount = this.estimateTokenCount(truncatedText);
       
-      // Generate embedding
+      // Generate embedding with E5 instruction prefixes
       const output = await this.pipeline(truncatedText, {
         pooling: 'mean',
         normalize: true
@@ -169,7 +179,7 @@ class NYLAEmbeddingService {
       const embeddingTime = performance.now() - startTime;
       this.updatePerformanceStats(embeddingTime, tokenCount, text.length);
       
-      // Cache the result
+      // Cache the result (use original text as key)
       if (this.options.cacheEnabled) {
         this.embeddingCache.set(text, embedding);
       }
@@ -180,6 +190,13 @@ class NYLAEmbeddingService {
       console.error('❌ Embedding generation failed:', error);
       throw error;
     }
+  }
+  
+  /**
+   * Check if the current model is an E5 model that requires instruction prefixes
+   */
+  isE5Model() {
+    return this.options.modelName && this.options.modelName.includes('e5');
   }
 
   /**
@@ -324,8 +341,8 @@ class NYLAEmbeddingService {
    * Find most similar chunks to a query
    */
   async findSimilar(query, chunks, topK = 5) {
-    // Generate query embedding
-    const queryEmbedding = await this.embed(query);
+    // Generate query embedding with E5 query prefix
+    const queryEmbedding = await this.embed(query, true);  // isQuery = true
     
     // Calculate similarities
     const similarities = chunks.map(chunk => ({

@@ -185,8 +185,8 @@ class NYLAEmbeddingEnvironment {
       // Retry logic for model loading
       let lastError;
       const models = [
-        'Xenova/all-MiniLM-L6-v2',
-        'sentence-transformers/all-MiniLM-L6-v2'
+        'Xenova/multilingual-e5-base',
+        'Xenova/all-MiniLM-L6-v2'  // Fallback for compatibility
       ];
       
       for (const modelName of models) {
@@ -200,6 +200,7 @@ class NYLAEmbeddingEnvironment {
               }
             }
           });
+          this.loadedModelName = modelName;  // Track successful model
           console.log(`[NYLA] ✅ Model loaded successfully: ${modelName}`);
           break;
         } catch (error) {
@@ -217,26 +218,35 @@ class NYLAEmbeddingEnvironment {
       if (typeof window.transformers === 'undefined') {
         throw new Error('Transformers.js not loaded in browser');
       }
-      this.pipeline = await window.transformers.pipeline('feature-extraction', 'sentence-transformers/all-MiniLM-L6-v2');
+      this.pipeline = await window.transformers.pipeline('feature-extraction', 'Xenova/multilingual-e5-base');
+      this.loadedModelName = 'Xenova/multilingual-e5-base';  // Track model for browser
     }
     
     this.initialized = true;
   }
   
-  async embed(text) {
+  async embed(text, isQuery = false) {
     if (!this.initialized) await this.initialize();
     
-    const result = await this.pipeline(text, { pooling: 'mean', normalize: true });
+    // E5 models require instruction prefixes for optimal performance
+    let processedText = text;
+    if (this.isE5Model()) {
+      const prefix = isQuery ? 'query: ' : 'passage: ';
+      processedText = prefix + text;
+    }
+    
+    const result = await this.pipeline(processedText, { pooling: 'mean', normalize: true });
     
     if (this.isNode) {
       // Node.js returns tensor, extract data
-      // For sentence transformers, we need the pooled output (384 dimensions)
+      // For sentence transformers, we need the pooled output (768 dimensions for multilingual-e5-base)
       const embedding = Array.from(result.data);
       
-      // The all-MiniLM-L6-v2 model should produce 384-dimensional embeddings
-      // If we get more, it might be the unpooled output - take first 384 dimensions
-      if (embedding.length > 384) {
-        return embedding.slice(0, 384);
+      // The multilingual-e5-base model produces 768-dimensional embeddings
+      // The all-MiniLM-L6-v2 fallback produces 384-dimensional embeddings
+      // Accept both dimensions and return as-is
+      if (embedding.length !== 768 && embedding.length !== 384) {
+        console.warn(`Unexpected embedding dimension: ${embedding.length}, expected 768 or 384`);
       }
       
       return embedding;
@@ -246,12 +256,29 @@ class NYLAEmbeddingEnvironment {
     }
   }
   
-  async embedBatch(texts) {
+  async embedBatch(texts, isQuery = false) {
     const embeddings = [];
     for (const text of texts) {
-      embeddings.push(await this.embed(text));
+      embeddings.push(await this.embed(text, isQuery));
     }
     return embeddings;
+  }
+  
+  /**
+   * Check if the current model is an E5 model that requires instruction prefixes
+   */
+  isE5Model() {
+    const currentModel = this.getCurrentModelName();
+    return currentModel && currentModel.includes('e5');
+  }
+  
+  /**
+   * Get the currently loaded model name
+   */
+  getCurrentModelName() {
+    // For E5 detection, we need to know which model was successfully loaded
+    // This will be set during initialization
+    return this.loadedModelName || '';
   }
 }
 

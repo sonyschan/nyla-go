@@ -172,8 +172,8 @@ class NYLAKBVersionManager {
         hash,
         vectorDBVersion: vectorDBStats?.version || '1.0.0',
         chunkCount: vectorDBStats?.chunkCount || 0,
-        embeddingModel: 'all-MiniLM-L6-v2',
-        embeddingDimension: 384,
+        embeddingModel: 'multilingual-e5-base',
+        embeddingDimension: 768,  // multilingual-e5-base
         generatedAt: new Date().toISOString(),
         ...additionalInfo
       };

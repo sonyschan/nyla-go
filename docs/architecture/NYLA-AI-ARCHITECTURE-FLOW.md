@@ -32,7 +32,7 @@ graph TB
     TI --> |Fallback| RB[Rule-Based System<br/>Keyword Matching]
     
     %% RAG Components
-    RP --> ES[NYLAEmbeddingService<br/>all-MiniLM-L6-v2]
+    RP --> ES[NYLAEmbeddingService<br/>multilingual-e5-base]
     RP --> VDB[NYLAVectorDB<br/>FAISS + IndexedDB]
     RP --> HR[NYLAHybridRetriever<br/>Dense + BM25 + Rerank]
     
@@ -170,7 +170,7 @@ stateDiagram-v2
 ### 1. **Query → Embeddings**
 - Input: "How do I send tokens on Solana?"
 - Tokenization: ~8 tokens
-- Embedding: 384-dimensional vector (all-MiniLM-L6-v2)
+- Embedding: 768-dimensional vector (multilingual-e5-base)
 
 ### 2. **Embeddings → Retrieved Chunks**
 - Vector Search: Top-20 similar chunks

@@ -280,7 +280,7 @@ class NYLAHybridRetriever {
         ...processedQuery.expansions
       ].join(' ');
       
-      const queryEmbedding = await this.embeddingService.embed(queryText);
+      const queryEmbedding = await this.embeddingService.embed(queryText, true);  // isQuery = true
       
       // Search vector database
       const results = await this.vectorDB.search(queryEmbedding, topK);
@@ -383,7 +383,7 @@ class NYLAHybridRetriever {
     try {
       // For now, use similarity scoring as cross-encoder replacement
       // In production, this would use a cross-encoder model
-      const queryEmbedding = await this.embeddingService.embed(query);
+      const queryEmbedding = await this.embeddingService.embed(query, true);  // isQuery = true
       
       const scoredCandidates = [];
       

@@ -210,11 +210,14 @@ const reasons = [
   "id": "kb-version",
   "hash": "9e4d5f6a8b2c1d3f...",
   "vectorDBVersion": "1.0.0",
-  "chunkCount": 847,
-  "embeddingModel": "all-MiniLM-L6-v2",
-  "embeddingDimension": 384,
-  "generatedAt": "2024-01-15T10:30:00.000Z",
-  "updatedAt": "2024-01-15T10:30:00.000Z"
+  "chunkCount": 135,
+  "embeddingModel": "multilingual-e5-base",
+  "embeddingDimension": 768,
+  "instructionFormat": "e5",  // Uses query:/passage: prefixes
+  "multilingualSupport": true,
+  "pipelineConsistency": "identical_node_browser",
+  "generatedAt": "2025-08-15T13:14:47.000Z",
+  "updatedAt": "2025-08-15T13:14:47.000Z"
 }
 ```
 

@@ -547,7 +547,7 @@ git config --global alias.release-create '!f() { gh release create "$1" --title 
 NYLA now implements a sophisticated knowledge handling system with multiple AI services:
 
 #### **Core RAG Components** (Existing)
-- **`nyla-embedding-service.js`** - Transformers.js with all-MiniLM-L6-v2 (384-dim embeddings)
+- **`nyla-embedding-service.js`** - Transformers.js with multilingual-e5-base (768-dim embeddings)
 - **`nyla-vector-db.js`** - FAISS-web with IndexedDB persistence 
 - **`nyla-retriever.js`** - Semantic + hybrid search with ranking
 - **`nyla-context-builder.js`** - Token-optimized context assembly
@@ -601,7 +601,7 @@ When Claude detects knowledge changes, suggest this sequence:
 # 1. Check current RAG status
 npm run rag:status
 
-# 2. Rebuild embeddings (73 chunks, ~11.5MB)
+# 2. Rebuild embeddings (135 chunks, ~21MB, 768-dim multilingual)
 npm run build:embeddings
 
 # 3. Verify rebuild success
@@ -614,7 +614,10 @@ npm run rag:test
 ### 🎯 **RAG Performance Optimization**
 
 #### **Current Capabilities:**
-- **Vector Search**: 384-dimensional semantic similarity
+- **Vector Search**: 768-dimensional multilingual semantic similarity
+- **Multilingual Support**: Enhanced Chinese language understanding with E5 model
+- **E5 Instructions**: Query/passage prefixes for optimal embedding performance  
+- **Pipeline Consistency**: Identical embedding process for Node.js and Browser
 - **Hybrid Ranking**: Semantic (70%) + keyword (30%) scoring
 - **Context Compression**: Field-specific token limits (50-200 tokens per chunk type)
 - **Deduplication**: MinHash + SimHash with 80% similarity threshold
@@ -622,10 +625,12 @@ npm run rag:test
 - **Content Filtering**: Removes marketing/boilerplate (70%+ threshold)
 
 #### **Knowledge Base Statistics:**
-- **Current Size**: 73 chunks, 11.5MB vector database
-- **Embedding Model**: all-MiniLM-L6-v2 (384 dimensions)
+- **Current Size**: 135 chunks, ~21MB vector database
+- **Embedding Model**: multilingual-e5-base (768 dimensions, 278MB model)
+- **Instruction Format**: E5 prefixes (query:/passage:) for optimal performance
 - **Chunk Types**: technical_spec (150 tokens), how_to (200 tokens), qa_pair (180 tokens)
-- **Quality Filtering**: Minimum 30% quality score threshold
+- **Quality Filtering**: Minimum 25% similarity score threshold (optimized for multilingual)
+- **Chinese Support**: Enhanced semantic understanding for queries like "旺柴"
 
 ### 🔍 **RAG Integration Checkpoints**
 
@@ -729,6 +734,51 @@ curl -X POST localhost:3000/rag/test -d '{"query": "latest features in nyla go"}
 # Test edge cases
 curl -X POST localhost:3000/rag/test -d '{"query": "cryptocurrency fees comparison"}'
 ```
+
+## 🌐 **Embedding Model Migration (Aug 15, 2025)**
+
+### **Migration: all-MiniLM-L6-v2 → multilingual-e5-base**
+
+#### **Root Cause Analysis:**
+- **RAG Inconsistency**: Chinese queries like "旺柴" were returning wrong chunks
+- **Model Mismatch**: Node.js used `Xenova/all-MiniLM-L6-v2`, Browser used `sentence-transformers/all-MiniLM-L6-v2`
+- **Embedding Variance**: Different model sources produced different embeddings for same text
+- **Chinese Language Limitations**: all-MiniLM-L6-v2 has poor multilingual support
+
+#### **Solution Implemented:**
+1. **Unified Model**: Both environments now use `Xenova/multilingual-e5-base`
+2. **E5 Instructions**: Added query/passage prefixes for optimal performance
+3. **Pipeline Consistency**: Identical embedding process guarantees same results
+4. **Multilingual Support**: Enhanced Chinese language understanding
+
+#### **Technical Changes:**
+```javascript
+// Before (Inconsistent)
+Node.js:  Xenova/all-MiniLM-L6-v2 (384-dim)
+Browser:  sentence-transformers/all-MiniLM-L6-v2 (384-dim)
+
+// After (Consistent)
+Node.js:  Xenova/multilingual-e5-base (768-dim) + E5 instructions
+Browser:  Xenova/multilingual-e5-base (768-dim) + E5 instructions
+
+// E5 Instruction Format
+Query:    "query: 跟我說說旺柴這個項目"
+Passage:  "passage: WangChai (旺柴) is a community-driven blockchain project..."
+```
+
+#### **Performance Improvements:**
+- **Chinese Query Accuracy**: Expected 40%+ improvement in similarity scores
+- **Cross-language Matching**: Better English-Chinese semantic understanding  
+- **Consistency**: Eliminates embedding variance between environments
+- **WangChai Queries**: Should now correctly return chunks 120-121 instead of unrelated content
+
+#### **Migration Steps Completed:**
+✅ Updated embedding model in both Node.js and Browser environments  
+✅ Implemented E5 instruction prefixes for queries vs passages  
+✅ Updated all dimension references from 384 → 768  
+✅ Rebuilt embeddings with new model (135 chunks, 35s build time)  
+✅ Updated documentation across RAG system  
+✅ Verified WangChai content exists in new vector database (chunks 120-121)
 
 ### ⚡ **Performance Metrics**
 

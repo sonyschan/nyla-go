@@ -6,8 +6,8 @@
 class NYLAMultilingualIngest {
   constructor(options = {}) {
     this.options = {
-      embeddingModel: 'Xenova/multilingual-e5-small', // Multilingual model
-      dimension: 384,
+      embeddingModel: 'Xenova/multilingual-e5-base', // Multilingual model (consistent with main system)
+      dimension: 768,  // multilingual-e5-base dimensions
       chunkingRules: {
         english: {
           tokenRange: [200, 300],

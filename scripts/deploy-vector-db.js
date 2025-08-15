@@ -114,8 +114,8 @@ class VectorDBDeployer {
         hash,
         buildTime: new Date().toISOString(),
         chunkCount: indexData.chunks?.length || 0,
-        embeddingModel: indexData.model?.name || 'all-MiniLM-L6-v2',
-        embeddingDimension: indexData.model?.dimension || 384,
+        embeddingModel: indexData.model?.name || 'multilingual-e5-base',
+        embeddingDimension: indexData.model?.dimension || 768,
         files: {
           index: {
             path: 'nyla-knowledge-index.json',
@@ -232,8 +232,8 @@ class VectorDBDeployer {
         },
         compatibility: {
           minClientVersion: '2.1.10',
-          embeddingModel: 'all-MiniLM-L6-v2',
-          vectorDimension: 384
+          embeddingModel: 'multilingual-e5-base',
+          vectorDimension: 768
         }
       };
       

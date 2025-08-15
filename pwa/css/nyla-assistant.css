@@ -1956,13 +1956,12 @@
    URL LINK BUTTONS
    ============================================ */
 
-/* Container for link buttons */
+/* Container for link buttons - if used */
 .message-content .link-buttons-container {
   margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: flex-start;
+  margin-bottom: 4px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 /* Individual link button styling */
@@ -1970,7 +1969,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 6px 10px;
+  margin: 0 4px;
+  vertical-align: middle;
   background: linear-gradient(135deg, #FF6B35, #FF5722);
   color: #ffffff !important;
   text-decoration: none !important;
@@ -2061,8 +2062,8 @@
   }
   
   .message-content .link-buttons-container {
-    gap: 4px;
     margin-top: 6px;
+    margin-bottom: 4px;
   }
 }
 

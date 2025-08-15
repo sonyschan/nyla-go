@@ -28,7 +28,7 @@ async function buildEmbeddings() {
     
     console.log('🤖 Initializing embedding service...');
     const embeddingService = new NYLAEmbeddingService({
-      modelName: 'Xenova/all-MiniLM-L6-v2',
+      modelName: 'Xenova/multilingual-e5-base',
       batchSize: 32
     });
     await embeddingService.initialize();
@@ -60,8 +60,8 @@ async function buildEmbeddings() {
       version: '1.0.0',
       created_at: new Date().toISOString(),
       model: {
-        name: 'all-MiniLM-L6-v2',
-        dimension: 384
+        name: 'multilingual-e5-base',
+        dimension: 768  // multilingual-e5-base dimensions
       },
       statistics: {
         total_chunks: embeddedChunks.length,
@@ -113,7 +113,7 @@ async function buildEmbeddings() {
     // Summary
     console.log('\n📋 Build Summary:');
     console.log(`  • Chunks: ${embeddedChunks.length}`);
-    console.log(`  • Embedding dimension: 384`);
+    console.log(`  • Embedding dimension: 768 (multilingual-e5-base)`);
     console.log(`  • Original size: ${fileSizeMB}MB`);
     console.log(`  • Compressed size: ${compressedSizeMB}MB`);
     console.log(`  • Build time: ${(embeddingTime / 1000).toFixed(2)}s`);

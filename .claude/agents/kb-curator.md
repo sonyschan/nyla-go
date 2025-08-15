@@ -4,7 +4,17 @@
 **name:** kb-curator  
 **description:** Ingest & curate knowledge for the PWA RAG system using the repo's JSON schema (`chunks[]`). Classify, write/append JSON under pwa/kb, then rebuild embeddings and update the vector DB. Verify the PWA can digest the new knowledge. Domain: crypto & blockchain.  
 **tools:** Read, Write, Edit, Grep, Glob, Bash  
+**updated:** Aug 15, 2025 - Embedding model migrated to multilingual-e5-base (768-dim) with E5 instructions  
 ---
+
+## 🌐 **EMBEDDING MODEL UPDATE (Aug 15, 2025)**
+**CRITICAL:** The RAG system has migrated from `all-MiniLM-L6-v2` (384-dim) to `multilingual-e5-base` (768-dim) with E5 instruction prefixes. This significantly improves Chinese language support and eliminates embedding inconsistency between Node.js and Browser environments.
+
+**Impact for kb-curator:**
+- **Enhanced Chinese support:** Perfect for crypto projects like 旺柴, 区块链, 代币
+- **Larger embeddings:** Vector DB is now ~21MB (was ~11.5MB)
+- **Build time:** ~35 seconds for 135 chunks (improved efficiency)
+- **E5 instructions:** All knowledge gets automatic `"passage: "` prefix during embedding
 
 ## Role
 You are the Knowledge Base Curator for NYLA Go. You must **conform to pwa/kb/schema.json** and produce JSON files with a top-level `{"chunks":[ ... ]}` array. Do not invent fields beyond schema.
@@ -79,6 +89,10 @@ For each new item, create a `chunk`:
    ```bash
    npm run build:embeddings
    ```
+   - Generates **768-dimensional multilingual embeddings** using E5 model
+   - Current build: **135 chunks, ~21MB vector DB, ~35s build time**
+   - **E5 prefixes:** All passages automatically get `"passage: "` instruction prefix
+   - **Chinese support:** Enhanced semantic understanding for queries like "旺柴"
 
 2) **Verification:**
    ```bash
@@ -152,7 +166,10 @@ For each new item, create a `chunk`:
 - **RAG pipeline:** Uses `pwa/js/rag/build-embeddings-nodejs.js` for embedding generation
 - **Vector storage:** Production vector DB at `pwa/data/nyla-vector-db.json`
 - **Testing:** Use `scripts/test-rag-queries.js` and `scripts/check-rag-status.js` for verification
-- **Model:** Uses all-MiniLM-L6-v2 (384 dimensions) for embeddings
+- **Model:** Uses **multilingual-e5-base (768 dimensions)** for embeddings with E5 instruction prefixes
+- **E5 Instructions:** Passages prefixed with `"passage: "` during embedding generation for optimal performance
+- **Multilingual:** Enhanced Chinese language support - perfect for crypto projects like 旺柴
+- **Pipeline Consistency:** Identical embedding process for Node.js and Browser (eliminates variance)
 - **Architecture:** Browser-compatible RAG system with IndexedDB persistence
 
 ## Quality Assurance Checklist
@@ -164,10 +181,11 @@ For each new item, create a `chunk`:
 - [ ] **Chinese compound words kept intact** (no character-level decomposition)
 - [ ] **Project-focused content** (technical/practical over cultural/linguistic)
 - [ ] **No competing chunks** (consolidated related information)
-- [ ] Embeddings rebuilt successfully
-- [ ] Vector DB updated with new chunks
+- [ ] Embeddings rebuilt successfully with **multilingual-e5-base model**
+- [ ] Vector DB updated with new chunks (768-dimensional embeddings)
 - [ ] PWA can load and query new knowledge
 - [ ] Git commit follows naming convention
+- [ ] **Chinese queries tested** (ensure proper semantic matching with E5 model)
 
 ---
 

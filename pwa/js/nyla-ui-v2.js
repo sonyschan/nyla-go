@@ -2585,21 +2585,14 @@ class NYLAAssistantUIV2 {
     // Convert to string to ensure we can call string methods
     const textString = String(text);
     
-    const formattedText = this.formatMessageText(textString);
-    
-    // Create a temporary element to get plain text for typing
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = formattedText;
-    const plainText = tempDiv.textContent || tempDiv.innerText || '';
-    
+    // Get the plain text without formatting for typing
     let currentText = '';
     
-    for (let i = 0; i < plainText.length; i++) {
-      currentText += plainText[i];
+    for (let i = 0; i < textString.length; i++) {
+      currentText += textString[i];
       
-      // Update the element with formatted version up to current position
-      const currentFormatted = this.formatMessageText(currentText);
-      element.innerHTML = currentFormatted;
+      // During typing, show plain text to avoid URL button issues with partial URLs
+      element.textContent = currentText;
       
       // Scroll to bottom during typing
       this.scrollToBottom();
@@ -2608,7 +2601,8 @@ class NYLAAssistantUIV2 {
       await this.sleep(this.typingSpeed);
     }
     
-    // Ensure final formatting is applied
+    // After typing is complete, apply final formatting with URL buttons
+    const formattedText = this.formatMessageText(textString);
     element.innerHTML = formattedText;
     this.isTyping = false;
   }
@@ -2721,38 +2715,7 @@ class NYLAAssistantUIV2 {
     // Reset regex lastIndex
     urlPatterns.generic.regex.lastIndex = 0;
 
-    // If we found URLs, wrap them in a container
-    if (foundUrls.size > 0) {
-      // Split text into parts around buttons and reassemble
-      const parts = processedText.split(/(<a[^>]*class="link-button[^"]*"[^>]*>.*?<\/a>)/);
-      let result = '';
-      let buttonBuffer = [];
-
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        
-        if (part.includes('class="link-button')) {
-          // This is a button, add to buffer
-          buttonBuffer.push(part);
-        } else {
-          // This is regular text
-          if (buttonBuffer.length > 0) {
-            // Add accumulated buttons in a container
-            result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
-            buttonBuffer = [];
-          }
-          result += part;
-        }
-      }
-
-      // Add any remaining buttons
-      if (buttonBuffer.length > 0) {
-        result += `<div class="link-buttons-container">${buttonBuffer.join('')}</div>`;
-      }
-
-      return result;
-    }
-
+    // Return the processed text with inline buttons
     return processedText;
   }
 
