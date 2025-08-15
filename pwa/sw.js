@@ -20,7 +20,7 @@ const urlsToCache = [
   '/nyla-go/js/nyla-knowledge-tracker.js',
   '/nyla-go/js/nyla-system-controller.js',
   '/nyla-go/lib/qr-simple.js',
-  '/nyla-go/nylago-data.js',
+  '/nyla-go/nylago-ui-data.js',
   '/nyla-go/manifest.json',
   '/nyla-go/video/NYLAGo-v2.mp4',
   '/nyla-go/icons/icon-192.png',

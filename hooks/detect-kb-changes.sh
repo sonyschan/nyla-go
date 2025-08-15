@@ -12,10 +12,8 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Knowledge base file patterns (CORRECTED TO ACTUAL STRUCTURE)
+# Knowledge base file patterns (ACTUAL KB FILES ONLY)
 KB_FILES=(
-    "nylago-data.js"
-    "pwa/nylago-data.js"
     "pwa/kb/"
 )
 

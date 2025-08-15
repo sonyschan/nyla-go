@@ -13,8 +13,8 @@ class KBChangeChecker {
   constructor() {
     this.projectRoot = path.resolve(__dirname, '..');
     this.trackedFiles = [
-      'pwa/js/nyla-knowledge-base.js',
-      'nylago-data.js'
+      'pwa/kb/'
+      // Note: nylago-ui-data.js removed - UI files don't affect knowledge base  
     ];
     this.hashFile = path.join(this.projectRoot, '.kb-hashes.json');
     this.embeddingScript = path.join(this.projectRoot, 'pwa/js/rag/build-embeddings.js');
