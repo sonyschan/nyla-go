@@ -639,6 +639,34 @@ npm run rag:test
 2. **Consider RAG Update** → If user-facing fix, rebuild embeddings
 3. **Test Query Coverage** → Ensure users can find the fix via NYLA chat
 
+### 🪝 **Pre-commit Hook for KB Changes**
+
+#### **Installation:**
+```bash
+# Install the pre-commit hook (one-time setup)
+./scripts/install-pre-commit-hook.sh
+```
+
+#### **How it Works:**
+- Automatically detects changes to KB files during commit
+- Checks if embeddings need rebuilding
+- Prompts user to rebuild embeddings when KB changes are detected
+- Prevents accidentally committing KB changes without updating embeddings
+
+#### **Configuration Options:**
+```bash
+# Skip embedding check for this commit
+NYLA_SKIP_EMBEDDINGS=true git commit
+
+# Auto-proceed without prompting
+NYLA_AUTO_REGENERATE=true git commit
+```
+
+#### **Tracked KB Files:**
+- `pwa/kb/**/*.json` - All knowledge base JSON files
+- `nylago-data.js` - Community data
+- `pwa/js/nyla-knowledge-base.js` - Legacy KB file
+
 ### 📋 **RAG Maintenance Commands**
 
 ```bash
