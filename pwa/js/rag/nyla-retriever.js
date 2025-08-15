@@ -239,46 +239,51 @@ class NYLARetriever {
   buildFilter(intent, keywords, options = {}) {
     const filter = {};
     
-    // DEFAULT FILTERS - Always applied unless explicitly disabled
-    if (!options.includeNonTech) {
-      // Exclude team info, branding, and other non-technical content
-      filter.excludeFromTech = { $ne: true };
-    }
+    // SIMPLIFIED: Use semantic similarity instead of complex metadata filtering
+    // The semantic embedding model is better at determining relevance than rigid rules
+    //
+    // // DEFAULT FILTERS - Always applied unless explicitly disabled
+    // if (!options.includeNonTech) {
+    //   // Exclude team info, branding, and other non-technical content
+    //   filter.excludeFromTech = { $ne: true };
+    // }
+    // 
+    // // For support questions, prioritize verified integrations
+    // if (intent === 'technical' || intent === 'blockchain' || keywords.some(k => 
+    //   ['transfer', 'send', 'wallet', 'integration', 'support'].includes(k.word.toLowerCase())
+    // )) {
+    //   filter.$or = [
+    //     { type: { $ne: 'integration' } },  // Include non-integration content
+    //     { 
+    //       type: 'integration',
+    //       verified: true,
+    //       status: { $in: ['beta', 'live'] }
+    //     }
+    //   ];
+    // }
     
-    // For support questions, prioritize verified integrations
-    if (intent === 'technical' || intent === 'blockchain' || keywords.some(k => 
-      ['transfer', 'send', 'wallet', 'integration', 'support'].includes(k.word.toLowerCase())
-    )) {
-      filter.$or = [
-        { type: { $ne: 'integration' } },  // Include non-integration content
-        { 
-          type: 'integration',
-          verified: true,
-          status: { $in: ['beta', 'live'] }
-        }
-      ];
-    }
-    
-    // Add intent-based filters
-    switch (intent) {
-      case 'howTo':
-        // Allow multiple chunk types for how-to queries (FAQ and guides)
-        filter.chunkType = { $in: ['how_to', 'general_info', 'faq'] };
-        break;
-      case 'technical':
-        filter.chunkType = 'technical_spec';
-        break;
-      case 'blockchain':
-        // Check for specific blockchain mentions
-        const blockchains = ['solana', 'ethereum', 'algorand'];
-        const mentioned = keywords.find(k => 
-          blockchains.some(b => k.word.includes(b) || k.variations.includes(b))
-        );
-        if (mentioned) {
-          filter.tags = [mentioned.word];
-        }
-        break;
-    }
+    // DISABLED: Intent-based filters are too restrictive and create mismatches
+    // Let semantic similarity handle content relevance instead of rigid metadata filtering
+    // 
+    // // Add intent-based filters
+    // switch (intent) {
+    //   case 'howTo':
+    //     filter.chunkType = 'how_to';
+    //     break;
+    //   case 'technical':
+    //     filter.chunkType = 'technical_spec';
+    //     break;
+    //   case 'blockchain':
+    //     // Check for specific blockchain mentions
+    //     const blockchains = ['solana', 'ethereum', 'algorand'];
+    //     const mentioned = keywords.find(k => 
+    //       blockchains.some(b => k.word.includes(b) || k.variations.includes(b))
+    //     );
+    //     if (mentioned) {
+    //       filter.tags = [mentioned.word];
+    //     }
+    //     break;
+    // }
     
     return Object.keys(filter).length > 0 ? filter : null;
   }

@@ -54,8 +54,8 @@ class NYLAConversationManagerV2 {
   }
 
   /**
-   * Identify relevant knowledge using RAG semantic search (replaces rule-based keyword matching)
-   * Falls back to rule-based matching if RAG is not available
+   * Identify relevant knowledge using RAG semantic search
+   * Falls back to generic responses if RAG is not available
    */
   async identifyRelevantKnowledgeKeys(userInput) {
     // First try RAG-based semantic search if available
@@ -147,7 +147,7 @@ class NYLAConversationManagerV2 {
       if (this.llmEngine) {
         console.log('NYLA Conversation V2: Initializing LLM engine...');
         this.llmEngine.initialize().catch(error => {
-          console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to rule-based system:', error);
+          console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to RAG-only system:', error);
         });
       } else {
         console.log('NYLA Conversation V2: LLM engine disabled (mobile device)');
@@ -285,7 +285,7 @@ class NYLAConversationManagerV2 {
         console.log('NYLA Conversation V2: 🔍 Response from processWithLLM:', {
           hasAnswer: !!response.answer,
           hasFollowUps: !!response.followUps,
-          isLLMGenerated: response.isLLMGenerated,
+          isFallback: response.isFallback || false,
           responseKeys: Object.keys(response)
         });
       } else {
@@ -304,11 +304,11 @@ class NYLAConversationManagerV2 {
         
         // Simplified fallback - just return "don't know" response
         response = {
-          answer: { text: "Sorry, I don't know about this.", isLLMGenerated: false },
+          answer: { text: "Sorry, I don't know about this." },
           followUps: [],
           sticker: null,
           timestamp: Date.now(),
-          isLLMGenerated: false
+          isFallback: true
         };
       }
       
@@ -384,7 +384,7 @@ class NYLAConversationManagerV2 {
       console.log('NYLA Conversation V2: 🔍 Final response before return:', {
         hasAnswer: !!response.answer,
         hasFollowUps: !!response.followUps,
-        isLLMGenerated: response.isLLMGenerated,
+        isFallback: response.isFallback || false,
         responseKeys: Object.keys(response)
       });
       
@@ -559,7 +559,7 @@ class NYLAConversationManagerV2 {
     } catch (error) {
       console.warn('NYLA Conversation V2: LLM timeout (30s) or error:', error.message);
       
-      // Generate debug information instead of falling back to rules
+      // Generate debug information instead of generic fallback
       const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false, model: 'Not available on mobile' };
       const debugInfo = {
         text: `🔧 LLM Debug Information:\n\n` +
@@ -584,7 +584,7 @@ class NYLAConversationManagerV2 {
           { id: 'what-is-nyla', text: 'What is NYLA?' },
           { id: 'how-to-use', text: 'How do I use NYLA transfers?' }
         ],
-        isLLMGenerated: false,
+        isFallback: true,
         isDebugResponse: true
       };
     }
@@ -630,8 +630,7 @@ class NYLAConversationManagerV2 {
       },
       followUps,
       sticker,
-      timestamp: Date.now(),
-      isLLMGenerated: true
+      timestamp: Date.now()
     };
   }
 
@@ -1566,8 +1565,8 @@ class NYLAConversationManagerV2 {
         targetTab: targetTab,
         originalButton: originalButtonText
       },
-      timestamp: Date.now(),
-      isLLMGenerated: false // This is rule-based positive response
+      timestamp: Date.now()
+      // Tab switching is just UI navigation - no generation method flags needed
     };
   }
 

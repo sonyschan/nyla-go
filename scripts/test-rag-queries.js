@@ -38,7 +38,8 @@ async function testRAGQueries() {
       'How to receive payments?',
       'Generate QR code for payments',
       'What blockchains are supported?',
-      'How does NYLA work?'
+      'How does NYLA work?',
+      'What happens after I post the command?'  // Target test query
     ];
 
     console.log('\n🔍 Testing Semantic Similarity');
