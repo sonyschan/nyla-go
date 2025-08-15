@@ -20,9 +20,24 @@ class NYLALLMEngine {
       max_tokens: 600,
       top_p: 0.8,
       top_k: 40,                    // Fix undefined top_k (common default)
-      repetition_penalty: 1.15,     // CRITICAL: Prevent token repetition loops
-      frequency_penalty: 0.3,       // Additional repetition control
-      presence_penalty: 0.1         // Encourage topic diversity
+      repetition_penalty: 1.3,      // INCREASED: More aggressive prevention (was 1.15)
+      frequency_penalty: 0.5,       // INCREASED: Stronger repetition control (was 0.3)
+      presence_penalty: 0.2,        // INCREASED: More topic diversity (was 0.1)
+      // Additional WebLLM-specific parameters for better control
+      no_repeat_ngram_size: 3,      // Prevent repetition of 3-grams and longer
+      encoder_repetition_penalty: 1.1,  // Encoder-level repetition control
+      length_penalty: 1.0,          // Balanced length preference
+      min_length: 20,               // Minimum meaningful response length
+      early_stopping: true,         // Enable early stopping for quality responses
+      // Enhanced stop sequences for better control
+      stop: [
+        "\n\n\n",                   // Multiple newlines (often indicates looping)
+        "##",                       // Markdown header repetition
+        "Related Terms: Related Terms:", // Specific repetition pattern
+        "NYLA NYLA",                // Brand name repetition
+        "旺柴旺柴",                   // Chinese character repetition
+        "。。。",                     // Chinese punctuation repetition
+      ]
     };
     this.systemPrompt = this.createSystemPrompt();
     
@@ -548,7 +563,13 @@ class NYLALLMEngine {
         top_k: this.modelConfig.top_k,
         repetition_penalty: this.modelConfig.repetition_penalty,
         frequency_penalty: this.modelConfig.frequency_penalty,
-        presence_penalty: this.modelConfig.presence_penalty
+        presence_penalty: this.modelConfig.presence_penalty,
+        no_repeat_ngram_size: this.modelConfig.no_repeat_ngram_size,
+        encoder_repetition_penalty: this.modelConfig.encoder_repetition_penalty,
+        length_penalty: this.modelConfig.length_penalty,
+        min_length: this.modelConfig.min_length,
+        early_stopping: this.modelConfig.early_stopping,
+        stop: this.modelConfig.stop
       });
       const inferenceTime = performance.now() - inferenceStart;
 
@@ -649,30 +670,67 @@ class NYLALLMEngine {
         repetition_penalty: this.modelConfig.repetition_penalty,
         frequency_penalty: this.modelConfig.frequency_penalty,
         presence_penalty: this.modelConfig.presence_penalty,
+        no_repeat_ngram_size: this.modelConfig.no_repeat_ngram_size,
+        encoder_repetition_penalty: this.modelConfig.encoder_repetition_penalty,
+        length_penalty: this.modelConfig.length_penalty,
+        min_length: this.modelConfig.min_length,
+        early_stopping: this.modelConfig.early_stopping,
+        stop: this.modelConfig.stop,
         stream: true
       });
 
-      // Process streaming chunks with repetition monitoring
+      // Process streaming chunks with AGGRESSIVE repetition monitoring
       let repetitionWarningCount = 0;
-      const REPETITION_CHECK_INTERVAL = 50; // Check every 50 characters
+      let consecutiveRepeats = 0;
+      const REPETITION_CHECK_INTERVAL = 30; // Check more frequently (was 50)
+      const MAX_REPETITION_WARNINGS = 2;    // Stop earlier (was 3)
       
       for await (const chunk of stream) {
         if (chunk.choices?.[0]?.delta?.content) {
           const content = chunk.choices[0].delta.content;
           fullResponse += content;
           
-          // CRITICAL: Monitor for repetition during streaming
+          // CRITICAL: Aggressive real-time repetition monitoring
           if (fullResponse.length % REPETITION_CHECK_INTERVAL === 0) {
-            const recentText = fullResponse.slice(-200); // Last 200 chars
-            const hasRepetition = /(.{5,20})\1{3,}/.test(recentText);
+            const recentText = fullResponse.slice(-150); // Check last 150 chars
+            
+            // Multiple detection patterns for early catching
+            const patterns = [
+              /(.{3,15})\1{3,}/g,           // Short repeated sequences (Chinese chars)
+              /(.{10,30})\1{2,}/g,          // Medium repeated phrases
+              /([\u4e00-\u9fff]{1,5})\1{4,}/g  // Chinese character specific
+            ];
+            
+            let hasRepetition = false;
+            for (const pattern of patterns) {
+              if (pattern.test(recentText)) {
+                hasRepetition = true;
+                break;
+              }
+            }
             
             if (hasRepetition) {
               repetitionWarningCount++;
-              NYLALogger.debug(`🚨 NYLA LLM: Streaming repetition detected (warning ${repetitionWarningCount})`);
+              consecutiveRepeats++;
+              NYLALogger.warn(`🚨 NYLA LLM: Streaming repetition detected (${repetitionWarningCount}/${MAX_REPETITION_WARNINGS})`);
               
-              if (repetitionWarningCount >= 3) {
-                NYLALogger.debug('🚨 NYLA LLM: Multiple repetition warnings - stopping stream early');
-                break; // Stop streaming to prevent infinite loops
+              if (repetitionWarningCount >= MAX_REPETITION_WARNINGS || consecutiveRepeats >= 2) {
+                NYLALogger.warn('🛑 NYLA LLM: EARLY STOP - Preventing infinite repetition loop');
+                break; // AGGRESSIVE: Stop streaming immediately
+              }
+            } else {
+              consecutiveRepeats = 0; // Reset consecutive counter
+            }
+            
+            // Additional safety: Stop if response becomes too long without progress
+            if (fullResponse.length > 800) {
+              const uniqueWords = new Set(fullResponse.toLowerCase().split(/\s+/)).size;
+              const totalWords = fullResponse.split(/\s+/).length;
+              const diversity = uniqueWords / totalWords;
+              
+              if (diversity < 0.3) { // Low diversity indicates repetition
+                NYLALogger.warn('🛑 NYLA LLM: EARLY STOP - Low content diversity detected');
+                break;
               }
             }
           }
