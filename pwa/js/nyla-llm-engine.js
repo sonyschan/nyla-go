@@ -98,9 +98,9 @@ class NYLALLMEngine {
       
       // Check for Android-specific f16 extension issue (only if using f16 model)
       // Note: Qwen-1.5B uses f32, so this test is skipped for better compatibility
-      if (isAndroid && this.modelConfig.model.includes('f16')) {
+      if (device.isAndroid && this.modelConfig.model.includes('f16')) {
         try {
-          const device = await adapter.requestDevice();
+          const gpuDevice = await adapter.requestDevice();
           
           // Set up error event listener to catch uncaptured WebGPU errors
           let webgpuError = null;
@@ -109,7 +109,7 @@ class NYLALLMEngine {
             webgpuError = event.error;
           };
           
-          device.addEventListener('uncapturederror', errorHandler);
+          gpuDevice.addEventListener('uncapturederror', errorHandler);
           
           // Test if device supports f16 extension (this will catch the actual f16 extension errors)  
           const testShader = `
@@ -123,14 +123,14 @@ class NYLALLMEngine {
             }
           `;
           
-          const shaderModule = device.createShaderModule({ code: testShader });
+          const shaderModule = gpuDevice.createShaderModule({ code: testShader });
           
           // Wait a bit for any async WebGPU errors to be triggered
           await new Promise(resolve => setTimeout(resolve, 100));
           
           // Clean up
-          device.removeEventListener('uncapturederror', errorHandler);
-          device.destroy();
+          gpuDevice.removeEventListener('uncapturederror', errorHandler);
+          gpuDevice.destroy();
           
           // Check if we caught any WebGPU errors
           if (webgpuError) {
