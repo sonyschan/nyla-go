@@ -1,4 +1,8 @@
-# Build outputs (excluding existing releases)
+# Dependencies
+node_modules/
+.cache/
+
+# Build outputs (excluding existing releases)  
 # releases/*.zip
 
 # OS files
