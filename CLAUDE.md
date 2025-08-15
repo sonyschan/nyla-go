@@ -296,8 +296,8 @@ releases/
 ## 📋 Project Information
 
 ### Current Version
-- **Latest Release**: v2.5.0
-- **Features**: Major RAG architecture overhaul with semantic-first retrieval, complete internationalization with Chinese language support, enhanced Settings page with language preferences and username management, comprehensive i18n system for both PWA and Extension, bilingual glossary expansion, significantly improved query understanding and response accuracy through pure semantic similarity, and **PROMPT_V2 optimization** with 46.4% token reduction for faster LLM inference
+- **Latest Release**: v2.6.0
+- **Features**: Cross-lingual proper noun & aliases system for Chinese↔English discovery, multilingual-e5-base embedding model migration (768-dim), enhanced LLM response length (1200 chars), improved confidence thresholds, comprehensive query expansion for projects like WangChai/旺柴, and fixed context builder logging
 
 ### Key Files Structure
 - `manifest.json` - Extension configuration and version

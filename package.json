@@ -1,6 +1,6 @@
 {
   "name": "nyla-go-tests",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Functional tests for NYLA Go Extension and PWA",
   "scripts": {
     "test": "playwright test",

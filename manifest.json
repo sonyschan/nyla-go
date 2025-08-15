@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NYLA Go - Transfer Assistant",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Generate crypto transfer commands for X.com. Create QR codes for payments. Supports Solana, Ethereum, and Algorand.",
   "author": "@h2crypto_eth",
   "homepage_url": "https://github.com/sonyschan/nyla-go",
