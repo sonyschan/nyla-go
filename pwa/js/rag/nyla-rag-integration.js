@@ -252,7 +252,7 @@ class NYLARAGIntegration {
       }
       
       // Format response
-      return this.formatRAGResponse(ragResult, questionId, questionText, options);
+      return await this.formatRAGResponse(ragResult, questionId, questionText, options);
       
     } catch (error) {
       console.error('❌ RAG processing failed:', error);
@@ -263,7 +263,7 @@ class NYLARAGIntegration {
   /**
    * Format RAG response for conversation system
    */
-  formatRAGResponse(ragResult, questionId, questionText, options) {
+  async formatRAGResponse(ragResult, questionId, questionText, options) {
     // Build response with sources
     let answer = ragResult.response;
     
@@ -276,7 +276,13 @@ class NYLARAGIntegration {
     const responseType = this.determineResponseType(ragResult.metrics.confidence);
     
     // Generate contextual follow-up suggestions using semantic approach
-    const followUpSuggestions = await this.generateSemanticRAGFollowUps(ragResult, questionText, answer);
+    let followUpSuggestions;
+    try {
+      followUpSuggestions = await this.generateSemanticRAGFollowUps(ragResult, questionText, answer);
+    } catch (error) {
+      console.warn('⚠️ Semantic follow-up generation failed, using fallback:', error);
+      followUpSuggestions = this.generateRuleBasedFollowUps(ragResult, questionText);
+    }
     
     // Convert followUpSuggestions to the format expected by UI
     const followUps = followUpSuggestions.map((suggestion, index) => ({
