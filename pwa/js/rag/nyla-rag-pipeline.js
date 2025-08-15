@@ -402,10 +402,6 @@ class NYLARAGPipeline {
     }
     
     this.lastCacheClean = now;
-    
-    if (expired.length > 0) {
-      console.log(`🧹 Cleaned ${expired.length} expired cache entries`);
-    }
   }
 
   /**
