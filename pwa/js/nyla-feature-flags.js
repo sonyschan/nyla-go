@@ -10,32 +10,46 @@
 class NYLAFeatureFlags {
     constructor() {
         this.flags = new Map();
-        this.initializeFromURL();
+        this.initialized = false;
         
-        this._log('debug', '🎛️ Feature Flags: Initialized', {
-            enabledFlags: Array.from(this.flags.keys()).filter(key => this.flags.get(key)),
-            totalFlags: this.flags.size
-        });
+        // Defer initialization until NYLALogger is available
+        this.deferredInit();
     }
     
     /**
-     * Safe logging that works even if NYLALogger isn't available yet
+     * Initialize when NYLALogger is available, or immediately if already loaded
      */
-    _log(level, message, ...args) {
-        try {
-            if (typeof NYLALogger !== 'undefined' && NYLALogger[level]) {
-                NYLALogger[level](message, ...args);
-            } else if (typeof console !== 'undefined') {
-                // Fallback to console with level prefix
-                const prefix = `[${level.toUpperCase()}]`;
-                console.log(prefix, message, ...args);
-            }
-        } catch (error) {
-            // Silent fallback - logging shouldn't break feature flags
-            if (typeof console !== 'undefined') {
-                console.log('[FEATURE-FLAGS]', message, ...args);
-            }
+    deferredInit() {
+        if (typeof NYLALogger !== 'undefined') {
+            // NYLALogger is already available
+            this.performInit();
+        } else {
+            // Wait for NYLALogger to be available
+            const checkLogger = () => {
+                if (typeof NYLALogger !== 'undefined') {
+                    this.performInit();
+                } else {
+                    // Check again in next tick
+                    setTimeout(checkLogger, 1);
+                }
+            };
+            checkLogger();
         }
+    }
+    
+    /**
+     * Perform the actual initialization once NYLALogger is available
+     */
+    performInit() {
+        if (this.initialized) return;
+        
+        this.initializeFromURL();
+        this.initialized = true;
+        
+        NYLALogger.debug('🎛️ Feature Flags: Initialized', {
+            enabledFlags: Array.from(this.flags.keys()).filter(key => this.flags.get(key)),
+            totalFlags: this.flags.size
+        });
     }
     
     /**
@@ -52,19 +66,27 @@ class NYLAFeatureFlags {
                 features.forEach(feature => {
                     if (this.isValidFeatureFlag(feature)) {
                         this.flags.set(feature, true);
-                        this._log('debug', `🚀 Feature Flag: ${feature} enabled via URL`);
+                        NYLALogger.debug(`🚀 Feature Flag: ${feature} enabled via URL`);
                     } else {
-                        this._log('warn', `⚠️ Feature Flag: Invalid flag name '${feature}' in URL`);
+                        NYLALogger.warn(`⚠️ Feature Flag: Invalid flag name '${feature}' in URL`);
                     }
                 });
                 
                 if (features.length > 0) {
-                    this._log('log', `🎛️ Feature Flags: Enabled ${features.length} flags from URL:`, features);
+                    NYLALogger.log(`🎛️ Feature Flags: Enabled ${features.length} flags from URL:`, features);
                 }
             }
         } catch (error) {
-            this._log('error', '🎛️ Feature Flags: URL parsing failed:', error);
+            NYLALogger.error('🎛️ Feature Flags: URL parsing failed:', error);
         }
+    }
+    
+    /**
+     * Check if the feature flag system is ready
+     * @returns {boolean} - True if initialized
+     */
+    isReady() {
+        return this.initialized;
     }
     
     /**
@@ -85,11 +107,11 @@ class NYLAFeatureFlags {
         if (this.isValidFeatureFlag(flagName)) {
             this.flags.set(flagName, true);
             if (notify) {
-                this._log('debug', `🚀 Feature Flag: ${flagName} enabled programmatically`);
+                NYLALogger.debug(`🚀 Feature Flag: ${flagName} enabled programmatically`);
             }
             return true;
         } else {
-            this._log('warn', `⚠️ Feature Flag: Invalid flag name '${flagName}'`);
+            NYLALogger.warn(`⚠️ Feature Flag: Invalid flag name '${flagName}'`);
             return false;
         }
     }
@@ -102,7 +124,7 @@ class NYLAFeatureFlags {
     disable(flagName, notify = true) {
         this.flags.set(flagName, false);
         if (notify) {
-            this._log('debug', `🔄 Feature Flag: ${flagName} disabled programmatically`);
+            NYLALogger.debug(`🔄 Feature Flag: ${flagName} disabled programmatically`);
         }
     }
     
@@ -181,13 +203,13 @@ class NYLAFeatureFlags {
         if (this.isEnabled('PROMPT_V2_ENABLED')) {
             if (!llmEngine.PROMPT_V2_ENABLED) {
                 llmEngine.enablePromptOptimization();
-                this._log('log', '🚀 Feature Flag: PROMPT_V2 applied to LLM engine');
+                NYLALogger.log('🚀 Feature Flag: PROMPT_V2 applied to LLM engine');
             }
         }
         
         // Future: Apply other LLM-related flags here
         if (this.isEnabled('LLM_V3_ENABLED')) {
-            this._log('debug', '🧪 Feature Flag: LLM_V3_ENABLED detected (not yet implemented)');
+            NYLALogger.debug('🧪 Feature Flag: LLM_V3_ENABLED detected (not yet implemented)');
         }
     }
 }
