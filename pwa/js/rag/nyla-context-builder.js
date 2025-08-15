@@ -769,10 +769,15 @@ ${context}`);
       sources.get(source).chunks.push(chunk.id);
     }
     
-    return Array.from(sources.entries()).map(([key, value]) => ({
-      source: key,
-      ...value
-    }));
+    // Optimize: single loop instead of Array.from + map
+    const result = [];
+    for (const [key, value] of sources.entries()) {
+      result.push({
+        source: key,
+        ...value
+      });
+    }
+    return result;
   }
 
   /**

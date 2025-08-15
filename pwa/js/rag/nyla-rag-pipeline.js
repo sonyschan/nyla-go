@@ -10,6 +10,7 @@ class NYLARAGPipeline {
       parallelProcessing: true,
       cacheEnabled: true,
       cacheTTL: 300000,  // 5 minutes
+      maxCacheSize: 100,   // Maximum cache entries
       streamingEnabled: true,
       ...options
     };
@@ -377,19 +378,29 @@ class NYLARAGPipeline {
   }
 
   /**
-   * Clean expired cache entries
+   * Clean expired cache entries and enforce size limit
    */
   cleanCache() {
     const now = Date.now();
-    const expired = [];
     
+    // Remove expired entries
     for (const [key, value] of this.queryCache.entries()) {
       if (now - value.timestamp > this.options.cacheTTL) {
-        expired.push(key);
+        this.queryCache.delete(key);
       }
     }
     
-    expired.forEach(key => this.queryCache.delete(key));
+    // Enforce cache size limit (LRU eviction)
+    if (this.queryCache.size > this.options.maxCacheSize) {
+      const entries = Array.from(this.queryCache.entries())
+        .sort((a, b) => a[1].timestamp - b[1].timestamp); // Oldest first
+      
+      const toDelete = entries.slice(0, entries.length - this.options.maxCacheSize);
+      toDelete.forEach(([key]) => this.queryCache.delete(key));
+      
+      NYLALogger.debug(`🧹 Cache cleanup: removed ${toDelete.length} old entries`);
+    }
+    
     this.lastCacheClean = now;
     
     if (expired.length > 0) {

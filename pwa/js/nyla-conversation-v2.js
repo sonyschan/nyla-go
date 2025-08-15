@@ -465,11 +465,12 @@ class NYLAConversationManagerV2 {
     }
     
     // Enhanced context with structured KB data
+    // Optimize: avoid unnecessary Array.from for already-arrays
     const structuredKnowledgeContext = this.knowledgeTracker ? {
-      chunks: Array.from(this.knowledgeTracker.userKnowledge.chunks || []),
-      categories: Array.from(this.knowledgeTracker.userKnowledge.categories || []),
-      tags: Array.from(this.knowledgeTracker.userKnowledge.tags || []),
-      glossaryTerms: Array.from(this.knowledgeTracker.userKnowledge.glossaryTerms || []),
+      chunks: [...(this.knowledgeTracker.userKnowledge.chunks || [])],
+      categories: [...(this.knowledgeTracker.userKnowledge.categories || [])],
+      tags: [...(this.knowledgeTracker.userKnowledge.tags || [])],
+      glossaryTerms: [...(this.knowledgeTracker.userKnowledge.glossaryTerms || [])],
       breakdown: this.knowledgeTracker.getKnowledgeBreakdown(),
       gaps: this.knowledgeTracker.getStructuredKnowledgeGaps ? 
         this.knowledgeTracker.getStructuredKnowledgeGaps() : null
