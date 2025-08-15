@@ -257,30 +257,14 @@ class NYLAConversationManagerV2 {
 
       let response;
       
-      // Try LLM if available, otherwise fallback to "don't know" response
-      const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
-      NYLALogger.debug('NYLA Conversation V2: LLM Status:', llmStatus);
-      NYLALogger.debug('NYLA Conversation V2: LLM Engine isReady():', this.llmEngine ? this.llmEngine.isReady() : false);
+      // Use simplified state machine to determine LLM availability
+      const llmState = NYLALLMStateManager.getLLMState(this.llmEngine);
+      const llmDebugInfo = NYLALLMStateManager.getDebugInfo(this.llmEngine);
       
-      // Check for mobile device (LLM engine will be null on mobile)
-      const device = NYLADeviceUtils.getDeviceInfo();
+      NYLALogger.debug('NYLA Conversation V2: LLM State:', llmDebugInfo);
       
-      // Use LLM if engine is ready, or force attempt on mobile for debugging
-      const canUseLLM = llmStatus.initialized && !llmStatus.loading && llmStatus.warmedUp;
-      const shouldForceDebug = device.isMobile && llmStatus.initialized && !llmStatus.loading;
-      
-      // Special case: If the user is interacting via conversation box, try LLM even if warmup flag is false
-      // This handles race conditions where UI loads before warmup flag is set
-      const shouldTryLLMDespiteWarmup = llmStatus.initialized && !llmStatus.loading && !llmStatus.warmedUp;
-      
-      if (canUseLLM || shouldForceDebug || shouldTryLLMDespiteWarmup) {
-        if (shouldForceDebug) {
-          NYLALogger.debug('NYLA Conversation V2: 🔧 MOBILE DEBUG: Forcing LLM attempt even if not warmed up');
-        } else if (shouldTryLLMDespiteWarmup) {
-          NYLALogger.debug('NYLA Conversation V2: ⚡ Trying LLM despite warmup flag being false (race condition handling)');
-        } else {
-          NYLALogger.debug('NYLA Conversation V2: ✅ Using LLM for response generation');
-        }
+      if (NYLALLMStateManager.canUseLLM(llmState)) {
+        NYLALogger.debug(`NYLA Conversation V2: ${llmDebugInfo.message}`);
         response = await this.processWithLLM(questionId, questionText, identifiedTopics, null);
         console.log('NYLA Conversation V2: 🔍 Response from processWithLLM:', {
           hasAnswer: !!response.answer,
@@ -289,18 +273,7 @@ class NYLAConversationManagerV2 {
           responseKeys: Object.keys(response)
         });
       } else {
-        NYLALogger.debug('NYLA Conversation V2: ⚠️ LLM not ready - using fallback response');
-        console.log('NYLA Conversation V2: 🚨 LLM Status:', {
-          'llmStatus.initialized': llmStatus.initialized ? '✅' : '❌',
-          'NOT llmStatus.loading': !llmStatus.loading ? '✅' : '❌',
-          'llmStatus.warmedUp': llmStatus.warmedUp ? '✅' : '❌',
-          'isMobile': isMobile ? '✅' : '❌'
-        });
-        
-        // Special handling when engine is initializing but not warmed up
-        if (llmStatus.initialized && !llmStatus.warmedUp) {
-          NYLALogger.debug('NYLA Conversation V2: 🔥 LLM engine warming up GPU buffers...');
-        }
+        NYLALogger.debug(`NYLA Conversation V2: ${llmDebugInfo.message} - using fallback response`);
         
         // Simplified fallback - just return "don't know" response
         response = {
