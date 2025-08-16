@@ -2787,12 +2787,11 @@ class NYLAAssistantUIV2 {
       }
     }
 
-    return `<a href="${url}" 
-               class="link-button platform-${pattern.platform}" 
-               target="_blank" 
-               rel="noopener noreferrer"
+    return `<a class="link-button platform-${pattern.platform}" 
+               role="button"
                onclick="window.nylaUI?.handleLinkClick('${url}', event)"
-               aria-label="Open ${pattern.label} link">
+               aria-label="Open ${pattern.label} link"
+               style="cursor: pointer;">
               <span class="platform-icon">${pattern.icon}</span>
               ${displayText}
             </a>`;
