@@ -66,11 +66,13 @@ class NYLAConversationManagerV2 {
         } else {
           NYLALogger.warn('NYLA Conversation V2: Hosted LLM failed, falling back to local');
           window.NYLALLMConfig.switchProvider('local');
+          // Only initialize local LLM if hosted failed
+          this.initializeLocalLLM();
         }
+      } else {
+        // Fall back to local LLM only if provider is local
+        this.initializeLocalLLM();
       }
-      
-      // Fall back to local LLM
-      this.initializeLocalLLM();
       
     } catch (error) {
       NYLALogger.error('NYLA Conversation V2: LLM system initialization failed:', error);

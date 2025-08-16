@@ -359,8 +359,10 @@ class NYLAAssistantV2 {
    * Handle tab activation with enhanced features
    */
   onTabActivated() {
-    if (this.ui) {
+    if (this.ui && this.conversationManager) {
       this.ui.onTabActivated();
+    } else {
+      console.log('NYLA Assistant V2: Tab activated but UI or conversation manager not ready');
     }
     
     // Update user activity for personal care timing

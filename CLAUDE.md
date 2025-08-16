@@ -981,6 +981,168 @@ console.log('KB Stats:', conversationManager.ragIntegration.getStatus());
 - Debugging approaches for common issues
 - File structure and environment configurations
 
+## ☁️ **Google Cloud Platform Deployment**
+
+### 🚀 **LLM Proxy Cloud Run Deployment**
+
+#### **Prerequisites**
+- Google Cloud SDK (`gcloud`) installed and authenticated
+- Project: `lparmy` (Project Number: 594680195221)
+- Region: `northamerica-northeast2`
+- OpenAI API key configured in Cloud Run environment variables
+
+#### **Required APIs (Auto-enabled on first deploy)**
+```bash
+# These APIs are automatically enabled during deployment:
+# - Cloud Run Admin API (run.googleapis.com)
+# - Cloud Build API (cloudbuild.googleapis.com)  
+# - Artifact Registry API (artifactregistry.googleapis.com)
+# - Cloud Resource Manager API (cloudresourcemanager.googleapis.com)
+```
+
+#### **🔧 Deployment Commands**
+
+**1. Navigate to Proxy Directory:**
+```bash
+cd /Users/sonyschan/NYLAgo/nylago-llm-proxy
+```
+
+**2. Build TypeScript (Optional - Cloud Build does this):**
+```bash
+npm run build
+```
+
+**3. Deploy to Cloud Run:**
+```bash
+gcloud run deploy nylago \
+  --source . \
+  --region northamerica-northeast2 \
+  --project lparmy \
+  --clear-base-image \
+  --allow-unauthenticated \
+  --set-env-vars NODE_ENV=production \
+  --memory 1Gi \
+  --cpu 1 \
+  --concurrency 1000 \
+  --timeout 30s
+```
+
+**4. Verify Deployment:**
+```bash
+# Health check
+curl -X GET "https://nylago-594680195221.northamerica-northeast2.run.app/v1/health"
+
+# API info
+curl -X GET "https://nylago-594680195221.northamerica-northeast2.run.app/v1"
+
+# Test inference
+curl -X POST "https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_query": "Hello, what is NYLA Go?",
+    "context": ["NYLA Go is a cryptocurrency transfer tool"],
+    "params": {"max_tokens": 100, "temperature": 0.3},
+    "session_id": "test-session",
+    "tenant_id": "test-tenant"
+  }'
+```
+
+#### **⚙️ Environment Variables Management**
+
+**Set OpenAI API Key:**
+```bash
+gcloud run services update nylago \
+  --region northamerica-northeast2 \
+  --project lparmy \
+  --set-env-vars OPENAI_API_KEY=your-api-key-here
+```
+
+**View Current Environment Variables:**
+```bash
+gcloud run services describe nylago \
+  --region northamerica-northeast2 \
+  --project lparmy \
+  --format="value(spec.template.spec.template.spec.containers[0].env[].name,spec.template.spec.template.spec.containers[0].env[].value)"
+```
+
+#### **📊 Service Management Commands**
+
+**Check Service Status:**
+```bash
+gcloud run services list \
+  --region northamerica-northeast2 \
+  --project lparmy
+```
+
+**View Service Logs:**
+```bash
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=nylago" \
+  --project lparmy \
+  --limit 50 \
+  --format="table(timestamp,textPayload)"
+```
+
+**Scale Service:**
+```bash
+gcloud run services update nylago \
+  --region northamerica-northeast2 \
+  --project lparmy \
+  --min-instances 0 \
+  --max-instances 10
+```
+
+#### **🚨 Troubleshooting Common Deployment Issues**
+
+**Issue**: `Missing required argument [--clear-base-image]`
+**Solution**: Always include `--clear-base-image` flag when deploying from source with Dockerfile
+
+**Issue**: `API [cloudresourcemanager.googleapis.com] not enabled`
+**Solution**: 
+```bash
+gcloud services enable cloudresourcemanager.googleapis.com --project lparmy
+```
+
+**Issue**: `Permission denied` or `does not have permission`
+**Solution**: Ensure you're authenticated with correct account:
+```bash
+gcloud auth login
+gcloud config set project lparmy
+```
+
+**Issue**: Build failures
+**Solution**: Check build logs:
+```bash
+gcloud builds list --project lparmy --limit 5
+gcloud builds log [BUILD_ID] --project lparmy
+```
+
+#### **🔄 Deployment Workflow**
+
+**For Code Updates:**
+1. Make changes to TypeScript files in `/nylago-llm-proxy/src/`
+2. Test locally: `npm run dev`
+3. Build: `npm run build` (optional)
+4. Deploy: Run the deployment command above
+5. Verify: Test the deployed endpoints
+
+**For Environment Changes:**
+1. Update environment variables using `gcloud run services update`
+2. Service automatically restarts with new variables
+
+#### **📋 Deployment Checklist**
+- [ ] **Code Changes**: All TypeScript changes committed
+- [ ] **Environment Variables**: OpenAI API key configured in Cloud Run
+- [ ] **Health Check**: `/v1/health` returns `{"status":"healthy"}`
+- [ ] **API Test**: `/v1/infer` processes queries correctly
+- [ ] **PWA Integration**: PWA uses hosted endpoint as default
+- [ ] **Error Monitoring**: Check logs for any runtime errors
+
+#### **🌐 Service URLs**
+- **Production**: `https://nylago-594680195221.northamerica-northeast2.run.app`
+- **Health**: `https://nylago-594680195221.northamerica-northeast2.run.app/v1/health`
+- **API Info**: `https://nylago-594680195221.northamerica-northeast2.run.app/v1`
+- **Inference**: `https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer`
+
 ## 📁 **Documentation Organization**
 
 ### **Root Directory Files**

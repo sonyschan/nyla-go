@@ -6,6 +6,11 @@
 class NYLAAssistantUIV2 {
   constructor(conversationManager) {
     this.conversation = conversationManager;
+    
+    // Add validation
+    if (!conversationManager) {
+      console.warn('NYLA UI V2: Constructor called with null conversation manager');
+    }
     this.currentMessage = null;
     this.isTyping = false;
     this.typingSpeed = 15; // milliseconds per character (faster typing)
@@ -416,6 +421,10 @@ class NYLAAssistantUIV2 {
     let checkCount = 0;
     this.loadingInterval = setInterval(async () => {
       checkCount++;
+      if (!this.conversation || !this.conversation.llmEngine) {
+        console.log('NYLA UI V2: Conversation or LLM engine not available during monitoring');
+        return;
+      }
       const status = this.conversation.llmEngine.getStatus();
       
       // Log every 10th check (every 5 seconds) to avoid spam
@@ -511,7 +520,7 @@ class NYLAAssistantUIV2 {
         clearInterval(this.loadingInterval);
         this.loadingInterval = null;
       }
-      if (!this.conversation.llmEngine.getStatus().initialized && !this.isWelcomeMessageShown) {
+      if ((!this.conversation || !this.conversation.llmEngine || !this.conversation.llmEngine.getStatus().initialized) && !this.isWelcomeMessageShown) {
         progressText.textContent = '⏱️ Loading taking longer than expected...';
         // Don't set isWelcomeMessageShown = true here - let showEnhancedWelcomeMessage handle it
         // Clear loading screen properly
@@ -562,8 +571,10 @@ class NYLAAssistantUIV2 {
     this.updateTimezoneDisplay();
     
     // Show initial questions
-    const questions = this.conversation.generateWelcomeQuestions();
-    this.displayQuestions(questions);
+    if (this.conversation && typeof this.conversation.generateWelcomeQuestions === 'function') {
+      const questions = this.conversation.generateWelcomeQuestions();
+      this.displayQuestions(questions);
+    }
     
     // Update stats and feature indicators
     this.updateStats();
@@ -599,8 +610,8 @@ class NYLAAssistantUIV2 {
    * Generate default greeting for new users
    */
   async generateDefaultGreeting() {
-    const userTimezone = this.conversation.userProfile?.timezone || 'UTC';
-    const localTime = this.conversation.userProfile?.localTime || new Date().toLocaleString();
+    const userTimezone = this.conversation?.userProfile?.timezone || 'UTC';
+    const localTime = this.conversation?.userProfile?.localTime || new Date().toLocaleString();
     const hour = new Date(localTime).getHours();
     
     let timeGreeting = '';
@@ -1472,7 +1483,9 @@ class NYLAAssistantUIV2 {
         console.log('NYLA UI V2: Timeout detected, providing debug information');
         
         // Get LLM status for debugging
-        const llmStatus = this.conversation.llmEngine.getStatus();
+        const llmStatus = this.conversation && this.conversation.llmEngine ? 
+          this.conversation.llmEngine.getStatus() : 
+          { initialized: false, loading: false, warmedUp: false };
         
         errorResponse = {
           answer: { 
@@ -1778,7 +1791,7 @@ class NYLAAssistantUIV2 {
    * Update timezone display
    */
   updateTimezoneDisplay() {
-    if (this.elements.timezoneDisplay && this.conversation.userProfile) {
+    if (this.elements.timezoneDisplay && this.conversation && this.conversation.userProfile) {
       const timezone = this.conversation.userProfile.timezone || 'UTC';
       const localTime = this.conversation.userProfile.localTime || new Date().toLocaleString();
       const timeOnly = new Date(localTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1871,6 +1884,12 @@ class NYLAAssistantUIV2 {
    * Enhanced tab activation
    */
   onTabActivated() {
+    // Check if conversation manager and LLM engine are available
+    if (!this.conversation || !this.conversation.llmEngine) {
+      console.log('NYLA UI V2: Tab activated but conversation manager not ready');
+      return;
+    }
+
     // Check if LLM is loading/warming up and show loading screen if needed
     const llmStatus = this.conversation.llmEngine.getStatus();
     if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {

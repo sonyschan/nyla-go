@@ -156,9 +156,19 @@ class NYLASystemController {
 
   /**
    * Preload WebLLM engine in background for faster first response
+   * Only preloads if using local/WebLLM provider, skips for hosted LLM
    */
   async preloadLLMEngine() {
     try {
+      // Check if we're using hosted LLM - if so, skip WebLLM preload
+      const llmConfig = window.NYLALLMConfig;
+      const currentProvider = llmConfig ? llmConfig.getCurrentProvider() : 'unknown';
+      
+      if (currentProvider === 'hosted') {
+        console.log('NYLA System: 🚀 Using hosted LLM - skipping WebLLM preload');
+        return;
+      }
+      
       console.log('NYLA System: 🚀 Starting WebLLM preload in background...');
       console.log('NYLA System: 💡 Users can continue using PWA while engine loads');
       
