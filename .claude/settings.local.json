@@ -54,7 +54,12 @@
       "Bash(npm run rag:test:*)",
       "Bash(mv:*)",
       "Bash(git mv:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(gh release create:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(PORT=8081 npm run dev)",
+      "Bash(npx tsx:*)"
     ],
     "deny": []
   }
