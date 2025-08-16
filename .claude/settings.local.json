@@ -59,7 +59,9 @@
       "Bash(npm run dev:*)",
       "Bash(curl:*)",
       "Bash(PORT=8081 npm run dev)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(gh release view:*)",
+      "Bash(gh release list:*)"
     ],
     "deny": []
   }

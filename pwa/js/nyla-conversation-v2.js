@@ -7,15 +7,10 @@ class NYLAConversationManagerV2 {
   constructor(knowledgeBase) {
     this.kb = knowledgeBase;
     
-    // Use centralized device detection
-    const device = NYLADeviceUtils.getDeviceInfo();
-    if (device.isMobile) {
-      NYLALogger.debug('NYLA Conversation V2: Mobile device detected - skipping LLM engine initialization');
-      this.llmEngine = null; // No LLM engine on mobile
-    } else {
-      NYLALogger.debug('NYLA Conversation V2: Desktop device detected - initializing LLM engine');
-      this.llmEngine = new NYLALLMEngine();
-    }
+    // Initialize LLM system with provider configuration
+    this.llmEngine = null;
+    this.hostedLLM = null;
+    this.initializeLLMSystem();
     
     // Conversation state
     this.conversationHistory = [];
@@ -43,6 +38,75 @@ class NYLAConversationManagerV2 {
     // Initialize from storage
     this.loadFromStorage();
     this.initializeTimezone();
+  }
+
+  /**
+   * Initialize LLM system based on device and configuration
+   */
+  async initializeLLMSystem() {
+    try {
+      // Check if LLM config is available
+      if (!window.NYLALLMConfig) {
+        NYLALogger.warn('NYLA Conversation V2: LLM Config not available, using local only');
+        this.initializeLocalLLM();
+        return;
+      }
+
+      // Auto-select best provider
+      const selectedProvider = await window.NYLALLMConfig.autoSelectProvider();
+      
+      if (selectedProvider === 'hosted') {
+        // Initialize hosted LLM
+        this.hostedLLM = new NYLAHostedLLM();
+        const hostedReady = await this.hostedLLM.initialize();
+        
+        if (hostedReady) {
+          NYLALogger.info('NYLA Conversation V2: Using hosted LLM provider');
+          return;
+        } else {
+          NYLALogger.warn('NYLA Conversation V2: Hosted LLM failed, falling back to local');
+          window.NYLALLMConfig.switchProvider('local');
+        }
+      }
+      
+      // Fall back to local LLM
+      this.initializeLocalLLM();
+      
+    } catch (error) {
+      NYLALogger.error('NYLA Conversation V2: LLM system initialization failed:', error);
+      this.initializeLocalLLM();
+    }
+  }
+
+  /**
+   * Initialize local WebLLM engine
+   */
+  initializeLocalLLM() {
+    const device = NYLADeviceUtils.getDeviceInfo();
+    if (device.isMobile) {
+      NYLALogger.debug('NYLA Conversation V2: Mobile device detected - skipping local LLM');
+      this.llmEngine = null;
+    } else {
+      NYLALogger.debug('NYLA Conversation V2: Initializing local WebLLM engine');
+      this.llmEngine = new NYLALLMEngine();
+    }
+  }
+
+  /**
+   * Get the active LLM instance (hosted or local)
+   */
+  getActiveLLM() {
+    if (this.hostedLLM && this.hostedLLM.isReady) {
+      return this.hostedLLM;
+    }
+    return this.llmEngine;
+  }
+
+  /**
+   * Check if any LLM is available and ready
+   */
+  isLLMAvailable() {
+    return (this.hostedLLM && this.hostedLLM.isReady) || (this.llmEngine && this.llmEngine.isInitialized());
   }
 
   /**
@@ -143,15 +207,7 @@ class NYLAConversationManagerV2 {
         console.warn('NYLA Conversation V2: ⚠️ Knowledge tracker not available, engagement features disabled');
       }
       
-      // Initialize LLM engine in background (desktop only)
-      if (this.llmEngine) {
-        NYLALogger.debug('NYLA Conversation V2: Initializing LLM engine...');
-        this.llmEngine.initialize().catch(error => {
-          console.warn('NYLA Conversation V2: ⚠️ LLM initialization failed, falling back to RAG-only system:', error);
-        });
-      } else {
-        NYLALogger.debug('NYLA Conversation V2: LLM engine disabled (mobile device)');
-      }
+      // LLM system already initialized in constructor
 
       NYLALogger.debug('NYLA Conversation V2: ✅ Initialized successfully');
       return true;
@@ -382,7 +438,8 @@ class NYLAConversationManagerV2 {
     NYLALogger.debug('NYLA Conversation V2: Has stream callback:', !!streamCallback);
     
     // Check LLM engine status before proceeding
-    const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
+    const activeLLM = this.getActiveLLM();
+    const llmStatus = activeLLM ? activeLLM.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false };
     console.log('NYLA Conversation V2: LLM Engine Status at start:', {
       initialized: llmStatus.initialized,
       loading: llmStatus.loading,
@@ -515,13 +572,13 @@ class NYLAConversationManagerV2 {
     let llmResponse;
     try {
       // Use streaming or non-streaming based on whether callback is provided (if LLM available)
-      if (!this.llmEngine) {
-        throw new Error('LLM engine not available on mobile devices');
+      const activeLLM = this.getActiveLLM();
+      if (!activeLLM) {
+        throw new Error('No LLM available (local or hosted)');
       }
-      
       const llmPromise = streamCallback 
-        ? this.llmEngine.generateStreamingResponse(questionText, conversationContext, streamCallback)
-        : this.llmEngine.generateResponse(questionText, conversationContext);
+        ? activeLLM.generateStreamingResponse(questionText, conversationContext, streamCallback)
+        : activeLLM.generateResponse(questionText, conversationContext);
       
       llmResponse = await Promise.race([llmPromise, timeoutPromise]);
       NYLALogger.debug('NYLA Conversation V2: ✅ LLM response completed');
@@ -534,7 +591,8 @@ class NYLAConversationManagerV2 {
       console.warn('NYLA Conversation V2: LLM timeout (30s) or error:', error.message);
       
       // Generate debug information instead of generic fallback
-      const llmStatus = this.llmEngine ? this.llmEngine.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false, model: 'Not available on mobile' };
+      const activeLLM = this.getActiveLLM();
+      const llmStatus = activeLLM ? activeLLM.getStatus() : { initialized: false, loading: false, ready: false, warmedUp: false, model: 'Not available' };
       const debugInfo = {
         text: `🔧 LLM Debug Information:\n\n` +
               `LLM model: ${llmStatus.model || 'Unknown'}\n` +
@@ -1166,7 +1224,7 @@ class NYLAConversationManagerV2 {
       userInterests: this.userProfile.interests,
       timezone: this.userProfile.timezone,
       sessionDuration: Date.now() - this.userProfile.sessionStart,
-      llmEnabled: this.llmEngine ? this.llmEngine.isReady() : false,
+      llmEnabled: this.isLLMAvailable(),
       personalCareEnabled: this.userProfile.personalCarePreferences.likesPersonalQuestions !== false,
       averageConfidence: this.conversationHistory.length > 0 
         ? this.conversationHistory.reduce((sum, conv) => sum + (conv.confidence || 0.7), 0) / this.conversationHistory.length 
