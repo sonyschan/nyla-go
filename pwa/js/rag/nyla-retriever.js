@@ -215,6 +215,7 @@ class NYLARetriever {
    */
   detectIntent(query) {
     const intents = {
+      social_media: /(social|links|follow|contact|community|channels|where.*find|join.*community|official.*links|twitter|telegram|x\.com|linktree|x.*account|twitter.*account|社交|社区|联系|关注|加入|联系方式|官方.*账户|官方.*渠道|如何.*联系|在哪.*找到|怎么.*联系)/i,
       howTo: /^(how (to|do)|can i|what.*steps)/i,
       comparison: /(difference|compare|vs|versus|better|which)/i,
       technical: /(fee|gas|tps|speed|cost|transaction|consensus)/i,
@@ -294,13 +295,35 @@ class NYLARetriever {
   applySemanticScoring(semanticResults, processedQuery, config) {
     return semanticResults.map(result => {
       // RAG-only: Use purely semantic scoring (no keyword rules)
-      const semanticScore = result.score;
+      let semanticScore = result.score;
+      
+      // Apply intent-based boosting for social media queries
+      if (processedQuery.intent === 'social_media' && this.isSocialChunk(result)) {
+        // Base social boost
+        let boostFactor = 1.4; // 40% base boost for social chunks on social queries
+        
+        // Additional boost based on content richness for social queries
+        const contentType = this.getContentType(result);
+        if (contentType === 'body' && result.tokens && result.tokens > 100) {
+          boostFactor = 1.8; // 80% boost for content-rich body chunks
+          console.log(`🔗 Enhanced social media boost applied to content-rich chunk: ${result.metadata?.title || 'untitled'}`);
+        } else if (contentType === 'title' && result.tokens && result.tokens < 50) {
+          boostFactor = 1.1; // Only 10% boost for title-only chunks to de-prioritize them
+          console.log(`🔗 Reduced social media boost applied to title chunk: ${result.metadata?.title || 'untitled'}`);
+        } else {
+          console.log(`🔗 Standard social media boost applied to chunk: ${result.metadata?.title || 'untitled'}`);
+        }
+        
+        semanticScore *= boostFactor;
+      }
+      
       const finalScore = semanticScore;
       
       return {
         ...result,
         semanticScore,
-        finalScore
+        finalScore,
+        socialBoost: processedQuery.intent === 'social_media' && this.isSocialChunk(result)
         // keywordScore removed - RAG-only semantic scoring
       };
     }).sort((a, b) => b.finalScore - a.finalScore);
@@ -384,10 +407,77 @@ class NYLARetriever {
       technical: ['technical_spec', 'blockchain_info'],
       feature: ['feature', 'how_to'],
       troubleshooting: ['qa_pair', 'how_to'],
-      comparison: ['technical_spec', 'blockchain_info']
+      comparison: ['technical_spec', 'blockchain_info'],
+      social_media: ['facts', 'ecosystem'] // Social info is often in facts or ecosystem chunks
     };
     
     return intentMapping[intent]?.includes(chunkType) || false;
+  }
+
+  /**
+   * Check if a chunk contains social media information
+   */
+  isSocialChunk(result) {
+    const metadata = result.metadata || {};
+    const tags = metadata.tags || [];
+    const title = (metadata.title || '').toLowerCase();
+    const text = (result.text || '').toLowerCase();
+    
+    // Check for explicit content type marking
+    const explicitSocialType = metadata.content_type === 'social_media_links';
+    
+    // Check for social media indicators in tags
+    const socialTags = tags.some(tag => 
+      /social|links|contact|community|official.*channels|twitter|telegram|x\.com|linktree|社交|社区|联系|官方|channels/i.test(tag)
+    );
+    
+    // Check for social media indicators in title
+    const socialTitle = /social|links|contact|community|official.*channels|twitter|telegram|official.*links/i.test(title);
+    
+    // Check for social media URLs or handles in text
+    const socialText = /@\w+|https?:\/\/(x\.com|twitter\.com|t\.me|linktr\.ee|discord\.gg)|social|community.*channels|official.*links|contact.*information|官方.*账户|联系方式|社区.*渠道|官方.*渠道/i.test(text);
+    
+    // Check specific section indicators
+    const socialSection = metadata.section === 'official_channels' || metadata.section === 'community_links';
+    
+    // Check query boost keywords
+    const hasQueryBoost = metadata.query_boost && metadata.query_boost.some(keyword =>
+      /social|links|contact|community|follow|official/i.test(keyword)
+    );
+    
+    return explicitSocialType || socialTags || socialTitle || socialText || socialSection || hasQueryBoost;
+  }
+
+  /**
+   * Determine the content type of a chunk (title, summary, body)
+   */
+  getContentType(result) {
+    const metadata = result.metadata || {};
+    const title = (metadata.title || '').toLowerCase();
+    
+    // Check for explicit subsection marking
+    if (metadata.subsection) {
+      return metadata.subsection; // 'title', 'summary', 'body'
+    }
+    
+    // Infer from title pattern
+    if (title.includes(' - title')) {
+      return 'title';
+    } else if (title.includes(' - summary')) {
+      return 'summary';
+    } else if (title.includes(' - body')) {
+      return 'body';
+    }
+    
+    // Infer from token count
+    const tokens = result.tokens || 0;
+    if (tokens < 30) {
+      return 'title';
+    } else if (tokens < 80) {
+      return 'summary';
+    } else {
+      return 'body';
+    }
   }
 
   /**
