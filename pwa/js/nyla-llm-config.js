@@ -23,14 +23,39 @@ class NYLALLMConfig {
             }
         };
 
-        // Default provider selection
-        this.defaultProvider = 'hosted'; // Changed from 'local' to 'hosted'
+        // Environment-based default provider selection
+        // Development (localhost): hosted LLM (Cloud Run)
+        // Production (GitHub Pages): local LLM (WebLLM)
+        this.defaultProvider = this.getEnvironmentDefaultProvider();
         this.currentProvider = this.loadProviderPreference();
         
         NYLALogger.info('🔧 LLM Config: Initialized', {
+            environment: this.isDevelopment() ? 'development' : 'production',
+            hostname: window.location.hostname,
+            defaultProvider: this.defaultProvider,
             currentProvider: this.currentProvider,
             available: Object.keys(this.providers)
         });
+    }
+
+    /**
+     * Detect if running in development environment
+     */
+    isDevelopment() {
+        const hostname = window.location.hostname;
+        return hostname === 'localhost' || 
+               hostname === '127.0.0.1' ||
+               hostname.startsWith('192.168.') ||
+               hostname.endsWith('.local');
+    }
+
+    /**
+     * Get environment-appropriate default provider
+     * Development: hosted LLM (Cloud Run)
+     * Production: local LLM (WebLLM)
+     */
+    getEnvironmentDefaultProvider() {
+        return this.isDevelopment() ? 'hosted' : 'local';
     }
 
     /**

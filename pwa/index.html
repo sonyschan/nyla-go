@@ -443,14 +443,15 @@
   <script src="lib/qr-simple.js"></script>
   <script src="nylago-ui-data.js"></script>
   <!-- i18n is Extension-only, removed from PWA -->
+  
+  <!-- LLM Configuration MUST load before app.js for proper provider detection -->
+  <script src="js/nyla-llm-config.js"></script>
+  
   <script src="js/app.js"></script>
   
   <!-- NYLA AI Assistant V1 (Fallback) -->
   <script src="js/nyla-web-fetcher.js"></script>
   <!-- nyla-knowledge-base.js removed - using structured KB from /pwa/kb -->
-  
-  <!-- NYLA AI Assistant V2 (Phase 2 Enhanced) -->
-  <script src="js/nyla-llm-config.js"></script>
   <script src="js/nyla-hosted-llm.js"></script>
   <script src="js/nyla-llm-engine.js"></script>
   <script src="js/nyla-knowledge-persistence.js"></script>

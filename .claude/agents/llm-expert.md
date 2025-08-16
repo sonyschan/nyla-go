@@ -168,6 +168,85 @@ When extra guidance would significantly improve reasoning (without touching RAG)
 - Model config: Look for `modelConfig` object with temperature/top_p/max_tokens settings
 - Feature flags: Consider environment variables or config-based flags for A/B testing
 
+## Current LLM Architecture (Environment-Based Provider System)
+
+### **Dual LLM Provider Setup**
+
+**Development Environment (localhost):**
+- **Hostname Detection**: `localhost`, `127.0.0.1`, `192.168.*`, `*.local`
+- **Provider**: `hosted` (Cloud Run)
+- **Endpoint**: `https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer`
+- **Technology**: OpenAI GPT-4o-mini via TypeScript/Hono proxy
+- **Features**: Confidence scoring (0.0-1.0), session caching (5min TTL), auto follow-ups
+
+**Production Environment (GitHub Pages):**
+- **Hostname Detection**: `sonyschan.github.io` and other public domains
+- **Provider**: `local` (WebLLM)
+- **Technology**: `Qwen2-1.5B-Instruct-q4f32_1-MLC` with WebGPU acceleration
+- **Features**: Offline operation, privacy-preserving, browser-based inference
+
+### **Platform Restrictions**
+- ✅ **Desktop PWA**: Full LLM functionality (auto-detects provider)
+- ❌ **Mobile PWA**: LLM completely disabled (UI blocked, no initialization)
+- ❌ **Chrome Extension**: Zero LLM code (clean extension, no AI features)
+
+### **Key Implementation Files**
+- **`pwa/js/nyla-llm-config.js`**: Environment detection and provider selection
+- **`pwa/js/nyla-hosted-llm.js`**: Cloud Run communication with OpenAI
+- **`pwa/js/nyla-llm-engine.js`**: WebLLM browser implementation with Qwen2
+- **`pwa/js/nyla-conversation-v2.js`**: LLM system orchestration and fallback logic
+
+### **Critical Script Loading Order**
+1. `nyla-llm-config.js` (MUST load first for environment detection)
+2. `app.js` (depends on config for proper provider detection)
+
+### **Provider Selection Logic**
+```javascript
+isDevelopment() {
+    const hostname = window.location.hostname;
+    return hostname === 'localhost' || 
+           hostname === '127.0.0.1' ||
+           hostname.startsWith('192.168.') ||
+           hostname.endsWith('.local');
+}
+
+getEnvironmentDefaultProvider() {
+    return this.isDevelopment() ? 'hosted' : 'local';
+}
+```
+
+### **Hosted LLM (Development) Details**
+- **Service**: Google Cloud Run in `lparmy` project (594680195221)
+- **Region**: `northamerica-northeast2`
+- **API Format**: JSON with `user_query`, `context`, `params`, `session_id`, `tenant_id`
+- **Response**: `{answer, followups}` with confidence-based enhancement
+- **Session Caching**: LRU cache (1500 entries, 5min TTL) for performance
+
+### **WebLLM (Production) Details**
+- **Primary Model**: `Qwen2-1.5B-Instruct-q4f32_1-MLC` (1.5B parameters)
+- **Fallback Models**: `Qwen2-0.5B-Instruct-q4f32_1-MLC`, `TinyLlama-1.1B-Chat-v1.0-q4f32_1-MLC`
+- **GPU Support**: WebGPU acceleration with CPU fallback
+- **Model Caching**: Browser storage for offline capability
+
+### **Error Handling & Fallback Strategy**
+- **WebLLM Failure**: No cross-environment fallback (maintains privacy)
+- **Strategy**: RAG-only responses or generic fallbacks when LLM unavailable
+- **Mobile Detection**: Complete LLM bypass with user notification
+
+### **Recent Architecture Fixes (2025-01)**
+- **Script Loading Order**: Fixed `nyla-llm-config.js` to load before `app.js`
+- **Resource Optimization**: No WebLLM preload in development when using hosted LLM
+- **Provider Detection**: Proper environment-based default provider selection
+- **Null Safety**: Comprehensive error handling for initialization race conditions
+- **Performance**: Eliminated unnecessary WebLLM initialization when hosted LLM active
+
+### **Integration with RAG System**
+Both LLM providers integrate seamlessly with:
+- **RAG Pipeline**: 384-dimensional embeddings (all-MiniLM-L6-v2)
+- **Vector Database**: FAISS-web with semantic + hybrid search
+- **Context Building**: Token-optimized context assembly with deduplication
+- **Conversation Management**: Multi-turn context and user profile handling
+
 ## Current Codebase Integration Notes
 - **Primary file**: `pwa/js/nyla-llm-engine.js` contains the main prompt assembly logic
 - **System prompt**: Created in `createSystemPrompt()` method with current persona and language rules
@@ -180,6 +259,8 @@ When extra guidance would significantly improve reasoning (without touching RAG)
 - "Use the llm-expert subagent to enable PROMPT_V2 and enforce length limits."
 - "llm-expert: lower temperature to 0.3, keep outputs ≤250/500, Traditional Chinese for zh."
 - "llm-expert: add prompt metrics logging and show a before/after diff."
+- "llm-expert: optimize prompts for both hosted (GPT-4o-mini) and local (Qwen2) providers."
+- "llm-expert: tune parameters for development (hosted) vs production (WebLLM) environments."
 
 ---
 

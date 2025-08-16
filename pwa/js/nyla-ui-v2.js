@@ -1884,19 +1884,35 @@ class NYLAAssistantUIV2 {
    * Enhanced tab activation
    */
   onTabActivated() {
-    // Check if conversation manager and LLM engine are available
-    if (!this.conversation || !this.conversation.llmEngine) {
+    // Check if conversation manager is available
+    if (!this.conversation) {
       console.log('NYLA UI V2: Tab activated but conversation manager not ready');
       return;
     }
 
-    // Check if LLM is loading/warming up and show loading screen if needed
-    const llmStatus = this.conversation.llmEngine.getStatus();
-    if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {
-      // Show loading screen if LLM is still loading or warming up
-      console.log('NYLA UI V2: Tab activated but LLM not fully ready, showing loading screen');
-      this.showLLMLoadingScreen();
+    // Check if any LLM system is available (hosted LLM or local LLM engine)
+    const hasHostedLLM = this.conversation.hostedLLM;
+    const hasLocalLLM = this.conversation.llmEngine;
+    
+    if (!hasHostedLLM && !hasLocalLLM) {
+      console.log('NYLA UI V2: Tab activated but no LLM system ready');
       return;
+    }
+
+    // For local LLM, check loading/warming status
+    if (hasLocalLLM && !hasHostedLLM) {
+      const llmStatus = this.conversation.llmEngine.getStatus();
+      if ((!llmStatus.initialized && llmStatus.loading) || (llmStatus.initialized && !llmStatus.warmedUp)) {
+        // Show loading screen if LLM is still loading or warming up
+        console.log('NYLA UI V2: Tab activated but local LLM not fully ready, showing loading screen');
+        this.showLLMLoadingScreen();
+        return;
+      }
+    }
+
+    // For hosted LLM, we can proceed immediately (no warming needed)
+    if (hasHostedLLM) {
+      console.log('NYLA UI V2: Tab activated with hosted LLM ready');
     }
     
     // Update timezone and feature indicators

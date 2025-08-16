@@ -189,10 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       // Check LLM provider configuration before preloading WebLLM
       const llmConfig = window.NYLALLMConfig;
-      const currentProvider = llmConfig ? llmConfig.getCurrentProvider() : 'unknown';
+      const currentProvider = llmConfig ? llmConfig.getCurrentProviderName() : 'unknown';
       
       if (currentProvider === 'hosted') {
         console.log('PWA: 🖥️ Desktop device detected but using hosted LLM - skipping WebLLM preload');
+      } else if (currentProvider === 'unknown') {
+        console.log('PWA: ⚠️ LLM config not yet available, will retry WebLLM check in fallback logic');
       } else if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
         console.log('PWA: 🖥️ Desktop device detected - starting WebLLM preload for faster NYLA responses...');
         setTimeout(() => {
@@ -214,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Retry after a longer delay to allow system controller to fully initialize (desktop only)
         setTimeout(() => {
           const retryLlmConfig = window.NYLALLMConfig;
-          const retryProvider = retryLlmConfig ? retryLlmConfig.getCurrentProvider() : 'unknown';
+          const retryProvider = retryLlmConfig ? retryLlmConfig.getCurrentProviderName() : 'unknown';
           
           if (retryProvider === 'hosted') {
             console.log('PWA: Retry skipped - using hosted LLM');

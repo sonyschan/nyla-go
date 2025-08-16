@@ -162,7 +162,7 @@ class NYLASystemController {
     try {
       // Check if we're using hosted LLM - if so, skip WebLLM preload
       const llmConfig = window.NYLALLMConfig;
-      const currentProvider = llmConfig ? llmConfig.getCurrentProvider() : 'unknown';
+      const currentProvider = llmConfig ? llmConfig.getCurrentProviderName() : 'unknown';
       
       if (currentProvider === 'hosted') {
         console.log('NYLA System: 🚀 Using hosted LLM - skipping WebLLM preload');
