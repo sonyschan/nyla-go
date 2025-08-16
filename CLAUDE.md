@@ -92,7 +92,7 @@ Follow semantic versioning (X.Y.Z) to determine appropriate version increments:
   - [ ] Attack surface changes
   - [ ] Security best practices compliance
 
-### 📦 **Release Creation**
+### 📦 **Git Release Creation**
 - [ ] **Create Git Tags** - REQUIRED before GitHub releases:
   ```bash
   git tag v[X.X.X] [commit-hash]
@@ -112,14 +112,9 @@ Follow semantic versioning (X.Y.Z) to determine appropriate version increments:
   - [ ] Include comprehensive release notes with features/fixes
   - [ ] Add links to PWA and full changelog
   - [ ] Use consistent formatting with previous releases
-- [ ] **Create Release Package** - Generate `nyla-go-v[X.X.X].zip`
 - [ ] **Commit Version Updates** - Push all documentation changes
 
-### 🔒 **Security Verification**
-- [ ] **3. Upload to VirusTotal** - Scan the new release package
-- [ ] **Send VirusTotal Link** - Provide new verification URL
-- [ ] **Update Security Documentation** - Replace placeholder with actual scan results
-- [ ] **Commit Security Updates** - Push VirusTotal changes
+**🚀 DONE** - PWA automatically deploys via GitHub Pages!
 
 ### 📝 **Post-Release Documentation**
 - [ ] **Release Notes** - Ensure comprehensive changelog
@@ -175,27 +170,39 @@ echo "✅ ALL VERSIONS ABOVE MUST SHOW: $RELEASE_VERSION"
 echo "❌ If any version is different, UPDATE IT before release!"
 ```
 
-### 🎯 **Core Steps Summary:**
+### 🎯 **Streamlined Git Release Process:**
 1. ✅ **Run version verification commands** - Ensure ALL versions match intended release
 2. ✅ **Update version tag** (manifest.json + pwa/js/app.js + popup.js + CLAUDE.md)
-3. ✅ **Update README** for new release tag (version badge + download links)  
+3. ✅ **Update README** for new release tag (version badge)  
 4. ✅ **Test version display** - Load extension and PWA to verify displayed versions
 5. ✅ **Create git tags and GitHub releases** with proper changelog
 6. ✅ **Update privacy and security documents** for any new features/changes
-7. 🔧 **Create Chrome Store package** - Manual process (see Chrome Store Packaging section below)
 
-## 🏪 Chrome Store Packaging
+**🚀 Git Release Complete** - PWA deploys automatically via GitHub Pages!
 
-**Note**: Chrome Store package creation is handled manually and is not part of the automated release process.
+## 🏪 Chrome Store Packaging (Separate Workflow)
+
+**⚠️ Important**: Chrome Store packaging is a **separate process** from git releases. Only run this when submitting to the Chrome Web Store.
+
+### 🔄 **When to Use This Process:**
+- Submitting new version to Chrome Web Store
+- Store review requires package update
+- Manual Chrome Store deployment needed
+
+### 🚫 **NOT Part of Git Releases:**
+- Git releases deploy PWA automatically via GitHub Pages
+- Chrome Store packages are distribution-specific, not code releases
 
 ### ⚠️ **CRITICAL: Multiple Manifest Issue**
 Chrome Web Store will **reject packages with multiple manifest.json files**. Our project has:
 - `manifest.json` (Extension manifest) 
 - `pwa/manifest.json` (PWA manifest)
 
-### 📦 **Create Extension-Only Package:**
+### 📦 **Create Extension-Only Package (Chrome Store Only):**
 ```bash
-# NOTE: nylago-ui-data.js is for development only - not needed for release packaging
+# ⚠️ ONLY run this when submitting to Chrome Web Store
+# NOT part of regular git releases
+
 # Create extension package directory
 mkdir -p extension-package
 
@@ -203,13 +210,17 @@ mkdir -p extension-package
 cp manifest.json popup.html popup.js content.js qr-simple.js GO-BACKGROUND.png NYLAGO-Logo-v2.png extension-package/
 cp -r icons extension-package/
 
-# Create Chrome Store ZIP package - IMPORTANT: Create directly in releases directory to avoid path issues
+# Create Chrome Store ZIP package locally (DO NOT commit to git)
 cd extension-package
-zip -r ../releases/nyla-go-v${RELEASE_VERSION}-extension-only.zip . -x "*.DS_Store"
+zip -r ../nyla-go-v${RELEASE_VERSION}-extension-only.zip . -x "*.DS_Store"
 cd ..
 
 # Clean up temporary directory
 rm -rf extension-package
+
+# Upload to VirusTotal for scanning (Chrome Store requirement)
+# Submit to Chrome Web Store
+# Keep ZIP file LOCAL - do not commit to git repository
 ```
 
 ### ⚠️ **CRITICAL: Packaging Lessons Learned (v1.4.4 - v1.4.5)**
@@ -217,7 +228,7 @@ rm -rf extension-package
 #### **Directory Structure & Navigation Issues:**
 1. **Missing nylago-ui-data.js**: Don't forget to include `nylago-ui-data.js` - it's required for community features (Raid/App tabs)
 2. **Directory Navigation**: Create ZIP directly in `releases/` to avoid path confusion and nested directory issues
-3. **Git Staging**: The ZIP file path should be `releases/nyla-go-v${VERSION}-extension-only.zip` when adding to git
+3. **Local Storage**: Keep ZIP files local, do NOT commit to git repository
 4. **Common Error**: Using `../nyla-go-v${VERSION}-extension-only.zip` creates file in wrong location
 5. **Working Directory**: Always ensure you're in the project root when running packaging commands
 
@@ -230,14 +241,14 @@ rm -rf extension-package
 
 #### **Safe Command Patterns:**
 ```bash
-# ✅ CORRECT: Avoid directory navigation issues
-cd extension-package && zip -r ../releases/nyla-go-v${VERSION}-extension-only.zip .
+# ✅ CORRECT: Create ZIP locally for Chrome Store submission
+cd extension-package && zip -r ../nyla-go-v${VERSION}-extension-only.zip .
 
 # ❌ WRONG: Causes directory navigation errors  
 cd extension-package && zip -r ../nyla-go-v${VERSION}-extension-only.zip . && cd ..
 
-# ✅ CORRECT: Verify file creation before cleanup
-ls -la releases/nyla-go-v${VERSION}-extension-only.zip && rm -rf extension-package
+# ✅ CORRECT: Verify local file creation before cleanup
+ls -la nyla-go-v${VERSION}-extension-only.zip && rm -rf extension-package
 
 # ✅ CORRECT: Use find to locate files when confused
 find . -name "*v${VERSION}*.zip" -type f
@@ -277,21 +288,20 @@ find . -name "*v${VERSION}*.zip" -type f
 - `.git/`, `.github/`, development files
 - `releases/`, `screenshots/`, `design/` directories
 
-## 📁 Release File Management
+## 📁 Chrome Store Package Management
 
-### 📂 **All Release Files Go to `/releases` Directory:**
+### 📂 **Local File Handling:**
 ```bash
-# Move all release artifacts to releases directory
-mv nyla-go-v${RELEASE_VERSION}-extension-only.zip releases/
+# Chrome Store packages are kept LOCAL only
+# DO NOT commit ZIP files to git repository
+# PWA releases happen automatically via GitHub Pages
 ```
 
-### 📋 **Release Directory Structure:**
-```
-releases/
-├── nyla-go-v1.3.5-extension-only.zip    # Chrome Store package
-├── previous-versions/                     # Older releases
-└── README.md                             # Release notes
-```
+### 🚫 **What NOT to Commit:**
+- Chrome Store ZIP packages
+- VirusTotal scan results
+- Store-specific documentation
+- Distribution artifacts
 
 ## 📋 Project Information
 
