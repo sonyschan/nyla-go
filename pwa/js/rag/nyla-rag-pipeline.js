@@ -299,7 +299,24 @@ class NYLARAGPipeline {
       throw new Error('LLM engine not configured');
     }
     
-    // Handle streaming response
+    // Check if this is a hosted LLM (simpler interface)
+    if (this.llmEngine.constructor.name === 'NYLAHostedLLM') {
+      try {
+        // For hosted LLM, use simple generateResponse interface
+        const response = await this.llmEngine.generateResponse(query, context);
+        
+        return {
+          text: response.text || response.answer || response,
+          streaming: false,
+          llmResponse: response
+        };
+      } catch (error) {
+        console.error('❌ Hosted LLM generate response failed:', error);
+        throw error;
+      }
+    }
+    
+    // Handle local WebLLM with streaming support
     if (options.streaming && this.llmEngine.generateStreamingResponse) {
       // Use the LLM engine's streaming method
       const streamResponse = await this.llmEngine.generateStreamingResponse(
@@ -326,7 +343,7 @@ class NYLARAGPipeline {
       };
     }
     
-    // Non-streaming response
+    // Non-streaming response for local WebLLM
     const response = await this.llmEngine.generateResponse(
       query,
       {

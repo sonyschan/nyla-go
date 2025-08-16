@@ -62,6 +62,10 @@ class NYLAConversationManagerV2 {
         
         if (hostedReady) {
           NYLALogger.info('NYLA Conversation V2: Using hosted LLM provider');
+          // Update RAG integration with new LLM engine
+          if (this.ragIntegration) {
+            this.ragIntegration.updateLLMEngine();
+          }
           return;
         } else {
           NYLALogger.warn('NYLA Conversation V2: Hosted LLM failed, falling back to local');
@@ -91,6 +95,10 @@ class NYLAConversationManagerV2 {
     } else {
       NYLALogger.debug('NYLA Conversation V2: Initializing local WebLLM engine');
       this.llmEngine = new NYLALLMEngine();
+      // Update RAG integration with new LLM engine
+      if (this.ragIntegration) {
+        this.ragIntegration.updateLLMEngine();
+      }
     }
   }
 

@@ -39,9 +39,9 @@ class NYLARAGIntegration {
       
       // Get knowledge base and LLM engine from conversation manager
       const knowledgeBase = this.conversationManager.kb;
-      const llmEngine = this.conversationManager.llmEngine;
+      const llmEngine = this.conversationManager.getActiveLLM();
       
-      // Initialize pipeline
+      // Initialize pipeline (LLM can be null initially, will be set later)
       await this.ragPipeline.initialize(knowledgeBase, llmEngine);
       
       // Initialize semantic follow-up generator
@@ -620,6 +620,36 @@ class NYLARAGIntegration {
   }
 
   /**
+   * Update the LLM engine when it becomes available
+   */
+  updateLLMEngine() {
+    try {
+      const activeLLM = this.conversationManager.getActiveLLM();
+      if (activeLLM && this.ragPipeline) {
+        console.log('🔄 Updating RAG pipeline LLM engine');
+        this.ragPipeline.llmEngine = activeLLM;
+        console.log('✅ RAG pipeline LLM engine updated');
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to update RAG pipeline LLM engine:', error);
+    }
+  }
+
+  /**
+   * Get current status
+   */
+  getStatus() {
+    return {
+      initialized: this.initialized,
+      indexBuilt: this.indexBuilt,
+      indexBuildFailed: this.indexBuildFailed,
+      hasLLMEngine: !!this.ragPipeline?.llmEngine,
+      llmEngineType: this.ragPipeline?.llmEngine?.constructor?.name || 'none',
+      config: this.config
+    };
+  }
+
+  /**
    * Get integration status
    */
   getStatus() {
@@ -655,6 +685,9 @@ function enhanceConversationManagerWithRAG(conversationManager) {
   // Store reference
   conversationManager.ragIntegration = ragIntegration;
   console.log('✅ RAG integration object created and attached to conversation manager');
+  
+  // Update LLM engine if conversation manager already has one available
+  ragIntegration.updateLLMEngine();
   
   // Override processQuestion method
   const originalProcessQuestion = conversationManager.processQuestion.bind(conversationManager);
