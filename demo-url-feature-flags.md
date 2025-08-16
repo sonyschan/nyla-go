@@ -13,8 +13,6 @@ cd pwa && python3 -m http.server 8080
 
 # Test URLs in browser:
 http://localhost:8080/?feature=PROMPT_V2_ENABLED
-http://localhost:8080/?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED
-http://localhost:8080/?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED
 ```
 
 ### **Method 2: Interactive Test Page**
@@ -94,11 +92,6 @@ if (NYLAFeatureFlags.isEnabled('PROMPT_V2_ENABLED')) {
 
 ### **Supported Flags**
 - `PROMPT_V2_ENABLED` ✅ - 46.4% token reduction (implemented)
-- `LLM_V3_ENABLED` 🚧 - Future LLM upgrades (placeholder)
-- `RAG_DEBUG_ENABLED` 🚧 - Enhanced RAG debugging (placeholder)
-- `UI_BETA_ENABLED` 🚧 - Beta UI components (placeholder)
-- `PERFORMANCE_MONITOR_ENABLED` 🚧 - Real-time tracking (placeholder)
-- `EXPERIMENTAL_FEATURES_ENABLED` 🚧 - Early access (placeholder)
 
 ## ✨ **Ready for Production!**
 

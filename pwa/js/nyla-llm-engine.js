@@ -2544,7 +2544,7 @@ CRITICAL: Respond ONLY in valid JSON format as shown in the system prompt. Start
 
   /**
    * Initialize feature flags from URL parameters
-   * Supports: ?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED
+   * Supports: ?feature=PROMPT_V2_ENABLED
    */
   initializeFeatureFlags() {
     try {

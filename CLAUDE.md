@@ -831,20 +831,10 @@ conversationManager.llmEngine.disablePromptOptimization()
 # Enable PROMPT_V2 via URL
 http://localhost:8080/?feature=PROMPT_V2_ENABLED
 
-# Enable multiple features
-http://localhost:8080/?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED
-
-# Enable debug features
-http://localhost:8080/?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED
 ```
 
 **Supported Feature Flags:**
 - `PROMPT_V2_ENABLED` - 46.4% token reduction optimization
-- `LLM_V3_ENABLED` - Future LLM model upgrades
-- `RAG_DEBUG_ENABLED` - Enhanced RAG debugging
-- `UI_BETA_ENABLED` - Beta UI components
-- `PERFORMANCE_MONITOR_ENABLED` - Real-time performance tracking
-- `EXPERIMENTAL_FEATURES_ENABLED` - Early feature access
 
 #### **Production Deployment Strategy:**
 - **Default State**: `PROMPT_V2_ENABLED = false` (safe rollout)

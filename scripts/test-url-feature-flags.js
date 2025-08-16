@@ -70,7 +70,7 @@ console.log('\n🧪 Test 5: Test Page');
 if (fs.existsSync(testPagePath)) {
     const testContent = fs.readFileSync(testPagePath, 'utf8');
     console.log('✅ URL feature flag test page exists');
-    console.log('✅ Multiple URL examples:', testContent.includes('PROMPT_V2_ENABLED,LLM_V3_ENABLED'));
+    console.log('✅ PROMPT_V2 examples:', testContent.includes('PROMPT_V2_ENABLED'));
     console.log('✅ Test functionality:', testContent.includes('testURL'));
     console.log('✅ Status display:', testContent.includes('updateStatus'));
 } else {
@@ -91,10 +91,5 @@ console.log('🧪 Testing: Open tests/test-feature-flags-url.html with query par
 
 console.log('\n📊 Supported Feature Flags:');
 console.log('• PROMPT_V2_ENABLED - 46.4% token reduction');
-console.log('• LLM_V3_ENABLED - Future model upgrades');
-console.log('• RAG_DEBUG_ENABLED - Enhanced debugging');
-console.log('• UI_BETA_ENABLED - Beta components');
-console.log('• PERFORMANCE_MONITOR_ENABLED - Real-time tracking');
-console.log('• EXPERIMENTAL_FEATURES_ENABLED - Early access');
 
 console.log('\n✨ Ready for testing!');

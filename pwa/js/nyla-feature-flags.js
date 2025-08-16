@@ -168,12 +168,7 @@ class NYLAFeatureFlags {
      */
     getSupportedFlags() {
         return [
-            'PROMPT_V2_ENABLED',
-            'LLM_V3_ENABLED',
-            'RAG_DEBUG_ENABLED',
-            'UI_BETA_ENABLED',
-            'PERFORMANCE_MONITOR_ENABLED',
-            'EXPERIMENTAL_FEATURES_ENABLED'
+            'PROMPT_V2_ENABLED'
         ];
     }
     
@@ -207,10 +202,7 @@ class NYLAFeatureFlags {
             }
         }
         
-        // Future: Apply other LLM-related flags here
-        if (this.isEnabled('LLM_V3_ENABLED')) {
-            NYLALogger.debug('🧪 Feature Flag: LLM_V3_ENABLED detected (not yet implemented)');
-        }
+        // Future: Apply other LLM-related flags here if needed
     }
 }
 

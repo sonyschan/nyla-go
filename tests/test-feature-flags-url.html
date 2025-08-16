@@ -105,15 +105,11 @@
             <p>Click these buttons to test different feature flag combinations:</p>
             
             <button onclick="testURL('?feature=PROMPT_V2_ENABLED')">Enable PROMPT_V2</button>
-            <button onclick="testURL('?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED')">Enable Multiple Flags</button>
-            <button onclick="testURL('?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED')">Enable Debug Flags</button>
             <button onclick="testURL('')">Clear All Flags</button>
             
             <div class="url-example">
                 <strong>Example URLs:</strong><br>
-                http://localhost:8080/?feature=PROMPT_V2_ENABLED<br>
-                http://localhost:8080/?feature=PROMPT_V2_ENABLED,LLM_V3_ENABLED<br>
-                http://localhost:8080/?feature=RAG_DEBUG_ENABLED,UI_BETA_ENABLED,PERFORMANCE_MONITOR_ENABLED
+                http://localhost:8080/?feature=PROMPT_V2_ENABLED
             </div>
         </div>
 
