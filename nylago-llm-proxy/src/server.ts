@@ -23,32 +23,7 @@ app.use('*', prettyJSON());
 
 // CORS configuration for NYLA Go clients
 app.use('*', cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-    
-    // Allowed origins
-    const allowedOrigins = [
-      'https://sonyschan.github.io',  // PWA origin
-      'http://localhost:3000',         // Local dev
-      'http://localhost:5173',         // Vite dev
-      'http://localhost:8080'          // Local proxy
-    ];
-    
-    // Check if it's a Chrome extension
-    if (origin.startsWith('chrome-extension://')) {
-      return callback(null, true);
-    }
-    
-    // Check allowed origins
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // Log rejected origin for debugging
-    logger.warn({ origin }, 'CORS origin rejected');
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: ['https://sonyschan.github.io', 'http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'X-Correlation-ID'],
   exposeHeaders: ['X-Correlation-ID'],
@@ -147,7 +122,7 @@ app.onError((err, c) => {
     request: {
       method: c.req.method,
       url: c.req.url,
-      headers: Object.fromEntries(c.req.header())
+      headers: c.req.header()
     }
   }, 'Unhandled error');
 

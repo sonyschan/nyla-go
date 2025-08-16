@@ -159,11 +159,8 @@ app.post('/', async (c) => {
       message: error instanceof Error ? error.message : 'Unknown error occurred'
     };
 
-    return c.json(errorResponse, 500, {
-      headers: {
-        'X-Correlation-ID': correlationId
-      }
-    });
+    c.header('X-Correlation-ID', correlationId);
+    return c.json(errorResponse, 500);
   }
 });
 
@@ -218,6 +215,12 @@ app.post('/stream', async (c) => {
 
     // Return streaming response
     return stream(c, async (stream) => {
+      // Set headers
+      c.header('Content-Type', 'text/event-stream');
+      c.header('Cache-Control', 'no-cache');
+      c.header('Connection', 'keep-alive');
+      c.header('X-Correlation-ID', correlationId);
+      
       try {
         const generator = llmClient.generateResponseStream(
           system,
@@ -247,13 +250,6 @@ app.post('/stream', async (c) => {
           message: error instanceof Error ? error.message : 'Unknown error'
         })}\n\n`);
       }
-    }, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'X-Correlation-ID': correlationId
-      }
     });
 
   } catch (error) {
@@ -265,11 +261,8 @@ app.post('/stream', async (c) => {
       message: error instanceof Error ? error.message : 'Unknown error occurred'
     };
 
-    return c.json(errorResponse, 500, {
-      headers: {
-        'X-Correlation-ID': correlationId
-      }
-    });
+    c.header('X-Correlation-ID', correlationId);
+    return c.json(errorResponse, 500);
   }
 });
 

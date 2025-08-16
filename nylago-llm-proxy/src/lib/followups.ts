@@ -11,8 +11,8 @@ import { detectLanguage } from './prompt.js';
  */
 export function generateFollowUps(
   userQuery: string,
-  response: string,
-  context: string[] = []
+  _response: string,
+  _context: string[] = []
 ): string[] {
   const language = detectLanguage(userQuery);
   const followUps: string[] = [];
@@ -96,7 +96,7 @@ function isCommunityQuery(query: string): boolean {
 /**
  * Generate project-related follow-ups
  */
-function getProjectFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): string[] {
+function getProjectFollowUps(_query: string, language: 'en' | 'zh' | 'mixed'): string[] {
   const isZh = language === 'zh' || language === 'mixed';
   
   return [
@@ -109,7 +109,7 @@ function getProjectFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): st
 /**
  * Generate transfer-related follow-ups
  */
-function getTransferFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): string[] {
+function getTransferFollowUps(_query: string, language: 'en' | 'zh' | 'mixed'): string[] {
   const isZh = language === 'zh' || language === 'mixed';
   
   return [
@@ -122,7 +122,7 @@ function getTransferFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): s
 /**
  * Generate technical follow-ups
  */
-function getTechnicalFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): string[] {
+function getTechnicalFollowUps(_query: string, language: 'en' | 'zh' | 'mixed'): string[] {
   const isZh = language === 'zh' || language === 'mixed';
   
   return [
@@ -135,7 +135,7 @@ function getTechnicalFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): 
 /**
  * Generate community-related follow-ups
  */
-function getCommunityFollowUps(query: string, language: 'en' | 'zh' | 'mixed'): string[] {
+function getCommunityFollowUps(_query: string, language: 'en' | 'zh' | 'mixed'): string[] {
   const isZh = language === 'zh' || language === 'mixed';
   
   return [
