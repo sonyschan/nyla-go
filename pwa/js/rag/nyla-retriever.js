@@ -215,7 +215,8 @@ class NYLARetriever {
    */
   detectIntent(query) {
     const intents = {
-      social_media: /(social|links|follow|contact|community|channels|where.*find|join.*community|official.*links|twitter|telegram|x\.com|linktree|x.*account|twitter.*account|社交|社区|联系|关注|加入|联系方式|官方.*账户|官方.*渠道|如何.*联系|在哪.*找到|怎么.*联系)/i,
+      team: /(team|founder|creator|developer|who.*created|who.*developed|who.*founded|who.*made|創辦人|創始人|開發者|團隊|誰創造|誰開發|開發團隊|創建者)/i,
+      social_media: /(social|links|follow|contact|community|channels|where.*find|join.*community|official.*links|twitter|telegram|x\.com|linktree|x.*account|twitter.*account|社交|社区|联系|聯絡|连接|連結|关注|關注|加入|联系方式|聯絡方式|官方.*账户|官方.*帳戶|官方.*渠道|如何.*联系|如何.*聯絡|在哪.*找到|怎么.*联系|怎麼.*聯絡)/i,
       howTo: /^(how (to|do)|can i|what.*steps)/i,
       comparison: /(difference|compare|vs|versus|better|which)/i,
       technical: /(fee|gas|tps|speed|cost|transaction|consensus)/i,
@@ -297,8 +298,24 @@ class NYLARetriever {
       // RAG-only: Use purely semantic scoring (no keyword rules)
       let semanticScore = result.score;
       
+      // Apply intent-based boosting for team/founder queries
+      if (processedQuery.intent === 'team' && this.isTeamChunk(result)) {
+        // Strong boost for team chunks when asking about founders/team
+        let boostFactor = 2.0; // 100% boost for team chunks on founder queries
+        
+        const contentType = this.getContentType(result);
+        if (contentType === 'body' && result.tokens > 50) {
+          boostFactor = 2.5; // 150% boost for content-rich team chunks
+          console.log(`👥 Enhanced team boost applied to content-rich chunk: ${result.metadata?.title || 'untitled'}`);
+        } else {
+          console.log(`👥 Standard team boost applied to chunk: ${result.metadata?.title || 'untitled'}`);
+        }
+        
+        semanticScore *= boostFactor;
+        console.log(`📈 Team boost applied: ${result.score.toFixed(3)} → ${semanticScore.toFixed(3)} (${boostFactor}x)`);
+      }
       // Apply intent-based boosting for social media queries
-      if (processedQuery.intent === 'social_media' && this.isSocialChunk(result)) {
+      else if (processedQuery.intent === 'social_media' && this.isSocialChunk(result)) {
         // Base social boost
         let boostFactor = 1.4; // 40% base boost for social chunks on social queries
         
@@ -446,6 +463,33 @@ class NYLARetriever {
     );
     
     return explicitSocialType || socialTags || socialTitle || socialText || socialSection || hasQueryBoost;
+  }
+
+  /**
+   * Check if a chunk contains team/founder information
+   */
+  isTeamChunk(result) {
+    const metadata = result.metadata || {};
+    const tags = metadata.tags || [];
+    const title = (metadata.title || '').toLowerCase();
+    const text = (result.text || '').toLowerCase();
+    const category = (metadata.category || '').toLowerCase();
+    
+    // Check for explicit team categories
+    const teamCategories = ['team_nyla', 'team_collaboration', 'team_credentials'].includes(category);
+    
+    // Check for team indicators in tags
+    const teamTags = tags.some(tag => 
+      /team|founder|developer|creator|about.*team|team.*nyla/i.test(tag)
+    );
+    
+    // Check for team indicators in title
+    const teamTitle = /team|founder|co.*founder|developer|creator|about.*team|team.*nyla/i.test(title);
+    
+    // Check for team indicators in text content
+    const teamText = /@\w+.*founder|founder.*@\w+|team.*nyla|nyla.*team|@shax_btc|@btcberries|@chiefz_sol|@noir0883|founded.*nyla|co.*founded/i.test(text);
+    
+    return teamCategories || teamTags || teamTitle || teamText;
   }
 
   /**
