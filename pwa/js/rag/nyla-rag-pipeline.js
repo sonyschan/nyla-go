@@ -302,8 +302,21 @@ class NYLARAGPipeline {
     // Check if this is a hosted LLM (simpler interface)
     if (this.llmEngine.constructor.name === 'NYLAHostedLLM') {
       try {
-        // For hosted LLM, use simple generateResponse interface
-        const response = await this.llmEngine.generateResponse(query, context);
+        // For hosted LLM, format context properly
+        const contextArray = [];
+        
+        // The context object contains the formatted context which includes the knowledge
+        // Extract the formatted context which already has the chunk content
+        if (context && context.context) {
+          // The formatted context contains the actual chunk text
+          contextArray.push({
+            role: 'system',
+            content: `Here is relevant knowledge to help answer the user's question:\n\n${context.context}`
+          });
+        }
+        
+        // For hosted LLM, use simple generateResponse interface with array context
+        const response = await this.llmEngine.generateResponse(query, contextArray);
         
         return {
           text: response.text || response.answer || response,
