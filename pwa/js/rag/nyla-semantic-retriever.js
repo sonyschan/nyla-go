@@ -10,13 +10,19 @@ class NYLASemanticRetriever {
     this.embeddingService = embeddingService;
     
     this.options = {
-      topK: 20,              // Dense retrieval top-k
-      bm25TopK: 10,          // BM25 top-k (when exact signals detected)
-      finalTopK: 8,          // Final results after MMR
-      minScore: 0.3,         // Maintain proper quality threshold
+      topK: 25,              // Dense retrieval top-k (BM25/Dense = 25 each)
+      bm25TopK: 25,          // BM25 top-k (BM25/Dense = 25 each)  
+      crossEncoderTopK: 15,  // Cross-encoder topK1 = 15
+      fusionTopK: 12,        // Working-set fusion topK0/1 = 12
+      parentTopK: 3,         // Parent-child aggregation topK_parent = 3
+      finalTopK: 3,          // Final context segments = 3
+      minScore: 0.3,         // Quality threshold
+      highSimilarityThreshold: 0.8, // Score-driven strategy threshold
       mmrEnabled: true,      // Enable MMR for diversity
       mmrLambda: 0.5,        // Balance relevance vs diversity
-      crossEncoderEnabled: false, // TODO: Enable when cross-encoder available
+      crossEncoderEnabled: true,  // Enable cross-encoder reranking
+      parentChildEnabled: true,   // Enable parent-child aggregation
+      scoreStrategyEnabled: true, // Enable score-driven strategy switch
       ...options
     };
     
@@ -328,30 +334,32 @@ class NYLASemanticRetriever {
   }
 
   /**
-   * 3. RERANK: Cross-encoder + MMR for diversity
+   * 3. RERANK: Working-set fusion + Cross-encoder + Parent-child aggregation + Score-driven MMR
    */
   async rerankResults(retrievalResults, processedQuery, config) {
     let results = retrievalResults.merged || retrievalResults.dense;
     
-    // TODO: Cross-encoder reranking (when available)
+    console.log(`🔄 Starting reranking pipeline with ${results.length} initial results...`);
+    
+    // Step 1: Working-set fusion (topK0/1 = 12)
+    results = this.applyWorkingSetFusion(results, config.fusionTopK);
+    
+    // Step 2: Cross-encoder reranking (topK1 = 15)
     if (config.crossEncoderEnabled && window.NYLACrossEncoder) {
-      console.log('🔄 Applying cross-encoder reranking...');
+      console.log('🎯 Applying cross-encoder reranking...');
       const crossEncoder = new window.NYLACrossEncoder();
-      results = await crossEncoder.rerank(processedQuery.original, results);
+      results = await crossEncoder.rerank(processedQuery.original, results, config.crossEncoderTopK);
     }
     
-    // Apply MMR for diversity
-    if (config.mmrEnabled && window.NYLAMMRReranker) {
-      try {
-        console.log('🔄 Applying MMR for diversity...');
-        const mmrReranker = new window.NYLAMMRReranker(this.embeddingService, {
-          lambda: config.mmrLambda
-        });
-        results = await mmrReranker.rerank(processedQuery.original, results, config.finalTopK * 2);
-      } catch (error) {
-        console.warn('⚠️ MMR reranking failed, using original results:', error);
-      }
+    // Step 3: Parent-child aggregation (topK_parent = 3)
+    if (config.parentChildEnabled && window.NYLAParentChildAggregator) {
+      console.log('🏗️ Applying parent-child aggregation...');
+      const aggregator = new window.NYLAParentChildAggregator();
+      results = await aggregator.aggregateToParents(results, config.parentTopK);
     }
+    
+    // Step 4: Score-driven MMR strategy
+    results = await this.applyScoreDrivenStrategy(results, processedQuery, config);
     
     return results;
   }
@@ -423,6 +431,117 @@ class NYLASemanticRetriever {
   }
 
   /**
+   * Working-set fusion: Combine and limit candidates before cross-encoder
+   */
+  applyWorkingSetFusion(results, fusionTopK) {
+    console.log(`🔗 Working-set fusion: limiting to ${fusionTopK} candidates`);
+    
+    // Sort by current scores and take top fusionTopK
+    const fused = results
+      .sort((a, b) => (b.finalScore || b.score || 0) - (a.finalScore || a.score || 0))
+      .slice(0, fusionTopK)
+      .map((result, index) => ({
+        ...result,
+        fusionRank: index + 1
+      }));
+    
+    console.log(`✅ Working-set fusion: reduced from ${results.length} to ${fused.length} candidates`);
+    
+    return fused;
+  }
+  
+  /**
+   * Score-driven strategy: Bypass MMR for high-similarity same-section results
+   */
+  async applyScoreDrivenStrategy(results, processedQuery, config) {
+    if (!config.scoreStrategyEnabled || results.length < 3) {
+      // Fallback to regular MMR
+      return this.applyRegularMMR(results, processedQuery, config);
+    }
+    
+    const top3 = results.slice(0, 3);
+    const allHighSimilarity = top3.every(r => 
+      (r.crossEncoderScore || r.aggregatedScore || r.finalScore || 0) >= config.highSimilarityThreshold
+    );
+    
+    const sameSection = this.checkSameSection(top3);
+    
+    if (allHighSimilarity && sameSection) {
+      console.log('🎯 Score-driven strategy: Bypassing MMR for high-similarity same-section results');
+      console.log('📊 Top-3 scores:', top3.map(r => ({
+        id: r.id,
+        score: (r.crossEncoderScore || r.aggregatedScore || r.finalScore || 0).toFixed(3),
+        section: r.metadata?.section || r.parentId
+      })));
+      
+      // Use neighbor expansion instead of MMR
+      return this.applyNeighborExpansion(results, config.finalTopK);
+    } else {
+      console.log('🔄 Score-driven strategy: Using regular MMR (conditions not met)');
+      console.log('📊 Analysis:', {
+        allHighSimilarity,
+        sameSection,
+        top3Scores: top3.map(r => (r.crossEncoderScore || r.aggregatedScore || r.finalScore || 0).toFixed(3))
+      });
+      
+      // Apply regular MMR
+      return this.applyRegularMMR(results, processedQuery, config);
+    }
+  }
+  
+  /**
+   * Check if top results come from the same section
+   */
+  checkSameSection(results) {
+    if (results.length === 0) return false;
+    
+    const firstSection = results[0].metadata?.section || results[0].parentId;
+    if (!firstSection) return false;
+    
+    return results.every(r => 
+      (r.metadata?.section || r.parentId) === firstSection
+    );
+  }
+  
+  /**
+   * Apply neighbor expansion for same-section high-similarity results
+   */
+  applyNeighborExpansion(results, finalTopK) {
+    console.log('🔗 Applying neighbor expansion for contiguous context...');
+    
+    // Take top result and expand with adjacent chunks
+    const expanded = results.slice(0, finalTopK).map((result, index) => ({
+      ...result,
+      expansionRank: index + 1,
+      bypassedMMR: true
+    }));
+    
+    console.log(`✅ Neighbor expansion: kept ${expanded.length} contiguous results`);
+    
+    return expanded;
+  }
+  
+  /**
+   * Apply regular MMR for diversity
+   */
+  async applyRegularMMR(results, processedQuery, config) {
+    if (!config.mmrEnabled || !window.NYLAMMRReranker) {
+      return results.slice(0, config.finalTopK);
+    }
+    
+    try {
+      console.log('🔄 Applying regular MMR for diversity...');
+      const mmrReranker = new window.NYLAMMRReranker(this.embeddingService, {
+        lambda: config.mmrLambda
+      });
+      return await mmrReranker.rerank(processedQuery.original, results, config.finalTopK);
+    } catch (error) {
+      console.warn('⚠️ MMR reranking failed, using original results:', error);
+      return results.slice(0, config.finalTopK);
+    }
+  }
+  
+  /**
    * Get retrieval statistics
    */
   getStats() {
@@ -432,7 +551,11 @@ class NYLASemanticRetriever {
       glossarySize: this.glossary.size,
       minScore: this.options.minScore,
       mmrEnabled: this.options.mmrEnabled,
-      topK: this.options.topK
+      topK: this.options.topK,
+      crossEncoderTopK: this.options.crossEncoderTopK,
+      fusionTopK: this.options.fusionTopK,
+      parentTopK: this.options.parentTopK,
+      finalTopK: this.options.finalTopK
     };
   }
 }

@@ -61,8 +61,7 @@ class NYLARAGPipeline {
       // Store LLM engine reference
       this.llmEngine = llmEngine;
       
-      // Initialize components
-      this.chunker = new NYLAKnowledgeChunker();
+      // Initialize components (chunker not needed - embeddings are pre-built)
       this.embeddingService = getEmbeddingService();
       this.vectorDB = new NYLAVectorDB();
       this.contextBuilder = new NYLAContextBuilder(this.embeddingService);
@@ -83,11 +82,18 @@ class NYLARAGPipeline {
       
       // Initialize semantic retriever after dependencies
       this.retriever = new NYLASemanticRetriever(this.vectorDB, this.embeddingService, {
-        topK: 20,
-        finalTopK: 8,
-        minScore: 0.3,         // Maintain proper quality threshold
+        topK: 25,              // Dense retrieval (BM25/Dense = 25 each)
+        bm25TopK: 25,          // BM25 retrieval (BM25/Dense = 25 each)
+        crossEncoderTopK: 15,  // Cross-encoder topK1 = 15  
+        fusionTopK: 12,        // Working-set fusion topK0/1 = 12
+        parentTopK: 3,         // Parent-child aggregation topK_parent = 3
+        finalTopK: 3,          // Final context segments = 3
+        minScore: 0.3,         // Quality threshold
         mmrEnabled: true,
-        mmrLambda: 0.5
+        mmrLambda: 0.5,
+        crossEncoderEnabled: true,
+        parentChildEnabled: true,
+        scoreStrategyEnabled: true
       });
       
       // Check if index needs building/rebuilding
@@ -112,44 +118,44 @@ class NYLARAGPipeline {
   }
 
   /**
-   * Build vector index from knowledge base
+   * Build vector index from knowledge base (using pre-built embeddings)
    */
   async buildIndex(knowledgeBase, onProgress) {
-    console.log('🏗️ Building vector index...');
+    console.log('🏗️ Loading pre-built vector index...');
     
     try {
-      // Chunk the knowledge base
-      const chunks = await this.chunker.processKnowledgeBase(knowledgeBase);
-      console.log(`📦 Created ${chunks.length} chunks`);
+      // The vector DB loads pre-built embeddings from nyla-vector-db.json
+      // No chunking needed as embeddings are already generated
+      if (onProgress) {
+        onProgress({ stage: 'loading', progress: 50, status: 'Loading pre-built embeddings...' });
+      }
       
-      // Generate embeddings
-      const embeddedChunks = await this.embeddingService.processChunks(
-        chunks,
-        onProgress ? (p) => onProgress({ stage: 'embedding', ...p }) : null
-      );
+      // Vector DB initialization handles loading the pre-built index
+      await this.vectorDB.initialize();
       
-      // Add to vector database
-      await this.vectorDB.addChunks(
-        embeddedChunks,
-        onProgress ? (p) => onProgress({ stage: 'indexing', ...p }) : null
-      );
+      const stats = this.vectorDB.getStats();
+      console.log(`📦 Loaded ${stats.totalChunks || 0} pre-built chunks`);
       
-      console.log('✅ Vector index built successfully');
+      if (onProgress) {
+        onProgress({ stage: 'loading', progress: 100, status: 'Vector index loaded successfully' });
+      }
+      
+      console.log('✅ Vector index loaded successfully');
       
       // Mark version as up-to-date
       if (this.versionManager) {
         const vectorStats = this.vectorDB.getStats();
         await this.versionManager.markAsUpToDate(knowledgeBase, vectorStats, {
-          chunkingStats: this.chunker.getStatistics()
+          loadedFromPreBuilt: true,
+          timestamp: new Date().toISOString()
         });
       }
       
-      // Get statistics
-      const stats = this.chunker.getStatistics();
-      console.log('📊 Chunking statistics:', stats);
+      // Log statistics
+      console.log('📊 Vector DB statistics:', stats);
       
     } catch (error) {
-      console.error('❌ Index building failed:', error);
+      console.error('❌ Vector index loading failed:', error);
       throw error;
     }
   }
@@ -274,10 +280,16 @@ class NYLARAGPipeline {
    */
   async performRetrieval(query, options) {
     const chunks = await this.retriever.retrieve(query, {
-      topK: options.topK || 20,        // Top-k=20 for initial retrieval
-      finalTopK: options.finalTopK || 8, // Top-m=8 for final results
+      topK: options.topK || 25,              // Top-k=25 for dense/BM25 retrieval
+      crossEncoderTopK: options.crossEncoderTopK || 15,   // Cross-encoder topK1=15
+      fusionTopK: options.fusionTopK || 12,               // Working-set fusion topK0/1=12
+      parentTopK: options.parentTopK || 3,               // Parent-child topK_parent=3
+      finalTopK: options.finalTopK || 3,                 // Final segments=3
       minScore: options.minScore || 0.5,
-      mmrEnabled: options.mmrEnabled !== false  // Default MMR enabled
+      mmrEnabled: options.mmrEnabled !== false,
+      crossEncoderEnabled: options.crossEncoderEnabled !== false,
+      parentChildEnabled: options.parentChildEnabled !== false,
+      scoreStrategyEnabled: options.scoreStrategyEnabled !== false
     });
     
     // Calculate confidence based on scores

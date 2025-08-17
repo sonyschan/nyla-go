@@ -59,6 +59,14 @@
       <div class="splash-tagline">Receive Payment via X</div>
       <div class="splash-powered">Powered by NYLA</div>
       <div class="splash-loading"></div>
+      
+      <!-- Embedding preload status -->
+      <div class="embedding-preload-status" id="embeddingPreloadStatus" style="display: none;">
+        <div class="preload-text">🧠 Preparing AI features...</div>
+        <div class="preload-progress-bar">
+          <div class="preload-progress-fill" id="preloadProgressFill"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -460,7 +468,6 @@
   <!-- NYLA RAG System (Phase 3 Vector Search) -->
   <script src="js/rag/nyla-environment.js"></script>
   <script src="js/rag/nyla-kb-loader.js"></script>
-  <script src="js/rag/nyla-knowledge-chunker.js"></script>
   <script src="js/rag/nyla-embedding-service.js"></script>
   <script src="js/rag/nyla-vector-db.js"></script>
   <script src="js/rag/nyla-semantic-retriever.js"></script>
@@ -471,6 +478,8 @@
   <!-- Advanced RAG Services (must load before context builder) -->
   <script src="js/rag/nyla-deduplication-service.js"></script>
   <script src="js/rag/nyla-mmr-reranker.js"></script>
+  <script src="js/rag/nyla-cross-encoder.js"></script>
+  <script src="js/rag/nyla-parent-child-aggregator.js"></script>
   <script src="js/rag/nyla-clustering-service.js"></script>
   <script src="js/rag/nyla-compression-service.js"></script>
   <script src="js/rag/nyla-content-filter.js"></script>
