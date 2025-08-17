@@ -314,6 +314,16 @@ class NYLARAGPipeline {
     // Check if this is a hosted LLM (simpler interface)
     if (this.llmEngine.constructor.name === 'NYLAHostedLLM') {
       try {
+        // Debug: Log what context we received from context builder
+        console.log('🌐 RAG Pipeline → Hosted LLM: Context received:', {
+          hasContext: !!context,
+          hasContextField: !!(context && context.context),
+          contextType: typeof context?.context,
+          contextLength: context?.context?.length || 0,
+          contextPreview: context?.context?.substring(0, 200) + '...' || 'No context',
+          metadata: context?.metadata
+        });
+        
         // For hosted LLM, format context properly as array of strings
         const contextArray = [];
         
@@ -321,7 +331,20 @@ class NYLARAGPipeline {
         // Extract the formatted context which already has the chunk content
         if (context && context.context) {
           // The hosted LLM expects an array of strings, not objects with role/content
-          contextArray.push(`Here is relevant knowledge to help answer the user's question:\n\n${context.context}`);
+          const formattedContext = `Here is relevant knowledge to help answer the user's question:\n\n${context.context}`;
+          contextArray.push(formattedContext);
+          
+          console.log('🌐 RAG Pipeline → Hosted LLM: Sending context:', {
+            contextArrayLength: contextArray.length,
+            firstItemLength: formattedContext.length,
+            firstItemPreview: formattedContext.substring(0, 300) + '...'
+          });
+        } else {
+          console.warn('⚠️ RAG Pipeline → Hosted LLM: No context to send!', {
+            context: context,
+            hasContext: !!context,
+            hasContextField: !!(context && context.context)
+          });
         }
         
         // For hosted LLM, use simple generateResponse interface with string array context
