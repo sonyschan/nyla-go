@@ -134,16 +134,6 @@ class NYLAEmbeddingService {
       processedText = prefix + text;
     }
     
-    console.log('🔍 Embedding Debug:', {
-      initialized: this.modelLoaded,
-      hasPipeline: !!this.pipeline,
-      textLength: text?.length,
-      processedLength: processedText?.length,
-      isE5Model: this.isE5Model(),
-      prefix: this.isE5Model() ? (isQuery ? 'query: ' : 'passage: ') : 'none',
-      textPreview: processedText?.substring(0, 50) + '...'
-    });
-    
     // Check cache first (use original text for cache key)
     if (this.options.cacheEnabled && this.embeddingCache.has(text)) {
       this.performanceMetrics.cacheHits++;
@@ -168,12 +158,6 @@ class NYLAEmbeddingService {
       
       // Extract embedding array
       const embedding = Array.from(output.data);
-      
-      console.log('✅ Generated embedding:', {
-        dimension: embedding.length,
-        sampleValues: embedding.slice(0, 5),
-        embeddingTime: (performance.now() - startTime).toFixed(2) + 'ms'
-      });
       
       // Track performance
       const embeddingTime = performance.now() - startTime;

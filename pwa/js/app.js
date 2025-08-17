@@ -156,6 +156,156 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize splash screen
   initializeSplashScreen();
   
+  // Start embedding model preload during splash screen for faster first NYLA query
+  preloadEmbeddingModel();
+  
+  /**
+   * Preload embedding model during splash screen for instant first NYLA query
+   * Runs in background while splash video plays (4.5-5 seconds available)
+   */
+  async function preloadEmbeddingModel() {
+    // Skip on mobile devices to save resources
+    const isLikelyMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isLikelyMobile) {
+      console.log('PWA: 📱 Mobile device detected - skipping embedding model preload');
+      return;
+    }
+    
+    console.log('PWA: 🚀 Starting embedding model preload during splash screen...');
+    const preloadStartTime = Date.now();
+    
+    // Get UI elements for progress feedback
+    const embeddingStatus = document.getElementById('embeddingPreloadStatus');
+    const progressFill = document.getElementById('preloadProgressFill');
+    const preloadText = embeddingStatus?.querySelector('.preload-text');
+    
+    // Show progress indicator after 1 second (let splash video start first)
+    let progressShown = false;
+    const showProgress = () => {
+      if (embeddingStatus && !progressShown) {
+        embeddingStatus.style.display = 'block';
+        progressShown = true;
+      }
+    };
+    
+    // Simulate progress during model loading
+    const updateProgress = (percentage, message) => {
+      if (progressFill) {
+        progressFill.style.width = `${percentage}%`;
+      }
+      if (preloadText && message) {
+        preloadText.textContent = message;
+      }
+    };
+    
+    try {
+      // Create embedding service instance early
+      if (typeof getEmbeddingService === 'function') {
+        console.log('PWA: 📦 Creating embedding service instance...');
+        
+        setTimeout(showProgress, 1000); // Show after 1 second
+        updateProgress(10, '🧠 Preparing AI features...');
+        
+        const embeddingService = getEmbeddingService();
+        
+        // Validate embedding service was created successfully
+        if (!embeddingService) {
+          throw new Error('Failed to create embedding service instance');
+        }
+        
+        // Start model initialization in background
+        console.log('PWA: 🤖 Initializing embedding model (this may take ~7 seconds)...');
+        updateProgress(25, '🤖 Loading AI model...');
+        
+        // Use timeout to prevent blocking splash screen if model loading hangs
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Embedding model preload timeout after 10 seconds')), 10000);
+        });
+        
+        // Track progress during initialization
+        let progressInterval;
+        try {
+          progressInterval = setInterval(() => {
+            const elapsed = Date.now() - preloadStartTime;
+            const progressPercentage = Math.min(25 + (elapsed / 7000) * 65, 90); // 25% to 90% over 7 seconds
+            updateProgress(progressPercentage, '🤖 Loading AI model...');
+          }, 200);
+          
+          const initPromise = embeddingService.initialize();
+          
+          // Race between initialization and timeout
+          await Promise.race([initPromise, timeoutPromise]);
+          
+          // Validate model was actually loaded
+          if (!embeddingService.modelLoaded) {
+            throw new Error('Embedding model loaded but modelLoaded flag is false');
+          }
+          
+          clearInterval(progressInterval);
+          updateProgress(100, '✅ AI ready!');
+          
+          const preloadTime = Date.now() - preloadStartTime;
+          console.log(`PWA: ✅ Embedding model preloaded successfully in ${preloadTime}ms`);
+          console.log('PWA: 💫 First NYLA query will now be instant!');
+          
+          // Store preload success flag for UI feedback
+          window.nylaEmbeddingPreloaded = true;
+          window.nylaEmbeddingPreloadTime = preloadTime;
+          
+          // Hide progress after success
+          setTimeout(() => {
+            if (embeddingStatus) {
+              embeddingStatus.style.display = 'none';
+            }
+          }, 1000);
+          
+        } catch (initError) {
+          // Clean up progress interval on any initialization error
+          if (progressInterval) {
+            clearInterval(progressInterval);
+          }
+          throw initError; // Re-throw to outer catch block
+        }
+        
+      } else {
+        console.warn('PWA: ⚠️ getEmbeddingService not available - preload skipped');
+        
+        // Mark as service unavailable for better error tracking
+        window.nylaEmbeddingPreloaded = false;
+        window.nylaEmbeddingPreloadError = 'getEmbeddingService function not available';
+      }
+    } catch (error) {
+      const preloadTime = Date.now() - preloadStartTime;
+      console.warn(`PWA: ⚠️ Embedding model preload failed after ${preloadTime}ms:`, error.message);
+      console.log('PWA: 📍 First NYLA query will still work but will have initial delay');
+      
+      // Update UI for failure with specific error handling
+      const isTimeoutError = error.message.includes('timeout');
+      const isNetworkError = error.message.includes('fetch') || error.message.includes('network');
+      
+      let failureMessage = '⚠️ AI loading failed';
+      if (isTimeoutError) {
+        failureMessage = '⏱️ AI loading timeout';
+      } else if (isNetworkError) {
+        failureMessage = '🌐 Network issue';
+      }
+      
+      updateProgress(0, failureMessage);
+      setTimeout(() => {
+        if (embeddingStatus) {
+          embeddingStatus.style.display = 'none';
+        }
+      }, 2000);
+      
+      // Store detailed preload failure info for debugging and UI feedback
+      window.nylaEmbeddingPreloaded = false;
+      window.nylaEmbeddingPreloadError = error.message;
+      window.nylaEmbeddingPreloadTime = preloadTime;
+      window.nylaEmbeddingPreloadErrorType = isTimeoutError ? 'timeout' : 
+                                             isNetworkError ? 'network' : 'unknown';
+    }
+  }
+  
   // Generate initial QR code with default values (after splash)
   async function initializeApp() {
     // Load saved username from localStorage
@@ -178,6 +328,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load Roboto font for NYLA conversation
     loadRobotoFont();
+    
+    // Show embedding preload status to user
+    showEmbeddingPreloadStatus();
     
     // Start WebLLM preload in background for faster NYLA responses (desktop only)
     // This happens after splash screen, so users can use other tabs while engine loads
@@ -2026,6 +2179,38 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   console.log('NYLA GO PWA: Application initialized successfully');
+
+  // Show embedding preload status for debugging and user feedback
+  function showEmbeddingPreloadStatus() {
+    // Skip on mobile devices since preload is disabled
+    const isLikelyMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isLikelyMobile) {
+      return;
+    }
+    
+    // Wait a moment for preload to potentially complete
+    setTimeout(() => {
+      const nylaTab = document.getElementById('nylaTab');
+      const nylaPlaceholder = nylaTab?.querySelector('.nyla-loading-placeholder p');
+      
+      if (nylaPlaceholder) {
+        if (window.nylaEmbeddingPreloaded === true) {
+          const preloadTime = window.nylaEmbeddingPreloadTime || 'unknown';
+          nylaPlaceholder.innerHTML = `NYLA is starting up...<br><small style="color: #4CAF50;">🚀 AI model preloaded in ${preloadTime}ms - first query will be fast!</small>`;
+          console.log('PWA: ✅ Embedding preload success message shown to user');
+        } else if (window.nylaEmbeddingPreloaded === false && window.nylaEmbeddingPreloadError) {
+          const errorType = window.nylaEmbeddingPreloadErrorType || 'unknown';
+          const preloadTime = window.nylaEmbeddingPreloadTime || 'unknown';
+          nylaPlaceholder.innerHTML = `NYLA is starting up...<br><small style="color: #FFA726;">⚠️ AI model preload ${errorType} (${preloadTime}ms) - first query may be slower</small>`;
+          console.log('PWA: ⚠️ Embedding preload failure message shown to user');
+        } else {
+          // Still loading or unknown state
+          nylaPlaceholder.innerHTML = `NYLA is starting up...<br><small style="color: #2196F3;">🤖 AI model loading in background...</small>`;
+          console.log('PWA: 🔄 Embedding preload in progress message shown to user');
+        }
+      }
+    }, 2000); // Wait 2 seconds for preload to complete or fail
+  }
 
   // Font loading function
   function loadRobotoFont() {

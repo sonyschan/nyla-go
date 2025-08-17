@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test RAG: What is NYLA?</title>
+    <style>
+        body { font-family: monospace; margin: 20px; background: #1a1a1a; color: #fff; }
+        .test-section { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+        .result { margin: 10px 0; padding: 10px; background: #333; border-radius: 4px; }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+        .info { border-left: 4px solid #2196F3; }
+        button { padding: 10px 20px; margin: 5px; background: #ff6b35; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        pre { background: #111; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test RAG: "What is NYLA?"</h1>
+    <p>Debug why RAG context is not reaching the hosted LLM for this specific query.</p>
+
+    <div class="test-section">
+        <button onclick="testVectorDBLoad()">1. Test Vector DB Load</button>
+        <button onclick="testSemanticSearch()">2. Test Semantic Search</button>
+        <button onclick="testRAGPipeline()">3. Test RAG Pipeline</button>
+        <button onclick="testFullFlow()">4. Test Full Flow</button>
+        <div id="testResults"></div>
+    </div>
+
+    <!-- Load required components -->
+    <script src="js/rag/nyla-environment.js"></script>
+    <script src="js/rag/nyla-embedding-service.js"></script>
+    <script src="js/rag/nyla-vector-db.js"></script>
+    <script src="js/rag/nyla-semantic-retriever.js"></script>
+    <script src="js/rag/nyla-rag-pipeline.js"></script>
+    <script src="js/rag/nyla-context-builder.js"></script>
+    <script src="js/rag/nyla-kb-version-manager.js"></script>
+
+    <script>
+        let vectorDB, embeddingService, retriever;
+        
+        async function testVectorDBLoad() {
+            const resultsDiv = document.getElementById('testResults');
+            try {
+                resultsDiv.innerHTML += `<div class="result info"><strong>🔄 Testing Vector DB Load...</strong></div>`;
+                
+                // Initialize vector DB
+                vectorDB = new NYLAVectorDB();
+                await vectorDB.initialize();
+                
+                const stats = vectorDB.getStats();
+                const hasData = stats.totalChunks > 0;
+                
+                const resultHTML = `
+                    <div class="result ${hasData ? 'success' : 'error'}">
+                        <strong>${hasData ? '✅' : '❌'} Vector DB Load Test</strong><br>
+                        <strong>Total Chunks:</strong> ${stats.totalChunks || 0}<br>
+                        <strong>Status:</strong> ${hasData ? 'Data loaded successfully' : 'No data found'}<br>
+                        <pre>${JSON.stringify(stats, null, 2)}</pre>
+                    </div>
+                `;
+                resultsDiv.innerHTML += resultHTML;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>❌ Vector DB Load Failed</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testSemanticSearch() {
+            const resultsDiv = document.getElementById('testResults');
+            try {
+                resultsDiv.innerHTML += `<div class="result info"><strong>🔄 Testing Semantic Search...</strong></div>`;
+                
+                if (!vectorDB) {
+                    throw new Error('Vector DB not initialized. Run test 1 first.');
+                }
+                
+                // Initialize embedding service
+                embeddingService = getEmbeddingService();
+                await embeddingService.initialize();
+                
+                // Create semantic retriever
+                retriever = new NYLASemanticRetriever(vectorDB, embeddingService);
+                
+                // Test retrieval for "What is NYLA?"
+                const query = "What is NYLA?";
+                const results = await retriever.retrieve(query, {
+                    topK: 5,
+                    minScore: 0.3
+                });
+                
+                const resultHTML = `
+                    <div class="result ${results.length > 0 ? 'success' : 'error'}">
+                        <strong>${results.length > 0 ? '✅' : '❌'} Semantic Search Test</strong><br>
+                        <strong>Query:</strong> "${query}"<br>
+                        <strong>Results Found:</strong> ${results.length}<br>
+                        <strong>Top Result Score:</strong> ${results[0]?.finalScore?.toFixed(3) || 'N/A'}<br>
+                        <pre>${JSON.stringify(results.map(r => ({
+                            id: r.id,
+                            score: r.finalScore?.toFixed(3),
+                            text: r.text?.substring(0, 100) + '...',
+                            metadata: r.metadata
+                        })), null, 2)}</pre>
+                    </div>
+                `;
+                resultsDiv.innerHTML += resultHTML;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>❌ Semantic Search Failed</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testRAGPipeline() {
+            const resultsDiv = document.getElementById('testResults');
+            try {
+                resultsDiv.innerHTML += `<div class="result info"><strong>🔄 Testing RAG Pipeline...</strong></div>`;
+                
+                // Create mock LLM engine
+                const mockLLM = {
+                    constructor: { name: 'MockLLM' },
+                    generateResponse: async (query, contextData) => {
+                        return {
+                            text: `Mock response for: "${query}" with context: ${JSON.stringify(contextData).substring(0, 100)}...`
+                        };
+                    }
+                };
+                
+                // Create RAG pipeline
+                const ragPipeline = new NYLARAGPipeline();
+                await ragPipeline.initialize({}, mockLLM);
+                
+                // Test query
+                const query = "What is NYLA?";
+                const result = await ragPipeline.query(query);
+                
+                const resultHTML = `
+                    <div class="result ${result.sources && result.sources.length > 0 ? 'success' : 'error'}">
+                        <strong>${result.sources && result.sources.length > 0 ? '✅' : '❌'} RAG Pipeline Test</strong><br>
+                        <strong>Query:</strong> "${query}"<br>
+                        <strong>Sources Found:</strong> ${result.sources?.length || 0}<br>
+                        <strong>Confidence:</strong> ${result.metrics?.confidence?.toFixed(3) || 'N/A'}<br>
+                        <strong>Response:</strong> ${result.response?.substring(0, 200) || 'No response'}...<br>
+                        <pre>${JSON.stringify({
+                            sources: result.sources?.map(s => ({ title: s.title, score: s.score })),
+                            metrics: result.metrics
+                        }, null, 2)}</pre>
+                    </div>
+                `;
+                resultsDiv.innerHTML += resultHTML;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>❌ RAG Pipeline Failed</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFullFlow() {
+            const resultsDiv = document.getElementById('testResults');
+            try {
+                resultsDiv.innerHTML += `<div class="result info"><strong>🔄 Testing Full RAG→LLM Flow...</strong></div>`;
+                
+                // This simulates what should happen when user types "What is NYLA?"
+                const query = "What is NYLA?";
+                
+                // Step 1: Check if RAG integration exists
+                const hasRAGIntegration = typeof window.enhanceConversationManagerWithRAG === 'function';
+                
+                // Step 2: Check if conversation manager is enhanced
+                let ragStatus = 'Not available';
+                if (window.conversationManager && window.conversationManager.getRAGStatus) {
+                    ragStatus = window.conversationManager.getRAGStatus();
+                }
+                
+                const resultHTML = `
+                    <div class="result info">
+                        <strong>🔍 Full Flow Analysis</strong><br>
+                        <strong>Query:</strong> "${query}"<br>
+                        <strong>RAG Integration Available:</strong> ${hasRAGIntegration ? 'Yes' : 'No'}<br>
+                        <strong>Conversation Manager Enhanced:</strong> ${window.conversationManager?.getRAGStatus ? 'Yes' : 'No'}<br>
+                        <strong>RAG Status:</strong> <pre>${JSON.stringify(ragStatus, null, 2)}</pre>
+                        <strong>Issue:</strong> ${hasRAGIntegration && ragStatus ? 'Unknown - need to trace processQuestion call' : 'RAG integration not properly set up'}
+                    </div>
+                `;
+                resultsDiv.innerHTML += resultHTML;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="result error">
+                        <strong>❌ Full Flow Test Failed</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 RAG Debug Test initialized');
+            document.getElementById('testResults').innerHTML = `
+                <div class="result info">
+                    <strong>📋 Test Instructions</strong><br>
+                    Run tests in order to debug why "What is NYLA?" query shows no RAG context in hosted LLM logs.
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

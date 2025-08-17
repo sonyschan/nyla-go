@@ -1,23 +1,20 @@
 {
   "chunks": [
     {
-      "id": "ecosystem_partners_wangchai_collaboration",
-      "source_id": "wangchai_nyla_partnership",
+      "id": "ecosystem_wangchai_project_overview",
+      "source_id": "wangchai_consolidated_overview",
       "type": "ecosystem",
       "lang": "bilingual",
-      "title": "WangChai (旺柴) Project Introduction & Partnership Overview",
       "section": "community_partnerships",
-      "tags": ["wangchai", "旺柴", "项目介绍", "项目", "介绍", "旺柴项目", "旺柴是什么", "跟我说说旺柴", "说说旺柴", "关于旺柴", "旺柴这个项目", "区块链项目", "社区项目", "community", "ama", "chinese", "eastern", "western", "bridge", "collaboration", "partnership", "cross-cultural", "what_is", "about", "project_info", "introduction", "overview", "description"],
+      "tags": ["wangchai", "旺柴", "项目介绍", "项目", "介绍", "旺柴项目", "旺柴是什么", "跟我说说旺柴", "说说旺柴", "关于旺柴", "旺柴这个项目", "区块链项目", "社区项目", "community", "ama", "chinese", "eastern", "western", "bridge", "collaboration", "partnership", "cross-cultural", "what_is", "about", "project_info", "introduction", "overview", "description", "joint_events", "looky"],
       "as_of": "2025-08-15",
       "stability": "evolving",
       "source_url": "internal://nyla/ecosystem/partnerships/wangchai",
-      "hash": "eco_part_wangchai_001",
-      "body": "跟我說說旺柴這個項目：关于旺柴项目，旺柴是什么？说说旺柴这个项目的详细信息。旺柴 (WangChai) 是什么项目？旺柴项目介绍如下：旺柴是一个社区驱动的区块链项目，专注于建设强大的社区参与度并交付计划中的里程碑。关于旺柴项目，你应该知道这是一个社区驱动的区块链项目，拥有强大的社区基础。旺柴项目的主要特点包括：社区驱动、区块链技术、跨文化合作。旺柴项目现状：截至2025年8月，旺柴已发展至4,820个推特成员和3,000个电报成员（总计7,820个社区成员）。WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise. The project has released version 1.0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages. WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025. WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach.",
-      "summary_en": "WangChai (旺柴) is a growing blockchain community project with 7,800+ members that maintains a deep partnership with NYLA through joint AMAs and serves as a bridge between Eastern and Western crypto communities.",
-      "summary_zh": "旺柴是一個不斷增長的區塊鏈社區項目，擁有7,800+成員，通過聯合AMA與NYLA保持深度合作，作為東西方加密社區之間的橋樑。",
-      "priority": 7,
-      "related_chunks": ["ecosystem_partnerships_mifenggou", "ecosystem_campaigns_chinese_community_outreach"],
-      "glossary_terms": ["WangChai", "旺柴", "旺柴项目", "项目介绍", "Chai cards", "柴卡", "cross-community bridge", "AMA", "Eastern-Western communities", "区块链项目", "社区项目"],
+      "hash": "eco_wangchai_consolidated_001",
+      "content": "WangChai (旺柴) - Comprehensive Project Overview & NYLA Partnership: WangChai (旺柴) Complete Project Overview: 跟我說說旺柴這個項目：关于旺柴项目，旺柴是什么？说说旺柴这个项目的详细信息。旺柴 (WangChai) 是什么项目？旺柴项目介绍如下：旺柴是一个社区驱动的区块链项目，专注于建设强大的社区参与度并交付计划中的里程碑。关于旺柴项目，你应该知道这是一个社区驱动的区块链项目，拥有强大的社区基础。旺柴项目的主要特点包括：社区驱动、区块链技术、跨文化合作。旺柴项目现状：截至2025年8月，旺柴已发展至4,820个推特成员和3,000个电报成员（总计7,820个社区成员）。WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise. The project has released version 1.0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages. WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach. NYLA Partnership & Joint AMAs: WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025. NYLA and WangChai have conducted a series of joint AMA (Ask Me Anything) sessions to strengthen their partnership and introduce NYLA to the Chinese-speaking community. On August 15, 2025, a Chinese-language AMA was planned where participant 'Looky' was invited to introduce the NYLA project to the WangChai community. These AMAs serve as a key mechanism for deepening ties between the projects and facilitating cross-cultural understanding in the crypto space, focusing on educating WangChai's community about NYLA's capabilities while building stronger collaborative relationships.",
+      "priority": 8,
+      "related_chunks": ["ecosystem_wangchai_technical_details"],
+      "glossary_terms": ["WangChai", "旺柴", "旺柴项目", "项目介绍", "Chai cards", "柴卡", "cross-community bridge", "AMA", "Eastern-Western communities", "区块链项目", "社区项目", "Joint AMA", "Looky", "Chinese-language", "cross-cultural engagement", "community introduction"],
       "partnership": {
         "type": "community_collaboration",
         "status": "active",
@@ -25,7 +22,7 @@
         "focus_areas": ["community_building", "cross_cultural_engagement", "joint_events", "social_media_outreach"],
         "collaboration_activities": [
           "joint_ama_sessions",
-          "community_cross_promotion",
+          "community_cross_promotion", 
           "cultural_bridge_building",
           "social_media_cooperation"
         ],
@@ -45,27 +42,8 @@
         "geographic_focus": "eastern_markets",
         "primary_language": "chinese",
         "bridge_function": "eastern_western_communities"
-      }
-    },
-    {
-      "id": "ecosystem_campaigns_wangchai_nyla_amas",
-      "source_id": "wangchai_nyla_joint_amas",
-      "type": "ecosystem", 
-      "lang": "bilingual",
-      "title": "NYLA x WangChai Joint AMA Series",
-      "section": "joint_events",
-      "tags": ["ama", "wangchai", "旺柴", "chinese", "community", "joint_events", "cross_cultural", "looky", "introduction"],
-      "as_of": "2025-08-15",
-      "stability": "evolving",
-      "source_url": "internal://nyla/campaigns/wangchai-amas",
-      "hash": "camp_wangchai_ama_001",
-      "body": "NYLA and WangChai have conducted a series of joint AMA (Ask Me Anything) sessions to strengthen their partnership and introduce NYLA to the Chinese-speaking community. As of August 12, 2025, two joint AMA sessions have been completed. On August 15, 2025, a Chinese-language AMA was planned where participant 'Looky' was invited to introduce the NYLA project to the WangChai community. These AMAs serve as a key mechanism for deepening ties between the projects and facilitating cross-cultural understanding in the crypto space. The sessions focus on educating WangChai's community about NYLA's capabilities while building stronger collaborative relationships.",
-      "summary_en": "Joint AMA series between NYLA and WangChai featuring Chinese-language sessions to introduce NYLA to Eastern markets, with 'Looky' as a key community bridge.",
-      "summary_zh": "NYLA與旺柴的聯合AMA系列，包含中文場次向東方市場介紹NYLA，'Looky'作為重要的社區橋樑。",
-      "priority": 6,
-      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "ecosystem_campaigns_chinese_market_expansion"],
-      "glossary_terms": ["Joint AMA", "Looky", "Chinese-language", "cross-cultural engagement", "community introduction"],
-      "campaign_details": {
+      },
+      "ama_details": {
         "campaign_type": "joint_ama_series",
         "status": "ongoing",
         "sessions_completed": 2,
@@ -79,23 +57,22 @@
       }
     },
     {
-      "id": "facts_wangchai_contract_specs",
-      "source_id": "wangchai_technical_specifications",
+      "id": "ecosystem_wangchai_technical_details",
+      "source_id": "wangchai_consolidated_technical",
       "type": "facts",
-      "lang": "bilingual",
-      "title": "WangChai (旺柴) Contract Address & Technical Specifications",
-      "section": "technical_specifications",
-      "tags": ["wangchai", "旺柴", "contract", "address", "solana", "token", "bonk_fun", "verification", "ticker", "合约地址", "代币", "技术规格", "技术", "technical", "specs", "blockchain", "crypto"],
+      "lang": "bilingual", 
+      "section": "technical_specifications_and_community",
+      "tags": ["wangchai", "旺柴", "contract", "address", "solana", "token", "bonk_fun", "verification", "ticker", "合约地址", "代币", "技术规格", "技术", "technical", "specs", "blockchain", "crypto", "official", "links", "x", "telegram", "linktree", "community", "社区", "社交媒体", "社交", "官方链接", "官方", "链接", "联系", "联系方式", "X账户", "推特", "电报", "社区在哪", "旺柴的社区", "旺柴社区", "怎么联系", "如何联系", "在哪里找到", "官方渠道", "旺柴X", "旺柴Telegram", "contact", "social", "where", "find", "channels", "community_links", "social_media", "join", "follow", "connect", "加入", "关注", "连接", "在哪", "思的社区"],
       "as_of": "2025-08-15",
       "stability": "stable",
       "source_url": "https://x.com/WangChaidotbonk",
-      "hash": "facts_wangchai_contract_001",
-      "body": "WangChai (旺柴) is a Solana-based token with the ticker symbol $旺柴. The official contract address is 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk. The token was launched on bonk.fun platform and is identified as the 'No.1 Chinese Ticker' and 'Born CTO on @bonk_fun'. WangChai is recognized as one of the most popular emoji expressions on WeChat. The project slogan is '命里有柴，命里有财！' which represents good fortune and wealth in Chinese culture. All technical specifications and contract details can be verified through the official X account and linked resources.",
-      "summary_en": "WangChai ($旺柴) is a Solana token at contract address 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk, launched on bonk.fun as the No.1 Chinese ticker.",
-      "summary_zh": "旺柴 ($旺柴) 是索拉納代幣，合約地址為 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk，在 bonk.fun 上推出，為第一中文股票代碼。",
+      "hash": "eco_wangchai_consolidated_002",
+      "content": "WangChai (旺柴) - Technical Specifications & Official Community Channels: WangChai (旺柴) Technical Specifications & Contract Information: WangChai (旺柴) is a Solana-based token with the ticker symbol $旺柴. The official contract address is 83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk. The token was launched on bonk.fun platform and is identified as the 'No.1 Chinese Ticker' and 'Born CTO on @bonk_fun'. WangChai is recognized as one of the most popular emoji expressions on WeChat. The project slogan is '命里有柴，命里有财！' which represents good fortune and wealth in Chinese culture. All technical specifications and contract details can be verified through the official X account and linked resources. WangChai Official Community Channels & Contact Information: 旺柴官方社区和联系方式指南。如何联系旺柴？旺柴的社区在哪里？以下是旺柴所有官方渠道的完整列表。旺柴官方渠道包括四个主要平台： 1) 官方 X 账户：@WangChaidotbonk (https://x.com/WangChaidotbonk) - 这是旺柴的主要官方社交媒体账户，用于发布最新消息和公告。 2) 旺柴中心化链接平台：linktr.ee/WangchaiDoge - 提供所有官方链接的集中访问点。 3) 旺柴官方 X 社区：https://x.com/i/communities/1941027470058434674 - 专门用于社区讨论和项目更新。 4) 旺柴 Telegram 社区：https://t.me/wechatdogesol - 提供实时交流和即时通讯。这些渠道是旺柴官方信息发布和社区参与的主要验证点。想要加入旺柴社区或获取最新信息，请通过以上官方渠道进行联系和关注。",
       "priority": 9,
-      "related_chunks": ["ecosystem_partners_wangchai_collaboration"],
-      "glossary_terms": ["contract address", "Solana token", "ticker symbol", "bonk.fun", "verification"],
+      "related_chunks": ["ecosystem_wangchai_project_overview"],
+      "content_type": "technical_and_social_media",
+      "query_boost": ["contract", "address", "technical", "specs", "social", "links", "contact", "community", "follow", "where", "find", "join", "official"],
+      "glossary_terms": ["contract address", "Solana token", "ticker symbol", "bonk.fun", "verification", "official links", "X Community", "Telegram", "Linktree", "community channels", "social media", "contact WangChai", "旺柴社区", "旺柴官方", "旺柴联系", "community links", "where to find", "join community"],
       "technical_specs": {
         "blockchain": "solana",
         "contract_address": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
@@ -105,26 +82,7 @@
         "verification_required": true,
         "official_designation": "No.1 Chinese Ticker",
         "cultural_significance": "top_wechat_emoji"
-      }
-    },
-    {
-      "id": "facts_wangchai_official_links",
-      "source_id": "wangchai_official_channels",
-      "type": "facts",
-      "lang": "bilingual", 
-      "title": "WangChai (旺柴) Official Links & Community Channels",
-      "section": "official_channels",
-      "tags": ["wangchai", "旺柴", "official", "links", "x", "telegram", "linktree", "community", "verification", "社区", "社交媒体", "社交", "官方链接", "官方", "链接", "联系", "联系方式", "X账户", "推特", "电报", "社区在哪", "旺柴的社区", "旺柴社区", "怎么联系", "如何联系", "在哪里找到", "官方渠道", "旺柴X", "旺柴Telegram", "contact", "social", "where", "find", "channels", "community_links", "social_media", "join", "follow", "connect", "加入", "关注", "连接", "在哪", "思的社区"],
-      "as_of": "2025-08-15",
-      "stability": "stable",
-      "source_url": "https://x.com/WangChaidotbonk",
-      "hash": "facts_wangchai_links_001",
-      "body": "WangChai (旺柴) Official Community Channels & Contact Information: 旺柴官方社区和联系方式指南。如何联系旺柴？旺柴的社区在哪里？以下是旺柴所有官方渠道的完整列表。旺柴官方渠道包括四个主要平台： 1) 官方 X 账户：@WangChaidotbonk (https://x.com/WangChaidotbonk) - 这是旺柴的主要官方社交媒体账户，用于发布最新消息和公告。 2) 旺柴中心化链接平台：linktr.ee/WangchaiDoge - 提供所有官方链接的集中访问点。 3) 旺柴官方 X 社区：https://x.com/i/communities/1941027470058434674 - 专门用于社区讨论和项目更新。 4) 旺柴 Telegram 社区：https://t.me/wechatdogesol - 提供实时交流和即时通讯。这些渠道是旺柴官方信息发布和社区参与的主要验证点。想要加入旺柴社区或获取最新信息，请通过以上官方渠道进行联系和关注。",
-      "summary_en": "WangChai's official community channels include X account @WangChaidotbonk, Linktree hub at linktr.ee/WangchaiDoge, X Community, and Telegram at https://t.me/wechatdogesol for community engagement and contact.",
-      "summary_zh": "旺柴官方社区渠道包括X账户@WangChaidotbonk、Linktree中心linktr.ee/WangchaiDoge、X社区和Telegram https://t.me/wechatdogesol，用于社区交流和联系。",
-      "priority": 8,
-      "related_chunks": ["ecosystem_partners_wangchai_collaboration", "facts_wangchai_contract_specs"],
-      "glossary_terms": ["official links", "verification", "X Community", "Telegram", "Linktree", "community channels", "social media", "contact WangChai", "旺柴社区", "旺柴官方", "旺柴联系", "community links", "where to find", "join community"],
+      },
       "official_channels": {
         "x_account": {
           "handle": "@WangChaidotbonk",
@@ -140,7 +98,7 @@
           "purpose": "community_discussions"
         },
         "telegram": {
-          "url": "https://t.me/wechatdogesol", 
+          "url": "https://t.me/wechatdogesol",
           "purpose": "real_time_communication"
         },
         "verification_status": "official_verified"

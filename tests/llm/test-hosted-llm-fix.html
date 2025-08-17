@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Hosted LLM Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #222;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #E55A25;
+        }
+        #output {
+            background: #111;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Hosted LLM Fix</h1>
+    
+    <div class="test-section">
+        <h2>Direct API Test</h2>
+        <button onclick="testDirectAPI()">Test Direct API Call</button>
+        <button onclick="testWithContext()">Test With Context Array</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Query</h2>
+        <input type="text" id="testQuery" value="What is NYLA?" style="width: 100%; padding: 8px; background: #333; color: white; border: 1px solid #555;">
+        <button onclick="testHostedLLM()">Test Hosted LLM Class</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString().substr(11, 8);
+            const className = type;
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function testDirectAPI() {
+            log('Testing direct API call...', 'info');
+            
+            try {
+                const response = await fetch('https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Correlation-ID': 'test-' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        user_query: "What is NYLA?",
+                        context: ["NYLA is a cryptocurrency assistant that helps with transfers"],
+                        params: {
+                            max_tokens: 1200,
+                            temperature: 0.3,
+                            top_p: 0.9
+                        },
+                        ab: 'cloud',
+                        session_id: 'test-session',
+                        tenant_id: 'nyla-pwa'
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    log(`HTTP ${response.status}: ${error}`, 'error');
+                    return;
+                }
+
+                const result = await response.json();
+                log('✅ Direct API Success!', 'success');
+                log('Answer: ' + result.answer, 'info');
+                log('Follow-ups: ' + JSON.stringify(result.followups), 'info');
+            } catch (error) {
+                log('❌ Direct API Error: ' + error.message, 'error');
+            }
+        }
+
+        async function testWithContext() {
+            log('Testing with context array (strings)...', 'info');
+            
+            try {
+                const contextArray = [
+                    "NYLA is a cryptocurrency assistant.",
+                    "It supports Solana, Ethereum, and Algorand.",
+                    "Users can generate transfer commands."
+                ];
+
+                const response = await fetch('https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Correlation-ID': 'test-context-' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        user_query: "What blockchains does NYLA support?",
+                        context: contextArray,
+                        params: {
+                            max_tokens: 1200,
+                            temperature: 0.3,
+                            top_p: 0.9
+                        },
+                        ab: 'cloud',
+                        session_id: 'test-session',
+                        tenant_id: 'nyla-pwa'
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    log(`HTTP ${response.status}: ${error}`, 'error');
+                    return;
+                }
+
+                const result = await response.json();
+                log('✅ Context Array Test Success!', 'success');
+                log('Answer: ' + result.answer, 'info');
+            } catch (error) {
+                log('❌ Context Array Error: ' + error.message, 'error');
+            }
+        }
+
+        // Simple logger for testing
+        window.NYLALogger = {
+            debug: (msg, data) => console.log('[DEBUG]', msg, data),
+            info: (msg, data) => console.log('[INFO]', msg, data),
+            error: (msg, data) => console.error('[ERROR]', msg, data),
+            warn: (msg, data) => console.warn('[WARN]', msg, data)
+        };
+
+        // Simple config for testing
+        window.NYLALLMConfig = {
+            getHostedEndpoint: async () => 'https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer'
+        };
+    </script>
+    
+    <!-- Load the hosted LLM class -->
+    <script src="pwa/js/nyla-hosted-llm.js"></script>
+    
+    <script>
+        async function testHostedLLM() {
+            const query = document.getElementById('testQuery').value;
+            log(`Testing NYLAHostedLLM class with query: "${query}"`, 'info');
+            
+            try {
+                const hostedLLM = new NYLAHostedLLM();
+                
+                log('Initializing hosted LLM...', 'info');
+                const initialized = await hostedLLM.initialize();
+                
+                if (!initialized) {
+                    log('Failed to initialize hosted LLM', 'error');
+                    return;
+                }
+                
+                log('Hosted LLM initialized successfully', 'success');
+                
+                // Test with string context (correct format)
+                const context = [
+                    "NYLA is an AI assistant for cryptocurrency.",
+                    "It helps with transfers on Solana, Ethereum, and Algorand."
+                ];
+                
+                log('Sending request with string array context...', 'info');
+                const response = await hostedLLM.generateResponse(query, context);
+                
+                log('✅ NYLAHostedLLM Test Success!', 'success');
+                log('Response: ' + response.text, 'info');
+                log('Follow-ups: ' + JSON.stringify(response.followUpSuggestions), 'info');
+                
+            } catch (error) {
+                log('❌ NYLAHostedLLM Error: ' + error.message, 'error');
+                console.error('Full error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

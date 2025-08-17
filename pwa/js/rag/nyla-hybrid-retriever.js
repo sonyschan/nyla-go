@@ -10,7 +10,7 @@ class NYLAHybridRetriever {
     
     this.options = {
       denseTopK: 40,        // Dense vector search top-k
-      bm25TopK: 40,         // BM25 search top-k  
+      bm25TopK: 40,         // BM25 search top-k
       rerankTopK: 10,       // Final reranked results
       fusionAlpha: 0.6,     // Dense vs BM25 fusion weight (0.6 = 60% dense, 40% BM25)
       minScore: 0.1,        // Minimum score threshold

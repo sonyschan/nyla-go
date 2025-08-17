@@ -165,6 +165,38 @@
         "abbreviations": ["LANG"],
         "context": "interface language setting"
       }
+    },
+    "team_terms": {
+      "創辦人": {
+        "en_primary": "founder",
+        "en_synonyms": ["creator", "establisher"],
+        "abbreviations": [],
+        "context": "person who founded NYLA"
+      },
+      "創始人": {
+        "en_primary": "co-founder",
+        "en_synonyms": ["founding member", "co-creator"],
+        "abbreviations": [],
+        "context": "person who co-founded NYLA"
+      },
+      "開發者": {
+        "en_primary": "developer",
+        "en_synonyms": ["programmer", "engineer"],
+        "abbreviations": ["DEV"],
+        "context": "person who develops NYLA"
+      },
+      "團隊": {
+        "en_primary": "team",
+        "en_synonyms": ["group", "members"],
+        "abbreviations": [],
+        "context": "NYLA development team"
+      },
+      "創建者": {
+        "en_primary": "creator",
+        "en_synonyms": ["builder", "maker"],
+        "abbreviations": [],
+        "context": "person who created NYLA"
+      }
     }
   },
   "query_rewrite_patterns": {
@@ -175,14 +207,22 @@
       "手续费多少": ["transaction fees", "network costs", "fee structure"],
       "二维码怎么用": ["QR code usage", "how to use QR codes", "QR code guide"],
       "安全吗": ["is it secure", "security features", "safety"],
-      "错误怎么办": ["error handling", "troubleshooting", "problem solving"]
+      "错误怎么办": ["error handling", "troubleshooting", "problem solving"],
+      "NYLA創辦人有誰": ["NYLA founder", "who founded NYLA", "NYLA creator"],
+      "創辦人是誰": ["who is the founder", "founder information", "creator details"],
+      "團隊成員": ["team members", "NYLA team", "development team"],
+      "誰開發NYLA": ["who developed NYLA", "NYLA developer", "development team"],
+      "創始人": ["co-founder", "founding team", "NYLA founders"]
     },
     "expansion_terms": {
       "NYLA": ["NYLA", "Agent NYLA", "尼拉", "NYLA AI"],
       "NYLAGo": ["NYLAGo", "NYLA Go", "尼拉围棋", "interface"],
       "blockchain": ["blockchain", "区块链", "network", "chain"],
       "transfer": ["transfer", "转账", "send", "payment", "发送"],
-      "fee": ["fee", "手续费", "gas", "cost", "费用"]
+      "fee": ["fee", "手续费", "gas", "cost", "费用"],
+      "founder": ["founder", "創辦人", "創始人", "creator", "establisher"],
+      "team": ["team", "團隊", "group", "members", "development team"],
+      "developer": ["developer", "開發者", "programmer", "engineer"]
     }
   }
 }

@@ -187,7 +187,10 @@ class NYLAConversationManagerV2 {
     const inputLower = userInput.toLowerCase();
     
     // Basic topic inference from common keywords
-    if (inputLower.includes('team') || inputLower.includes('founder') || inputLower.includes('developer')) {
+    if (inputLower.includes('team') || inputLower.includes('founder') || inputLower.includes('developer') ||
+        inputLower.includes('創辦人') || inputLower.includes('創始人') || inputLower.includes('開發者') || 
+        inputLower.includes('團隊') || inputLower.includes('誰創造') || inputLower.includes('誰開發') ||
+        inputLower.includes('開發團隊') || inputLower.includes('創建者')) {
       return ['team', 'about'];
     } else if (inputLower.includes('send') || inputLower.includes('transfer') || inputLower.includes('payment')) {
       return ['transfers', 'howto'];

@@ -118,7 +118,7 @@ class NYLANodeEmbeddingBuilder {
   }
   
   /**
-   * Chunk the knowledge base
+   * Chunk the knowledge base - Enhanced for multilingual content
    */
   chunkKnowledgeBase(knowledgeBase) {
     this.logger.log('Chunking knowledge base...');
@@ -126,63 +126,117 @@ class NYLANodeEmbeddingBuilder {
     const chunks = [];
     let chunkId = 1;
     
-    for (const [category, sections] of Object.entries(knowledgeBase)) {
-      for (const [sectionKey, sectionData] of Object.entries(sections)) {
-        if (typeof sectionData === 'object' && sectionData !== null) {
-          // Handle nested structure
-          for (const [key, value] of Object.entries(sectionData)) {
-            if (typeof value === 'string' && value.length > 50) {
-              chunks.push(this.createChunk(
-                chunkId++,
-                value,
-                {
-                  category,
-                  section: sectionKey,
-                  subsection: key,
-                  source: 'knowledge_base',
-                  title: `${category} - ${sectionKey} - ${key}`,
-                  tags: [category.toLowerCase(), sectionKey.toLowerCase()],
-                  chunk_type: this.inferChunkType(key, value),
-                  updated_at: new Date().toISOString()
-                }
-              ));
-            } else if (Array.isArray(value)) {
-              // Handle arrays (like community links)
-              value.forEach((item, index) => {
-                if (typeof item === 'string' && item.length > 20) {
-                  chunks.push(this.createChunk(
-                    chunkId++,
-                    item,
-                    {
-                      category,
-                      section: sectionKey,
-                      subsection: `${key}_${index}`,
-                      source: 'knowledge_base',
-                      title: `${category} - ${sectionKey} - ${key}[${index}]`,
-                      tags: [category.toLowerCase(), sectionKey.toLowerCase()],
-                      chunk_type: 'list_item',
-                      updated_at: new Date().toISOString()
-                    }
-                  ));
-                }
-              });
-            }
-          }
-        } else if (typeof sectionData === 'string' && sectionData.length > 50) {
-          // Handle direct strings
+    // knowledgeBase is actually an array of chunks from structured KB JSON files
+    if (Array.isArray(knowledgeBase)) {
+      // Handle structured KB format where knowledgeBase is the chunks array
+      for (const kbChunk of knowledgeBase) {
+        if (this.isValidKBChunk(kbChunk)) {
+          // Create multilingual chunk by combining all text fields
+          const multilingualText = this.combineMultilingualContent(kbChunk);
+          
           chunks.push(this.createChunk(
             chunkId++,
-            sectionData,
+            multilingualText,
             {
-              category,
-              section: sectionKey,
+              category: kbChunk.section || kbChunk.type || 'unknown',
+              section: kbChunk.id,
               source: 'knowledge_base',
-              title: `${category} - ${sectionKey}`,
-              tags: [category.toLowerCase()],
-              chunk_type: this.inferChunkType(sectionKey, sectionData),
+              title: kbChunk.title || `${kbChunk.section} - ${kbChunk.id}`,
+              tags: kbChunk.tags || [],
+              chunk_type: kbChunk.type || this.inferChunkType('kb_chunk', multilingualText),
+              kb_id: kbChunk.id,
+              kb_priority: kbChunk.priority || 5,
               updated_at: new Date().toISOString()
             }
           ));
+          
+          // Also create separate summary chunks for focused retrieval
+          if (kbChunk.summary_en || kbChunk.summary_zh) {
+            const summaryText = [kbChunk.summary_en, kbChunk.summary_zh]
+              .filter(text => text && text.length > 0)
+              .join(' ');
+            
+            if (summaryText.length > 20) {
+              chunks.push(this.createChunk(
+                chunkId++,
+                summaryText,
+                {
+                  category: kbChunk.section || kbChunk.type || 'unknown',
+                  section: kbChunk.id,
+                  subsection: 'summary',
+                  source: 'knowledge_base',
+                  title: `${kbChunk.title || kbChunk.id} - summary`,
+                  tags: [...(kbChunk.tags || []), 'summary'],
+                  chunk_type: 'summary',
+                  kb_id: kbChunk.id,
+                  kb_priority: kbChunk.priority || 5,
+                  updated_at: new Date().toISOString()
+                }
+              ));
+            }
+          }
+        }
+      }
+    } else {
+      // Fallback: Handle legacy nested structure
+      for (const [category, sections] of Object.entries(knowledgeBase)) {
+        for (const [sectionKey, sectionData] of Object.entries(sections)) {
+          if (typeof sectionData === 'object' && sectionData !== null) {
+            // Handle nested structure
+            for (const [key, value] of Object.entries(sectionData)) {
+              if (typeof value === 'string' && value.length > 50) {
+                chunks.push(this.createChunk(
+                  chunkId++,
+                  value,
+                  {
+                    category,
+                    section: sectionKey,
+                    subsection: key,
+                    source: 'knowledge_base',
+                    title: `${category} - ${sectionKey} - ${key}`,
+                    tags: [category.toLowerCase(), sectionKey.toLowerCase()],
+                    chunk_type: this.inferChunkType(key, value),
+                    updated_at: new Date().toISOString()
+                  }
+                ));
+              } else if (Array.isArray(value)) {
+                // Handle arrays (like community links)
+                value.forEach((item, index) => {
+                  if (typeof item === 'string' && item.length > 20) {
+                    chunks.push(this.createChunk(
+                      chunkId++,
+                      item,
+                      {
+                        category,
+                        section: sectionKey,
+                        subsection: `${key}_${index}`,
+                        source: 'knowledge_base',
+                        title: `${category} - ${sectionKey} - ${key}[${index}]`,
+                        tags: [category.toLowerCase(), sectionKey.toLowerCase()],
+                        chunk_type: 'list_item',
+                        updated_at: new Date().toISOString()
+                      }
+                    ));
+                  }
+                });
+              }
+            }
+          } else if (typeof sectionData === 'string' && sectionData.length > 50) {
+            // Handle direct strings
+            chunks.push(this.createChunk(
+              chunkId++,
+              sectionData,
+              {
+                category,
+                section: sectionKey,
+                source: 'knowledge_base',
+                title: `${category} - ${sectionKey}`,
+                tags: [category.toLowerCase()],
+                chunk_type: this.inferChunkType(sectionKey, sectionData),
+                updated_at: new Date().toISOString()
+              }
+            ));
+          }
         }
       }
     }
@@ -214,52 +268,88 @@ class NYLANodeEmbeddingBuilder {
   }
   
   /**
-   * Split chunks that are too long
+   * Split chunks that are too long with 15% overlap
    */
-  splitLongChunk(chunk, maxTokens = 400) {
+  splitLongChunk(chunk, maxTokens = 300) {
     if (chunk.tokens <= maxTokens) {
       return [chunk];
     }
     
     const sentences = chunk.text.split(/[.!?]+/).filter(s => s.trim());
     const subChunks = [];
-    let currentChunk = '';
+    let currentSentences = [];
     let currentTokens = 0;
     let subChunkIndex = 1;
     
-    for (const sentence of sentences) {
+    // Configuration for overlap
+    const OVERLAP_PERCENT = 0.15; // 15% overlap
+    const MIN_OVERLAP_TOKENS = 20;
+    const MAX_OVERLAP_TOKENS = 50;
+    
+    for (let i = 0; i < sentences.length; i++) {
+      const sentence = sentences[i];
       const sentenceTokens = this.estimateTokens(sentence);
       
-      if (currentTokens + sentenceTokens > maxTokens && currentChunk) {
+      if (currentTokens + sentenceTokens > maxTokens && currentSentences.length > 0) {
         // Create sub-chunk
+        const chunkText = currentSentences.join('. ');
         subChunks.push(this.createChunk(
           `${chunk.id}_${subChunkIndex}`,
-          currentChunk.trim(),
+          chunkText.trim(),
           {
             ...chunk.metadata,
             parent_chunk: chunk.id,
-            chunk_part: subChunkIndex
+            chunk_part: subChunkIndex,
+            has_overlap: subChunkIndex > 1
           }
         ));
         
-        currentChunk = sentence;
-        currentTokens = sentenceTokens;
+        // Calculate overlap for next chunk
+        const targetOverlapTokens = Math.min(
+          Math.max(
+            Math.floor(currentTokens * OVERLAP_PERCENT),
+            MIN_OVERLAP_TOKENS
+          ),
+          MAX_OVERLAP_TOKENS
+        );
+        
+        // Find sentences for overlap from the end of current chunk
+        const overlapSentences = [];
+        let overlapTokenCount = 0;
+        
+        for (let j = currentSentences.length - 1; j >= 0; j--) {
+          const sent = currentSentences[j];
+          const sentTokens = this.estimateTokens(sent);
+          
+          if (overlapTokenCount + sentTokens <= targetOverlapTokens) {
+            overlapSentences.unshift(sent);
+            overlapTokenCount += sentTokens;
+          } else {
+            break;
+          }
+        }
+        
+        // Start new chunk with overlap
+        currentSentences = [...overlapSentences, sentence];
+        currentTokens = overlapTokenCount + sentenceTokens;
         subChunkIndex++;
       } else {
-        currentChunk += (currentChunk ? '. ' : '') + sentence;
+        currentSentences.push(sentence);
         currentTokens += sentenceTokens;
       }
     }
     
     // Add final sub-chunk
-    if (currentChunk.trim()) {
+    if (currentSentences.length > 0) {
+      const chunkText = currentSentences.join('. ');
       subChunks.push(this.createChunk(
         `${chunk.id}_${subChunkIndex}`,
-        currentChunk.trim(),
+        chunkText.trim(),
         {
           ...chunk.metadata,
           parent_chunk: chunk.id,
-          chunk_part: subChunkIndex
+          chunk_part: subChunkIndex,
+          has_overlap: subChunkIndex > 1
         }
       ));
     }
@@ -293,6 +383,49 @@ class NYLANodeEmbeddingBuilder {
    */
   estimateTokens(text) {
     return Math.ceil(text.length / 4);
+  }
+  
+  /**
+   * Validate knowledge base chunk structure
+   */
+  isValidKBChunk(chunk) {
+    return chunk && 
+           typeof chunk === 'object' && 
+           chunk.id && 
+           (chunk.body || chunk.summary_en || chunk.summary_zh);
+  }
+  
+  /**
+   * Combine multilingual content from KB chunk
+   */
+  combineMultilingualContent(kbChunk) {
+    const textParts = [];
+    
+    // Add title (always in both languages where available)
+    if (kbChunk.title) {
+      textParts.push(`# ${kbChunk.title}`);
+    }
+    
+    // Add main body content
+    if (kbChunk.body) {
+      textParts.push(kbChunk.body);
+    }
+    
+    // Add both English and Chinese summaries for multilingual search
+    if (kbChunk.summary_en) {
+      textParts.push(kbChunk.summary_en);
+    }
+    
+    if (kbChunk.summary_zh) {
+      textParts.push(kbChunk.summary_zh);
+    }
+    
+    // Add related terms if available
+    if (kbChunk.glossary_terms && Array.isArray(kbChunk.glossary_terms)) {
+      textParts.push(`\n## Related Terms: ${kbChunk.glossary_terms.join(', ')}`);
+    }
+    
+    return textParts.filter(text => text && text.length > 0).join('\n\n');
   }
   
   /**

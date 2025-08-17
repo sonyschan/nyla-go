@@ -388,8 +388,15 @@ class NYLAUtils {
       
       if (chunk.body) {
         fullContent.push(chunk.body);
-      } else if (chunk.summary_en) {
+      }
+      
+      // Add both English and Chinese summaries for multilingual search
+      if (chunk.summary_en) {
         fullContent.push(chunk.summary_en);
+      }
+      
+      if (chunk.summary_zh) {
+        fullContent.push(chunk.summary_zh);
       }
       
       // Extract detailed steps if available (critical for how-to guides)

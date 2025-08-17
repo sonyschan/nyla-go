@@ -58,19 +58,20 @@
     }
   },
   "chunking_guidelines": {
+    "_comment": "NOTE: These are documentation guidelines. Actual implementation in build-embeddings-nodejs.js",
     "english": {
-      "token_range": "200-300 tokens",
-      "overlap": "15-20% with adjacent chunks",
+      "token_range": "300 tokens max (implemented)",
+      "overlap": "15% with adjacent chunks (implemented)",
       "boundary": "respect sentence boundaries"
     },
     "chinese": {
-      "character_range": "350-500 characters",
-      "overlap": "15-20% with adjacent chunks", 
+      "character_range": "300 tokens max (uses same token limit)",
+      "overlap": "15% with adjacent chunks (implemented)", 
       "boundary": "respect sentence boundaries"
     },
     "bilingual": {
-      "approach": "separate chunks for each language with cross-references",
-      "linking": "use related_chunks field to connect translations"
+      "approach": "unified chunks with both languages included",
+      "linking": "use related_chunks field to connect related content"
     }
   }
 }
