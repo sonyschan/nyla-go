@@ -72,6 +72,10 @@ class NYLAHostedLLM {
             sessionId: this.sessionId,
             query: userQuery,
             queryLength: userQuery.length,
+            contextItems: Array.isArray(context) ? context.length : (context ? 1 : 0),
+            contextPreview: Array.isArray(context) && context.length > 0 ? 
+                context[0].substring(0, 200) + '...' : 
+                (context ? context.toString().substring(0, 200) + '...' : 'No context'),
             timestamp: new Date().toISOString()
         });
 
@@ -165,6 +169,10 @@ class NYLAHostedLLM {
             sessionId: this.sessionId,
             query: userQuery,
             queryLength: userQuery.length,
+            contextItems: Array.isArray(context) ? context.length : (context ? 1 : 0),
+            contextPreview: Array.isArray(context) && context.length > 0 ? 
+                context[0].substring(0, 200) + '...' : 
+                (context ? context.toString().substring(0, 200) + '...' : 'No context'),
             timestamp: new Date().toISOString()
         });
 
