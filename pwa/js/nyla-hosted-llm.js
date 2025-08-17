@@ -57,8 +57,11 @@ class NYLAHostedLLM {
 
     /**
      * Generate response from hosted LLM
+     * @param {string} userQuery - The user's query
+     * @param {Array|Object} context - Context information
+     * @param {Object} options - Additional options like language preference
      */
-    async generateResponse(userQuery, context = []) {
+    async generateResponse(userQuery, context = [], options = {}) {
         if (!this.isReady) {
             throw new Error('Hosted LLM not initialized');
         }
@@ -66,12 +69,18 @@ class NYLAHostedLLM {
         const startTime = Date.now();
         this.requestCount++;
 
+        // Detect query language
+        const detectedLanguage = this.detectLanguage(userQuery);
+        const preferredLanguage = options.language || detectedLanguage;
+
         // Log UserPrompt for debugging and monitoring
         NYLALogger.info('📝 Hosted LLM: UserPrompt', {
             requestId: this.requestCount,
             sessionId: this.sessionId,
             query: userQuery,
             queryLength: userQuery.length,
+            detectedLanguage: detectedLanguage,
+            preferredLanguage: preferredLanguage,
             contextItems: Array.isArray(context) ? context.length : (context ? 1 : 0),
             contextPreview: Array.isArray(context) && context.length > 0 ? 
                 context[0].substring(0, 200) + '...' : 
@@ -80,6 +89,14 @@ class NYLAHostedLLM {
         });
 
         try {
+            // Add language-specific system prompt if needed
+            let systemPrompt = undefined;
+            if (preferredLanguage === 'zh') {
+                systemPrompt = "CRITICAL: You MUST respond ONLY in Chinese. Do not mix any English in your response.";
+            } else if (preferredLanguage === 'en') {
+                systemPrompt = "CRITICAL: You MUST respond ONLY in English. Do not mix any other language in your response.";
+            }
+
             const requestBody = {
                 user_query: userQuery,
                 context: Array.isArray(context) ? context : [context],
@@ -90,7 +107,9 @@ class NYLAHostedLLM {
                 },
                 ab: 'cloud',
                 session_id: this.sessionId,
-                tenant_id: 'nyla-pwa'
+                tenant_id: 'nyla-pwa',
+                language_preference: preferredLanguage,  // Add language preference
+                system_prompt: systemPrompt  // Override system prompt for language enforcement
             };
 
             NYLALogger.debug('🌐 Hosted LLM: Sending request', {
@@ -154,8 +173,12 @@ class NYLAHostedLLM {
 
     /**
      * Generate streaming response from hosted LLM
+     * @param {string} userQuery - The user's query
+     * @param {Array|Object} context - Context information
+     * @param {Function} streamCallback - Callback for streaming chunks
+     * @param {Object} options - Additional options like language preference
      */
-    async generateStreamingResponse(userQuery, context = [], streamCallback) {
+    async generateStreamingResponse(userQuery, context = [], streamCallback, options = {}) {
         if (!this.isReady) {
             throw new Error('Hosted LLM not initialized');
         }
@@ -163,12 +186,18 @@ class NYLAHostedLLM {
         const startTime = Date.now();
         this.requestCount++;
 
+        // Detect query language
+        const detectedLanguage = this.detectLanguage(userQuery);
+        const preferredLanguage = options.language || detectedLanguage;
+
         // Log UserPrompt for streaming request
         NYLALogger.info('📝 Hosted LLM: UserPrompt (Streaming)', {
             requestId: this.requestCount,
             sessionId: this.sessionId,
             query: userQuery,
             queryLength: userQuery.length,
+            detectedLanguage: detectedLanguage,
+            preferredLanguage: preferredLanguage,
             contextItems: Array.isArray(context) ? context.length : (context ? 1 : 0),
             contextPreview: Array.isArray(context) && context.length > 0 ? 
                 context[0].substring(0, 200) + '...' : 
@@ -177,6 +206,14 @@ class NYLAHostedLLM {
         });
 
         try {
+            // Add language-specific system prompt if needed
+            let systemPrompt = undefined;
+            if (preferredLanguage === 'zh') {
+                systemPrompt = "CRITICAL: You MUST respond ONLY in Chinese. Do not mix any English in your response.";
+            } else if (preferredLanguage === 'en') {
+                systemPrompt = "CRITICAL: You MUST respond ONLY in English. Do not mix any other language in your response.";
+            }
+
             const requestBody = {
                 user_query: userQuery,
                 context: Array.isArray(context) ? context : [context],
@@ -187,7 +224,9 @@ class NYLAHostedLLM {
                 },
                 ab: 'cloud',
                 session_id: this.sessionId,
-                tenant_id: 'nyla-pwa'
+                tenant_id: 'nyla-pwa',
+                language_preference: preferredLanguage,  // Add language preference
+                system_prompt: systemPrompt  // Override system prompt for language enforcement
             };
 
             const streamEndpoint = this.endpoint + '/stream';
@@ -268,6 +307,26 @@ class NYLAHostedLLM {
             });
             throw error;
         }
+    }
+
+    /**
+     * Detect language from user query
+     * @param {string} text - Text to analyze
+     * @returns {string} 'en' for English, 'zh' for Chinese, 'mixed' for mixed
+     */
+    detectLanguage(text) {
+        const chineseChars = text.match(/[\u4e00-\u9fff]/g) || [];
+        const totalChars = text.replace(/\s+/g, '').length;
+        
+        if (totalChars === 0) return 'en';
+        
+        const chineseRatio = chineseChars.length / totalChars;
+        
+        if (chineseRatio > 0.3) {
+            return chineseRatio > 0.7 ? 'zh' : 'mixed';
+        }
+        
+        return 'en';
     }
 
     /**
