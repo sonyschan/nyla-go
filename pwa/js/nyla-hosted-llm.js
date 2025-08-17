@@ -66,6 +66,15 @@ class NYLAHostedLLM {
         const startTime = Date.now();
         this.requestCount++;
 
+        // Log UserPrompt for debugging and monitoring
+        NYLALogger.info('📝 Hosted LLM: UserPrompt', {
+            requestId: this.requestCount,
+            sessionId: this.sessionId,
+            query: userQuery,
+            queryLength: userQuery.length,
+            timestamp: new Date().toISOString()
+        });
+
         try {
             const requestBody = {
                 user_query: userQuery,
@@ -82,8 +91,11 @@ class NYLAHostedLLM {
 
             NYLALogger.debug('🌐 Hosted LLM: Sending request', {
                 endpoint: this.endpoint,
+                requestId: this.requestCount,
                 queryLength: userQuery.length,
-                contextItems: requestBody.context.length
+                contextItems: requestBody.context.length,
+                contextPreview: requestBody.context.length > 0 ? 
+                    requestBody.context[0].substring(0, 100) + '...' : 'No context'
             });
 
             const response = await fetch(this.endpoint, {
@@ -103,10 +115,15 @@ class NYLAHostedLLM {
             const result = await response.json();
             const latency = Date.now() - startTime;
 
-            NYLALogger.info('🌐 Hosted LLM: Response received', {
+            // Log complete response for debugging and monitoring
+            NYLALogger.info('✅ Hosted LLM: Response received', {
+                requestId: this.requestCount,
+                sessionId: this.sessionId,
                 latency,
                 answerLength: result.answer?.length || 0,
-                followupsCount: result.followups?.length || 0
+                followupsCount: result.followups?.length || 0,
+                answerPreview: result.answer ? result.answer.substring(0, 150) + '...' : 'No answer',
+                timestamp: new Date().toISOString()
             });
 
             // Transform to match local LLM response format
@@ -119,9 +136,13 @@ class NYLAHostedLLM {
 
         } catch (error) {
             const latency = Date.now() - startTime;
-            NYLALogger.error('🌐 Hosted LLM: Request failed', {
+            NYLALogger.error('❌ Hosted LLM: Request failed', {
+                requestId: this.requestCount,
+                sessionId: this.sessionId,
                 error: error.message,
-                latency
+                latency,
+                query: userQuery.substring(0, 100) + '...',
+                timestamp: new Date().toISOString()
             });
             throw error;
         }
@@ -137,6 +158,15 @@ class NYLAHostedLLM {
 
         const startTime = Date.now();
         this.requestCount++;
+
+        // Log UserPrompt for streaming request
+        NYLALogger.info('📝 Hosted LLM: UserPrompt (Streaming)', {
+            requestId: this.requestCount,
+            sessionId: this.sessionId,
+            query: userQuery,
+            queryLength: userQuery.length,
+            timestamp: new Date().toISOString()
+        });
 
         try {
             const requestBody = {
@@ -154,7 +184,10 @@ class NYLAHostedLLM {
 
             const streamEndpoint = this.endpoint + '/stream';
             NYLALogger.debug('🌐 Hosted LLM: Starting stream', {
-                endpoint: streamEndpoint
+                endpoint: streamEndpoint,
+                requestId: this.requestCount,
+                queryLength: userQuery.length,
+                contextItems: requestBody.context.length
             });
 
             const response = await fetch(streamEndpoint, {
