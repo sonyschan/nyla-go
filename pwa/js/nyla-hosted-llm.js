@@ -69,9 +69,14 @@ class NYLAHostedLLM {
         const startTime = Date.now();
         this.requestCount++;
 
+        // Get user's saved language preference from shared localStorage
+        const savedLanguage = localStorage.getItem('nylago-language') || null;
+        
         // Detect query language
         const detectedLanguage = this.detectLanguage(userQuery);
-        const preferredLanguage = options.language || detectedLanguage;
+        
+        // Priority: options.language > saved preference > detected language
+        const preferredLanguage = options.language || savedLanguage || detectedLanguage;
 
         // Log UserPrompt for debugging and monitoring
         NYLALogger.info('📝 Hosted LLM: UserPrompt', {
@@ -79,6 +84,7 @@ class NYLAHostedLLM {
             sessionId: this.sessionId,
             query: userQuery,
             queryLength: userQuery.length,
+            savedLanguage: savedLanguage,
             detectedLanguage: detectedLanguage,
             preferredLanguage: preferredLanguage,
             contextItems: Array.isArray(context) ? context.length : (context ? 1 : 0),
@@ -186,9 +192,14 @@ class NYLAHostedLLM {
         const startTime = Date.now();
         this.requestCount++;
 
+        // Get user's saved language preference from shared localStorage
+        const savedLanguage = localStorage.getItem('nylago-language') || null;
+        
         // Detect query language
         const detectedLanguage = this.detectLanguage(userQuery);
-        const preferredLanguage = options.language || detectedLanguage;
+        
+        // Priority: options.language > saved preference > detected language
+        const preferredLanguage = options.language || savedLanguage || detectedLanguage;
 
         // Log UserPrompt for streaming request
         NYLALogger.info('📝 Hosted LLM: UserPrompt (Streaming)', {
