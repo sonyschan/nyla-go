@@ -39,7 +39,19 @@ class NYLARAGIntegration {
       
       // Get knowledge base and LLM engine from conversation manager
       const knowledgeBase = this.conversationManager.kb;
-      const llmEngine = this.conversationManager.getActiveLLM();
+      let llmEngine = await this.conversationManager.getActiveLLM();
+      
+      // If LLM engine is not available yet, try to get it again after a short delay
+      if (!llmEngine) {
+        console.log('⏳ LLM engine not yet available, retrying...');
+        // Wait a moment for the LLM to initialize
+        await new Promise(resolve => setTimeout(resolve, 100));
+        llmEngine = await this.conversationManager.getActiveLLM();
+        
+        if (!llmEngine) {
+          console.warn('⚠️ LLM engine still not available, will be set later');
+        }
+      }
       
       // Initialize pipeline (LLM can be null initially, will be set later)
       await this.ragPipeline.initialize(knowledgeBase, llmEngine);
@@ -622,13 +634,15 @@ class NYLARAGIntegration {
   /**
    * Update the LLM engine when it becomes available
    */
-  updateLLMEngine() {
+  async updateLLMEngine() {
     try {
-      const activeLLM = this.conversationManager.getActiveLLM();
+      const activeLLM = await this.conversationManager.getActiveLLM();
       if (activeLLM && this.ragPipeline) {
-        console.log('🔄 Updating RAG pipeline LLM engine');
+        console.log('🔄 Updating RAG pipeline LLM engine, type:', typeof activeLLM, 'constructor:', activeLLM.constructor.name);
         this.ragPipeline.llmEngine = activeLLM;
-        console.log('✅ RAG pipeline LLM engine updated');
+        console.log('✅ RAG pipeline LLM engine updated successfully');
+      } else {
+        console.log('⏳ LLM engine not yet available for RAG pipeline update, activeLLM:', !!activeLLM, 'ragPipeline:', !!this.ragPipeline);
       }
     } catch (error) {
       console.warn('⚠️ Failed to update RAG pipeline LLM engine:', error);
@@ -676,7 +690,7 @@ class NYLARAGIntegration {
 }
 
 // Enhance existing conversation manager with RAG
-function enhanceConversationManagerWithRAG(conversationManager) {
+async function enhanceConversationManagerWithRAG(conversationManager) {
   console.log('🔌 Starting RAG enhancement of conversation manager...');
   
   // Create RAG integration
@@ -687,7 +701,7 @@ function enhanceConversationManagerWithRAG(conversationManager) {
   console.log('✅ RAG integration object created and attached to conversation manager');
   
   // Update LLM engine if conversation manager already has one available
-  ragIntegration.updateLLMEngine();
+  await ragIntegration.updateLLMEngine();
   
   // Override processQuestion method
   const originalProcessQuestion = conversationManager.processQuestion.bind(conversationManager);

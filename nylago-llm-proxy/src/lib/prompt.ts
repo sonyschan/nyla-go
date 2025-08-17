@@ -60,8 +60,18 @@ export function assemblePrompt(
     maxContextLength = 2000
   } = options;
 
-  // Use provided system prompt or default
-  const finalSystemPrompt = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+  // Use provided system prompt or default, ensuring JSON format is mentioned
+  let finalSystemPrompt = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+  
+  // If custom system prompt doesn't mention JSON, append JSON requirement
+  if (systemPrompt && !systemPrompt.toLowerCase().includes('json')) {
+    finalSystemPrompt = `${systemPrompt}\n\nIMPORTANT: Always respond with valid JSON in this format:
+{
+  "answer": "your response here",
+  "followups": ["follow-up 1", "follow-up 2"],
+  "self_confidence": 0.8
+}`;
+  }
 
   // Prepare context section
   let contextSection = '';

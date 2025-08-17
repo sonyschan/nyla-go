@@ -76,7 +76,7 @@ class NYLAAssistantV2 {
       // Enhance with RAG capabilities for semantic search and knowledge retrieval
       console.log('NYLA Assistant V2: Step 2a - Enhancing with RAG-based semantic search...');
       if (typeof enhanceConversationManagerWithRAG !== 'undefined') {
-        this.conversationManager = enhanceConversationManagerWithRAG(this.conversationManager);
+        this.conversationManager = await enhanceConversationManagerWithRAG(this.conversationManager);
         console.log('NYLA Assistant V2: ✅ RAG integration enabled - all queries will use semantic search');
         this.features.rag = true;
       } else {
