@@ -13,7 +13,7 @@
     "lint": "eslint src/**/*.ts",
     "docker:build": "docker build -t nylago-llm-proxy .",
     "docker:run": "docker run -p 8080:8080 nylago-llm-proxy",
-    "deploy": "gcloud run deploy nylago-llm-proxy --source . --region northamerica-northeast2"
+    "deploy": "gcloud run deploy nylago --source . --region asia-southeast1 --allow-unauthenticated"
   },
   "dependencies": {
     "@hono/node-server": "^1.12.0",

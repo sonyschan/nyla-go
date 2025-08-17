@@ -23,9 +23,9 @@ app.use('*', prettyJSON());
 
 // CORS configuration for NYLA Go clients
 app.use('*', cors({
-  origin: ['https://sonyschan.github.io', 'http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'],
+  origin: ['https://sonyschan.github.io', 'http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'X-Correlation-ID'],
+  allowHeaders: ['Content-Type', 'X-Correlation-ID', 'Authorization'],
   exposeHeaders: ['X-Correlation-ID'],
   credentials: true
 }));

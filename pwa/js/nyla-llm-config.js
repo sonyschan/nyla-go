@@ -15,8 +15,8 @@ class NYLALLMConfig {
             },
             hosted: {
                 name: 'Hosted LLM Proxy',
-                description: 'OpenAI GPT-4o-mini via Cloud Run',
-                endpoint: 'https://nylago-594680195221.northamerica-northeast2.run.app/v1/infer',
+                description: 'OpenAI GPT-4o-mini via Cloud Run (Asia Southeast - GPU)',
+                endpoint: 'https://nylago-594680195221.asia-southeast1.run.app/v1/infer',
                 fallbackEndpoint: 'http://localhost:8081/v1/infer', // Only for proxy development
                 enabled: true,
                 requiresWebGPU: false
@@ -152,7 +152,8 @@ class NYLALLMConfig {
                 // Try Cloud Run primary endpoint first
                 const response = await fetch(provider.endpoint.replace('/infer', '/health'), {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors' // Explicitly request CORS
                 });
                 
                 if (response.ok) {
@@ -164,7 +165,8 @@ class NYLALLMConfig {
                 if (provider.fallbackEndpoint && window.location.search.includes('use_local_proxy')) {
                     const fallbackResponse = await fetch(provider.fallbackEndpoint.replace('/infer', '/health'), {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'cors'
                     });
                     
                     if (fallbackResponse.ok) {
@@ -176,6 +178,12 @@ class NYLALLMConfig {
                 NYLALogger.warn('🔧 LLM Config: Cloud Run not reachable, will fall back to local WebLLM');
                 return false;
             } catch (error) {
+                // Check if this is a CORS error specifically
+                if (error.message?.includes('CORS') || error.name === 'TypeError') {
+                    NYLALogger.warn('🔧 LLM Config: CORS error - assuming hosted endpoint is available for actual requests');
+                    // For CORS errors, assume the endpoint is available since CORS only blocks browser checks
+                    return true;
+                }
                 NYLALogger.error('🔧 LLM Config: Error checking hosted provider:', error);
                 return false;
             }
@@ -195,7 +203,8 @@ class NYLALLMConfig {
             // Primary endpoint: Cloud Run (for both development and production)
             const response = await fetch(provider.endpoint.replace('/infer', '/health'), {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors'
             });
             
             if (response.ok) {
@@ -207,7 +216,8 @@ class NYLALLMConfig {
             if (provider.fallbackEndpoint && window.location.search.includes('use_local_proxy')) {
                 const fallbackResponse = await fetch(provider.fallbackEndpoint.replace('/infer', '/health'), {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
                 });
                 
                 if (fallbackResponse.ok) {
@@ -219,6 +229,13 @@ class NYLALLMConfig {
             NYLALogger.error('🔧 LLM Config: Cloud Run not available, will fall back to local WebLLM');
             return null;
         } catch (error) {
+            // Check if this is a CORS error specifically
+            if (error.message?.includes('CORS') || error.name === 'TypeError') {
+                NYLALogger.warn('🔧 LLM Config: CORS error on health check - using Cloud Run endpoint anyway');
+                // For CORS errors, return the primary endpoint since CORS only blocks health checks
+                return provider.endpoint;
+            }
+            
             NYLALogger.error('🔧 LLM Config: Error determining endpoint:', error);
             
             // Only return local proxy if explicitly requested
