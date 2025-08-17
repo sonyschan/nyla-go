@@ -29,12 +29,25 @@ class NYLALLMConfig {
         this.defaultProvider = this.getEnvironmentDefaultProvider();
         this.currentProvider = this.loadProviderPreference();
         
+        // Get device info for logging
+        let deviceInfo = null;
+        if (typeof NYLADeviceUtils !== 'undefined') {
+            deviceInfo = NYLADeviceUtils.getDeviceInfo();
+        }
+        
         NYLALogger.info('🔧 LLM Config: Initialized', {
             environment: this.isDevelopment() ? 'development' : 'production',
             hostname: window.location.hostname,
             defaultProvider: this.defaultProvider,
             currentProvider: this.currentProvider,
-            available: Object.keys(this.providers)
+            available: Object.keys(this.providers),
+            deviceInfo: deviceInfo ? {
+                isMobile: deviceInfo.isMobile,
+                isPWA: deviceInfo.isPWA,
+                isDesktopPWA: deviceInfo.isDesktopPWA,
+                isDesktop: deviceInfo.isDesktop,
+                isExtension: deviceInfo.isExtension
+            } : 'not available'
         });
     }
 
@@ -52,10 +65,34 @@ class NYLALLMConfig {
     /**
      * Get environment-appropriate default provider
      * Development: hosted LLM (Cloud Run)
-     * Production: local LLM (WebLLM)
+     * Desktop PWA: hosted LLM (Cloud Run) 
+     * Production mobile: local LLM (WebLLM)
      */
     getEnvironmentDefaultProvider() {
-        return this.isDevelopment() ? 'hosted' : 'local';
+        // Always use hosted LLM for development
+        if (this.isDevelopment()) {
+            return 'hosted';
+        }
+        
+        // Check device info for desktop PWA routing
+        if (typeof NYLADeviceUtils !== 'undefined') {
+            const deviceInfo = NYLADeviceUtils.getDeviceInfo();
+            
+            // Desktop environments should use hosted LLM (no local model download needed)
+            // This covers: installed PWA, regular browser, local development
+            // Key point: any non-mobile, non-extension environment should use hosted
+            if (!deviceInfo.isMobile && !deviceInfo.isExtension) {
+                return 'hosted';
+            }
+            
+            // Mobile devices can use local LLM if they support it
+            if (deviceInfo.isMobile) {
+                return 'local';
+            }
+        }
+        
+        // Fallback: hosted for unknown environments (safer default)
+        return 'hosted';
     }
 
     /**
@@ -244,15 +281,40 @@ class NYLALLMConfig {
      * Auto-select best available provider
      */
     async autoSelectProvider() {
+        // Get device info for smart provider selection
+        let deviceInfo = null;
+        if (typeof NYLADeviceUtils !== 'undefined') {
+            deviceInfo = NYLADeviceUtils.getDeviceInfo();
+        }
+        
+        // For desktop environments (including PWA context), prefer hosted LLM
+        if (deviceInfo && (deviceInfo.isDesktopPWA || deviceInfo.isDesktop || (deviceInfo.isPWAContext && !deviceInfo.isMobile))) {
+            NYLALogger.debug('🔧 LLM Config: Desktop/PWA environment detected, prioritizing hosted LLM');
+            
+            // Try hosted first for desktop
+            if (this.currentProvider !== 'hosted') {
+                this.currentProvider = 'hosted';
+                if (await this.checkProviderAvailability()) {
+                    this.saveProviderPreference();
+                    NYLALogger.info('🔧 LLM Config: Auto-selected hosted provider for desktop:', this.currentProvider);
+                    return this.currentProvider;
+                }
+            }
+        }
+        
         // Try current provider first
         if (await this.checkProviderAvailability()) {
             NYLALogger.info('🔧 LLM Config: Current provider available:', this.currentProvider);
             return this.currentProvider;
         }
 
-        // Try other providers
-        for (const [providerName] of Object.entries(this.providers)) {
-            if (providerName !== this.currentProvider) {
+        // Try other providers in order of preference
+        const providerOrder = deviceInfo && (deviceInfo.isDesktopPWA || deviceInfo.isDesktop || (deviceInfo.isPWAContext && !deviceInfo.isMobile))
+            ? ['hosted', 'local']  // Prefer hosted for desktop/PWA
+            : ['local', 'hosted']; // Prefer local for mobile
+            
+        for (const providerName of providerOrder) {
+            if (providerName !== this.currentProvider && this.providers[providerName]) {
                 this.currentProvider = providerName;
                 if (await this.checkProviderAvailability()) {
                     this.saveProviderPreference();

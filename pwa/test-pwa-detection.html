@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Detection Test</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #000;
+      color: #fff;
+    }
+    .result {
+      margin: 10px 0;
+      padding: 10px;
+      background: #222;
+      border-radius: 5px;
+    }
+    .true { color: #4CAF50; }
+    .false { color: #f44336; }
+    code {
+      background: #333;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PWA Detection Test</h1>
+  <div id="results"></div>
+  
+  <script src="js/nyla-device-utils.js"></script>
+  <script>
+    function testPWADetection() {
+      const results = document.getElementById('results');
+      // Clear cache to get fresh detection
+      NYLADeviceUtils.clearCache();
+      const deviceInfo = NYLADeviceUtils.getDeviceInfo();
+      
+      // Test individual conditions
+      const displayMode = window.matchMedia('(display-mode: standalone)').matches;
+      const navigatorStandalone = window.navigator.standalone === true;
+      const androidApp = document.referrer.includes('android-app://');
+      
+      // Additional tests
+      const displayModeFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+      const displayModeMinimalUI = window.matchMedia('(display-mode: minimal-ui)').matches;
+      const displayModeBrowser = window.matchMedia('(display-mode: browser)').matches;
+      
+      // Check if installed
+      const beforeInstallPromptFired = 'BeforeInstallPromptEvent' in window;
+      
+      const tests = [
+        { label: 'getDeviceInfo().isPWA (installed)', value: deviceInfo.isPWA },
+        { label: 'getDeviceInfo().isPWACapable', value: deviceInfo.isPWACapable },
+        { label: 'getDeviceInfo().isPWAContext', value: deviceInfo.isPWAContext },
+        { label: 'display-mode: standalone', value: displayMode },
+        { label: 'display-mode: fullscreen', value: displayModeFullscreen },
+        { label: 'display-mode: minimal-ui', value: displayModeMinimalUI },
+        { label: 'display-mode: browser', value: displayModeBrowser },
+        { label: 'navigator.standalone', value: navigatorStandalone },
+        { label: 'android-app:// referrer', value: androidApp },
+        { label: 'Service Worker support', value: 'serviceWorker' in navigator },
+        { label: 'Manifest link present', value: !!document.querySelector('link[rel="manifest"]') },
+        { label: 'window.matchMedia exists', value: !!window.matchMedia },
+        { label: 'BeforeInstallPromptEvent available', value: beforeInstallPromptFired },
+        { label: 'document.referrer', value: document.referrer || '(empty)' },
+        { label: 'window.location.href', value: window.location.href },
+        { label: 'navigator.userAgent', value: navigator.userAgent }
+      ];
+      
+      tests.forEach(test => {
+        const div = document.createElement('div');
+        div.className = 'result';
+        const valueClass = test.value === true ? 'true' : test.value === false ? 'false' : '';
+        div.innerHTML = `<strong>${test.label}:</strong> <span class="${valueClass}">${test.value}</span>`;
+        results.appendChild(div);
+      });
+      
+      // Add install button if supported
+      if ('serviceWorker' in navigator) {
+        const installBtn = document.createElement('button');
+        installBtn.textContent = 'Test Install PWA';
+        installBtn.style.marginTop = '20px';
+        installBtn.style.padding = '10px 20px';
+        installBtn.style.fontSize = '16px';
+        installBtn.onclick = async () => {
+          if (window.deferredPrompt) {
+            window.deferredPrompt.prompt();
+            const result = await window.deferredPrompt.userChoice;
+            console.log('Install prompt result:', result);
+          } else {
+            alert('PWA install not available. This might mean:\n1. Already installed\n2. Not served over HTTPS\n3. Missing service worker\n4. Invalid manifest');
+          }
+        };
+        results.appendChild(installBtn);
+      }
+    }
+    
+    // Capture install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+      console.log('beforeinstallprompt fired');
+    });
+    
+    // Run tests
+    testPWADetection();
+    
+    // Re-run tests if display mode changes
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', () => {
+      console.log('Display mode changed');
+      results.innerHTML = '';
+      NYLADeviceUtils.clearCache();
+      testPWADetection();
+    });
+  </script>
+</body>
+</html>
