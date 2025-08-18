@@ -139,7 +139,15 @@ class NYLAParentChildAggregator {
       
       const scores = children.map(child => {
         // FIXED: Prioritize finalScore over crossEncoderScore to preserve MMR ranking
-        const extractedScore = child.finalScore || child.crossEncoderScore || child.score || 0;
+        let extractedScore = child.finalScore || child.crossEncoderScore || child.score || 0;
+        
+        // NEW: Apply meta_card boost to preserve structured data during parent-child aggregation
+        if (child.meta_card) {
+          const metaCardBoost = this.calculateMetaCardBoost(child);
+          extractedScore += metaCardBoost;
+          console.log(`  Child ${child.id}: meta_card boost +${metaCardBoost.toFixed(3)} applied (total: ${extractedScore.toFixed(3)})`);
+        }
+        
         console.log(`  Child ${child.id}: extracted score = ${extractedScore} (from ${child.finalScore ? 'finalScore' : child.crossEncoderScore ? 'crossEncoderScore' : child.score ? 'score' : 'default 0'})`);
         return extractedScore;
       });
@@ -462,6 +470,36 @@ class NYLAParentChildAggregator {
     return Math.ceil(text.split(/\s+/).length * 1.3);
   }
   
+  /**
+   * Calculate meta_card boost for parent-child aggregation
+   */
+  calculateMetaCardBoost(chunk) {
+    if (!chunk.meta_card) {
+      return 0;
+    }
+    
+    let boost = 0.1; // Base boost for having meta_card
+    
+    // Higher boost for contract address (most valuable structured data)
+    if (chunk.meta_card.contract_address) {
+      boost += 0.15; // Total 0.25 boost
+    }
+    
+    // Moderate boost for ticker symbol
+    if (chunk.meta_card.ticker_symbol) {
+      boost += 0.1; // Total 0.2 boost (or 0.35 if both)
+    }
+    
+    // Small boost for official channels
+    if (chunk.meta_card.official_channels) {
+      boost += 0.05;
+    }
+    
+    console.log(`🎯 Parent-Child Meta Card Boost: ${chunk.id} gets +${boost.toFixed(3)} (contract: ${!!chunk.meta_card.contract_address}, ticker: ${!!chunk.meta_card.ticker_symbol})`);
+    
+    return boost;
+  }
+
   /**
    * Get aggregation statistics
    */
