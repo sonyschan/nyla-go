@@ -102,7 +102,7 @@ I am the Architect Agent for the NYLAGo project. My primary responsibility is to
 ## Config & Feature Flags
 ```json
 {
-  "version": "2.6.0",
+  "version": "2.7.0",
   "env": {
     "pwa": { "llmDefault": "hosted" },
     "extension": { "llmDefault": "hosted" }

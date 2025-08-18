@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const appItems = document.querySelectorAll('.app-item');
 
   // App version - will be dynamically determined
-  let APP_VERSION = '2.6.0';
+  let APP_VERSION = '2.7.0';
 
   // Default tokens (same as Extension)
   const defaultTokens = ['NYLA', 'SOL', 'ETH', 'ALGO', 'USDC', 'USDT'];
@@ -341,40 +341,51 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('PWA: NYLA assistant will be disabled on mobile devices');
     } else {
       // Check LLM provider configuration before preloading WebLLM
-      const llmConfig = window.NYLALLMConfig;
-      const currentProvider = llmConfig ? llmConfig.getCurrentProviderName() : 'unknown';
-      
-      if (currentProvider === 'hosted') {
-        console.log('PWA: 🖥️ Desktop device detected but using hosted LLM - skipping WebLLM preload');
-      } else if (currentProvider === 'unknown') {
-        console.log('PWA: ⚠️ LLM config not yet available, will retry WebLLM check in fallback logic');
-      } else if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
-        console.log('PWA: 🖥️ Desktop device detected - starting WebLLM preload for faster NYLA responses...');
-        setTimeout(() => {
-          try {
-            // Double-check the method still exists before calling
-            if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+      setTimeout(async () => {
+        const llmConfig = window.NYLALLMConfig;
+        
+        if (!llmConfig) {
+          console.log('PWA: LLM config not yet available, will retry later');
+        } else {
+          // Auto-select provider to ensure correct decision for desktop PWA
+          const selectedProvider = await llmConfig.autoSelectProvider();
+          console.log('PWA: LLM provider selected:', selectedProvider);
+          
+          if (selectedProvider === 'hosted') {
+            console.log('PWA: 🖥️ Desktop device using hosted LLM - no WebLLM preload needed');
+          } else if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
+            console.log('PWA: 🖥️ Desktop device using local LLM - starting WebLLM preload...');
+            try {
               window.nylaSystemController.preloadLLMEngine();
-            } else {
-              console.warn('PWA: preloadLLMEngine method no longer available in setTimeout callback');
-              console.warn('PWA: System controller exists:', !!window.nylaSystemController);
-              console.warn('PWA: Method type:', typeof window.nylaSystemController?.preloadLLMEngine);
+            } catch (error) {
+              console.warn('PWA: Failed to preload LLM engine:', error.message);
             }
-          } catch (error) {
-            console.warn('PWA: Failed to preload LLM engine:', error.message);
+          } else {
+            console.warn('PWA: System controller not ready for WebLLM preload');
           }
-        }, 500); // Small delay to let UI finish initializing
-      } else {
+        }
+      }, 500); // Small delay to ensure LLM config is loaded
+      
+      // Keep the retry logic as fallback
+      if (!window.NYLALLMConfig) {
         console.warn('PWA: System controller or preloadLLMEngine method not available yet');
         // Retry after a longer delay to allow system controller to fully initialize (desktop only)
-        setTimeout(() => {
+        setTimeout(async () => {
           const retryLlmConfig = window.NYLALLMConfig;
-          const retryProvider = retryLlmConfig ? retryLlmConfig.getCurrentProviderName() : 'unknown';
           
-          if (retryProvider === 'hosted') {
-            console.log('PWA: Retry skipped - using hosted LLM');
+          if (!retryLlmConfig) {
+            console.warn('PWA: LLM config still not available after retry');
+            return;
+          }
+          
+          // Ensure provider is selected before checking
+          const selectedProvider = await retryLlmConfig.autoSelectProvider();
+          console.log('PWA: Auto-selected LLM provider:', selectedProvider);
+          
+          if (selectedProvider === 'hosted') {
+            console.log('PWA: ✅ Using hosted LLM - no WebLLM preload needed');
           } else if (!isLikelyMobile && window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {
-            console.log('PWA: 🚀 Retrying WebLLM preload...');
+            console.log('PWA: 🚀 Using local LLM - starting WebLLM preload...');
             try {
               // Triple-check before calling in retry
               if (window.nylaSystemController && typeof window.nylaSystemController.preloadLLMEngine === 'function') {

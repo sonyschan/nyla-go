@@ -82,5 +82,5 @@ gcloud run deploy nylago --source . --region asia-southeast1 --allow-unauthentic
 ---
 
 ## 📌 Current Version
-- **Latest Release**: v2.6.0  
-- **Features**: Multilingual embeddings, alias system (CN↔EN), longer responses, improved RAG confidence  
+- **Latest Release**: v2.7.0  
+- **Features**: Fixed cross-encoder transformers.js compatibility, hosted LLM error fixes, async/await improvements, JSON format enforcement  
