@@ -131,26 +131,49 @@ class NYLABm25Index {
     
     tokens.push(...englishTokens);
     
-    // Second pass: Extract Chinese terms - more conservative approach
-    // Focus on meaningful Chinese terms rather than single characters
+    // Second pass: Extract Chinese terms - IMPROVED precision approach
+    // Focus on meaningful Chinese terms and avoid noise bi-grams
     const chineseChars = text.match(/[\u4e00-\u9fff]+/g) || [];
     
+    // Comprehensive noise bi-gram patterns to avoid (connecting particles, meaningless fragments)
+    const noiseBigrams = new Set([
+      // Possessive particles causing noise matches
+      '的合', '柴的', '个的', '们的', '它的', '他的', '她的', '我的', '你的', '其的',
+      '是的', '了的', '在的', '有的', '也的', '都的', '很的', '就的', '要的', '会的',
+      '可的', '能的', '说的', '做的', '来的', '去的', '对的', '向的', '从的', '与的',
+      
+      // Common grammatical connecting fragments  
+      '的是', '的在', '的有', '的为', '的和', '的或', '的但', '的所', '的如', '的此',
+      '和的', '或的', '但的', '所的', '如的', '此的', '等的', '及的', '以的', '用的',
+      
+      // Temporal/spatial meaningless fragments
+      '时的', '候的', '间的', '里的', '上的', '下的', '前的', '后的', '左的', '右的',
+      '内的', '外的', '中的', '间中', '中间', '之间', '之中', '之内', '之外', '之上',
+      
+      // Query-specific noise from contract searches
+      '合的', '约的', '址的', '地的', '智的', '能的', '链的', '块的', '币的', '代的',
+      '旺的', '柴的', '项的', '目的', '技的', '术的', '规的', '格的'
+    ]);
+    
     for (const chineseStr of chineseChars) {
-      // Add the full Chinese string if it's meaningful (2-8 characters)
+      // ALWAYS add the full Chinese string (highest priority for exact matching)
       if (chineseStr.length >= 2 && chineseStr.length <= 8) {
         tokens.push(chineseStr);
       }
       
-      // Add Chinese bi-grams for better matching
-      if (chineseStr.length >= 2) {
+      // Add bi-grams ONLY for longer strings and AVOID noise patterns
+      if (chineseStr.length >= 4) {
         for (let i = 0; i < chineseStr.length - 1; i++) {
           const bigram = chineseStr.slice(i, i + 2);
-          tokens.push(bigram);
+          // Skip noise bi-grams that create false matches
+          if (!noiseBigrams.has(bigram)) {
+            tokens.push(bigram);
+          }
         }
       }
       
-      // Only add individual characters for very short strings (1-2 chars)
-      if (chineseStr.length <= 2) {
+      // Add individual characters ONLY for 2-character terms (to preserve meaning)
+      if (chineseStr.length === 2) {
         for (const char of chineseStr) {
           tokens.push(char);
         }
@@ -161,13 +184,14 @@ class NYLABm25Index {
     const uniqueTokens = [...new Set(tokens)];
     
     // Debug tokenization for complex queries
-    if (text.match(/[一-鿿]/) && uniqueTokens.length > 10) {
-      console.log('🔍 Tokenization debug:', {
+    if (text.match(/[一-鿿]/) && uniqueTokens.length > 8) {
+      console.log('🔍 Improved tokenization debug:', {
         original: text.substring(0, 100),
         englishTokens: englishTokens.slice(0, 10),
         chineseStrings: chineseChars.slice(0, 5),
         totalTokens: uniqueTokens.length,
-        sampleTokens: uniqueTokens.slice(0, 15)
+        sampleTokens: uniqueTokens.slice(0, 15),
+        noiseFiltered: '✅ Filtered noise bi-grams'
       });
     }
     
