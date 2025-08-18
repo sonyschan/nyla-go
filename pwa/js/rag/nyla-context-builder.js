@@ -168,11 +168,18 @@ class NYLAContextBuilder {
       const preCappedChunks = this.applyPreCap(chunksWithSourceId, 2);
       console.log(`🧩 Pre-cap: ${chunks.length} → ${preCappedChunks.length} chunks (max 2 per source)`);
 
-      // Step 3: Apply clustering or advanced deduplication on pre-capped set
+      // Step 3: Check if any chunks have meta_card data that we need to preserve
+      const hasMetaCardChunks = preCappedChunks.some(chunk => chunk.meta_card);
+      
+      // Step 4: Apply clustering or advanced deduplication on pre-capped set
       let clusteredChunks = preCappedChunks;
       
       if (this.clusteringService && this.options.semanticDeduplication) {
         console.log(`🧩 Using clustering service with cosine threshold ${this.options.cosineThreshold}`);
+        
+        if (hasMetaCardChunks) {
+          console.log(`⚠️ CLUSTERING WARNING: ${preCappedChunks.filter(c => c.meta_card).length} chunks have meta_card data - using enhanced representative selection`);
+        }
         
         const clusterResult = await this.clusteringService.clusterChunks(preCappedChunks, (progress) => {
           console.log(`🧩 Clustering progress: ${progress.percentage}%`);
@@ -446,22 +453,22 @@ class NYLAContextBuilder {
     for (const chunk of cluster.chunks) {
       let score = 0;
 
-      // Factor 1: Existing retrieval score (40% weight)
+      // Factor 1: Existing retrieval score (35% weight - reduced to make room for meta_card)
       if (chunk.finalScore !== undefined) {
-        score += chunk.finalScore * 0.4;
+        score += chunk.finalScore * 0.35;
       } else if (chunk.score !== undefined) {
-        score += chunk.score * 0.4;
+        score += chunk.score * 0.35;
       }
 
-      // Factor 2: Content length and completeness (30% weight)
+      // Factor 2: Content length and completeness (25% weight - reduced)
       const textLength = chunk.text ? chunk.text.length : 0;
       const lengthScore = Math.min(textLength / 500, 1); // Normalize to 0-1, optimal around 500 chars
-      score += lengthScore * 0.3;
+      score += lengthScore * 0.25;
 
-      // Factor 3: Metadata richness (20% weight)
+      // Factor 3: Metadata richness (15% weight - reduced)
       const metadataCount = chunk.metadata ? Object.keys(chunk.metadata).length : 0;
       const metadataScore = Math.min(metadataCount / 5, 1); // Normalize to 0-1
-      score += metadataScore * 0.2;
+      score += metadataScore * 0.15;
 
       // Factor 4: Query keyword overlap (10% weight)
       if (query && chunk.text) {
@@ -472,12 +479,38 @@ class NYLAContextBuilder {
         score += keywordScore * 0.1;
       }
 
+      // Factor 5: Meta card bonus (15% weight) - NEW!
+      if (chunk.meta_card) {
+        let metaCardBonus = 0.5; // Base bonus for having meta_card
+        
+        // Extra bonus for contract-related queries
+        if (query && (query.includes('合約') || query.includes('合同') || query.includes('contract') || query.includes('CA'))) {
+          if (chunk.meta_card.contract_address) {
+            metaCardBonus += 0.5; // Double bonus for contract address queries
+          }
+        }
+        
+        // Extra bonus for ticker/symbol queries  
+        if (query && (query.includes('$') || query.includes('ticker') || query.includes('symbol'))) {
+          if (chunk.meta_card.ticker_symbol) {
+            metaCardBonus += 0.3;
+          }
+        }
+        
+        score += Math.min(metaCardBonus, 1.0) * 0.15; // Cap at 1.0, apply 15% weight
+        
+        console.log(`🎯 Cluster Representative: ${chunk.id} gets meta_card bonus ${metaCardBonus.toFixed(2)} for query "${query}"`);
+      }
+
+      console.log(`🏆 Cluster Representative Scoring: ${chunk.id} = ${score.toFixed(3)} (retrieval: ${((chunk.finalScore || chunk.score || 0) * 0.35).toFixed(3)}, meta_card: ${chunk.meta_card ? 'YES' : 'NO'})`);
+
       if (score > bestScore) {
         bestScore = score;
         bestChunk = chunk;
       }
     }
 
+    console.log(`✅ Selected cluster representative: ${bestChunk?.id} with score ${bestScore.toFixed(3)}`);
     return bestChunk;
   }
 
