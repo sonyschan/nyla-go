@@ -101,23 +101,24 @@ class NYLABm25Index {
   
   /**
    * Tokenize text for BM25 indexing
-   * Optimized for crypto/blockchain terms and multilingual content
+   * Optimized for crypto/blockchain terms and multilingual content (Chinese/English)
    */
   tokenize(text) {
     if (!text) return [];
     
-    // Convert to lowercase and split on whitespace and punctuation
-    // Preserve crypto-specific patterns (contract addresses, ticker symbols, handles)
-    const tokens = text.toLowerCase()
+    const tokens = [];
+    
+    // Convert to lowercase for English terms
+    const lowerText = text.toLowerCase();
+    
+    // First pass: Extract English words and crypto patterns
+    const englishTokens = lowerText
       .split(/[\s\.,;:!?()[\]{}"'`~\-_+=<>|\\\/]+/)
       .filter(token => {
-        // Keep tokens that are:
-        // 1. Length >= 2
-        // 2. Not common stop words
-        // 3. Crypto addresses, tickers, handles, or meaningful terms
+        // Keep meaningful English tokens
         if (token.length < 2) return false;
         
-        // Skip common stop words
+        // Skip common stop words for English
         const stopWords = new Set([
           'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
           'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did',
@@ -125,11 +126,39 @@ class NYLABm25Index {
         ]);
         
         if (stopWords.has(token)) return false;
-        
         return true;
       });
     
-    return tokens;
+    tokens.push(...englishTokens);
+    
+    // Second pass: Extract Chinese terms - more conservative approach
+    // Focus on meaningful Chinese terms rather than single characters
+    const chineseChars = text.match(/[\u4e00-\u9fff]+/g) || [];
+    
+    for (const chineseStr of chineseChars) {
+      // Add the full Chinese string if it's meaningful (2-8 characters)
+      if (chineseStr.length >= 2 && chineseStr.length <= 8) {
+        tokens.push(chineseStr);
+      }
+      
+      // Add Chinese bi-grams for better matching
+      if (chineseStr.length >= 2) {
+        for (let i = 0; i < chineseStr.length - 1; i++) {
+          const bigram = chineseStr.slice(i, i + 2);
+          tokens.push(bigram);
+        }
+      }
+      
+      // Only add individual characters for very short strings (1-2 chars)
+      if (chineseStr.length <= 2) {
+        for (const char of chineseStr) {
+          tokens.push(char);
+        }
+      }
+    }
+    
+    // Remove duplicates and return
+    return [...new Set(tokens)];
   }
   
   /**

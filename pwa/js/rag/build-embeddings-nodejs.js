@@ -452,6 +452,7 @@ class NYLANodeEmbeddingBuilder {
         keywordParts.push(kbChunk.technical_specs.contract_address);
         keywordParts.push('contract address');
         keywordParts.push('合約地址');
+        keywordParts.push('合約');  // Add standalone contract term
         keywordParts.push('CA');
       }
       if (kbChunk.technical_specs.ticker_symbol) {

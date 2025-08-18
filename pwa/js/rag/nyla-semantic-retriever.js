@@ -270,16 +270,30 @@ class NYLASemanticRetriever {
       });
     }
     
-    // Ticker Symbol Intent
+    // Ticker Symbol Intent - Enhanced Pattern Detection
     const tickerKeywords = [
       'ticker', 'symbol', 'token symbol', 'coin symbol',
       '代號', '符號', '代幣符號', '幣種符號'
     ];
-    if (tickerKeywords.some(keyword => queryLower.includes(keyword))) {
+    
+    // Price-related context keywords
+    const priceKeywords = [
+      'price', 'cost', 'value', 'worth', 'market cap', 'mcap', 'volume',
+      'trading', 'buy', 'sell', 'exchange', 'rate', 'usd', 'dollar',
+      '價格', '價錢', '成本', '市值', '交易', '買', '賣', '匯率'
+    ];
+    
+    const hasTickerKeyword = tickerKeywords.some(keyword => queryLower.includes(keyword));
+    const hasPriceKeyword = priceKeywords.some(keyword => queryLower.includes(keyword));
+    const tickerMatches = query.match(/\$([A-Z0-9]{2,10})\b/g);
+    const hasTickerSymbol = tickerMatches && tickerMatches.length > 0;
+    
+    // Detect ticker intents with enhanced pattern matching
+    if (hasTickerKeyword || (hasTickerSymbol && hasPriceKeyword) || hasTickerSymbol) {
       intents.push({
         type: 'ticker_symbol',
-        confidence: 0.8,
-        keywords: tickerKeywords.filter(k => queryLower.includes(k))
+        confidence: hasTickerKeyword ? 0.8 : hasTickerSymbol ? 0.9 : 0.7,
+        keywords: hasTickerSymbol ? tickerMatches : tickerKeywords.filter(k => queryLower.includes(k))
       });
     }
     
@@ -500,18 +514,21 @@ class NYLASemanticRetriever {
     let bm25Weight = this.options.baseBm25Weight;
     let reason = 'base_weights';
     
-    // Boost BM25 for slot intent queries (Facts lookup)
+    // Boost BM25 for slot intent queries (Facts lookup) - Optimized Weights
     if (slotIntents.length > 0) {
       const intentTypes = slotIntents.map(intent => intent.type);
       
-      if (intentTypes.includes('contract_address') || intentTypes.includes('ticker_symbol')) {
-        bm25Weight = 0.7; // High BM25 weight for exact data lookups
-        reason = 'facts_lookup_intent';
+      if (intentTypes.includes('contract_address')) {
+        bm25Weight = 0.8; // Very high BM25 weight for contract addresses (exact facts)
+        reason = 'contract_address_intent';
+      } else if (intentTypes.includes('ticker_symbol')) {
+        bm25Weight = 0.75; // High BM25 weight for ticker symbols
+        reason = 'ticker_symbol_intent';
       } else if (intentTypes.includes('official_channel')) {
-        bm25Weight = 0.6; // Medium-high BM25 weight for official links
+        bm25Weight = 0.65; // Medium-high BM25 weight for official links (increased)
         reason = 'official_channel_intent';
       } else if (intentTypes.includes('technical_specs')) {
-        bm25Weight = 0.5; // Medium BM25 weight for technical specs
+        bm25Weight = 0.45; // Medium BM25 weight for technical specs (favor semantic)
         reason = 'technical_specs_intent';
       }
     }

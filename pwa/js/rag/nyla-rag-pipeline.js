@@ -96,6 +96,19 @@ class NYLARAGPipeline {
         scoreStrategyEnabled: true
       });
       
+      // Expose semantic retriever globally for BM25 index building
+      if (typeof window !== 'undefined') {
+        window.nylaSemanticRetriever = this.retriever;
+        console.log('🔗 Semantic retriever exposed globally for BM25 integration');
+        
+        // Check if vector DB has pending BM25 chunks to process
+        if (this.vectorDB.pendingBM25Chunks && this.vectorDB.pendingBM25Chunks.length > 0) {
+          console.log('🔍 Processing pending BM25 chunks from vector DB...');
+          await this.retriever.buildBM25Index(this.vectorDB.pendingBM25Chunks);
+          this.vectorDB.pendingBM25Chunks = null; // Clear pending chunks
+        }
+      }
+      
       // Check if index needs building/rebuilding
       const stats = this.vectorDB.getStats();
       const versionCheck = await this.versionManager.needsRebuild(knowledgeBase, stats);
