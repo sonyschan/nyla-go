@@ -3,7 +3,7 @@
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bbfolghcbmfbfcphapfhnmdalapifklh?label=Chrome%20Web%20Store&color=blue&logo=googlechrome)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
-![Version](https://img.shields.io/badge/Version-2.7.0-orange)
+![Version](https://img.shields.io/badge/Version-2.8.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Security](https://img.shields.io/badge/Security-Verified-brightgreen?logo=shield)
 ![Open Source](https://img.shields.io/badge/Source-Open-blue?logo=github)

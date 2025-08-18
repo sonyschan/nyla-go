@@ -82,5 +82,5 @@ gcloud run deploy nylago --source . --region asia-southeast1 --allow-unauthentic
 ---
 
 ## 📌 Current Version
-- **Latest Release**: v2.7.0  
-- **Features**: Fixed cross-encoder transformers.js compatibility, hosted LLM error fixes, async/await improvements, JSON format enforcement  
+- **Latest Release**: v2.8.0  
+- **Features**: Advanced RAG enhancements with meta_card preservation, parent-child score prioritization, comprehensive debugging, and contract address retrieval fix  
