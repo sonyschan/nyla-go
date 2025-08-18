@@ -6,7 +6,7 @@
 class NYLACrossEncoder {
   constructor(options = {}) {
     this.options = {
-      modelName: 'cross-encoder/ms-marco-MiniLM-L-6-v2',
+      modelName: 'Xenova/ms-marco-MiniLM-L-6-v2',
       batchSize: 8,
       maxLength: 512,
       useLocalFallback: true,
@@ -31,7 +31,7 @@ class NYLACrossEncoder {
     
     try {
       // Try to load transformers.js cross-encoder
-      if (typeof window !== 'undefined' && window.transformers) {
+      if (typeof window !== 'undefined' && window.transformers && window.transformers.pipeline) {
         const { pipeline } = window.transformers;
         this.model = await pipeline('text-classification', this.options.modelName);
         console.log('✅ Cross-encoder model loaded');
@@ -106,10 +106,11 @@ class NYLACrossEncoder {
     for (let i = 0; i < results.length; i += this.options.batchSize) {
       const batch = results.slice(i, i + this.options.batchSize);
       
-      const batchInputs = batch.map(result => ({
-        text: query,
-        text_pair: result.text || result.content || ''
-      }));
+      // FIXED: Use string concatenation instead of object format for transformers.js
+      const batchInputs = batch.map(result => {
+        const document = result.text || result.content || '';
+        return `${query} ${document}`;
+      });
       
       try {
         const scores = await this.model(batchInputs);
