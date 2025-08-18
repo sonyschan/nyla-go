@@ -1,0 +1,34 @@
+{
+  "facts": {
+    "ecosystem_wangchai_technical_details_contract_address": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_ca": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_合約": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_合約地址": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_ticker": "$旺柴",
+    "ecosystem_wangchai_technical_details_symbol": "$旺柴",
+    "ecosystem_wangchai_technical_details_x_account": {
+      "handle": "@WangChaidotbonk",
+      "url": "https://x.com/WangChaidotbonk",
+      "purpose": "primary_official_communication"
+    },
+    "ecosystem_wangchai_technical_details_linktree": {
+      "url": "linktr.ee/WangchaiDoge",
+      "purpose": "centralized_link_hub"
+    },
+    "ecosystem_wangchai_technical_details_x_community": {
+      "url": "https://x.com/i/communities/1941027470058434674",
+      "purpose": "community_discussions"
+    },
+    "ecosystem_wangchai_technical_details_telegram": {
+      "url": "https://t.me/wechatdogesol",
+      "purpose": "real_time_communication"
+    },
+    "ecosystem_wangchai_technical_details_verification_status": "official_verified"
+  },
+  "metadata": {
+    "generated_at": "2025-08-18T07:40:10.439Z",
+    "version": "1.0.0",
+    "total_facts": 11,
+    "source_chunks": 119
+  }
+}

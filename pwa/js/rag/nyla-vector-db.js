@@ -167,8 +167,37 @@ class NYLAVectorDB {
     
     // Save to IndexedDB
     await this.saveToIndexedDB();
+    
+    // Phase 2: Notify semantic retriever to build BM25 index
+    this.notifyBM25IndexBuild(chunks);
   }
 
+  /**
+   * Phase 2: Notify semantic retriever to build BM25 index
+   */
+  notifyBM25IndexBuild(chunks) {
+    try {
+      // Try to find and notify semantic retriever instances
+      if (typeof window !== 'undefined' && window.nylaSemanticRetriever) {
+        console.log('🔍 Phase 2: Building BM25 index with', chunks.length, 'chunks...');
+        window.nylaSemanticRetriever.buildBM25Index(chunks);
+      } else {
+        // Store chunks for later BM25 index building
+        this.pendingBM25Chunks = chunks;
+        console.log('🔍 Phase 2: Semantic retriever not ready, storing chunks for BM25 index');
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to notify BM25 index build:', error.message);
+    }
+  }
+  
+  /**
+   * Phase 2: Get pending chunks for BM25 index building
+   */
+  getPendingBM25Chunks() {
+    return this.pendingBM25Chunks || [];
+  }
+  
   /**
    * Search for similar vectors
    */

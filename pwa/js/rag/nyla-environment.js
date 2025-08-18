@@ -292,7 +292,74 @@ class NYLAUtils {
   
   static async loadKnowledgeBase() {
     // Load from structured KB only - single source of truth
-    return await this.loadStructuredKB();
+    return await this.loadStructuredKBRaw();
+  }
+  
+  static async loadStructuredKBRaw() {
+    // Return raw structured chunks array for enhanced processing
+    if (isNode) {
+      const fs = require('fs').promises;
+      const path = require('path');
+      
+      const kbDir = path.join(process.cwd(), 'pwa/kb');
+      const chunks = [];
+      
+      // Define KB structure to load
+      const kbFiles = [
+        'about/team.json',
+        'facts/contracts.algorand.json',
+        'facts/contracts.ethereum.json', 
+        'facts/contracts.solana.json',
+        'facts/network-limitations.json',
+        'facts/supported-networks.algorand.json',
+        'facts/supported-networks.ethereum.json',
+        'facts/supported-networks.solana.json',
+        'faq/common.json',
+        'glossary/terms.json',
+        'howto/basics/send-tokens-guide.json',
+        'howto/qr/create.json',
+        'howto/qr/troubleshoot.json',
+        'howto/raids/participate.json',
+        'howto/transfers/receive.json',
+        'howto/transfers/send.json',
+        'marketing/brand.json',
+        'policy/answer_templates.json',
+        'policy/wording.json',
+        'troubleshooting/transfers.json',
+        'ecosystem/campaigns/algorand/2025-07-nyla-x-algorand-launch.json',
+        'ecosystem/integrations/algorand/core-support.json',
+        'ecosystem/integrations/algorand/pera-wallet.json',
+        'ecosystem/integrations/ethereum/uniswap-v3.json',
+        'ecosystem/integrations/solana/jupiter-routing.json',
+        'ecosystem/partners/algorand/algorand-foundation.json',
+        'ecosystem/partners/solana/solana-foundation.json',
+        'ecosystem/partners/multi-chain/wangchai.json'
+      ];
+      
+      for (const filePath of kbFiles) {
+        try {
+          const fullPath = path.join(kbDir, filePath);
+          const data = await fs.readFile(fullPath, 'utf-8');
+          const jsonData = JSON.parse(data);
+          
+          if (jsonData.chunks && Array.isArray(jsonData.chunks)) {
+            chunks.push(...jsonData.chunks);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Could not load ${filePath}:`, error.message);
+        }
+      }
+      
+      if (chunks.length === 0) {
+        throw new Error('No valid chunks found in structured KB');
+      }
+      
+      console.log(`✅ Loaded structured KB: ${chunks.length} chunks from ${kbFiles.length} files`);
+      return chunks; // Return raw chunks array
+      
+    } else {
+      throw new Error('Structured KB loading only supported in Node.js environment');
+    }
   }
 
   static async loadStructuredKB() {

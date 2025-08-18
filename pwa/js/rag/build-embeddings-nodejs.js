@@ -131,24 +131,24 @@ class NYLANodeEmbeddingBuilder {
       // Handle structured KB format where knowledgeBase is the chunks array
       for (const kbChunk of knowledgeBase) {
         if (this.isValidKBChunk(kbChunk)) {
-          // Create multilingual chunk by combining all text fields
-          const multilingualText = this.combineMultilingualContent(kbChunk);
-          
-          chunks.push(this.createChunk(
+          // Create enhanced chunk with separate Dense/Sparse text views
+          const enhancedChunk = this.createEnhancedChunk(
             chunkId++,
-            multilingualText,
+            kbChunk,
             {
               category: kbChunk.section || kbChunk.type || 'unknown',
               section: kbChunk.id,
               source: 'knowledge_base',
               title: kbChunk.title || `${kbChunk.section} - ${kbChunk.id}`,
               tags: kbChunk.tags || [],
-              chunk_type: kbChunk.type || this.inferChunkType('kb_chunk', multilingualText),
+              chunk_type: kbChunk.type || this.inferChunkType('kb_chunk', enhancedChunk.text),
               kb_id: kbChunk.id,
               kb_priority: kbChunk.priority || 5,
               updated_at: new Date().toISOString()
             }
-          ));
+          );
+          
+          chunks.push(enhancedChunk);
           
           // Also create separate summary chunks for focused retrieval
           if (kbChunk.summary_en || kbChunk.summary_zh) {
@@ -389,16 +389,17 @@ class NYLANodeEmbeddingBuilder {
    * Validate knowledge base chunk structure
    */
   isValidKBChunk(chunk) {
-    return chunk && 
+    return !!(chunk && 
            typeof chunk === 'object' && 
            chunk.id && 
-           (chunk.body || chunk.summary_en || chunk.summary_zh);
+           (chunk.content || chunk.body || chunk.summary_en || chunk.summary_zh));
   }
   
   /**
-   * Combine multilingual content from KB chunk
+   * Build Dense Text View for embeddings (natural language descriptions)
+   * CRITICAL: This is the ONLY content that gets embedded
    */
-  combineMultilingualContent(kbChunk) {
+  buildDenseTextView(kbChunk) {
     const textParts = [];
     
     // Add title (always in both languages where available)
@@ -406,12 +407,17 @@ class NYLANodeEmbeddingBuilder {
       textParts.push(`# ${kbChunk.title}`);
     }
     
-    // Add main body content
+    // Add main content (primary field in new KB structure)
+    if (kbChunk.content) {
+      textParts.push(kbChunk.content);
+    }
+    
+    // Add main body content (legacy field)
     if (kbChunk.body) {
       textParts.push(kbChunk.body);
     }
     
-    // Add both English and Chinese summaries for multilingual search
+    // Add both English and Chinese summaries for multilingual embedding
     if (kbChunk.summary_en) {
       textParts.push(kbChunk.summary_en);
     }
@@ -420,12 +426,186 @@ class NYLANodeEmbeddingBuilder {
       textParts.push(kbChunk.summary_zh);
     }
     
-    // Add related terms if available
-    if (kbChunk.glossary_terms && Array.isArray(kbChunk.glossary_terms)) {
-      textParts.push(`\n## Related Terms: ${kbChunk.glossary_terms.join(', ')}`);
+    return textParts.filter(text => text && text.length > 0).join('\n\n');
+  }
+  
+  /**
+   * Build Sparse Text View for BM25 (keyword-oriented with synonyms, IDs, addresses)
+   * CRITICAL: This is NOT embedded, only used for keyword matching
+   */
+  buildSparseTextView(kbChunk) {
+    const keywordParts = [];
+    
+    // Add title for keyword matching
+    if (kbChunk.title) {
+      keywordParts.push(kbChunk.title);
     }
     
-    return textParts.filter(text => text && text.length > 0).join('\n\n');
+    // Add IDs and identifiers
+    if (kbChunk.id) {
+      keywordParts.push(kbChunk.id);
+    }
+    
+    // Add contract addresses and technical specs
+    if (kbChunk.technical_specs) {
+      if (kbChunk.technical_specs.contract_address) {
+        keywordParts.push(kbChunk.technical_specs.contract_address);
+        keywordParts.push('contract address');
+        keywordParts.push('合約地址');
+        keywordParts.push('CA');
+      }
+      if (kbChunk.technical_specs.ticker_symbol) {
+        keywordParts.push(kbChunk.technical_specs.ticker_symbol);
+        keywordParts.push('ticker');
+        keywordParts.push('symbol');
+      }
+    }
+    
+    // Add official channels
+    if (kbChunk.official_channels) {
+      Object.entries(kbChunk.official_channels).forEach(([platform, url]) => {
+        keywordParts.push(platform);
+        keywordParts.push(url);
+      });
+    }
+    
+    // Add glossary terms and synonyms
+    if (kbChunk.glossary_terms && Array.isArray(kbChunk.glossary_terms)) {
+      keywordParts.push(...kbChunk.glossary_terms);
+    }
+    
+    // Add key facts for keyword matching
+    if (kbChunk.summary_en) {
+      // Extract key terms from English summary
+      const keyTerms = this.extractKeyTerms(kbChunk.summary_en);
+      keywordParts.push(...keyTerms);
+    }
+    
+    if (kbChunk.summary_zh) {
+      // Extract key terms from Chinese summary
+      const keyTerms = this.extractKeyTerms(kbChunk.summary_zh);
+      keywordParts.push(...keyTerms);
+    }
+    
+    return keywordParts.filter(text => text && text.length > 0).join(' ');
+  }
+  
+  /**
+   * Extract key terms for BM25 indexing
+   */
+  extractKeyTerms(text) {
+    const terms = [];
+    
+    // Extract contract-like addresses (starts with uppercase letters/numbers)
+    const addressPattern = /\b[A-Z0-9]{20,}\b/g;
+    const addresses = text.match(addressPattern) || [];
+    terms.push(...addresses);
+    
+    // Extract ticker symbols (2-10 uppercase letters)
+    const tickerPattern = /\b[A-Z]{2,10}\b/g;
+    const tickers = text.match(tickerPattern) || [];
+    terms.push(...tickers);
+    
+    // Extract URLs
+    const urlPattern = /https?:\/\/[^\s]+/g;
+    const urls = text.match(urlPattern) || [];
+    terms.push(...urls);
+    
+    return terms;
+  }
+  
+  /**
+   * Build meta card for structured data attachment
+   */
+  buildMetaCard(kbChunk) {
+    const metaData = {};
+    
+    // Contract information
+    if (kbChunk.technical_specs) {
+      if (kbChunk.technical_specs.contract_address) {
+        metaData.contract_address = kbChunk.technical_specs.contract_address;
+      }
+      if (kbChunk.technical_specs.ticker_symbol) {
+        metaData.ticker_symbol = kbChunk.technical_specs.ticker_symbol;
+      }
+      if (kbChunk.technical_specs.blockchain) {
+        metaData.blockchain = kbChunk.technical_specs.blockchain;
+      }
+    }
+    
+    // Official channels
+    if (kbChunk.official_channels) {
+      metaData.official_channels = kbChunk.official_channels;
+    }
+    
+    // Community information
+    if (kbChunk.community_info) {
+      metaData.community_info = kbChunk.community_info;
+    }
+    
+    return Object.keys(metaData).length > 0 ? metaData : null;
+  }
+  
+  /**
+   * Build Facts database entry for direct key-value lookups
+   */
+  buildFactsEntry(kbChunk) {
+    const facts = {};
+    
+    if (kbChunk.id) {
+      // Contract address fact
+      if (kbChunk.technical_specs?.contract_address) {
+        facts[`${kbChunk.id}_contract_address`] = kbChunk.technical_specs.contract_address;
+        facts[`${kbChunk.id}_ca`] = kbChunk.technical_specs.contract_address;
+        facts[`${kbChunk.id}_合約`] = kbChunk.technical_specs.contract_address;
+        facts[`${kbChunk.id}_合約地址`] = kbChunk.technical_specs.contract_address;
+      }
+      
+      // Ticker symbol fact
+      if (kbChunk.technical_specs?.ticker_symbol) {
+        facts[`${kbChunk.id}_ticker`] = kbChunk.technical_specs.ticker_symbol;
+        facts[`${kbChunk.id}_symbol`] = kbChunk.technical_specs.ticker_symbol;
+      }
+      
+      // Official channels facts
+      if (kbChunk.official_channels) {
+        Object.entries(kbChunk.official_channels).forEach(([platform, url]) => {
+          facts[`${kbChunk.id}_${platform}`] = url;
+        });
+      }
+    }
+    
+    return Object.keys(facts).length > 0 ? facts : null;
+  }
+  
+  /**
+   * Create enhanced chunk with separate text views and metadata
+   */
+  createEnhancedChunk(id, kbChunk, metadata) {
+    // Dense Text View - ONLY this goes to embeddings
+    const denseText = this.buildDenseTextView(kbChunk);
+    
+    // Sparse Text View - for BM25 only, NOT embedded
+    const sparseText = this.buildSparseTextView(kbChunk);
+    
+    // Meta card for structured data
+    const metaCard = this.buildMetaCard(kbChunk);
+    
+    // Facts entry
+    const facts = this.buildFactsEntry(kbChunk);
+    
+    return {
+      id: `chunk_${id}`,
+      text: denseText.trim(), // Dense text for embeddings
+      search_text: sparseText.trim(), // Sparse text for BM25 (NOT embedded)
+      meta_card: metaCard, // Structured data
+      facts: facts, // Key-value facts
+      tokens: this.estimateTokens(denseText),
+      metadata: {
+        created_at: new Date().toISOString(),
+        ...metadata
+      }
+    };
   }
   
   /**
@@ -444,7 +624,16 @@ class NYLANodeEmbeddingBuilder {
       
       for (const chunk of batch) {
         try {
-          const embedding = await this.embeddingService.embed(chunk.text);
+          // CRITICAL: Only embed the 'text' field (Dense Text View)
+          // search_text is for BM25 only and should NOT be embedded
+          const textToEmbed = chunk.text; // Dense Text View only
+          
+          if (!textToEmbed || textToEmbed.trim().length === 0) {
+            this.logger.warn(`Skipping chunk ${chunk.id} - no dense text content`);
+            continue;
+          }
+          
+          const embedding = await this.embeddingService.embed(textToEmbed);
           embeddings.push({
             id: chunk.id,
             embedding: embedding,
@@ -470,12 +659,35 @@ class NYLANodeEmbeddingBuilder {
   }
   
   /**
-   * Save all data to files
+   * Build Facts database from all chunks
+   */
+  buildFactsDatabase(chunks) {
+    this.logger.log('Building Facts database...');
+    
+    const factsDb = {};
+    let factCount = 0;
+    
+    for (const chunk of chunks) {
+      if (chunk.facts) {
+        Object.assign(factsDb, chunk.facts);
+        factCount += Object.keys(chunk.facts).length;
+      }
+    }
+    
+    this.logger.success(`Facts database built: ${factCount} facts from ${chunks.length} chunks`);
+    return factsDb;
+  }
+  
+  /**
+   * Save all data to files including Facts database
    */
   async saveData(chunks, embeddings) {
     this.logger.log('Saving data to files...');
     
     try {
+      // Build Facts database
+      const factsDb = this.buildFactsDatabase(chunks);
+      
       // Save chunks to storage
       await this.storage.storeChunks(chunks);
       
@@ -493,6 +705,18 @@ class NYLANodeEmbeddingBuilder {
         kb_version: await this.generateKBHash(chunks),
         total_chunks: chunks.length
       });
+      
+      // Save Facts database separately
+      const factsPath = path.join(this.webOutputDir, 'nyla-facts-db.json');
+      await fs.writeFile(factsPath, JSON.stringify({
+        facts: factsDb,
+        metadata: {
+          generated_at: new Date().toISOString(),
+          version: '1.0.0',
+          total_facts: Object.keys(factsDb).length,
+          source_chunks: chunks.length
+        }
+      }, null, 2));
       
       // Also save to web-accessible format for PWA
       const webData = {
@@ -518,7 +742,9 @@ class NYLANodeEmbeddingBuilder {
 - Chunks: ${chunks.length}  
 - Embeddings: ${embeddings.length}
 - Dimension: ${vectorData.dimension}
-- Web data: ${webDataPath}`);
+- Facts: ${Object.keys(factsDb).length}
+- Web data: ${webDataPath}
+- Facts DB: ${factsPath}`);
       
     } catch (error) {
       this.logger.error('Failed to save data', error);

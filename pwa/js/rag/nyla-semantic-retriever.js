@@ -23,8 +23,23 @@ class NYLASemanticRetriever {
       crossEncoderEnabled: true,  // Enable cross-encoder reranking
       parentChildEnabled: true,   // Enable parent-child aggregation
       scoreStrategyEnabled: true, // Enable score-driven strategy switch
+      // Phase 2: BM25 hybrid retrieval options
+      bm25Enabled: true,     // Enable BM25 retrieval
+      dynamicWeighting: true, // Enable dynamic BM25/Dense weighting
+      baseBm25Weight: 0.3,   // Base BM25 weight (when no exact signals)
+      baseVectorWeight: 0.7, // Base vector weight (when no exact signals)
+      maxBm25Weight: 0.8,    // Maximum BM25 weight (with many exact signals)
+      minVectorWeight: 0.2,  // Minimum vector weight (with many exact signals)
       ...options
     };
+    
+    // Phase 2: Initialize BM25 index
+    this.bm25Index = null;
+    this.bm25Ready = false;
+    
+    // Phase 3: Language consistency checking
+    this.languageConsistency = null;
+    this.initializeLanguageConsistency();
     
     // High-precision exact-match patterns (keep these minimal)
     this.exactPatterns = {
@@ -39,6 +54,80 @@ class NYLASemanticRetriever {
     // Glossary for query expansion (will be loaded from /glossary/terms.json)
     this.glossary = new Map();
     this.loadGlossary();
+    
+    // Phase 2: Initialize BM25 index if available
+    this.initializeBM25Index();
+  }
+  
+  /**
+   * Phase 3: Initialize language consistency service
+   */
+  initializeLanguageConsistency() {
+    try {
+      if (typeof window.NYLALanguageConsistency === 'undefined') {
+        console.warn('⚠️ NYLALanguageConsistency not available, language consistency disabled');
+        return;
+      }
+      
+      this.languageConsistency = new window.NYLALanguageConsistency({
+        enableLanguageDetection: true,
+        enableConsistencyChecking: true,
+        enableSelfRepair: true,
+        consistencyThreshold: 0.7,
+        maxRepairAttempts: 2
+      });
+      
+      console.log('🌎 Language consistency service initialized');
+      
+    } catch (error) {
+      console.warn('⚠️ Failed to initialize language consistency service:', error.message);
+    }
+  }
+  
+  /**
+   * Phase 2: Initialize BM25 index for hybrid retrieval
+   */
+  async initializeBM25Index() {
+    try {
+      if (typeof window.NYLABm25Index === 'undefined') {
+        console.warn('⚠️ NYLABm25Index not available, hybrid retrieval disabled');
+        this.options.bm25Enabled = false;
+        return;
+      }
+      
+      this.bm25Index = new window.NYLABm25Index({
+        k1: 1.2,
+        b: 0.75,
+        minScore: 0.1,
+        maxResults: this.options.bm25TopK
+      });
+      
+      console.log('🔍 BM25 index initialized, waiting for chunks to build index...');
+      
+    } catch (error) {
+      console.warn('⚠️ Failed to initialize BM25 index:', error.message);
+      this.options.bm25Enabled = false;
+    }
+  }
+  
+  /**
+   * Phase 2: Build BM25 index from vector DB chunks
+   */
+  async buildBM25Index(chunks) {
+    if (!this.bm25Index || !this.options.bm25Enabled) {
+      return false;
+    }
+    
+    try {
+      await this.bm25Index.buildIndex(chunks);
+      this.bm25Ready = true;
+      console.log('✅ BM25 index built successfully for hybrid retrieval');
+      return true;
+    } catch (error) {
+      console.warn('⚠️ Failed to build BM25 index:', error.message);
+      this.bm25Ready = false;
+      return false;
+    }
   }
 
   /**
@@ -92,16 +181,28 @@ class NYLASemanticRetriever {
       // 4. FILTER: Metadata gates & deduplication
       const filteredResults = this.applyMetadataFilters(rerankedResults, processedQuery, config);
       
+      // Phase 3: Language consistency checking and self-repair
+      let finalResults = filteredResults.slice(0, config.finalTopK);
+      if (this.languageConsistency) {
+        const consistencyResult = await this.applyLanguageConsistency(query, finalResults, config);
+        if (consistencyResult.applied) {
+          finalResults = consistencyResult.results;
+        }
+      }
+      
       console.log('📊 Retrieval summary:', {
         query: query,
         hasExactSignals: processedQuery.exactSignals.length > 0,
+        hasSlotIntents: processedQuery.slotIntents?.length > 0,
         denseResults: retrievalResults.dense?.length || 0,
         bm25Results: retrievalResults.bm25?.length || 0,
-        finalResults: filteredResults.length,
-        topScore: filteredResults[0]?.finalScore?.toFixed(3)
+        filteredResults: filteredResults.length,
+        finalResults: finalResults.length,
+        topScore: finalResults[0]?.finalScore?.toFixed(3),
+        languageConsistencyApplied: this.languageConsistency ? true : false
       });
       
-      return filteredResults.slice(0, config.finalTopK);
+      return finalResults;
       
     } catch (error) {
       console.error('❌ Semantic retrieval failed:', error);
@@ -110,25 +211,106 @@ class NYLASemanticRetriever {
   }
 
   /**
-   * 1. QUERY PREP: Detect exact signals & expand via glossary
+   * 1. QUERY PREP: Detect slot intents, exact signals & expand via glossary
    */
   async prepareQuery(query) {
+    // Phase 1 Enhancement: Detect slot intents via keyword matching
+    const slotIntents = this.detectSlotIntents(query);
+    
     // Detect exact signals (addresses, tickers, handles, etc.)
     const exactSignals = this.detectExactSignals(query);
     
     // Expand via glossary (EN↔ZH, no regex trees)
     const expandedQuery = this.expandQueryViaGlossary(query);
     
-    // Determine query type from detected signals
-    const queryType = this.inferQueryType(exactSignals);
+    // Determine query type from slot intents and detected signals
+    const queryType = this.inferQueryType(exactSignals, slotIntents);
     
     return {
       original: query,
       expanded: expandedQuery,
+      slotIntents: slotIntents,
       exactSignals: exactSignals,
       queryType: queryType,
-      needsBM25: exactSignals.length > 0 // Use BM25 when exact signals found
+      needsBM25: exactSignals.length > 0 || slotIntents.length > 0 // Use BM25 when intents/signals found
     };
+  }
+  
+  /**
+   * Phase 1: Detect slot intents via keyword matching
+   * Routes queries to appropriate Facts database or specialized retrieval
+   */
+  detectSlotIntents(query) {
+    const intents = [];
+    const queryLower = query.toLowerCase();
+    
+    // Contract Address Intent (合約/CA)
+    const contractKeywords = [
+      'contract address', 'contract', 'ca', 'smart contract',
+      '合約', '合約地址', '合同地址', '智能合約地址', '智能合约地址'
+    ];
+    if (contractKeywords.some(keyword => queryLower.includes(keyword))) {
+      intents.push({
+        type: 'contract_address',
+        confidence: 0.9,
+        keywords: contractKeywords.filter(k => queryLower.includes(k))
+      });
+    }
+    
+    // Official Channel Intent
+    const channelKeywords = [
+      'official', 'twitter', 'telegram', 'discord', 'website', 'channel',
+      '官方', '推特', '電報', '網站', '頻道', '社群', 'x.com', 't.me'
+    ];
+    if (channelKeywords.some(keyword => queryLower.includes(keyword))) {
+      intents.push({
+        type: 'official_channel',
+        confidence: 0.8,
+        keywords: channelKeywords.filter(k => queryLower.includes(k))
+      });
+    }
+    
+    // Ticker Symbol Intent
+    const tickerKeywords = [
+      'ticker', 'symbol', 'token symbol', 'coin symbol',
+      '代號', '符號', '代幣符號', '幣種符號'
+    ];
+    if (tickerKeywords.some(keyword => queryLower.includes(keyword))) {
+      intents.push({
+        type: 'ticker_symbol',
+        confidence: 0.8,
+        keywords: tickerKeywords.filter(k => queryLower.includes(k))
+      });
+    }
+    
+    // Technical Specs Intent
+    const techKeywords = [
+      'blockchain', 'tps', 'consensus', 'fee', 'gas', 'network',
+      '區塊鏈', '共識', '手續費', '網路', '技術', '規格'
+    ];
+    if (techKeywords.some(keyword => queryLower.includes(keyword))) {
+      intents.push({
+        type: 'technical_specs',
+        confidence: 0.7,
+        keywords: techKeywords.filter(k => queryLower.includes(k))
+      });
+    }
+    
+    // How-to Intent
+    const howtoKeywords = [
+      'how to', 'how do', 'steps', 'tutorial', 'guide',
+      '如何', '怎麼', '步驟', '教程', '指南'
+    ];
+    if (howtoKeywords.some(keyword => queryLower.includes(keyword))) {
+      intents.push({
+        type: 'how_to',
+        confidence: 0.8,
+        keywords: howtoKeywords.filter(k => queryLower.includes(k))
+      });
+    }
+    
+    console.log('🎯 Slot intents detected:', intents);
+    return intents;
   }
 
   /**
@@ -206,9 +388,35 @@ class NYLASemanticRetriever {
   }
 
   /**
-   * Infer query type from exact signals
+   * Infer query type from slot intents and exact signals
    */
-  inferQueryType(exactSignals) {
+  inferQueryType(exactSignals, slotIntents) {
+    // Prioritize slot intents over exact signals
+    if (slotIntents.length > 0) {
+      const intentTypes = slotIntents.map(intent => intent.type);
+      
+      if (intentTypes.includes('contract_address')) {
+        return 'facts_lookup'; // Direct Facts database lookup
+      }
+      
+      if (intentTypes.includes('official_channel')) {
+        return 'facts_lookup'; // Direct Facts database lookup
+      }
+      
+      if (intentTypes.includes('ticker_symbol')) {
+        return 'facts_lookup'; // Direct Facts database lookup
+      }
+      
+      if (intentTypes.includes('technical_specs')) {
+        return 'facts_technical'; // Technical specs retrieval
+      }
+      
+      if (intentTypes.includes('how_to')) {
+        return 'how_to_guide'; // How-to guide retrieval
+      }
+    }
+    
+    // Fallback to exact signal inference
     if (exactSignals.length === 0) return 'semantic';
     
     const signalTypes = exactSignals.map(s => s.type);
@@ -229,7 +437,7 @@ class NYLASemanticRetriever {
   }
 
   /**
-   * 2. RETRIEVE: Dynamic hybrid (dense + BM25 when exact signals present)
+   * 2. RETRIEVE: Phase 2 Enhanced - Dynamic hybrid (dense + BM25 with adaptive weighting)
    */
   async performRetrieval(processedQuery, config) {
     const results = {};
@@ -238,31 +446,108 @@ class NYLASemanticRetriever {
     const denseEmbedding = await this.embeddingService.embed(processedQuery.expanded);
     results.dense = await this.vectorDB.search(denseEmbedding, config.topK);
     
-    // Add BM25 when exact signals detected (favor exact matches)
-    if (processedQuery.needsBM25 && this.vectorDB.searchBM25) {
+    // Phase 2: BM25 retrieval using search_text field
+    if (processedQuery.needsBM25 && this.bm25Ready && config.bm25Enabled) {
+      console.log('🔍 Phase 2: Performing BM25 + Dense hybrid retrieval');
+      
+      try {
+        results.bm25 = await this.bm25Index.search(processedQuery.original, config.bm25TopK);
+        
+        // Phase 2: Dynamic weighting based on slot intents and exact signals
+        const weights = this.calculateDynamicWeights(processedQuery);
+        
+        console.log('⚖️ Phase 2 Dynamic weighting:', {
+          bm25: weights.bm25Weight.toFixed(3),
+          dense: weights.denseWeight.toFixed(3),
+          reason: weights.reason,
+          exactSignals: processedQuery.exactSignals.length,
+          slotIntents: processedQuery.slotIntents.length
+        });
+        
+        // Merge and dedupe by source_id/hash with dynamic weights
+        results.merged = this.mergeAndDedupe(results.dense, results.bm25, weights.denseWeight, weights.bm25Weight);
+        
+      } catch (error) {
+        console.warn('⚠️ BM25 search failed, falling back to dense-only:', error.message);
+        results.merged = this.createDenseOnlyResults(results.dense);
+      }
+      
+    } else if (processedQuery.needsBM25 && this.vectorDB.searchBM25) {
+      // Fallback: Use legacy vector DB BM25 if available
+      console.log('🔍 Fallback: Using legacy vector DB BM25');
       results.bm25 = await this.vectorDB.searchBM25(processedQuery.original, config.bm25TopK);
       
-      // Dynamic weighting: higher BM25 weight when exact signals found
       const bm25Weight = Math.min(0.4 + (processedQuery.exactSignals.length * 0.1), 0.8);
       const denseWeight = 1.0 - bm25Weight;
       
-      console.log('⚖️ Dynamic hybrid weighting:', { dense: denseWeight, bm25: bm25Weight });
-      
-      // Merge and dedupe by source_id/hash
       results.merged = this.mergeAndDedupe(results.dense, results.bm25, denseWeight, bm25Weight);
-    } else {
-      // No BM25, but still need to set finalScore for filtering
-      results.merged = results.dense.map(result => ({
-        ...result,
-        finalScore: result.score, // Copy score to finalScore for filtering
-        sources: ['dense']
-      }));
       
-      console.log('🔍 Dense-only results:', {
-        count: results.merged.length,
-        topScores: results.merged.slice(0, 2).map(r => ({ id: r.id, finalScore: r.finalScore?.toFixed(4) }))
-      });
+    } else {
+      // Dense-only retrieval
+      results.merged = this.createDenseOnlyResults(results.dense);
     }
+    
+    return results;
+  }
+  
+  /**
+   * Phase 2: Calculate dynamic weights based on query characteristics
+   */
+  calculateDynamicWeights(processedQuery) {
+    const { slotIntents, exactSignals } = processedQuery;
+    
+    // Base weights
+    let bm25Weight = this.options.baseBm25Weight;
+    let reason = 'base_weights';
+    
+    // Boost BM25 for slot intent queries (Facts lookup)
+    if (slotIntents.length > 0) {
+      const intentTypes = slotIntents.map(intent => intent.type);
+      
+      if (intentTypes.includes('contract_address') || intentTypes.includes('ticker_symbol')) {
+        bm25Weight = 0.7; // High BM25 weight for exact data lookups
+        reason = 'facts_lookup_intent';
+      } else if (intentTypes.includes('official_channel')) {
+        bm25Weight = 0.6; // Medium-high BM25 weight for official links
+        reason = 'official_channel_intent';
+      } else if (intentTypes.includes('technical_specs')) {
+        bm25Weight = 0.5; // Medium BM25 weight for technical specs
+        reason = 'technical_specs_intent';
+      }
+    }
+    
+    // Additional boost for exact signals (addresses, tickers, handles)
+    if (exactSignals.length > 0) {
+      const signalBoost = Math.min(exactSignals.length * 0.1, 0.2);
+      bm25Weight = Math.min(bm25Weight + signalBoost, this.options.maxBm25Weight);
+      reason += '_with_exact_signals';
+    }
+    
+    // Ensure minimum vector weight
+    const denseWeight = Math.max(1.0 - bm25Weight, this.options.minVectorWeight);
+    bm25Weight = 1.0 - denseWeight; // Recalculate to maintain sum = 1.0
+    
+    return {
+      bm25Weight,
+      denseWeight,
+      reason
+    };
+  }
+  
+  /**
+   * Create dense-only results with proper format
+   */
+  createDenseOnlyResults(denseResults) {
+    const results = denseResults.map(result => ({
+      ...result,
+      finalScore: result.score, // Copy score to finalScore for filtering
+      sources: ['dense']
+    }));
+    
+    console.log('🔍 Dense-only results:', {
+      count: results.length,
+      topScores: results.slice(0, 2).map(r => ({ id: r.id, finalScore: r.finalScore?.toFixed(4) }))
+    });
     
     return results;
   }
@@ -429,6 +714,65 @@ class NYLASemanticRetriever {
 
     return filtered;
   }
+  
+  /**
+   * Phase 3: Apply language consistency checking and self-repair
+   */
+  async applyLanguageConsistency(query, results, config) {
+    if (!this.languageConsistency || results.length === 0) {
+      return { applied: false, reason: 'no_consistency_service' };
+    }
+    
+    try {
+      console.log('🌎 Phase 3: Analyzing language consistency...');
+      
+      // Analyze consistency
+      const analysis = this.languageConsistency.analyzeConsistency(query, results);
+      
+      if (analysis.consistent) {
+        console.log('✅ Language consistency check passed:', analysis.consistency.overall.toFixed(3));
+        return { applied: false, reason: 'already_consistent', analysis };
+      }
+      
+      console.log('⚠️ Language consistency issues detected:', {
+        score: analysis.consistency.overall.toFixed(3),
+        threshold: config.consistencyThreshold || 0.7,
+        recommendations: analysis.recommendations.length
+      });
+      
+      // Attempt self-repair
+      const repairResult = await this.languageConsistency.attemptSelfRepair(query, results, analysis);
+      
+      if (repairResult.repaired) {
+        console.log('✅ Language consistency self-repair successful:', {
+          improvement: repairResult.improvement.toFixed(3),
+          attempts: repairResult.attempts,
+          finalScore: repairResult.repairedScore.toFixed(3)
+        });
+        
+        return {
+          applied: true,
+          reason: 'self_repair_successful',
+          results: repairResult.repairedChunks,
+          analysis,
+          repairResult
+        };
+      } else {
+        console.log('⚠️ Language consistency self-repair failed or insufficient improvement');
+        return {
+          applied: false,
+          reason: 'self_repair_failed',
+          results,
+          analysis,
+          repairResult
+        };
+      }
+      
+    } catch (error) {
+      console.warn('⚠️ Language consistency check failed:', error.message);
+      return { applied: false, reason: 'consistency_check_error', error: error.message };
+    }
+  }
 
   /**
    * Working-set fusion: Combine and limit candidates before cross-encoder
@@ -542,20 +886,39 @@ class NYLASemanticRetriever {
   }
   
   /**
-   * Get retrieval statistics
+   * Get retrieval statistics (Enhanced with Phase 2 & 3)
    */
   getStats() {
     return {
-      type: 'semantic',
+      type: 'semantic_enhanced',
+      phase1: {
+        slotIntentDetection: true,
+        factsStorage: true,
+        dualTextViews: true
+      },
+      phase2: {
+        bm25Enabled: this.options.bm25Enabled,
+        bm25Ready: this.bm25Ready,
+        hybridRetrieval: true,
+        dynamicWeighting: this.options.dynamicWeighting
+      },
+      phase3: {
+        languageConsistency: !!this.languageConsistency,
+        selfRepairEnabled: this.languageConsistency?.options.enableSelfRepair || false,
+        consistencyThreshold: this.languageConsistency?.options.consistencyThreshold || 0.7
+      },
       exactPatternsCount: Object.keys(this.exactPatterns).length,
       glossarySize: this.glossary.size,
-      minScore: this.options.minScore,
-      mmrEnabled: this.options.mmrEnabled,
-      topK: this.options.topK,
-      crossEncoderTopK: this.options.crossEncoderTopK,
-      fusionTopK: this.options.fusionTopK,
-      parentTopK: this.options.parentTopK,
-      finalTopK: this.options.finalTopK
+      options: {
+        minScore: this.options.minScore,
+        mmrEnabled: this.options.mmrEnabled,
+        topK: this.options.topK,
+        bm25TopK: this.options.bm25TopK,
+        crossEncoderTopK: this.options.crossEncoderTopK,
+        fusionTopK: this.options.fusionTopK,
+        parentTopK: this.options.parentTopK,
+        finalTopK: this.options.finalTopK
+      }
     };
   }
 }

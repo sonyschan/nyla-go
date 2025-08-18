@@ -16,6 +16,7 @@ class NYLACrossEncoder {
     
     this.initialized = false;
     this.model = null;
+    this.useLocalFallback = false;
     
     console.log('🎯 Cross-encoder initialized', {
       model: this.options.modelName,
@@ -30,19 +31,33 @@ class NYLACrossEncoder {
     if (this.initialized) return;
     
     try {
-      // Try to load transformers.js cross-encoder
-      if (typeof window !== 'undefined' && window.transformers && window.transformers.pipeline) {
-        const { pipeline } = window.transformers;
-        this.model = await pipeline('text-classification', this.options.modelName);
-        console.log('✅ Cross-encoder model loaded');
+      console.log('🎆 Loading Transformers.js for cross-encoder...');
+      
+      let pipeline;
+      
+      // Environment-aware loading (same approach as embedding service)
+      if (typeof window === 'undefined') {
+        // Node.js environment
+        const transformers = await import('@xenova/transformers');
+        pipeline = transformers.pipeline;
       } else {
-        console.log('⚠️ Transformers.js not available, using fallback');
-        this.useLocalFallback = true;
+        // Browser environment - use dynamic import to match embedding service
+        const transformers = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+        pipeline = transformers.pipeline;
+      }
+      
+      if (pipeline) {
+        console.log('🎆 Transformers.js loaded, initializing cross-encoder model...');
+        this.model = await pipeline('text-classification', this.options.modelName);
+        console.log('✅ Cross-encoder model loaded:', this.options.modelName);
+        this.useLocalFallback = false;
+      } else {
+        throw new Error('Transformers.js pipeline not available');
       }
       
       this.initialized = true;
     } catch (error) {
-      console.warn('⚠️ Cross-encoder initialization failed, using fallback:', error);
+      console.warn('⚠️ Cross-encoder initialization failed, using fallback:', error.message);
       this.useLocalFallback = true;
       this.initialized = true;
     }
