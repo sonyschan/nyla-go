@@ -8,7 +8,7 @@
       "facts": null,
       "tokens": 103,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.821Z",
         "category": "team_nyla",
         "section": "about_team_nyla_founder",
         "source": "knowledge_base",
@@ -23,7 +23,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_founder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.619Z"
+        "updated_at": "2025-08-18T10:29:07.803Z"
       }
     },
     {
@@ -31,7 +31,7 @@
       "text": "NYLA founder @shax_btc - handles smart contracts, backend systems, and core AI agent functionality. NYLA创始人@shax_btc - 负责智能合约、后端系统和核心AI代理功能。",
       "tokens": 35,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_founder",
         "subsection": "summary",
@@ -48,7 +48,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_founder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -59,7 +59,7 @@
       "facts": null,
       "tokens": 104,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_cofounder",
         "source": "knowledge_base",
@@ -75,7 +75,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_cofounder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -83,7 +83,7 @@
       "text": "NYLA co-founder @btcberries - manages community engagement, social presence, and marketing efforts. NYLA联合创始人@btcberries - 管理社区参与、社交媒体和营销工作。",
       "tokens": 35,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_cofounder",
         "subsection": "summary",
@@ -101,7 +101,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_cofounder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -112,7 +112,7 @@
       "facts": null,
       "tokens": 93,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_dev",
         "source": "knowledge_base",
@@ -127,7 +127,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_dev",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -135,7 +135,7 @@
       "text": "NYLA lead developer @ChiefZ_SOL - handles technical development and AI agent implementation. NYLA首席开发人员@ChiefZ_SOL - 负责技术开发和AI代理实现。",
       "tokens": 33,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_dev",
         "subsection": "summary",
@@ -152,7 +152,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_dev",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -163,7 +163,7 @@
       "facts": null,
       "tokens": 102,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_designer",
         "source": "knowledge_base",
@@ -180,7 +180,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_designer",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -188,7 +188,7 @@
       "text": "NYLA visual designer @Noir0883 - creates branding, graphics, stickers, and artistic elements. NYLA视觉设计师@Noir0883 - 创建品牌、图形、贴纸和艺术元素。",
       "tokens": 33,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_designer",
         "subsection": "summary",
@@ -207,7 +207,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_designer",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -218,7 +218,7 @@
       "facts": null,
       "tokens": 130,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_collaboration",
         "section": "about_team_distinction",
         "source": "knowledge_base",
@@ -233,7 +233,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_distinction",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -241,7 +241,7 @@
       "text": "Clear team distinction: NYLA team builds AI agent, NYLAGo provides interface. Separate but collaborative projects. 团队区别明确：NYLA团队构建AI代理，NYLAGo提供界面。独立但协作的项目。",
       "tokens": 39,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_collaboration",
         "section": "about_team_distinction",
         "subsection": "summary",
@@ -258,7 +258,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_distinction",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -269,7 +269,7 @@
       "facts": null,
       "tokens": 188,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "resources",
         "section": "about_nyla_resources",
         "source": "knowledge_base",
@@ -286,7 +286,7 @@
         "chunk_type": "about",
         "kb_id": "about_nyla_resources",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -294,7 +294,7 @@
       "text": "Official NYLA resources: website (agentnyla.com), lore site, X.com (@AgentNyla), and $NYLA contract address on Solana. NYLA官方资源：网站(agentnyla.com)、故事网站、X.com (@AgentNyla)和Solana上的$NYLA合约地址。",
       "tokens": 47,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "resources",
         "section": "about_nyla_resources",
         "subsection": "summary",
@@ -313,7 +313,7 @@
         "chunk_type": "summary",
         "kb_id": "about_nyla_resources",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -324,7 +324,7 @@
       "facts": null,
       "tokens": 106,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_algorand_tokens",
         "source": "knowledge_base",
@@ -340,7 +340,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_algorand_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -348,7 +348,7 @@
       "text": "Authoritative Algorand ASA token IDs with decimals and technical specifications for accurate transfers. 权威的Algorand ASA代币ID，包含小数位数和技术规格，确保准确转账。",
       "tokens": 36,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_algorand_tokens",
         "subsection": "summary",
@@ -366,7 +366,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_algorand_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -377,7 +377,7 @@
       "facts": null,
       "tokens": 109,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_ethereum_tokens",
         "source": "knowledge_base",
@@ -393,7 +393,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_ethereum_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -401,7 +401,7 @@
       "text": "Authoritative Ethereum token contract addresses with decimals and technical specifications for accurate transfers. 权威的以太坊代币合约地址，包含小数位数和技术规格，确保准确转账。",
       "tokens": 37,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_ethereum_tokens",
         "subsection": "summary",
@@ -419,7 +419,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_ethereum_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -430,7 +430,7 @@
       "facts": null,
       "tokens": 108,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_solana_tokens",
         "source": "knowledge_base",
@@ -446,7 +446,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_solana_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -454,7 +454,7 @@
       "text": "Authoritative Solana token contract addresses with decimals and technical specifications for accurate transfers. 权威的Solana代币合约地址，包含小数位数和技术规格，确保准确转账。",
       "tokens": 37,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "contracts",
         "section": "facts_contracts_solana_tokens",
         "subsection": "summary",
@@ -472,7 +472,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_solana_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -483,7 +483,7 @@
       "facts": null,
       "tokens": 162,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "limitations",
         "section": "facts_network_limitations",
         "source": "knowledge_base",
@@ -498,7 +498,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_network_limitations",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -506,7 +506,7 @@
       "text": "All NYLA operations are within-network only. No cross-chain bridging between different blockchains. 所有NYLA操作仅限于同一网络内。不同区块链之间无跨链桥接。",
       "tokens": 33,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "limitations",
         "section": "facts_network_limitations",
         "subsection": "summary",
@@ -523,7 +523,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_network_limitations",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -534,7 +534,7 @@
       "facts": null,
       "tokens": 118,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_algorand_overview",
         "source": "knowledge_base",
@@ -550,7 +550,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_algorand_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -558,7 +558,7 @@
       "text": "Energy-efficient blockchain with PPoS consensus. ~$0.001 fees, 6k TPS, carbon-negative. 采用纯权益证明共识机制的节能区块链。约0.001美元费用，6k TPS，碳中和。",
       "tokens": 32,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_algorand_overview",
         "subsection": "summary",
@@ -576,7 +576,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_algorand_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -587,7 +587,7 @@
       "facts": null,
       "tokens": 119,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_ethereum_overview",
         "source": "knowledge_base",
@@ -603,7 +603,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_ethereum_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -611,7 +611,7 @@
       "text": "Most established blockchain with smart contracts. PoS consensus, $5-50+ variable fees, 15-30 TPS. 最成熟的智能合约区块链。PoS共识，5-50+美元可变费用，15-30 TPS。",
       "tokens": 35,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_ethereum_overview",
         "subsection": "summary",
@@ -629,7 +629,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_ethereum_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -640,7 +640,7 @@
       "facts": null,
       "tokens": 120,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_solana_overview",
         "source": "knowledge_base",
@@ -656,7 +656,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_solana_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -664,7 +664,7 @@
       "text": "Ultra-fast, low-cost blockchain network with PoH+PoS consensus. ~$0.0001 fees, 65k TPS capacity. 超快速、低成本的区块链网络，采用PoH+PoS共识机制。约0.0001美元费用，65k TPS容量。",
       "tokens": 37,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_solana_overview",
         "subsection": "summary",
@@ -682,7 +682,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_solana_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -693,7 +693,7 @@
       "facts": null,
       "tokens": 121,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_how_to_send",
         "source": "knowledge_base",
@@ -708,7 +708,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_how_to_send",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -716,7 +716,7 @@
       "text": "Send tokens via NYLAGo Send tab: enter recipient, amount, token, network, then post generated command on X.com. 通过NYLAGo发送选项卡发送代币：输入收件人、金额、代币、网络，然后在X.com上发布生成的命令。",
       "tokens": 41,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_how_to_send",
         "subsection": "summary",
@@ -733,7 +733,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_how_to_send",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -744,7 +744,7 @@
       "facts": null,
       "tokens": 106,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_transaction_fees",
         "source": "knowledge_base",
@@ -759,7 +759,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_transaction_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -767,7 +767,7 @@
       "text": "No NYLA fees, only network costs: Solana ~$0.0001, Ethereum $5-50+, Algorand ~$0.001. 无NYLA费用，仅网络成本：Solana约0.0001美元，Ethereum 5-50+美元，Algorand约0.001美元。",
       "tokens": 38,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_transaction_fees",
         "subsection": "summary",
@@ -784,7 +784,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_transaction_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -795,7 +795,7 @@
       "facts": null,
       "tokens": 109,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "status_tracking",
         "section": "faq_transaction_status",
         "source": "knowledge_base",
@@ -810,7 +810,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_transaction_status",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -818,7 +818,7 @@
       "text": "Check status via NYLA's comment responses on your X.com posts. Processing takes ~1 minute. 通过NYLA在您的X.com帖子上的评论回复查看状态。处理需要约1分钟。",
       "tokens": 32,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "status_tracking",
         "section": "faq_transaction_status",
         "subsection": "summary",
@@ -835,7 +835,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_transaction_status",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -846,7 +846,7 @@
       "facts": null,
       "tokens": 107,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "security_safety",
         "section": "faq_security",
         "source": "knowledge_base",
@@ -861,7 +861,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_security",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -869,7 +869,7 @@
       "text": "NYLA is secure: no private key handling, transparent commands, open source, non-custodial design. NYLA安全：不处理私钥，透明命令，开源，非托管设计。",
       "tokens": 32,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "security_safety",
         "section": "faq_security",
         "subsection": "summary",
@@ -886,7 +886,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_security",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -897,7 +897,7 @@
       "facts": null,
       "tokens": 107,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "networks_support",
         "section": "faq_supported_blockchains",
         "source": "knowledge_base",
@@ -912,7 +912,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_supported_blockchains",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -920,7 +920,7 @@
       "text": "Supports 3 networks: Solana, Ethereum, Algorand. Operations within-network only, no cross-chain. 支持3个网络：Solana、Ethereum、Algorand。仅限网络内操作，无跨链。",
       "tokens": 36,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "networks_support",
         "section": "faq_supported_blockchains",
         "subsection": "summary",
@@ -937,7 +937,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_supported_blockchains",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -948,7 +948,7 @@
       "facts": null,
       "tokens": 169,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "capabilities",
         "section": "faq_what_can_nyla_do",
         "source": "knowledge_base",
@@ -965,7 +965,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -973,7 +973,7 @@
       "text": "NYLAGo generates commands for transfers, same-network swaps, QR payments, and X.com execution. Includes community features. NYLAGo生成转账、同网络交换、QR支付和X.com执行的命令。包括社区功能。",
       "tokens": 41,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "capabilities",
         "section": "faq_what_can_nyla_do",
         "subsection": "summary",
@@ -992,7 +992,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1003,7 +1003,7 @@
       "facts": null,
       "tokens": 246,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "additional_capabilities",
         "section": "faq_what_else_can_nyla_do",
         "source": "knowledge_base",
@@ -1021,7 +1021,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_else_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1029,7 +1029,7 @@
       "text": "NYLAGo provides username-based transfers, QR payment requests, same-network swaps, X.com integration, and community tools beyond basic cryptocurrency operations. 除了基本的加密货币操作，NYLAGo还提供基于用户名的转账、QR支付请求、同网络交换、X.com集成和社区工具。",
       "tokens": 55,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "additional_capabilities",
         "section": "faq_what_else_can_nyla_do",
         "subsection": "summary",
@@ -1049,7 +1049,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_else_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1060,7 +1060,7 @@
       "facts": null,
       "tokens": 151,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_blockchain_fees",
         "source": "knowledge_base",
@@ -1077,7 +1077,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_blockchain_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1085,7 +1085,7 @@
       "text": "Blockchain fees vary: Solana ~$0.0001 (lowest), Ethereum $5-50+ (highest, variable), Algorand ~$0.001 (low, stable). No NYLA fees added. 区块链费用各不相同：Solana约0.0001美元（最低），Ethereum 5-50+美元（最高，可变），Algorand约0.001美元（低，稳定）。无NYLA费用。",
       "tokens": 56,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_blockchain_fees",
         "subsection": "summary",
@@ -1104,7 +1104,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_blockchain_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1115,7 +1115,7 @@
       "facts": null,
       "tokens": 146,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "performance_comparison",
         "section": "faq_blockchain_speed",
         "source": "knowledge_base",
@@ -1132,7 +1132,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_blockchain_speed",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1140,7 +1140,7 @@
       "text": "Solana is fastest (65,000 TPS), followed by Algorand (6,000 TPS), then Ethereum (15-30 TPS). Performance varies with network conditions. Solana最快（65,000 TPS），其次是Algorand（6,000 TPS），然后是Ethereum（15-30 TPS）。性能因网络状况而异。",
       "tokens": 54,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "performance_comparison",
         "section": "faq_blockchain_speed",
         "subsection": "summary",
@@ -1159,7 +1159,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_blockchain_speed",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1170,7 +1170,7 @@
       "facts": null,
       "tokens": 186,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "getting_started",
         "section": "faq_getting_started",
         "source": "knowledge_base",
@@ -1186,7 +1186,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_getting_started",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1194,7 +1194,7 @@
       "text": "Start using NYLAGo immediately: visit the site/extension, choose Send/Receive/Raid tab, generate commands, post on X.com. No registration required. 立即开始使用NYLAGo：访问网站/扩展，选择发送/接收/突袭选项卡，生成命令，在X.com上发布。无需注册。",
       "tokens": 51,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "getting_started",
         "section": "faq_getting_started",
         "subsection": "summary",
@@ -1212,7 +1212,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_getting_started",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1223,7 +1223,7 @@
       "facts": null,
       "tokens": 165,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_sharing",
         "section": "faq_share_qr_code",
         "source": "knowledge_base",
@@ -1238,7 +1238,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_share_qr_code",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1246,7 +1246,7 @@
       "text": "Generate QR codes in NYLAGo's Receive tab, then share the image via text, email, or display on screen. QR creation happens in NYLAGo, not X.com. 在NYLAGo的接收选项卡中生成QR码，然后通过短信、邮件分享图像或在屏幕上显示。QR创建在NYLAGo中进行，而非X.com。",
       "tokens": 53,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_sharing",
         "section": "faq_share_qr_code",
         "subsection": "summary",
@@ -1263,7 +1263,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_share_qr_code",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1274,7 +1274,7 @@
       "facts": null,
       "tokens": 182,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_send_tokens_natural",
         "source": "knowledge_base",
@@ -1292,7 +1292,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_send_tokens_natural",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1300,7 +1300,7 @@
       "text": "Send tokens through NYLAGo: use Send tab, enter recipient username, choose amount/token/network, generate command, post on X.com for execution. 通过NYLAGo发送代币：使用发送选项卡，输入收件人用户名，选择金额/代币/网络，生成命令，在X.com上发布执行。",
       "tokens": 51,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_send_tokens_natural",
         "subsection": "summary",
@@ -1320,7 +1320,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_send_tokens_natural",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1331,7 +1331,7 @@
       "facts": null,
       "tokens": 227,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "workflow_process",
         "section": "faq_what_happens_after_post",
         "source": "knowledge_base",
@@ -1348,7 +1348,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_happens_after_post",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1356,7 +1356,7 @@
       "text": "After posting: NYLA detects → validates → executes transaction → replies with confirmation. Complete automated workflow in 30-60 seconds. 发布后：NYLA检测→验证→执行交易→回复确认。在30-60秒内完成自动化工作流程。",
       "tokens": 45,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "workflow_process",
         "section": "faq_what_happens_after_post",
         "subsection": "summary",
@@ -1375,7 +1375,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_happens_after_post",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1386,7 +1386,7 @@
       "facts": null,
       "tokens": 186,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "about_nyla",
         "section": "faq_what_is_nyla",
         "source": "knowledge_base",
@@ -1401,7 +1401,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_is_nyla",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1409,7 +1409,7 @@
       "text": "NYLA is an AI agent that executes blockchain transactions through X.com posts. Post commands, NYLA executes them automatically. NYLA是一个通过X.com帖子执行区块链交易的AI代理。发布命令，NYLA会自动执行。",
       "tokens": 43,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "about_nyla",
         "section": "faq_what_is_nyla",
         "subsection": "summary",
@@ -1426,7 +1426,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_is_nyla",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1437,7 +1437,7 @@
       "facts": null,
       "tokens": 91,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_guide",
         "section": "howto_send_tokens_guide",
         "source": "knowledge_base",
@@ -1455,7 +1455,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_send_tokens_guide",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1463,7 +1463,7 @@
       "text": "Step-by-step instructions for sending tokens/cryptocurrency using NYLAGo interface through X.com integration. 使用NYLAGo界面通过X.com集成发送代币/加密货币的分步说明。",
       "tokens": 36,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_guide",
         "section": "howto_send_tokens_guide",
         "subsection": "summary",
@@ -1483,7 +1483,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_send_tokens_guide",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1494,7 +1494,7 @@
       "facts": null,
       "tokens": 71,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_create_guide",
         "source": "knowledge_base",
@@ -1509,7 +1509,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_qr_create_guide",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1517,7 +1517,7 @@
       "text": "Step-by-step guide for creating payment QR codes for easy token receiving via mobile scanning. 创建支付二维码的分步指南，便于通过移动设备扫描接收代币。",
       "tokens": 31,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_create_guide",
         "subsection": "summary",
@@ -1534,7 +1534,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_qr_create_guide",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1545,7 +1545,7 @@
       "facts": null,
       "tokens": 68,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_troubleshoot_guide",
         "source": "knowledge_base",
@@ -1560,7 +1560,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_qr_troubleshoot_guide",
         "kb_priority": 6,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1568,7 +1568,7 @@
       "text": "Troubleshooting guide for common QR code scanning and generation problems with step-by-step solutions. 常见二维码扫描和生成问题的故障排除指南，包含分步解决方案。",
       "tokens": 33,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_troubleshoot_guide",
         "subsection": "summary",
@@ -1585,7 +1585,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_qr_troubleshoot_guide",
         "kb_priority": 6,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1596,7 +1596,7 @@
       "facts": null,
       "tokens": 85,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "raids",
         "section": "howto_raids_participate_guide",
         "source": "knowledge_base",
@@ -1611,7 +1611,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_raids_participate_guide",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -1619,7 +1619,7 @@
       "text": "Step-by-step guide for joining and participating in community raids through NYLA's social engagement system. 通过NYLA社交参与系统加入和参与社区突袭的分步指南。",
       "tokens": 34,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "raids",
         "section": "howto_raids_participate_guide",
         "subsection": "summary",
@@ -1636,7 +1636,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_raids_participate_guide",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1647,7 +1647,7 @@
       "facts": null,
       "tokens": 69,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_receive_guide",
         "source": "knowledge_base",
@@ -1662,7 +1662,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_transfers_receive_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1670,7 +1670,7 @@
       "text": "Step-by-step guide for receiving tokens through NYLA with wallet address sharing and verification. 通过NYLA接收代币的分步指南，包括钱包地址共享和验证。",
       "tokens": 32,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_receive_guide",
         "subsection": "summary",
@@ -1687,7 +1687,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_transfers_receive_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1698,7 +1698,7 @@
       "facts": null,
       "tokens": 68,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_send_guide",
         "source": "knowledge_base",
@@ -1713,7 +1713,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_transfers_send_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1721,7 +1721,7 @@
       "text": "Step-by-step guide for sending tokens through NYLA with social verification on X.com. 通过NYLA在X.com上进行社交验证发送代币的分步指南。",
       "tokens": 29,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_send_guide",
         "subsection": "summary",
@@ -1738,7 +1738,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_transfers_send_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1749,7 +1749,7 @@
       "facts": null,
       "tokens": 167,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "brand",
         "section": "marketing_brand_voice_guidelines",
         "source": "knowledge_base",
@@ -1765,7 +1765,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_brand_voice_guidelines",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1773,7 +1773,7 @@
       "text": "NYLA brand guidelines emphasizing innovation, accessibility, and trust with professional yet approachable tone. NYLA品牌指导原则，强调创新、可及性和信任，采用专业而亲切的语调。",
       "tokens": 37,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "brand",
         "section": "marketing_brand_voice_guidelines",
         "subsection": "summary",
@@ -1791,7 +1791,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_brand_voice_guidelines",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1802,7 +1802,7 @@
       "facts": null,
       "tokens": 164,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "positioning",
         "section": "marketing_venmo_of_web3",
         "source": "knowledge_base",
@@ -1819,7 +1819,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_venmo_of_web3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1827,7 +1827,7 @@
       "text": "NYLA positioned as 'The Venmo of Web3' - simplifying token distribution using only X usernames, making Web3 accessible to newcomers. NYLA被定位为'Web3的Venmo' - 仅使用X用户名简化代币分发，让新手也能轻松进入Web3。",
       "tokens": 46,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "positioning",
         "section": "marketing_venmo_of_web3",
         "subsection": "summary",
@@ -1846,7 +1846,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_venmo_of_web3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1857,7 +1857,7 @@
       "facts": null,
       "tokens": 189,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "expansion",
         "section": "marketing_multi_platform_vision",
         "source": "knowledge_base",
@@ -1876,7 +1876,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_platform_vision",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1884,7 +1884,7 @@
       "text": "NYLA's multi-platform vision includes expansion to Reddit, Instagram, Discord, WeChat through API integrations, becoming a universal Web3 layer. NYLA的多平台愿景包括通过API集成扩展到Reddit、Instagram、Discord、微信，成为通用的Web3层。",
       "tokens": 52,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "expansion",
         "section": "marketing_multi_platform_vision",
         "subsection": "summary",
@@ -1905,7 +1905,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_platform_vision",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1916,7 +1916,7 @@
       "facts": null,
       "tokens": 169,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "blockchain_support",
         "section": "marketing_multi_chain_support",
         "source": "knowledge_base",
@@ -1933,7 +1933,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_chain_support",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1941,7 +1941,7 @@
       "text": "NYLA supports Solana, Ethereum, and Algorand with Algorand Foundation endorsement. More chains coming for expanded network effects. NYLA支持Solana、Ethereum和Algorand，获得Algorand基金会认可。更多区块链即将加入以扩大网络效应。",
       "tokens": 49,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "blockchain_support",
         "section": "marketing_multi_chain_support",
         "subsection": "summary",
@@ -1960,7 +1960,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_chain_support",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1971,7 +1971,7 @@
       "facts": null,
       "tokens": 171,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_support",
         "section": "marketing_multi_lingual_support",
         "source": "knowledge_base",
@@ -1988,7 +1988,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_lingual_support",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -1996,7 +1996,7 @@
       "text": "NYLA supports full Chinese language commands alongside English, with BONK partnership validation. More languages coming for global accessibility. NYLA支持完整的中文命令和英文，通过BONK合作伙伴关系验证。更多语言即将推出以实现全球可访问性。",
       "tokens": 49,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_support",
         "section": "marketing_multi_lingual_support",
         "subsection": "summary",
@@ -2015,7 +2015,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_lingual_support",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2026,7 +2026,7 @@
       "facts": null,
       "tokens": 191,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "team_credentials",
         "section": "marketing_team_qualifications",
         "source": "knowledge_base",
@@ -2043,7 +2043,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_team_qualifications",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2051,7 +2051,7 @@
       "text": "NYLA team: 10-figure Web2 exits, fintech/hedge fund engineering, crypto natives since BTC/ETH/SOL inception, strong BONK supporters. NYLA团队：Web2十位数退出、金融科技/对冲基金工程、自BTC/ETH/SOL开始的加密原生、强大的BONK支持者。",
       "tokens": 49,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "team_credentials",
         "section": "marketing_team_qualifications",
         "subsection": "summary",
@@ -2070,7 +2070,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_team_qualifications",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2081,7 +2081,7 @@
       "facts": null,
       "tokens": 172,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "market_positioning",
         "section": "marketing_ai_valuation_comparisons",
         "source": "knowledge_base",
@@ -2099,7 +2099,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_ai_valuation_comparisons",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2107,7 +2107,7 @@
       "text": "AI project valuations: Zerebro $821M, AIXBT $916M, AI16Z $2.73B vs NYLA at $7M - showing significant growth potential. AI项目估值：Zerebro 8.21亿美元、AIXBT 9.16亿美元、AI16Z 27.3亿美元，而NYLA仅700万美元 - 显示巨大增长潜力。",
       "tokens": 49,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "market_positioning",
         "section": "marketing_ai_valuation_comparisons",
         "subsection": "summary",
@@ -2127,7 +2127,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_ai_valuation_comparisons",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2138,7 +2138,7 @@
       "facts": null,
       "tokens": 50,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "security_templates",
         "section": "policy_security_disclaimers",
         "source": "knowledge_base",
@@ -2152,7 +2152,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_security_disclaimers",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2160,7 +2160,7 @@
       "text": "Standard security disclaimers and non-custodial stance templates. 标准安全免责声明和非托管立场模板。",
       "tokens": 21,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "security_templates",
         "section": "policy_security_disclaimers",
         "subsection": "summary",
@@ -2176,7 +2176,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_security_disclaimers",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2187,7 +2187,7 @@
       "facts": null,
       "tokens": 48,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_templates",
         "section": "policy_language_output_rules",
         "source": "knowledge_base",
@@ -2201,7 +2201,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_language_output_rules",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2209,7 +2209,7 @@
       "text": "Guidelines for language detection and response formatting in bilingual contexts. 双语环境中语言检测和响应格式的准则。",
       "tokens": 25,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_templates",
         "section": "policy_language_output_rules",
         "subsection": "summary",
@@ -2225,7 +2225,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_language_output_rules",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2236,7 +2236,7 @@
       "facts": null,
       "tokens": 52,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "volatility_templates",
         "section": "policy_volatility_handling",
         "source": "knowledge_base",
@@ -2250,7 +2250,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_volatility_handling",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2258,7 +2258,7 @@
       "text": "Guidelines for presenting volatile data without specific outdated numbers. 处理易变数据的指南，避免提及具体的过时数字。",
       "tokens": 25,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "volatility_templates",
         "section": "policy_volatility_handling",
         "subsection": "summary",
@@ -2274,7 +2274,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_volatility_handling",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2285,7 +2285,7 @@
       "facts": null,
       "tokens": 122,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "terminology",
         "section": "policy_wording_features_vs_networks",
         "source": "knowledge_base",
@@ -2300,7 +2300,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_features_vs_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2308,7 +2308,7 @@
       "text": "Clear distinction between blockchain networks (infrastructure) and features (operations). Always use correct terminology. 区块链网络（基础设施）和功能（操作）之间的明确区别。始终使用正确的术语。",
       "tokens": 40,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "terminology",
         "section": "policy_wording_features_vs_networks",
         "subsection": "summary",
@@ -2325,7 +2325,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_features_vs_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2336,7 +2336,7 @@
       "facts": null,
       "tokens": 132,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "identity",
         "section": "policy_wording_nyla_identity",
         "source": "knowledge_base",
@@ -2350,7 +2350,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_nyla_identity",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2358,7 +2358,7 @@
       "text": "Maintain clear identity distinction between NYLA (AI agent) and NYLAGo (interface) especially for security discussions. 保持NYLA（AI代理）和NYLAGo（界面）之间的清晰身份区别，特别是在安全讨论中。",
       "tokens": 41,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "identity",
         "section": "policy_wording_nyla_identity",
         "subsection": "summary",
@@ -2374,7 +2374,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_nyla_identity",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2385,7 +2385,7 @@
       "facts": null,
       "tokens": 109,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "networks",
         "section": "policy_wording_supported_networks",
         "source": "knowledge_base",
@@ -2399,7 +2399,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_supported_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2407,7 +2407,7 @@
       "text": "Definitive list of 3 supported blockchain networks with explicit exclusions. No cross-chain operations. 3个支持的区块链网络的权威列表，明确排除其他网络。无跨链操作。",
       "tokens": 34,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "networks",
         "section": "policy_wording_supported_networks",
         "subsection": "summary",
@@ -2423,7 +2423,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_supported_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2434,7 +2434,7 @@
       "facts": null,
       "tokens": 51,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "forbidden_corrections",
         "section": "policy_forbidden_phrases",
         "source": "knowledge_base",
@@ -2448,7 +2448,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_forbidden_phrases",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2456,7 +2456,7 @@
       "text": "Mandatory phrase corrections to maintain accuracy and prevent confusion. 维护准确性和防止混淆的强制性措辞纠正。",
       "tokens": 23,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "forbidden_corrections",
         "section": "policy_forbidden_phrases",
         "subsection": "summary",
@@ -2472,7 +2472,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_forbidden_phrases",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2483,7 +2483,7 @@
       "facts": null,
       "tokens": 48,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "required_qualifiers",
         "section": "policy_required_qualifiers",
         "source": "knowledge_base",
@@ -2497,7 +2497,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_required_qualifiers",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2505,7 +2505,7 @@
       "text": "Mandatory qualifiers for financial, security, and technical statements. 金融、安全和技术声明的强制性限定词。",
       "tokens": 23,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "required_qualifiers",
         "section": "policy_required_qualifiers",
         "subsection": "summary",
@@ -2521,7 +2521,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_required_qualifiers",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2532,7 +2532,7 @@
       "facts": null,
       "tokens": 58,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfer_problems",
         "section": "troubleshoot_transfer_not_working",
         "source": "knowledge_base",
@@ -2547,7 +2547,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_transfer_not_working",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2555,7 +2555,7 @@
       "text": "Transfer command posted but no NYLA response - diagnostic steps and fixes. 已发布转账命令但NYLA无响应 - 诊断步骤和修复方法。",
       "tokens": 26,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfer_problems",
         "section": "troubleshoot_transfer_not_working",
         "subsection": "summary",
@@ -2572,7 +2572,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_transfer_not_working",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2583,7 +2583,7 @@
       "facts": null,
       "tokens": 50,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "qr_problems",
         "section": "troubleshoot_qr_not_scanning",
         "source": "knowledge_base",
@@ -2597,7 +2597,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_qr_not_scanning",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2605,7 +2605,7 @@
       "text": "QR code scanning problems - diagnostic steps and mobile compatibility fixes. 二维码扫描问题 - 诊断步骤和移动兼容性修复。",
       "tokens": 25,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "qr_problems",
         "section": "troubleshoot_qr_not_scanning",
         "subsection": "summary",
@@ -2621,7 +2621,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_qr_not_scanning",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2632,7 +2632,7 @@
       "facts": null,
       "tokens": 47,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "extension_problems",
         "section": "troubleshoot_extension_not_loading",
         "source": "knowledge_base",
@@ -2646,7 +2646,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_extension_not_loading",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2654,7 +2654,7 @@
       "text": "Browser extension loading problems - troubleshooting steps and fixes. 浏览器扩展加载问题 - 故障排除步骤和修复方法。",
       "tokens": 24,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "extension_problems",
         "section": "troubleshoot_extension_not_loading",
         "subsection": "summary",
@@ -2670,7 +2670,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_extension_not_loading",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2681,7 +2681,7 @@
       "facts": null,
       "tokens": 185,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "network_launches",
         "section": "ecosystem_campaigns_algorand_launch_july_2025",
         "source": "knowledge_base",
@@ -2699,7 +2699,7 @@
         "chunk_type": "campaign",
         "kb_id": "ecosystem_campaigns_algorand_launch_july_2025",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2707,7 +2707,7 @@
       "text": "NYLA x Algorand integration launch campaign culminated in July 26, 2025 go-live, adding carbon-negative blockchain support. NYLA x Algorand整合發佈活動於2025年7月26日正式上線，增加碳負區塊鏈支援。",
       "tokens": 43,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "network_launches",
         "section": "ecosystem_campaigns_algorand_launch_july_2025",
         "subsection": "summary",
@@ -2727,7 +2727,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_campaigns_algorand_launch_july_2025",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2738,7 +2738,7 @@
       "facts": null,
       "tokens": 53,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/core-support",
         "source": "knowledge_base",
@@ -2754,7 +2754,7 @@
         "chunk_type": "integration",
         "kb_id": "algorand/core-support",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2762,7 +2762,7 @@
       "text": "NYLA's canonical Algorand integration supporting ALGO transfers, ASA tokens, and sustainability tracking since July 26, 2025. NYLA的標準Algorand整合，自2025年7月26日起支援ALGO轉帳、ASA代幣和可持續性追蹤。",
       "tokens": 45,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/core-support",
         "subsection": "summary",
@@ -2780,7 +2780,7 @@
         "chunk_type": "summary",
         "kb_id": "algorand/core-support",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2791,7 +2791,7 @@
       "facts": null,
       "tokens": 35,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/pera-wallet",
         "source": "knowledge_base",
@@ -2806,7 +2806,7 @@
         "chunk_type": "integration",
         "kb_id": "algorand/pera-wallet",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2814,7 +2814,7 @@
       "text": "Live wallet integration for ALGO transfers, ASA tokens, and QR code generation. 已上線的錢包整合，支援ALGO轉帳、ASA代幣和QR碼生成。",
       "tokens": 28,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/pera-wallet",
         "subsection": "summary",
@@ -2831,7 +2831,7 @@
         "chunk_type": "summary",
         "kb_id": "algorand/pera-wallet",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2842,7 +2842,7 @@
       "facts": null,
       "tokens": 29,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "ethereum/uniswap-v3",
         "source": "knowledge_base",
@@ -2857,7 +2857,7 @@
         "chunk_type": "integration",
         "kb_id": "ethereum/uniswap-v3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2865,7 +2865,7 @@
       "text": "Live DEX protocol integration with concentrated liquidity and flash loan capabilities. 已上線的DEX協議整合，支援集中流動性和閃電貸款功能。",
       "tokens": 29,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "ethereum/uniswap-v3",
         "subsection": "summary",
@@ -2882,7 +2882,7 @@
         "chunk_type": "summary",
         "kb_id": "ethereum/uniswap-v3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2893,7 +2893,7 @@
       "facts": null,
       "tokens": 38,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "solana/jupiter-routing",
         "source": "knowledge_base",
@@ -2908,7 +2908,7 @@
         "chunk_type": "integration",
         "kb_id": "solana/jupiter-routing",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2916,7 +2916,7 @@
       "text": "Live DEX aggregator for optimal Solana token routing across 20+ exchanges. 已上線的DEX聚合器，在20多個交易所中提供最優Solana代幣路由。",
       "tokens": 28,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "solana/jupiter-routing",
         "subsection": "summary",
@@ -2933,7 +2933,7 @@
         "chunk_type": "summary",
         "kb_id": "solana/jupiter-routing",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2944,7 +2944,7 @@
       "facts": null,
       "tokens": 161,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_algorand_foundation",
         "source": "knowledge_base",
@@ -2960,7 +2960,7 @@
         "chunk_type": "partner",
         "kb_id": "ecosystem_partners_algorand_foundation",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2968,7 +2968,7 @@
       "text": "Algorand Foundation partnership emphasizing sustainable, carbon-negative AI agents and green DeFi solutions. 与Algorand基金会的合作，重点关注可持续的碳负AI代理和绿色DeFi解决方案。",
       "tokens": 38,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_algorand_foundation",
         "subsection": "summary",
@@ -2986,7 +2986,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_partners_algorand_foundation",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -2997,7 +2997,7 @@
       "facts": null,
       "tokens": 163,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_solana_foundation",
         "source": "knowledge_base",
@@ -3013,7 +3013,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_partners_solana_foundation",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -3021,7 +3021,7 @@
       "text": "Strategic Solana Foundation partnership providing grants, technical advisory, and ecosystem integration priority for NYLA. 与Solana基金会的战略合作，为NYLA提供资助、技术咨询和生态系统集成优先权。",
       "tokens": 41,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_solana_foundation",
         "subsection": "summary",
@@ -3039,7 +3039,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_partners_solana_foundation",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -3047,7 +3047,7 @@
       "text": "WangChai (旺柴) - Comprehensive Project Overview & NYLA Partnership: WangChai (旺柴) Complete Project Overview: 跟我說說旺柴這個項目：关于旺柴项目，旺柴是什么？说说旺柴这个项目的详细信息。旺柴 (WangChai) 是什么项目？旺柴项目介绍如下：旺柴是一个社区驱动的区块链项目，专注于建设强大的社区参与度并交付计划中的里程碑。关于旺柴项目，你应该知道这是一个社区驱动的区块链项目，拥有强大的社区基础。旺柴项目的主要特点包括：社区驱动、区块链技术、跨文化合作。旺柴项目现状：截至2025年8月，旺柴已发展至4,820个推特成员和3,000个电报成员（总计7,820个社区成员）。WangChai (旺柴) is a community-driven blockchain project focused on building strong community engagement and delivering planned milestones including whitepapers, NFT collections (Chai cards/柴卡), and merchandise.  The project has released version 1. 0 of its whitepaper, completed two batches of Chai cards, finished the first batch of WangChai profile pictures/avatars, and procured merchandise gift packages.  WangChai serves as a bridge connecting Eastern and Western communities, supporting NYLA during challenges and strengthening ties through continued cooperation and social media outreach.  NYLA Partnership & Joint AMAs: WangChai maintains a deep cooperative relationship with NYLA through joint AMAs and community events, with at least two collaborative AMA sessions completed as of August 12, 2025",
       "tokens": 287,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "community_partnerships",
         "section": "ecosystem_wangchai_project_overview",
         "source": "knowledge_base",
@@ -3087,7 +3087,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_wangchai_project_overview",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z",
+        "updated_at": "2025-08-18T10:29:07.824Z",
         "parent_chunk": "chunk_117",
         "chunk_part": 1,
         "has_overlap": false
@@ -3098,7 +3098,7 @@
       "text": "NYLA and WangChai have conducted a series of joint AMA (Ask Me Anything) sessions to strengthen their partnership and introduce NYLA to the Chinese-speaking community.  On August 15, 2025, a Chinese-language AMA was planned where participant 'Looky' was invited to introduce the NYLA project to the WangChai community.  These AMAs serve as a key mechanism for deepening ties between the projects and facilitating cross-cultural understanding in the crypto space, focusing on educating WangChai's community about NYLA's capabilities while building stronger collaborative relationships",
       "tokens": 146,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "community_partnerships",
         "section": "ecosystem_wangchai_project_overview",
         "source": "knowledge_base",
@@ -3138,7 +3138,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_wangchai_project_overview",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z",
+        "updated_at": "2025-08-18T10:29:07.824Z",
         "parent_chunk": "chunk_117",
         "chunk_part": 2,
         "has_overlap": true
@@ -3201,7 +3201,7 @@
       },
       "tokens": 290,
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.825Z",
         "category": "technical_specifications_and_community",
         "section": "ecosystem_wangchai_technical_details",
         "source": "knowledge_base",
@@ -3269,7 +3269,7 @@
         "chunk_type": "facts",
         "kb_id": "ecosystem_wangchai_technical_details",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     }
   ],
@@ -4047,7 +4047,7 @@
         0.011352443136274815
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.821Z",
         "category": "team_nyla",
         "section": "about_team_nyla_founder",
         "source": "knowledge_base",
@@ -4062,7 +4062,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_founder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.619Z"
+        "updated_at": "2025-08-18T10:29:07.803Z"
       }
     },
     {
@@ -4838,7 +4838,7 @@
         -0.005449078045785427
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_founder",
         "subsection": "summary",
@@ -4855,7 +4855,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_founder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -5631,7 +5631,7 @@
         0.008533436805009842
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_cofounder",
         "source": "knowledge_base",
@@ -5647,7 +5647,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_cofounder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -6423,7 +6423,7 @@
         0.0036138396244496107
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_cofounder",
         "subsection": "summary",
@@ -6441,7 +6441,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_cofounder",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -7217,7 +7217,7 @@
         -0.0036021284759044647
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_dev",
         "source": "knowledge_base",
@@ -7232,7 +7232,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_dev",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -8008,7 +8008,7 @@
         -0.004021020140498877
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_dev",
         "subsection": "summary",
@@ -8025,7 +8025,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_dev",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -8801,7 +8801,7 @@
         0.058039695024490356
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.647Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_designer",
         "source": "knowledge_base",
@@ -8818,7 +8818,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_nyla_designer",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.647Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -9594,7 +9594,7 @@
         0.05925086885690689
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_nyla",
         "section": "about_team_nyla_designer",
         "subsection": "summary",
@@ -9613,7 +9613,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_nyla_designer",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -10389,7 +10389,7 @@
         0.028644630685448647
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_collaboration",
         "section": "about_team_distinction",
         "source": "knowledge_base",
@@ -10404,7 +10404,7 @@
         "chunk_type": "about",
         "kb_id": "about_team_distinction",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -11180,7 +11180,7 @@
         0.02090800553560257
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "team_collaboration",
         "section": "about_team_distinction",
         "subsection": "summary",
@@ -11197,7 +11197,7 @@
         "chunk_type": "summary",
         "kb_id": "about_team_distinction",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -11973,7 +11973,7 @@
         0.04081012308597565
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "resources",
         "section": "about_nyla_resources",
         "source": "knowledge_base",
@@ -11990,7 +11990,7 @@
         "chunk_type": "about",
         "kb_id": "about_nyla_resources",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -12766,7 +12766,7 @@
         0.04718457907438278
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "resources",
         "section": "about_nyla_resources",
         "subsection": "summary",
@@ -12785,7 +12785,7 @@
         "chunk_type": "summary",
         "kb_id": "about_nyla_resources",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -13561,7 +13561,7 @@
         -0.00221665995195508
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_algorand_tokens",
         "source": "knowledge_base",
@@ -13577,7 +13577,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_algorand_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -14353,7 +14353,7 @@
         0.013852483592927456
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_algorand_tokens",
         "subsection": "summary",
@@ -14371,7 +14371,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_algorand_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -15147,7 +15147,7 @@
         0.021603794768452644
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_ethereum_tokens",
         "source": "knowledge_base",
@@ -15163,7 +15163,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_ethereum_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -15939,7 +15939,7 @@
         0.03773915767669678
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_ethereum_tokens",
         "subsection": "summary",
@@ -15957,7 +15957,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_ethereum_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -16733,7 +16733,7 @@
         0.03240414708852768
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.822Z",
         "category": "contracts",
         "section": "facts_contracts_solana_tokens",
         "source": "knowledge_base",
@@ -16749,7 +16749,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_contracts_solana_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.822Z"
       }
     },
     {
@@ -17525,7 +17525,7 @@
         0.05683119222521782
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "contracts",
         "section": "facts_contracts_solana_tokens",
         "subsection": "summary",
@@ -17543,7 +17543,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_contracts_solana_tokens",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -18319,7 +18319,7 @@
         0.036163993179798126
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "limitations",
         "section": "facts_network_limitations",
         "source": "knowledge_base",
@@ -18334,7 +18334,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_network_limitations",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -19110,7 +19110,7 @@
         0.037792742252349854
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "limitations",
         "section": "facts_network_limitations",
         "subsection": "summary",
@@ -19127,7 +19127,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_network_limitations",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -19903,7 +19903,7 @@
         0.018583951517939568
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_algorand_overview",
         "source": "knowledge_base",
@@ -19919,7 +19919,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_algorand_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -20695,7 +20695,7 @@
         0.016376689076423645
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_algorand_overview",
         "subsection": "summary",
@@ -20713,7 +20713,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_algorand_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -21489,7 +21489,7 @@
         0.038539305329322815
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_ethereum_overview",
         "source": "knowledge_base",
@@ -21505,7 +21505,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_ethereum_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -22281,7 +22281,7 @@
         0.04163253307342529
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_ethereum_overview",
         "subsection": "summary",
@@ -22299,7 +22299,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_ethereum_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -23075,7 +23075,7 @@
         0.024391546845436096
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_solana_overview",
         "source": "knowledge_base",
@@ -23091,7 +23091,7 @@
         "chunk_type": "facts",
         "kb_id": "facts_supported_networks_solana_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -23867,7 +23867,7 @@
         0.027547720819711685
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "supported_networks",
         "section": "facts_supported_networks_solana_overview",
         "subsection": "summary",
@@ -23885,7 +23885,7 @@
         "chunk_type": "summary",
         "kb_id": "facts_supported_networks_solana_overview",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -24661,7 +24661,7 @@
         0.02255846932530403
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_how_to_send",
         "source": "knowledge_base",
@@ -24676,7 +24676,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_how_to_send",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -25452,7 +25452,7 @@
         0.03862344101071358
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_how_to_send",
         "subsection": "summary",
@@ -25469,7 +25469,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_how_to_send",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -26245,7 +26245,7 @@
         0.003870208514854312
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_transaction_fees",
         "source": "knowledge_base",
@@ -26260,7 +26260,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_transaction_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -27036,7 +27036,7 @@
         0.014631050638854504
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.648Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_transaction_fees",
         "subsection": "summary",
@@ -27053,7 +27053,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_transaction_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -27829,7 +27829,7 @@
         0.02724245935678482
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "status_tracking",
         "section": "faq_transaction_status",
         "source": "knowledge_base",
@@ -27844,7 +27844,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_transaction_status",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.648Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -28620,7 +28620,7 @@
         0.046079520136117935
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "status_tracking",
         "section": "faq_transaction_status",
         "subsection": "summary",
@@ -28637,7 +28637,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_transaction_status",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -29413,7 +29413,7 @@
         0.06959957629442215
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "security_safety",
         "section": "faq_security",
         "source": "knowledge_base",
@@ -29428,7 +29428,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_security",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -30204,7 +30204,7 @@
         0.06700268387794495
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "security_safety",
         "section": "faq_security",
         "subsection": "summary",
@@ -30221,7 +30221,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_security",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -30997,7 +30997,7 @@
         0.0361885130405426
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "networks_support",
         "section": "faq_supported_blockchains",
         "source": "knowledge_base",
@@ -31012,7 +31012,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_supported_blockchains",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -31788,7 +31788,7 @@
         0.03765921667218208
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "networks_support",
         "section": "faq_supported_blockchains",
         "subsection": "summary",
@@ -31805,7 +31805,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_supported_blockchains",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -32581,7 +32581,7 @@
         0.03715907037258148
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "capabilities",
         "section": "faq_what_can_nyla_do",
         "source": "knowledge_base",
@@ -32598,7 +32598,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -33374,7 +33374,7 @@
         0.0461290180683136
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "capabilities",
         "section": "faq_what_can_nyla_do",
         "subsection": "summary",
@@ -33393,7 +33393,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -34169,7 +34169,7 @@
         0.04355275258421898
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "additional_capabilities",
         "section": "faq_what_else_can_nyla_do",
         "source": "knowledge_base",
@@ -34187,7 +34187,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_else_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -34963,7 +34963,7 @@
         0.041410911828279495
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "additional_capabilities",
         "section": "faq_what_else_can_nyla_do",
         "subsection": "summary",
@@ -34983,7 +34983,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_else_can_nyla_do",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -35759,7 +35759,7 @@
         0.014316298998892307
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_blockchain_fees",
         "source": "knowledge_base",
@@ -35776,7 +35776,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_blockchain_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -36552,7 +36552,7 @@
         0.00535508943721652
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "fees_costs",
         "section": "faq_blockchain_fees",
         "subsection": "summary",
@@ -36571,7 +36571,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_blockchain_fees",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -37347,7 +37347,7 @@
         0.01175754889845848
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "performance_comparison",
         "section": "faq_blockchain_speed",
         "source": "knowledge_base",
@@ -37364,7 +37364,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_blockchain_speed",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -38140,7 +38140,7 @@
         0.006909525953233242
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "performance_comparison",
         "section": "faq_blockchain_speed",
         "subsection": "summary",
@@ -38159,7 +38159,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_blockchain_speed",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -38935,7 +38935,7 @@
         0.033578045666217804
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "getting_started",
         "section": "faq_getting_started",
         "source": "knowledge_base",
@@ -38951,7 +38951,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_getting_started",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -39727,7 +39727,7 @@
         0.0426141656935215
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "getting_started",
         "section": "faq_getting_started",
         "subsection": "summary",
@@ -39745,7 +39745,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_getting_started",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -40521,7 +40521,7 @@
         0.0594351626932621
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_sharing",
         "section": "faq_share_qr_code",
         "source": "knowledge_base",
@@ -40536,7 +40536,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_share_qr_code",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -41312,7 +41312,7 @@
         0.0628281831741333
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_sharing",
         "section": "faq_share_qr_code",
         "subsection": "summary",
@@ -41329,7 +41329,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_share_qr_code",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -42105,7 +42105,7 @@
         0.026647502556443214
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_send_tokens_natural",
         "source": "knowledge_base",
@@ -42123,7 +42123,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_send_tokens_natural",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -42899,7 +42899,7 @@
         0.029188375920057297
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_usage",
         "section": "faq_send_tokens_natural",
         "subsection": "summary",
@@ -42919,7 +42919,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_send_tokens_natural",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -43695,7 +43695,7 @@
         0.031031625345349312
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "workflow_process",
         "section": "faq_what_happens_after_post",
         "source": "knowledge_base",
@@ -43712,7 +43712,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_happens_after_post",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -44488,7 +44488,7 @@
         0.01834014244377613
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "workflow_process",
         "section": "faq_what_happens_after_post",
         "subsection": "summary",
@@ -44507,7 +44507,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_happens_after_post",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -45283,7 +45283,7 @@
         0.020445875823497772
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "about_nyla",
         "section": "faq_what_is_nyla",
         "source": "knowledge_base",
@@ -45298,7 +45298,7 @@
         "chunk_type": "faq",
         "kb_id": "faq_what_is_nyla",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -46074,7 +46074,7 @@
         0.005744186230003834
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "about_nyla",
         "section": "faq_what_is_nyla",
         "subsection": "summary",
@@ -46091,7 +46091,7 @@
         "chunk_type": "summary",
         "kb_id": "faq_what_is_nyla",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -46867,7 +46867,7 @@
         0.04706231877207756
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_guide",
         "section": "howto_send_tokens_guide",
         "source": "knowledge_base",
@@ -46885,7 +46885,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_send_tokens_guide",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -47661,7 +47661,7 @@
         0.04886755719780922
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "basic_guide",
         "section": "howto_send_tokens_guide",
         "subsection": "summary",
@@ -47681,7 +47681,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_send_tokens_guide",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -48457,7 +48457,7 @@
         0.05247415602207184
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_create_guide",
         "source": "knowledge_base",
@@ -48472,7 +48472,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_qr_create_guide",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -49248,7 +49248,7 @@
         0.05305713415145874
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_create_guide",
         "subsection": "summary",
@@ -49265,7 +49265,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_qr_create_guide",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -50041,7 +50041,7 @@
         0.0664488822221756
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_troubleshoot_guide",
         "source": "knowledge_base",
@@ -50056,7 +50056,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_qr_troubleshoot_guide",
         "kb_priority": 6,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -50832,7 +50832,7 @@
         0.07951979339122772
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "qr_codes",
         "section": "howto_qr_troubleshoot_guide",
         "subsection": "summary",
@@ -50849,7 +50849,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_qr_troubleshoot_guide",
         "kb_priority": 6,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -51625,7 +51625,7 @@
         0.02540186233818531
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.823Z",
         "category": "raids",
         "section": "howto_raids_participate_guide",
         "source": "knowledge_base",
@@ -51640,7 +51640,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_raids_participate_guide",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.823Z"
       }
     },
     {
@@ -52416,7 +52416,7 @@
         0.03879328817129135
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "raids",
         "section": "howto_raids_participate_guide",
         "subsection": "summary",
@@ -52433,7 +52433,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_raids_participate_guide",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -53209,7 +53209,7 @@
         0.026339266449213028
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_receive_guide",
         "source": "knowledge_base",
@@ -53224,7 +53224,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_transfers_receive_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -54000,7 +54000,7 @@
         0.03932197764515877
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_receive_guide",
         "subsection": "summary",
@@ -54017,7 +54017,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_transfers_receive_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -54793,7 +54793,7 @@
         0.0179470032453537
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_send_guide",
         "source": "knowledge_base",
@@ -54808,7 +54808,7 @@
         "chunk_type": "howto",
         "kb_id": "howto_transfers_send_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -55584,7 +55584,7 @@
         0.03719479963183403
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfers",
         "section": "howto_transfers_send_guide",
         "subsection": "summary",
@@ -55601,7 +55601,7 @@
         "chunk_type": "summary",
         "kb_id": "howto_transfers_send_guide",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -56377,7 +56377,7 @@
         0.05885845422744751
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "brand",
         "section": "marketing_brand_voice_guidelines",
         "source": "knowledge_base",
@@ -56393,7 +56393,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_brand_voice_guidelines",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -57169,7 +57169,7 @@
         0.042926449328660965
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "brand",
         "section": "marketing_brand_voice_guidelines",
         "subsection": "summary",
@@ -57187,7 +57187,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_brand_voice_guidelines",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -57963,7 +57963,7 @@
         0.03440171480178833
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "positioning",
         "section": "marketing_venmo_of_web3",
         "source": "knowledge_base",
@@ -57980,7 +57980,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_venmo_of_web3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -58756,7 +58756,7 @@
         0.02122551016509533
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "positioning",
         "section": "marketing_venmo_of_web3",
         "subsection": "summary",
@@ -58775,7 +58775,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_venmo_of_web3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -59551,7 +59551,7 @@
         0.05546082556247711
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "expansion",
         "section": "marketing_multi_platform_vision",
         "source": "knowledge_base",
@@ -59570,7 +59570,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_platform_vision",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -60346,7 +60346,7 @@
         0.04775006324052811
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "expansion",
         "section": "marketing_multi_platform_vision",
         "subsection": "summary",
@@ -60367,7 +60367,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_platform_vision",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -61143,7 +61143,7 @@
         0.02687765285372734
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "blockchain_support",
         "section": "marketing_multi_chain_support",
         "source": "knowledge_base",
@@ -61160,7 +61160,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_chain_support",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -61936,7 +61936,7 @@
         0.035568803548812866
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "blockchain_support",
         "section": "marketing_multi_chain_support",
         "subsection": "summary",
@@ -61955,7 +61955,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_chain_support",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -62731,7 +62731,7 @@
         0.05249442160129547
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_support",
         "section": "marketing_multi_lingual_support",
         "source": "knowledge_base",
@@ -62748,7 +62748,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_multi_lingual_support",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -63524,7 +63524,7 @@
         0.05071220546960831
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_support",
         "section": "marketing_multi_lingual_support",
         "subsection": "summary",
@@ -63543,7 +63543,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_multi_lingual_support",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -64319,7 +64319,7 @@
         0.0369875468313694
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "team_credentials",
         "section": "marketing_team_qualifications",
         "source": "knowledge_base",
@@ -64336,7 +64336,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_team_qualifications",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -65112,7 +65112,7 @@
         0.02399807795882225
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "team_credentials",
         "section": "marketing_team_qualifications",
         "subsection": "summary",
@@ -65131,7 +65131,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_team_qualifications",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -65907,7 +65907,7 @@
         0.013083212077617645
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "market_positioning",
         "section": "marketing_ai_valuation_comparisons",
         "source": "knowledge_base",
@@ -65925,7 +65925,7 @@
         "chunk_type": "marketing",
         "kb_id": "marketing_ai_valuation_comparisons",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -66701,7 +66701,7 @@
         0.010045385919511318
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "market_positioning",
         "section": "marketing_ai_valuation_comparisons",
         "subsection": "summary",
@@ -66721,7 +66721,7 @@
         "chunk_type": "summary",
         "kb_id": "marketing_ai_valuation_comparisons",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -67497,7 +67497,7 @@
         0.06104889512062073
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "security_templates",
         "section": "policy_security_disclaimers",
         "source": "knowledge_base",
@@ -67511,7 +67511,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_security_disclaimers",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -68287,7 +68287,7 @@
         0.07606644183397293
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "security_templates",
         "section": "policy_security_disclaimers",
         "subsection": "summary",
@@ -68303,7 +68303,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_security_disclaimers",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -69079,7 +69079,7 @@
         0.035068079829216
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_templates",
         "section": "policy_language_output_rules",
         "source": "knowledge_base",
@@ -69093,7 +69093,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_language_output_rules",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -69869,7 +69869,7 @@
         0.042551010847091675
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "language_templates",
         "section": "policy_language_output_rules",
         "subsection": "summary",
@@ -69885,7 +69885,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_language_output_rules",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -70661,7 +70661,7 @@
         0.052376940846443176
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "volatility_templates",
         "section": "policy_volatility_handling",
         "source": "knowledge_base",
@@ -70675,7 +70675,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_volatility_handling",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -71451,7 +71451,7 @@
         0.06751743704080582
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "volatility_templates",
         "section": "policy_volatility_handling",
         "subsection": "summary",
@@ -71467,7 +71467,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_volatility_handling",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -72243,7 +72243,7 @@
         0.060497380793094635
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.649Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "terminology",
         "section": "policy_wording_features_vs_networks",
         "source": "knowledge_base",
@@ -72258,7 +72258,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_features_vs_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.649Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -73034,7 +73034,7 @@
         0.04627663269639015
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "terminology",
         "section": "policy_wording_features_vs_networks",
         "subsection": "summary",
@@ -73051,7 +73051,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_features_vs_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -73827,7 +73827,7 @@
         0.022844631224870682
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "identity",
         "section": "policy_wording_nyla_identity",
         "source": "knowledge_base",
@@ -73841,7 +73841,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_nyla_identity",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -74617,7 +74617,7 @@
         0.03361578285694122
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "identity",
         "section": "policy_wording_nyla_identity",
         "subsection": "summary",
@@ -74633,7 +74633,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_nyla_identity",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -75409,7 +75409,7 @@
         0.03209901973605156
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "networks",
         "section": "policy_wording_supported_networks",
         "source": "knowledge_base",
@@ -75423,7 +75423,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_wording_supported_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -76199,7 +76199,7 @@
         0.0556214265525341
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "networks",
         "section": "policy_wording_supported_networks",
         "subsection": "summary",
@@ -76215,7 +76215,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_wording_supported_networks",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -76991,7 +76991,7 @@
         0.0401250459253788
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "forbidden_corrections",
         "section": "policy_forbidden_phrases",
         "source": "knowledge_base",
@@ -77005,7 +77005,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_forbidden_phrases",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -77781,7 +77781,7 @@
         0.053538817912340164
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "forbidden_corrections",
         "section": "policy_forbidden_phrases",
         "subsection": "summary",
@@ -77797,7 +77797,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_forbidden_phrases",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -78573,7 +78573,7 @@
         0.015755105763673782
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "required_qualifiers",
         "section": "policy_required_qualifiers",
         "source": "knowledge_base",
@@ -78587,7 +78587,7 @@
         "chunk_type": "policy",
         "kb_id": "policy_required_qualifiers",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -79363,7 +79363,7 @@
         0.03529704734683037
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "required_qualifiers",
         "section": "policy_required_qualifiers",
         "subsection": "summary",
@@ -79379,7 +79379,7 @@
         "chunk_type": "summary",
         "kb_id": "policy_required_qualifiers",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -80155,7 +80155,7 @@
         0.044740717858076096
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfer_problems",
         "section": "troubleshoot_transfer_not_working",
         "source": "knowledge_base",
@@ -80170,7 +80170,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_transfer_not_working",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -80946,7 +80946,7 @@
         0.05565605312585831
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "transfer_problems",
         "section": "troubleshoot_transfer_not_working",
         "subsection": "summary",
@@ -80963,7 +80963,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_transfer_not_working",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -81739,7 +81739,7 @@
         0.06775037199258804
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "qr_problems",
         "section": "troubleshoot_qr_not_scanning",
         "source": "knowledge_base",
@@ -81753,7 +81753,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_qr_not_scanning",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -82529,7 +82529,7 @@
         0.06798598915338516
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "qr_problems",
         "section": "troubleshoot_qr_not_scanning",
         "subsection": "summary",
@@ -82545,7 +82545,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_qr_not_scanning",
         "kb_priority": 7,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -83321,7 +83321,7 @@
         0.05279049277305603
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "extension_problems",
         "section": "troubleshoot_extension_not_loading",
         "source": "knowledge_base",
@@ -83335,7 +83335,7 @@
         "chunk_type": "troubleshooting",
         "kb_id": "troubleshoot_extension_not_loading",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -84111,7 +84111,7 @@
         0.022582659497857094
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "extension_problems",
         "section": "troubleshoot_extension_not_loading",
         "subsection": "summary",
@@ -84127,7 +84127,7 @@
         "chunk_type": "summary",
         "kb_id": "troubleshoot_extension_not_loading",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -84903,7 +84903,7 @@
         0.019753267988562584
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "network_launches",
         "section": "ecosystem_campaigns_algorand_launch_july_2025",
         "source": "knowledge_base",
@@ -84921,7 +84921,7 @@
         "chunk_type": "campaign",
         "kb_id": "ecosystem_campaigns_algorand_launch_july_2025",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -85697,7 +85697,7 @@
         0.023504726588726044
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "network_launches",
         "section": "ecosystem_campaigns_algorand_launch_july_2025",
         "subsection": "summary",
@@ -85717,7 +85717,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_campaigns_algorand_launch_july_2025",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -86493,7 +86493,7 @@
         0.02667970024049282
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/core-support",
         "source": "knowledge_base",
@@ -86509,7 +86509,7 @@
         "chunk_type": "integration",
         "kb_id": "algorand/core-support",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -87285,7 +87285,7 @@
         0.02429485321044922
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/core-support",
         "subsection": "summary",
@@ -87303,7 +87303,7 @@
         "chunk_type": "summary",
         "kb_id": "algorand/core-support",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -88079,7 +88079,7 @@
         -0.0034114024601876736
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/pera-wallet",
         "source": "knowledge_base",
@@ -88094,7 +88094,7 @@
         "chunk_type": "integration",
         "kb_id": "algorand/pera-wallet",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -88870,7 +88870,7 @@
         0.001329651684500277
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "algorand/pera-wallet",
         "subsection": "summary",
@@ -88887,7 +88887,7 @@
         "chunk_type": "summary",
         "kb_id": "algorand/pera-wallet",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -89663,7 +89663,7 @@
         0.02657170034945011
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "ethereum/uniswap-v3",
         "source": "knowledge_base",
@@ -89678,7 +89678,7 @@
         "chunk_type": "integration",
         "kb_id": "ethereum/uniswap-v3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -90454,7 +90454,7 @@
         0.02657170034945011
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "ethereum/uniswap-v3",
         "subsection": "summary",
@@ -90471,7 +90471,7 @@
         "chunk_type": "summary",
         "kb_id": "ethereum/uniswap-v3",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -91247,7 +91247,7 @@
         0.02511783130466938
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "solana/jupiter-routing",
         "source": "knowledge_base",
@@ -91262,7 +91262,7 @@
         "chunk_type": "integration",
         "kb_id": "solana/jupiter-routing",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -92038,7 +92038,7 @@
         0.04055655002593994
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "integrations",
         "section": "solana/jupiter-routing",
         "subsection": "summary",
@@ -92055,7 +92055,7 @@
         "chunk_type": "summary",
         "kb_id": "solana/jupiter-routing",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -92831,7 +92831,7 @@
         0.01667351834475994
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_algorand_foundation",
         "source": "knowledge_base",
@@ -92847,7 +92847,7 @@
         "chunk_type": "partner",
         "kb_id": "ecosystem_partners_algorand_foundation",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -93623,7 +93623,7 @@
         0.0023662203457206488
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_algorand_foundation",
         "subsection": "summary",
@@ -93641,7 +93641,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_partners_algorand_foundation",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -94417,7 +94417,7 @@
         0.018361205235123634
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_solana_foundation",
         "source": "knowledge_base",
@@ -94433,7 +94433,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_partners_solana_foundation",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -95209,7 +95209,7 @@
         0.040565986186265945
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "partners",
         "section": "ecosystem_partners_solana_foundation",
         "subsection": "summary",
@@ -95227,7 +95227,7 @@
         "chunk_type": "summary",
         "kb_id": "ecosystem_partners_solana_foundation",
         "kb_priority": 10,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     },
     {
@@ -96003,7 +96003,7 @@
         0.024593373760581017
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "community_partnerships",
         "section": "ecosystem_wangchai_project_overview",
         "source": "knowledge_base",
@@ -96043,7 +96043,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_wangchai_project_overview",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z",
+        "updated_at": "2025-08-18T10:29:07.824Z",
         "parent_chunk": "chunk_117",
         "chunk_part": 1,
         "has_overlap": false
@@ -96822,7 +96822,7 @@
         0.019412361085414886
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.824Z",
         "category": "community_partnerships",
         "section": "ecosystem_wangchai_project_overview",
         "source": "knowledge_base",
@@ -96862,7 +96862,7 @@
         "chunk_type": "ecosystem",
         "kb_id": "ecosystem_wangchai_project_overview",
         "kb_priority": 8,
-        "updated_at": "2025-08-18T08:31:58.650Z",
+        "updated_at": "2025-08-18T10:29:07.824Z",
         "parent_chunk": "chunk_117",
         "chunk_part": 2,
         "has_overlap": true
@@ -97641,7 +97641,7 @@
         0.019980167970061302
       ],
       "metadata": {
-        "created_at": "2025-08-18T08:31:58.650Z",
+        "created_at": "2025-08-18T10:29:07.825Z",
         "category": "technical_specifications_and_community",
         "section": "ecosystem_wangchai_technical_details",
         "source": "knowledge_base",
@@ -97709,12 +97709,12 @@
         "chunk_type": "facts",
         "kb_id": "ecosystem_wangchai_technical_details",
         "kb_priority": 9,
-        "updated_at": "2025-08-18T08:31:58.650Z"
+        "updated_at": "2025-08-18T10:29:07.824Z"
       }
     }
   ],
   "metadata": {
-    "generated_at": "2025-08-18T08:32:38.280Z",
+    "generated_at": "2025-08-18T10:29:39.142Z",
     "version": "1.0.0",
     "model": "multilingual-e5-base",
     "dimension": 768,
