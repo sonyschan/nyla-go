@@ -8,7 +8,7 @@ class NYLAMMRReranker {
     this.embeddingService = embeddingService;
     
     this.options = {
-      lambda: 0.5,              // Balance between relevance and diversity (0 = diversity only, 1 = relevance only)
+      lambda: 0.82,             // Balance between relevance and diversity (0 = diversity only, 1 = relevance only)
       diversityWeight: 0.3,     // Weight for diversity scoring
       maxIterations: 100,       // Maximum iterations to prevent infinite loops
       minSimilarity: 0.1,       // Minimum similarity to consider for selection

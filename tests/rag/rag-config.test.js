@@ -1,5 +1,5 @@
 /**
- * Test new RAG configuration: Top-k=20 → MMR (λ=0.5) → Top-m=8
+ * Test new RAG configuration: Top-k=20 → MMR (λ=0.82) → Top-m=8
  */
 
 // Load required modules (Node.js environment simulation)
@@ -32,9 +32,9 @@ for (const file of testFiles) {
       console.log('  ✅ Top-m=8 configured for final results');
     }
     
-    // Check for MMR λ=0.5
-    if (content.includes('lambda: 0.5')) {
-      console.log('  ✅ MMR lambda=0.5 configured');
+    // Check for MMR λ=0.82
+    if (content.includes('lambda: 0.82')) {
+      console.log('  ✅ MMR lambda=0.82 configured');
     }
     
     // Check for MMR integration
@@ -52,11 +52,11 @@ console.log('\n🎯 New RAG Pipeline Configuration:');
 console.log('1. Vector Search: Top-k=20 initial retrieval');
 console.log('2. Semantic Deduplication: Cosine similarity > 0.92');
 console.log('3. Two-cap Source Filtering: 2 pre-cap → 1 post-cap');
-console.log('4. MMR Reranking: λ=0.5 (balance relevance/diversity)');
+console.log('4. MMR Reranking: λ=0.82 (optimized relevance/diversity balance)');
 console.log('5. Final Selection: Top-m=8 results');
 
 console.log('\n🔍 Expected Query Flow:');
-console.log('Query → Embed → Search(k=20) → Dedupe → Cluster → MMR(λ=0.5) → Select(m=8) → Context → LLM');
+console.log('Query → Embed → Search(k=20) → Dedupe → Cluster → MMR(λ=0.82) → Select(m=8) → Context → LLM');
 
 // Test knowledge base status
 try {

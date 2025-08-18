@@ -45,7 +45,17 @@ class NYLAParentChildAggregator {
     // Build parent blocks with full context
     const parentBlocks = await this.buildParentBlocks(topParents);
     
+    // Debug: Show final parent block ranking
+    const finalRanking = parentBlocks.map((block, i) => ({
+      rank: i + 1,
+      parentId: block.parentId,
+      finalScore: block.finalScore?.toFixed(3),
+      childCount: block.childCount,
+      method: block.parentBuildMethod
+    }));
+    
     console.log(`✅ Built ${parentBlocks.length} parent blocks from ${Object.keys(parentGroups).length} parent groups`);
+    console.log(`📈 Final parent ranking:`, finalRanking);
     
     return parentBlocks;
   }
@@ -65,9 +75,15 @@ class NYLAParentChildAggregator {
       groups.get(parentId).push(child);
     }
     
-    console.log(`📊 Grouped into ${groups.size} parent groups:`, 
-      Array.from(groups.entries()).map(([id, children]) => `${id}: ${children.length} chunks`)
-    );
+    // Debug: Show detailed grouping information
+    const groupSummary = Array.from(groups.entries()).map(([id, children]) => ({
+      parentId: id,
+      childCount: children.length,
+      childIds: children.map(c => c.id),
+      scores: children.map(c => (c.crossEncoderScore || c.finalScore || c.score || 0).toFixed(3))
+    }));
+    
+    console.log(`📊 Grouped into ${groups.size} parent groups:`, groupSummary);
     
     return groups;
   }
@@ -78,20 +94,27 @@ class NYLAParentChildAggregator {
   getParentId(chunk) {
     // Priority order for parent identification:
     // 1. Explicit parent_chunk metadata
-    // 2. Section + source combination
-    // 3. Source + category combination
-    // 4. Fallback to chunk id itself
+    // 2. Source + section combination (knowledge_base:path/file)
+    // 3. Source only for knowledge_base chunks (to group related chunks)
+    // 4. Chunk ID as individual parent (for non-knowledge_base chunks)
     
     if (chunk.metadata?.parent_chunk) {
       return chunk.metadata.parent_chunk;
+    }
+    
+    // For knowledge_base chunks, group by source path to avoid redundant groups
+    if (chunk.metadata?.source && chunk.metadata.source.startsWith('knowledge_base:')) {
+      // Extract the main path before any sub-sections
+      const sourcePath = chunk.metadata.source.split('/')[0] + '/' + (chunk.metadata.source.split('/')[1] || '');
+      return sourcePath;
     }
     
     if (chunk.metadata?.section && chunk.metadata?.source) {
       return `${chunk.metadata.source}:${chunk.metadata.section}`;
     }
     
-    if (chunk.metadata?.source && chunk.metadata?.category) {
-      return `${chunk.metadata.category}:${chunk.metadata.source}`;
+    if (chunk.metadata?.source) {
+      return chunk.metadata.source;
     }
     
     // Fallback: treat as its own parent
@@ -132,7 +155,8 @@ class NYLAParentChildAggregator {
         this.options.maxMultiHitBonus
       );
       
-      const finalScore = Math.min(aggregatedScore + multiHitBonus, 1.0);
+      // Apply multi-hit bonus without normalization to preserve original scores
+      const finalScore = aggregatedScore + multiHitBonus;
       
       scoredParents.push({
         parentId,
@@ -142,7 +166,23 @@ class NYLAParentChildAggregator {
         baseScore: aggregatedScore,
         multiHitBonus,
         topChildScore: Math.max(...scores),
-        avgChildScore: scores.reduce((sum, s) => sum + s, 0) / scores.length
+        avgChildScore: scores.reduce((sum, s) => sum + s, 0) / scores.length,
+        // Debug info
+        rawScores: scores,
+        scoreMethod: this.options.scoreAggregationMethod,
+        rawFinalScore: finalScore
+      });
+      
+      // Debug: Log detailed score calculation
+      console.log(`🔢 Parent ${parentId} scoring:`, {
+        childCount: children.length,
+        rawScores: scores.map(s => s.toFixed(3)),
+        baseScore: aggregatedScore.toFixed(3),
+        multiHitBonus: multiHitBonus.toFixed(3),
+        rawFinalScore: finalScore.toFixed(3),
+        finalScore: finalScore.toFixed(3),
+        wasNormalized: finalScore > 1.0,
+        method: this.options.scoreAggregationMethod
       });
     }
     

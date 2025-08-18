@@ -19,7 +19,7 @@ class NYLASemanticRetriever {
       minScore: 0.3,         // Quality threshold
       highSimilarityThreshold: 0.8, // Score-driven strategy threshold
       mmrEnabled: true,      // Enable MMR for diversity
-      mmrLambda: 0.5,        // Balance relevance vs diversity
+      mmrLambda: 0.82,       // Balance relevance vs diversity
       crossEncoderEnabled: true,  // Enable cross-encoder reranking
       parentChildEnabled: true,   // Enable parent-child aggregation
       scoreStrategyEnabled: true, // Enable score-driven strategy switch

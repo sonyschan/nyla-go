@@ -611,11 +611,68 @@ class NYLAContextBuilder {
           : ' [UNVERIFIED MARKETING CONTENT - Use qualifying language]';
       }
       
+      // Build the chunk content
+      let chunkContent = chunk.text;
+      
+      // Append meta_card information if available
+      if (chunk.meta_card) {
+        console.log(`📋 Context Builder: Adding meta_card for chunk ${chunk.id}:`, chunk.meta_card);
+        chunkContent += '\n\n' + this.formatMetaCard(chunk.meta_card);
+      }
+      
       sections.push(`${citation}${verificationNote}
-${chunk.text}${chunk.truncated ? '...' : ''}`);
+${chunkContent}${chunk.truncated ? '...' : ''}`);
     }
     
     return sections.join('\n\n---\n\n');
+  }
+
+  /**
+   * Format meta_card data into readable context
+   */
+  formatMetaCard(metaCard) {
+    const lines = ['Technical Details:'];
+    
+    // Add contract address if available
+    if (metaCard.contract_address) {
+      lines.push(`Contract Address: ${metaCard.contract_address}`);
+    }
+    
+    // Add ticker symbol if available
+    if (metaCard.ticker_symbol) {
+      lines.push(`Ticker Symbol: ${metaCard.ticker_symbol}`);
+    }
+    
+    // Add blockchain if available
+    if (metaCard.blockchain) {
+      lines.push(`Blockchain: ${metaCard.blockchain}`);
+    }
+    
+    // Add official channels if available
+    if (metaCard.official_channels) {
+      lines.push('\nOfficial Channels:');
+      for (const [channel, data] of Object.entries(metaCard.official_channels)) {
+        if (typeof data === 'object' && data.url) {
+          lines.push(`- ${channel}: ${data.url}`);
+          if (data.handle) {
+            lines.push(`  Handle: ${data.handle}`);
+          }
+        } else if (typeof data === 'string') {
+          lines.push(`- ${channel}: ${data}`);
+        }
+      }
+    }
+    
+    // Add any other top-level properties
+    for (const [key, value] of Object.entries(metaCard)) {
+      if (!['contract_address', 'ticker_symbol', 'blockchain', 'official_channels'].includes(key)) {
+        if (typeof value === 'string' || typeof value === 'number') {
+          lines.push(`${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: ${value}`);
+        }
+      }
+    }
+    
+    return lines.join('\n');
   }
 
   /**
@@ -627,7 +684,15 @@ ${chunk.text}${chunk.truncated ? '...' : ''}`);
     parts.push("Based on my knowledge:");
     
     for (const chunk of chunks) {
-      parts.push(`• ${chunk.text}`);
+      let chunkContent = chunk.text;
+      
+      // Append meta_card information if available
+      if (chunk.meta_card) {
+        console.log(`📋 Context Builder: Adding meta_card for chunk ${chunk.id} in conversational format`);
+        chunkContent += '\n' + this.formatMetaCard(chunk.meta_card);
+      }
+      
+      parts.push(`• ${chunkContent}`);
     }
     
     return parts.join('\n');
@@ -637,7 +702,17 @@ ${chunk.text}${chunk.truncated ? '...' : ''}`);
    * Minimal format (just the facts)
    */
   formatMinimal(chunks) {
-    return chunks.map(c => c.text).join(' ');
+    return chunks.map(chunk => {
+      let content = chunk.text;
+      
+      // Append meta_card information if available
+      if (chunk.meta_card) {
+        console.log(`📋 Context Builder: Adding meta_card for chunk ${chunk.id} in minimal format`);
+        content += ' ' + this.formatMetaCard(chunk.meta_card);
+      }
+      
+      return content;
+    }).join(' ');
   }
 
   /**

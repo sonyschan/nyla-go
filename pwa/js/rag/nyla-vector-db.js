@@ -255,6 +255,10 @@ class NYLAVectorDB {
         id: chunk.id,
         text: chunk.text,
         metadata: chunk.metadata,
+        meta_card: chunk.meta_card || null,
+        search_text: chunk.search_text || null,
+        facts: chunk.facts || null,
+        tokens: chunk.tokens || null,
         score: result.similarity,
         distance: result.distance
       });
@@ -392,7 +396,12 @@ class NYLAVectorDB {
       this.chunks.set(chunk.id, {
         id: chunk.id,
         text: chunk.text,
-        metadata: chunk.metadata
+        metadata: chunk.metadata,
+        embedding: chunk.embedding,
+        meta_card: chunk.meta_card || null,
+        search_text: chunk.search_text || null,
+        facts: chunk.facts || null,
+        tokens: chunk.tokens || null
       });
     }
     
@@ -469,7 +478,11 @@ class NYLAVectorDB {
               id: embeddingData.id,
               text: chunk?.text || '',
               metadata: embeddingData.metadata || chunk?.metadata || {},
-              embedding: embeddingData.embedding
+              embedding: embeddingData.embedding,
+              meta_card: chunk?.meta_card || null,
+              search_text: chunk?.search_text || null,
+              facts: chunk?.facts || null,
+              tokens: chunk?.tokens || null
             });
             
             // Add to FAISS index
@@ -498,7 +511,11 @@ class NYLAVectorDB {
               id: chunk.id,
               text: chunk.text || '',
               metadata: chunk.metadata || {},
-              embedding: chunk.embedding
+              embedding: chunk.embedding,
+              meta_card: chunk.meta_card || null,
+              search_text: chunk.search_text || null,
+              facts: chunk.facts || null,
+              tokens: chunk.tokens || null
             });
             
             // Add to FAISS index

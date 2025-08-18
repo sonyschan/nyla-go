@@ -90,7 +90,7 @@ class NYLARAGPipeline {
         finalTopK: 3,          // Final context segments = 3
         minScore: 0.3,         // Quality threshold
         mmrEnabled: true,
-        mmrLambda: 0.5,
+        mmrLambda: 0.82,
         crossEncoderEnabled: true,
         parentChildEnabled: true,
         scoreStrategyEnabled: true

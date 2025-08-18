@@ -90,9 +90,7 @@ class NYLARetriever {
       let finalResults = filteredResults;
       if (config.mmrEnabled && typeof NYLAMMRReranker !== 'undefined') {
         try {
-          const mmrReranker = new NYLAMMRReranker(this.embeddingService, {
-            lambda: 0.5  // λ≈0.5 as specified
-          });
+          const mmrReranker = new NYLAMMRReranker(this.embeddingService);
           finalResults = await mmrReranker.rerank(
             query, 
             filteredResults, 

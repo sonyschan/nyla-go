@@ -28,7 +28,7 @@ Successfully replaced heavyweight "pattern logic" with semantic-first retrieval 
 
 #### **3. Rerank**
 - **Cross-encoder**: Ready for multilingual cross-encoder when available
-- **MMR Diversity**: Reduce redundancy while maintaining relevance (λ=0.5)
+- **MMR Diversity**: Reduce redundancy while maintaining relevance (λ=0.82)
 
 #### **4. Filter**
 - **Metadata Gates**: Route support queries to verified integrations only

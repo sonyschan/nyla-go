@@ -196,7 +196,7 @@ class NYLACrossEncoder {
       positionScore * 0.2 +
       existingScore * 0.1;
     
-    return Math.min(combinedScore, 1.0); // Cap at 1.0
+    return combinedScore; // Remove hard cap to preserve score distribution
   }
   
   /**
