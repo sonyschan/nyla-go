@@ -110,9 +110,18 @@ class NYLAContextBuilder {
         id: c.id,
         title: c.metadata?.title || c.title || 'undefined',
         source_id: c.metadata?.source || c.source_id || 'undefined', 
-        body_preview: (c.text || c.body || 'undefined').substring(0, 100) + '...'
+        body_preview: (c.text || c.body || 'undefined').substring(0, 100) + '...',
+        hasMetaCard: !!c.meta_card,
+        metaCardKeys: c.meta_card ? Object.keys(c.meta_card) : [],
+        contractAddress: c.meta_card?.contract_address || 'none'
       })));
       console.log('🔍 CONTEXT BUILDER: Formatted context length:', formattedContext.length);
+      console.log('🔍 CONTEXT BUILDER: Meta card presence in formatted context:', {
+        hasContractAddress: formattedContext.includes('Contract Address'),
+        hasTechnicalDetails: formattedContext.includes('Technical Details'),
+        hasWangChaiAddress: formattedContext.includes('83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk')
+      });
+      console.log('🔍 CONTEXT BUILDER: Full formatted context preview:', formattedContext.substring(0, 1000) + '...');
       console.log('🔍 CONTEXT BUILDER: Full prompt preview:', prompt.full.substring(0, 500) + '...');
       
       // Validate token count
@@ -617,7 +626,11 @@ class NYLAContextBuilder {
       // Append meta_card information if available
       if (chunk.meta_card) {
         console.log(`📋 Context Builder: Adding meta_card for chunk ${chunk.id}:`, chunk.meta_card);
-        chunkContent += '\n\n' + this.formatMetaCard(chunk.meta_card);
+        const formattedMetaCard = this.formatMetaCard(chunk.meta_card);
+        console.log(`📋 Context Builder: Formatted meta_card:`, formattedMetaCard);
+        chunkContent += '\n\n' + formattedMetaCard;
+      } else {
+        console.log(`📋 Context Builder: No meta_card found for chunk ${chunk.id}`);
       }
       
       sections.push(`${citation}${verificationNote}

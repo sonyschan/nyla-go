@@ -334,7 +334,9 @@ class NYLARAGPipeline {
           contextType: typeof context?.context,
           contextLength: context?.context?.length || 0,
           contextPreview: context?.context?.substring(0, 200) + '...' || 'No context',
-          metadata: context?.metadata
+          metadata: context?.metadata,
+          hasContractAddress: context?.context?.includes('Contract Address') || false,
+          hasWangChaiAddress: context?.context?.includes('83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk') || false
         });
         
         // For hosted LLM, format context properly as array of strings

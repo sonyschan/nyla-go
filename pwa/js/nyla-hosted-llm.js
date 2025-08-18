@@ -124,8 +124,21 @@ class NYLAHostedLLM {
                 queryLength: userQuery.length,
                 contextItems: requestBody.context.length,
                 contextPreview: requestBody.context.length > 0 ? 
-                    requestBody.context[0].substring(0, 100) + '...' : 'No context'
+                    requestBody.context[0].substring(0, 100) + '...' : 'No context',
+                hasContractAddress: requestBody.context.length > 0 ? 
+                    requestBody.context[0].includes('Contract Address') : false,
+                hasWangChaiAddress: requestBody.context.length > 0 ? 
+                    requestBody.context[0].includes('83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk') : false
             });
+            
+            // Additional debug for contract address queries
+            if (userQuery.includes('旺柴') && userQuery.includes('合約')) {
+                NYLALogger.info('🔍 CONTRACT ADDRESS DEBUG: Query about WangChai contract', {
+                    query: userQuery,
+                    contextLength: requestBody.context.length,
+                    fullContext: requestBody.context.length > 0 ? requestBody.context[0] : 'No context'
+                });
+            }
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
