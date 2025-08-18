@@ -128,5 +128,10 @@
     "zh": ["重排序", "重新排序", "相关性评分"],
     "en": ["reranking", "reordering", "relevance scoring"],
     "abbr": ["RR"]
+  },
+  "contract address": {
+    "zh": ["合約", "合約地址", "合同地址", "智能合约地址"],
+    "en": ["contract address", "smart contract address", "contract", "token contract", "contract ID"],
+    "abbr": ["CA", "CONTRACT"]
   }
 }

@@ -9,8 +9,8 @@
       },
       "智能合约": {
         "en_primary": "smart contract",
-        "en_synonyms": ["contract", "dapp contract"],
-        "abbreviations": ["SC"],
+        "en_synonyms": ["contract", "dapp contract", "contract address"],
+        "abbreviations": ["SC", "CA"],
         "context": "automated program on blockchain"
       },
       "代币": {
@@ -164,6 +164,12 @@
         "en_synonyms": ["locale", "lang"],
         "abbreviations": ["LANG"],
         "context": "interface language setting"
+      },
+      "合約": {
+        "en_primary": "contract address",
+        "en_synonyms": ["smart contract address", "contract", "token contract", "contract ID"],
+        "abbreviations": ["CA", "CONTRACT"],
+        "context": "blockchain contract identifier"
       }
     },
     "team_terms": {
@@ -212,7 +218,10 @@
       "創辦人是誰": ["who is the founder", "founder information", "creator details"],
       "團隊成員": ["team members", "NYLA team", "development team"],
       "誰開發NYLA": ["who developed NYLA", "NYLA developer", "development team"],
-      "創始人": ["co-founder", "founding team", "NYLA founders"]
+      "創始人": ["co-founder", "founding team", "NYLA founders"],
+      "合約地址是什么": ["what is contract address", "contract address explanation", "token contract info"],
+      "怎么找合約地址": ["how to find contract address", "locate contract address", "contract address search"],
+      "CA地址": ["CA address", "contract address", "token contract address"]
     },
     "expansion_terms": {
       "NYLA": ["NYLA", "Agent NYLA", "尼拉", "NYLA AI"],
@@ -222,7 +231,8 @@
       "fee": ["fee", "手续费", "gas", "cost", "费用"],
       "founder": ["founder", "創辦人", "創始人", "creator", "establisher"],
       "team": ["team", "團隊", "group", "members", "development team"],
-      "developer": ["developer", "開發者", "programmer", "engineer"]
+      "developer": ["developer", "開發者", "programmer", "engineer"],
+      "contract address": ["contract address", "合約", "合約地址", "CA", "smart contract address", "token contract"]
     }
   }
 }
