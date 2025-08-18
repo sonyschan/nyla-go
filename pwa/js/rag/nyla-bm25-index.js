@@ -158,7 +158,50 @@ class NYLABm25Index {
     }
     
     // Remove duplicates and return
-    return [...new Set(tokens)];
+    const uniqueTokens = [...new Set(tokens)];
+    
+    // Debug tokenization for complex queries
+    if (text.match(/[一-鿿]/) && uniqueTokens.length > 10) {
+      console.log('🔍 Tokenization debug:', {
+        original: text.substring(0, 100),
+        englishTokens: englishTokens.slice(0, 10),
+        chineseStrings: chineseChars.slice(0, 5),
+        totalTokens: uniqueTokens.length,
+        sampleTokens: uniqueTokens.slice(0, 15)
+      });
+    }
+    
+    return uniqueTokens;
+  }
+  
+  /**
+   * Analyze how query tokens match against the index
+   */
+  analyzeQueryTokens(queryTokens) {
+    const analysis = {
+      totalTokens: queryTokens.length,
+      tokensWithMatches: 0,
+      tokenDetails: {},
+      coverage: 0
+    };
+    
+    for (const token of queryTokens) {
+      const df = this.documentFreq.get(token) || 0;
+      analysis.tokenDetails[token] = {
+        documentFrequency: df,
+        hasMatches: df > 0,
+        coverage: df > 0 ? (df / this.totalDocuments * 100).toFixed(1) + '%' : '0%'
+      };
+      
+      if (df > 0) {
+        analysis.tokensWithMatches++;
+      }
+    }
+    
+    analysis.coverage = analysis.totalTokens > 0 ? 
+      (analysis.tokensWithMatches / analysis.totalTokens * 100).toFixed(1) + '%' : '0%';
+    
+    return analysis;
   }
   
   /**
@@ -173,38 +216,78 @@ class NYLABm25Index {
     const queryTokens = this.tokenize(query);
     
     if (queryTokens.length === 0) {
+      console.warn('⚠️ BM25 search: No valid tokens found in query:', query);
       return [];
     }
     
     console.log(`🔍 BM25 search for query: "${query}"`);
-    console.log(`📝 Query tokens: [${queryTokens.join(', ')}]`);
+    console.log(`📝 Query tokens (${queryTokens.length}): [${queryTokens.join(', ')}]`);
+    
+    // Analyze token matches in index
+    const tokenAnalysis = this.analyzeQueryTokens(queryTokens);
+    console.log('🔍 Token analysis:', tokenAnalysis);
     
     const scores = new Map(); // doc_id -> BM25 score
+    const scoringDetails = []; // For debugging
     
     // Calculate BM25 score for each document
     for (const [docId, docInfo] of this.documents.entries()) {
       let score = 0;
       const docTermFreq = this.index.get(docId);
+      const termScores = {}; // Track individual term contributions
       
       if (!docTermFreq) continue;
       
+      let hasAnyMatch = false;
       for (const queryToken of queryTokens) {
         const tf = docTermFreq.get(queryToken) || 0; // term frequency in document
         const df = this.documentFreq.get(queryToken) || 0; // document frequency
         
         if (tf > 0 && df > 0) {
+          hasAnyMatch = true;
           // BM25 formula components
           const idf = Math.log((this.totalDocuments - df + 0.5) / (df + 0.5));
           const tfComponent = (tf * (this.options.k1 + 1)) / 
                             (tf + this.options.k1 * (1 - this.options.b + this.options.b * (docInfo.length / this.avgDocLength)));
           
-          score += idf * tfComponent;
+          const termScore = idf * tfComponent;
+          score += termScore;
+          termScores[queryToken] = {
+            tf: tf,
+            df: df,
+            idf: idf.toFixed(4),
+            tfComponent: tfComponent.toFixed(4),
+            termScore: termScore.toFixed(4)
+          };
         }
       }
       
       if (score >= this.options.minScore) {
         scores.set(docId, score);
+        
+        // Store scoring details for top documents
+        if (hasAnyMatch && scoringDetails.length < 5) {
+          scoringDetails.push({
+            docId: docId,
+            title: docInfo.chunk.metadata?.title?.substring(0, 50) || 'No title',
+            finalScore: score.toFixed(4),
+            termMatches: Object.keys(termScores).length,
+            termScores: termScores,
+            searchTextSnippet: docInfo.search_text.substring(0, 100)
+          });
+        }
       }
+    }
+    
+    // Log detailed scoring analysis
+    if (scoringDetails.length > 0) {
+      console.log('🔍 BM25 Scoring Details (top matches):');
+      scoringDetails.forEach((detail, i) => {
+        console.log(`  ${i + 1}. Doc ${detail.docId} (${detail.title}):`);
+        console.log(`     Final Score: ${detail.finalScore}, Term Matches: ${detail.termMatches}`);
+        console.log(`     Term Scores:`, detail.termScores);
+        console.log(`     Text: "${detail.searchTextSnippet}..."`);
+      });
     }
     
     // Sort by score and return results
@@ -225,6 +308,16 @@ class NYLABm25Index {
     
     console.log(`📊 BM25 results: ${results.length} documents, top score: ${results[0]?.score?.toFixed(4) || 'N/A'}`);
     
+    // Log final results summary
+    if (results.length > 0) {
+      console.log('📊 BM25 Final Results Summary:');
+      results.slice(0, 3).forEach((result, i) => {
+        console.log(`  ${i + 1}. ${result.id} - Score: ${result.score.toFixed(4)} - ${result.metadata?.title?.substring(0, 50) || 'No title'}`);
+      });
+    } else {
+      console.warn('⚠️ BM25 search returned no results above threshold:', this.options.minScore);
+    }
+    
     return results;
   }
   
@@ -243,7 +336,7 @@ class NYLABm25Index {
   }
   
   /**
-   * Debug method to inspect index for a specific term
+   * Enhanced debug method to inspect index for a specific term
    */
   debugTerm(term) {
     if (!this.isBuilt) {
@@ -267,12 +360,63 @@ class NYLABm25Index {
       }
     }
     
-    return {
+    const debugInfo = {
       term: lowerTerm,
       documentFrequency: df,
       totalDocuments: this.totalDocuments,
       idf: df > 0 ? Math.log((this.totalDocuments - df + 0.5) / (df + 0.5)) : 0,
+      coverage: df > 0 ? (df / this.totalDocuments * 100).toFixed(1) + '%' : '0%',
       docsWithTerm: docsWithTerm.slice(0, 5) // Show first 5 for debugging
+    };
+    
+    console.log(`🔍 Debug term "${term}":`, debugInfo);
+    return debugInfo;
+  }
+  
+  /**
+   * Debug a full query to understand tokenization and matching
+   */
+  debugQuery(query) {
+    if (!this.isBuilt) {
+      return { error: 'Index not built' };
+    }
+    
+    const tokens = this.tokenize(query);
+    const analysis = this.analyzeQueryTokens(tokens);
+    
+    console.log(`🔍 Full Query Debug for: "${query}"`);
+    console.log('Tokenization:', {
+      originalQuery: query,
+      tokens: tokens,
+      tokenCount: tokens.length
+    });
+    console.log('Token Analysis:', analysis);
+    
+    // Show which documents would match each token
+    const tokenMatches = {};
+    tokens.forEach(token => {
+      const matchingDocs = [];
+      for (const [docId, termFreq] of this.index.entries()) {
+        const tf = termFreq.get(token);
+        if (tf && tf > 0) {
+          const docInfo = this.documents.get(docId);
+          matchingDocs.push({
+            docId: docId,
+            termFreq: tf,
+            title: docInfo.chunk.metadata?.title?.substring(0, 50) || 'No title'
+          });
+        }
+      }
+      tokenMatches[token] = matchingDocs.slice(0, 3); // Top 3 matches per token
+    });
+    
+    console.log('Token Matches:', tokenMatches);
+    
+    return {
+      query,
+      tokens,
+      analysis,
+      tokenMatches
     };
   }
 }

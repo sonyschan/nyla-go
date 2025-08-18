@@ -169,18 +169,19 @@ class NYLAVectorDB {
     await this.saveToIndexedDB();
     
     // Phase 2: Notify semantic retriever to build BM25 index
-    this.notifyBM25IndexBuild(chunks);
+    await this.notifyBM25IndexBuild(chunks);
   }
 
   /**
    * Phase 2: Notify semantic retriever to build BM25 index
    */
-  notifyBM25IndexBuild(chunks) {
+  async notifyBM25IndexBuild(chunks) {
     try {
       // Try to find and notify semantic retriever instances
       if (typeof window !== 'undefined' && window.nylaSemanticRetriever) {
         console.log('🔍 Phase 2: Building BM25 index with', chunks.length, 'chunks...');
-        window.nylaSemanticRetriever.buildBM25Index(chunks);
+        await window.nylaSemanticRetriever.buildBM25Index(chunks);
+        console.log('✅ Phase 2: BM25 index build notification completed');
       } else {
         // Store chunks for later BM25 index building
         this.pendingBM25Chunks = chunks;
@@ -518,6 +519,21 @@ class NYLAVectorDB {
       if (loadedCount === 0) {
         throw new Error('No valid chunks with embeddings found in data');
       }
+      
+      // Phase 2: Notify semantic retriever to build BM25 index from loaded chunks
+      const chunksForBM25 = [];
+      for (const [chunkId, chunkData] of this.chunks.entries()) {
+        // Create chunk format needed for BM25 index building
+        chunksForBM25.push({
+          id: chunkId,
+          text: chunkData.text,
+          search_text: chunkData.metadata?.search_text || chunkData.text, // Use search_text if available
+          metadata: chunkData.metadata
+        });
+      }
+      
+      console.log(`🔍 Phase 2: Notifying BM25 index build with ${chunksForBM25.length} loaded chunks`);
+      this.notifyBM25IndexBuild(chunksForBM25);
       
     } catch (error) {
       console.error('❌ Failed to load vector data:', error);

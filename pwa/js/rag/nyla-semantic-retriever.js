@@ -226,7 +226,7 @@ class NYLASemanticRetriever {
     // Determine query type from slot intents and detected signals
     const queryType = this.inferQueryType(exactSignals, slotIntents);
     
-    return {
+    const processedQuery = {
       original: query,
       expanded: expandedQuery,
       slotIntents: slotIntents,
@@ -234,6 +234,18 @@ class NYLASemanticRetriever {
       queryType: queryType,
       needsBM25: exactSignals.length > 0 || slotIntents.length > 0 // Use BM25 when intents/signals found
     };
+    
+    console.log('🔍 Query Processing Summary:', {
+      original: query,
+      expanded: expandedQuery !== query ? `"${expandedQuery}"` : 'no expansion',
+      slotIntents: slotIntents.map(i => i.type),
+      exactSignals: exactSignals.map(s => `${s.type}:${s.value}`),
+      queryType: queryType,
+      needsBM25: processedQuery.needsBM25,
+      bm25Trigger: exactSignals.length > 0 ? 'exact_signals' : slotIntents.length > 0 ? 'slot_intents' : 'none'
+    });
+    
+    return processedQuery;
   }
   
   /**
@@ -463,9 +475,30 @@ class NYLASemanticRetriever {
     // Phase 2: BM25 retrieval using search_text field
     if (processedQuery.needsBM25 && this.bm25Ready && config.bm25Enabled) {
       console.log('🔍 Phase 2: Performing BM25 + Dense hybrid retrieval');
+      console.log('🔍 BM25 Debug - Query Analysis:', {
+        original: processedQuery.original,
+        expanded: processedQuery.expanded,
+        needsBM25: processedQuery.needsBM25,
+        exactSignals: processedQuery.exactSignals,
+        slotIntents: processedQuery.slotIntents,
+        queryType: processedQuery.queryType
+      });
       
       try {
+        // Perform BM25 search with detailed logging
+        console.log('🔍 BM25 Search - Starting search with query:', processedQuery.original);
         results.bm25 = await this.bm25Index.search(processedQuery.original, config.bm25TopK);
+        
+        console.log('🔍 BM25 Search - Results:', {
+          totalResults: results.bm25.length,
+          topScores: results.bm25.slice(0, 3).map(r => ({
+            id: r.id,
+            score: r.score?.toFixed(4),
+            title: r.metadata?.title?.substring(0, 50) || 'No title',
+            searchTextSnippet: r.search_text?.substring(0, 100) || 'No search_text'
+          })),
+          allScores: results.bm25.map(r => r.score?.toFixed(4))
+        });
         
         // Phase 2: Dynamic weighting based on slot intents and exact signals
         const weights = this.calculateDynamicWeights(processedQuery);
@@ -482,7 +515,13 @@ class NYLASemanticRetriever {
         results.merged = this.mergeAndDedupe(results.dense, results.bm25, weights.denseWeight, weights.bm25Weight);
         
       } catch (error) {
-        console.warn('⚠️ BM25 search failed, falling back to dense-only:', error.message);
+        console.error('❌ BM25 search failed, falling back to dense-only:', {
+          error: error.message,
+          stack: error.stack,
+          bm25Ready: this.bm25Ready,
+          bm25Index: !!this.bm25Index,
+          query: processedQuery.original
+        });
         results.merged = this.createDenseOnlyResults(results.dense);
       }
       
@@ -498,6 +537,14 @@ class NYLASemanticRetriever {
       
     } else {
       // Dense-only retrieval
+      console.log('🔍 Using dense-only retrieval:', {
+        needsBM25: processedQuery.needsBM25,
+        bm25Ready: this.bm25Ready,
+        bm25Enabled: config.bm25Enabled,
+        reason: !processedQuery.needsBM25 ? 'no_bm25_signals' : 
+                !this.bm25Ready ? 'bm25_not_ready' : 
+                !config.bm25Enabled ? 'bm25_disabled' : 'unknown'
+      });
       results.merged = this.createDenseOnlyResults(results.dense);
     }
     
@@ -510,45 +557,77 @@ class NYLASemanticRetriever {
   calculateDynamicWeights(processedQuery) {
     const { slotIntents, exactSignals } = processedQuery;
     
+    console.log('⚖️ Weight calculation input:', {
+      slotIntents: slotIntents.map(i => ({ type: i.type, confidence: i.confidence })),
+      exactSignals: exactSignals.map(s => ({ type: s.type, value: s.value })),
+      baseBm25Weight: this.options.baseBm25Weight,
+      baseVectorWeight: this.options.baseVectorWeight
+    });
+    
     // Base weights
     let bm25Weight = this.options.baseBm25Weight;
     let reason = 'base_weights';
+    let calculationSteps = [`Base BM25 weight: ${bm25Weight}`];
     
     // Boost BM25 for slot intent queries (Facts lookup) - Optimized Weights
     if (slotIntents.length > 0) {
       const intentTypes = slotIntents.map(intent => intent.type);
+      calculationSteps.push(`Found slot intents: [${intentTypes.join(', ')}]`);
       
       if (intentTypes.includes('contract_address')) {
         bm25Weight = 0.8; // Very high BM25 weight for contract addresses (exact facts)
         reason = 'contract_address_intent';
+        calculationSteps.push(`Contract address intent -> BM25 weight: ${bm25Weight}`);
       } else if (intentTypes.includes('ticker_symbol')) {
         bm25Weight = 0.75; // High BM25 weight for ticker symbols
         reason = 'ticker_symbol_intent';
+        calculationSteps.push(`Ticker symbol intent -> BM25 weight: ${bm25Weight}`);
       } else if (intentTypes.includes('official_channel')) {
         bm25Weight = 0.65; // Medium-high BM25 weight for official links (increased)
         reason = 'official_channel_intent';
+        calculationSteps.push(`Official channel intent -> BM25 weight: ${bm25Weight}`);
       } else if (intentTypes.includes('technical_specs')) {
         bm25Weight = 0.45; // Medium BM25 weight for technical specs (favor semantic)
         reason = 'technical_specs_intent';
+        calculationSteps.push(`Technical specs intent -> BM25 weight: ${bm25Weight}`);
       }
     }
     
     // Additional boost for exact signals (addresses, tickers, handles)
     if (exactSignals.length > 0) {
       const signalBoost = Math.min(exactSignals.length * 0.1, 0.2);
+      const oldWeight = bm25Weight;
       bm25Weight = Math.min(bm25Weight + signalBoost, this.options.maxBm25Weight);
       reason += '_with_exact_signals';
+      calculationSteps.push(`Exact signals boost: +${signalBoost.toFixed(3)} (${oldWeight.toFixed(3)} -> ${bm25Weight.toFixed(3)})`);
     }
     
     // Ensure minimum vector weight
     const denseWeight = Math.max(1.0 - bm25Weight, this.options.minVectorWeight);
-    bm25Weight = 1.0 - denseWeight; // Recalculate to maintain sum = 1.0
+    const finalBm25Weight = 1.0 - denseWeight; // Recalculate to maintain sum = 1.0
     
-    return {
-      bm25Weight,
+    if (finalBm25Weight !== bm25Weight) {
+      calculationSteps.push(`Weight adjustment to maintain min vector weight: BM25 ${bm25Weight.toFixed(3)} -> ${finalBm25Weight.toFixed(3)}`);
+    }
+    
+    const weights = {
+      bm25Weight: finalBm25Weight,
       denseWeight,
-      reason
+      reason,
+      calculationSteps
     };
+    
+    console.log('⚖️ Weight calculation result:', {
+      finalWeights: {
+        bm25: weights.bm25Weight.toFixed(3),
+        dense: weights.denseWeight.toFixed(3),
+        sum: (weights.bm25Weight + weights.denseWeight).toFixed(3)
+      },
+      reason: weights.reason,
+      steps: weights.calculationSteps
+    });
+    
+    return weights;
   }
   
   /**
@@ -558,12 +637,19 @@ class NYLASemanticRetriever {
     const results = denseResults.map(result => ({
       ...result,
       finalScore: result.score, // Copy score to finalScore for filtering
-      sources: ['dense']
+      sources: ['dense'],
+      denseScore: result.score,
+      bm25Score: 0
     }));
     
     console.log('🔍 Dense-only results:', {
       count: results.length,
-      topScores: results.slice(0, 2).map(r => ({ id: r.id, finalScore: r.finalScore?.toFixed(4) }))
+      reason: 'No BM25 retrieval performed',
+      topScores: results.slice(0, 3).map(r => ({ 
+        id: r.id, 
+        finalScore: r.finalScore?.toFixed(4),
+        title: r.metadata?.title?.substring(0, 40) || 'No title'
+      }))
     });
     
     return results;
@@ -575,13 +661,23 @@ class NYLASemanticRetriever {
   mergeAndDedupe(denseResults, bm25Results, denseWeight, bm25Weight) {
     const merged = new Map(); // Dedupe by source_id or content hash
     
-    console.log('🔍 Merge Debug - Input:', {
+    console.log('🔍 Hybrid Fusion - Input Analysis:', {
       denseCount: denseResults.length,
       bm25Count: bm25Results.length,
-      denseWeight: denseWeight.toFixed(3),
-      bm25Weight: bm25Weight.toFixed(3),
-      topDenseScores: denseResults.slice(0, 2).map(r => ({ id: r.id, score: r.score?.toFixed(4) }))
+      weights: { dense: denseWeight.toFixed(3), bm25: bm25Weight.toFixed(3) },
+      topDenseScores: denseResults.slice(0, 3).map(r => ({ 
+        id: r.id, 
+        score: r.score?.toFixed(4),
+        title: r.metadata?.title?.substring(0, 40) || 'No title'
+      })),
+      topBm25Scores: bm25Results.slice(0, 3).map(r => ({ 
+        id: r.id, 
+        score: r.score?.toFixed(4),
+        title: r.metadata?.title?.substring(0, 40) || 'No title'
+      }))
     });
+    
+    const fusionDetails = [];
     
     // Add dense results
     for (const result of denseResults) {
@@ -591,11 +687,20 @@ class NYLASemanticRetriever {
         merged.set(key, {
           ...result,
           finalScore: finalScore,
-          sources: ['dense']
+          sources: ['dense'],
+          denseScore: result.score,
+          bm25Score: 0
         });
         
-        if (merged.size <= 2) { // Debug first few
-          console.log('🔍 Added dense result:', { id: result.id, originalScore: result.score?.toFixed(4), finalScore: finalScore.toFixed(4) });
+        if (fusionDetails.length < 5) { // Debug first few
+          fusionDetails.push({
+            operation: 'add_dense',
+            id: result.id,
+            originalScore: result.score.toFixed(4),
+            weight: denseWeight.toFixed(3),
+            finalScore: finalScore.toFixed(4),
+            title: result.metadata?.title?.substring(0, 40) || 'No title'
+          });
         }
       }
     }
@@ -607,29 +712,73 @@ class NYLASemanticRetriever {
       if (merged.has(key)) {
         // Boost existing result
         const existing = merged.get(key);
-        existing.finalScore += result.score * bm25Weight;
+        const bm25Contribution = result.score * bm25Weight;
+        const oldFinalScore = existing.finalScore;
+        existing.finalScore += bm25Contribution;
         existing.sources.push('bm25');
+        existing.bm25Score = result.score;
+        
+        if (fusionDetails.length < 5) {
+          fusionDetails.push({
+            operation: 'boost_existing',
+            id: result.id,
+            bm25Score: result.score.toFixed(4),
+            bm25Contribution: bm25Contribution.toFixed(4),
+            oldFinalScore: oldFinalScore.toFixed(4),
+            newFinalScore: existing.finalScore.toFixed(4),
+            boost: (existing.finalScore - oldFinalScore).toFixed(4)
+          });
+        }
       } else {
         // Add new result
+        const finalScore = result.score * bm25Weight;
         merged.set(key, {
           ...result,
-          finalScore: result.score * bm25Weight,
-          sources: ['bm25']
+          finalScore: finalScore,
+          sources: ['bm25'],
+          denseScore: 0,
+          bm25Score: result.score
         });
+        
+        if (fusionDetails.length < 5) {
+          fusionDetails.push({
+            operation: 'add_bm25_only',
+            id: result.id,
+            bm25Score: result.score.toFixed(4),
+            weight: bm25Weight.toFixed(3),
+            finalScore: finalScore.toFixed(4)
+          });
+        }
       }
     }
     
-    // Return sorted by final score
-    // Optimize: collect and sort in single operation
-    const sortedResults = [];
-    for (const result of merged.values()) {
-      sortedResults.push(result);
-    }
-    sortedResults.sort((a, b) => b.finalScore - a.finalScore);
+    // Log fusion details
+    console.log('🔍 Hybrid Fusion - Processing Details:');
+    fusionDetails.forEach((detail, i) => {
+      console.log(`  ${i + 1}. ${detail.operation}:`, detail);
+    });
     
-    console.log('🔍 Merge Debug - Output:', {
-      mergedCount: sortedResults.length,
-      topFinalScores: sortedResults.slice(0, 2).map(r => ({ id: r.id, finalScore: r.finalScore?.toFixed(4) }))
+    // Return sorted by final score
+    const sortedResults = Array.from(merged.values())
+      .sort((a, b) => b.finalScore - a.finalScore);
+    
+    // Analyze final ranking
+    const rankingAnalysis = sortedResults.slice(0, 5).map((result, rank) => ({
+      rank: rank + 1,
+      id: result.id,
+      finalScore: result.finalScore.toFixed(4),
+      sources: result.sources.join('+'),
+      denseScore: result.denseScore.toFixed(4),
+      bm25Score: result.bm25Score.toFixed(4),
+      title: result.metadata?.title?.substring(0, 40) || 'No title'
+    }));
+    
+    console.log('🔍 Hybrid Fusion - Final Ranking:', {
+      totalMerged: sortedResults.length,
+      hybridResults: sortedResults.filter(r => r.sources.length > 1).length,
+      denseOnlyResults: sortedResults.filter(r => r.sources.includes('dense') && !r.sources.includes('bm25')).length,
+      bm25OnlyResults: sortedResults.filter(r => r.sources.includes('bm25') && !r.sources.includes('dense')).length,
+      topResults: rankingAnalysis
     });
     
     return sortedResults;
@@ -899,6 +1048,74 @@ class NYLASemanticRetriever {
     } catch (error) {
       console.warn('⚠️ MMR reranking failed, using original results:', error);
       return results.slice(0, config.finalTopK);
+    }
+  }
+  
+  /**
+   * Special diagnostic for contract-related queries
+   */
+  diagnosticContractQuery(query, processedQuery, retrievalResults, finalResults) {
+    console.log('🔬 CONTRACT QUERY DIAGNOSTIC for:', query);
+    
+    // Analyze why contract queries might not surface expected results
+    const diagnostic = {
+      queryAnalysis: {
+        hasContractTerms: query.includes('合約') || query.includes('contract'),
+        detectedIntents: processedQuery.slotIntents.map(i => i.type),
+        needsBM25: processedQuery.needsBM25,
+        queryType: processedQuery.queryType
+      },
+      retrievalAnalysis: {
+        bm25Performed: !!retrievalResults.bm25,
+        bm25ResultsCount: retrievalResults.bm25?.length || 0,
+        denseResultsCount: retrievalResults.dense?.length || 0
+      },
+      contentAnalysis: {
+        bm25ContractMatches: retrievalResults.bm25?.filter(r => 
+          r.text?.includes('合約') || r.text?.includes('contract') || 
+          r.search_text?.includes('合約') || r.search_text?.includes('contract')
+        ).length || 0,
+        denseContractMatches: retrievalResults.dense?.filter(r => 
+          r.text?.includes('合約') || r.text?.includes('contract')
+        ).length || 0,
+        finalContractMatches: finalResults.filter(r => 
+          r.text?.includes('合約') || r.text?.includes('contract')
+        ).length
+      }
+    };
+    
+    console.log('🔬 Diagnostic Results:', diagnostic);
+    
+    // Show specific BM25 matches for contract terms
+    if (retrievalResults.bm25 && this.bm25Index) {
+      // Full query debug for comprehensive analysis
+      this.bm25Index.debugQuery(query);
+      
+      const contractTerms = ['合約', 'contract', '地址', 'address'];
+      contractTerms.forEach(term => {
+        if (query.includes(term)) {
+          const termDebug = this.bm25Index.debugTerm(term);
+          console.log(`🔬 BM25 term analysis for "${term}":`, termDebug);
+        }
+      });
+    }
+    
+    // Show if contract-related chunks were filtered out
+    if (retrievalResults.merged) {
+      const contractChunksBeforeFilter = retrievalResults.merged.filter(r => 
+        r.text?.includes('合約') || r.text?.includes('contract')
+      );
+      const contractChunksAfterFilter = finalResults.filter(r => 
+        r.text?.includes('合約') || r.text?.includes('contract')
+      );
+      
+      if (contractChunksBeforeFilter.length > contractChunksAfterFilter.length) {
+        console.log('⚠️ Contract chunks filtered out:', {
+          before: contractChunksBeforeFilter.length,
+          after: contractChunksAfterFilter.length,
+          filtered: contractChunksBeforeFilter.length - contractChunksAfterFilter.length
+        });
+      }
     }
   }
   
