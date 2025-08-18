@@ -80,7 +80,7 @@ class NYLAParentChildAggregator {
       parentId: id,
       childCount: children.length,
       childIds: children.map(c => c.id),
-      scores: children.map(c => (c.crossEncoderScore || c.finalScore || c.score || 0).toFixed(3))
+      scores: children.map(c => (c.finalScore || c.crossEncoderScore || c.score || 0).toFixed(3))
     }));
     
     console.log(`📊 Grouped into ${groups.size} parent groups:`, groupSummary);
@@ -128,9 +128,23 @@ class NYLAParentChildAggregator {
     const scoredParents = [];
     
     for (const [parentId, children] of parentGroups.entries()) {
-      const scores = children.map(child => 
-        child.crossEncoderScore || child.finalScore || child.score || 0
-      );
+      // Debug: Log child properties to understand score extraction
+      console.log(`🔍 Debug Parent ${parentId} children:`, children.map(child => ({
+        id: child.id,
+        crossEncoderScore: child.crossEncoderScore,
+        finalScore: child.finalScore,
+        score: child.score,
+        availableFields: Object.keys(child).filter(k => k.includes('core')).join(', ')
+      })));
+      
+      const scores = children.map(child => {
+        // FIXED: Prioritize finalScore over crossEncoderScore to preserve MMR ranking
+        const extractedScore = child.finalScore || child.crossEncoderScore || child.score || 0;
+        console.log(`  Child ${child.id}: extracted score = ${extractedScore} (from ${child.finalScore ? 'finalScore' : child.crossEncoderScore ? 'crossEncoderScore' : child.score ? 'score' : 'default 0'})`);
+        return extractedScore;
+      });
+      
+      console.log(`  Extracted scores for ${parentId}: [${scores.map(s => s.toFixed(4)).join(', ')}]`);
       
       let aggregatedScore;
       
@@ -146,6 +160,7 @@ class NYLAParentChildAggregator {
           const maxScore = Math.max(...scores);
           const meanScore = scores.reduce((sum, s) => sum + s, 0) / scores.length;
           aggregatedScore = (maxScore * 0.7) + (meanScore * 0.3);
+          console.log(`    Max: ${maxScore.toFixed(4)}, Mean: ${meanScore.toFixed(4)}, Weighted: ${aggregatedScore.toFixed(4)}`);
           break;
       }
       
@@ -248,7 +263,7 @@ class NYLAParentChildAggregator {
         metadata: this.mergeChildMetadata(children),
         childChunks: children.map(c => ({
           id: c.id,
-          score: c.crossEncoderScore || c.finalScore || c.score || 0,
+          score: c.finalScore || c.crossEncoderScore || c.score || 0,
           position: c.metadata?.chunk_part || 0
         }))
       };
@@ -272,8 +287,8 @@ class NYLAParentChildAggregator {
       }
       
       // Fallback to score
-      const scoreA = a.crossEncoderScore || a.finalScore || a.score || 0;
-      const scoreB = b.crossEncoderScore || b.finalScore || b.score || 0;
+      const scoreA = a.finalScore || a.crossEncoderScore || a.score || 0;
+      const scoreB = b.finalScore || b.crossEncoderScore || b.score || 0;
       return scoreB - scoreA;
     });
   }
@@ -363,8 +378,8 @@ class NYLAParentChildAggregator {
     
     // Take top scoring children up to token limit
     const sortedByScore = children.sort((a, b) => 
-      (b.crossEncoderScore || b.finalScore || b.score || 0) - 
-      (a.crossEncoderScore || a.finalScore || a.score || 0)
+      (b.finalScore || b.crossEncoderScore || b.score || 0) - 
+      (a.finalScore || a.crossEncoderScore || a.score || 0)
     );
     
     const selectedTexts = [];
@@ -395,7 +410,7 @@ class NYLAParentChildAggregator {
       metadata: this.mergeChildMetadata(children),
       childChunks: children.map(c => ({
         id: c.id,
-        score: c.crossEncoderScore || c.finalScore || c.score || 0
+        score: c.finalScore || c.crossEncoderScore || c.score || 0
       }))
     };
   }
