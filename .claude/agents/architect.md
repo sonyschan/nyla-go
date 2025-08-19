@@ -26,14 +26,22 @@ I am the Architect Agent for the NYLAGo project. My primary responsibility is to
   - Content script: `content.js`
   - Shared utilities with PWA
 
-### 3. RAG Pipeline Architecture
-- **Flow**: User Query → RAG → Context Builder → LLM Engine → Response
-- **Key Components**:
-  - Embedding Model: Xenova/multilingual-e5-base (768-dim)
-  - Query/Passage prefixes for semantic search
-  - MMR reranking for diversity
-  - Parent-child aggregation for context
-  - Deduplication and clustering
+### 3. Phase 1-3 Enhanced RAG Pipeline Architecture
+- **Enhanced Flow**: User Query → Slot Intent Detection → Hybrid Retrieval (BM25+Dense) → Cross-Encoder Reranking → MMR Diversity → Parent-Child Aggregation → Meta Card Preservation → LLM Engine → Response
+- **Phase 1 - Enhanced Structure**:
+  - Dual Text Views: Dense (`content`) for embeddings, Sparse (`search_text`) for BM25
+  - 5-Type Slot Intent Detection: contract_address, ticker_symbol, official_channel, technical_specs, how_to
+  - Facts Database: 11 multilingual entries for instant key-value lookup
+  - Meta Card System: Structured data preservation through pipeline
+- **Phase 2 - Hybrid Retrieval**:
+  - BM25 Index: Chinese tokenization with noise filtering, bi-gram support
+  - Dynamic Weighting: Intent-based BM25/Dense ratios (contract queries: 70%/30%)
+  - Working-Set Fusion: Deduplication across retrieval methods
+- **Phase 3 - Advanced Processing**:
+  - Cross-Encoder: Xenova/ms-marco-MiniLM-L-6-v2 with score prioritization fixes
+  - MMR Reranking: Lambda=0.82 for relevance-diversity balance
+  - Parent-Child Aggregation: Meta card prioritization, max 1200 tokens per parent
+  - Score Prioritization: finalScore takes precedence over crossEncoderScore
 
 ### 4. LLM Integration Flow
 - **Local LLM** (WebLLM)
@@ -123,7 +131,21 @@ I am the Architect Agent for the NYLAGo project. My primary responsibility is to
   },
   "rag": {
     "embedder": { "name": "Xenova/multilingual-e5-base", "dim": 768, "pooling": "mean", "normalize": true },
-    "mmr": { "lambda": 0.82, "k": 8, "minSimilarity": 0.3, "diversityWeight": 1.0, "maxIterations": 3 }
+    "retrieval": {
+      "topK": 25, "bm25TopK": 25, "crossEncoderTopK": 15, "fusionTopK": 12, 
+      "parentTopK": 3, "finalTopK": 3, "minScore": 0.3, "highSimilarityThreshold": 0.8
+    },
+    "hybrid": {
+      "bm25Enabled": true, "dynamicWeighting": true, 
+      "baseBm25Weight": 0.3, "baseVectorWeight": 0.7,
+      "maxBm25Weight": 0.8, "minVectorWeight": 0.2
+    },
+    "mmr": { "lambda": 0.82, "k": 8, "minSimilarity": 0.3, "diversityWeight": 1.0, "maxIterations": 3 },
+    "slotIntents": ["contract_address", "ticker_symbol", "official_channel", "technical_specs", "how_to"],
+    "processing": { 
+      "crossEncoderEnabled": true, "parentChildEnabled": true, 
+      "scoreStrategyEnabled": true, "metaCardPreservation": true 
+    }
   },
   "flags": {
     "PROMPT_V2_ENABLED": true,
@@ -242,6 +264,94 @@ gcloud run deploy nylago --source . --region=asia-southeast1 --allow-unauthentic
 - ✅ Ready for actual LLM proxy functionality
 
 Each major change → ADR doc with context, options, decision, consequences, rollback plan.
+
+---
+
+## Complete Phase 1-3 RAG Architecture Reference
+
+### Data Structure Architecture
+
+#### Enhanced Chunk Schema (Phase 1)
+```json
+{
+  "id": "ecosystem_wangchai_technical_details",
+  "source_id": "wangchai_ecosystem",
+  "type": "ecosystem",
+  "content": "Dense text view for semantic embeddings...",
+  "search_text": "Sparse text view for BM25 keyword matching...",
+  "technical_specs": {
+    "blockchain": "solana",
+    "contract_address": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ticker_symbol": "$旺柴"
+  },
+  "official_channels": {
+    "x_account": { "handle": "@WangChaidotbonk", "url": "...", "purpose": "..." }
+  },
+  "meta_card": { "auto_generated": "structured_data" },
+  "facts": { "auto_extracted": "key_value_pairs" }
+}
+```
+
+#### Facts Database Structure (Phase 1)
+```json
+{
+  "facts": {
+    "ecosystem_wangchai_technical_details_contract_address": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_合約": "83kGGSggYGP2ZEEyvX54SkZR1kFn84RgGCDyptbDbonk",
+    "ecosystem_wangchai_technical_details_ticker": "$旺柴",
+    "ecosystem_wangchai_technical_details_x_account": { "handle": "@WangChaidotbonk" }
+  }
+}
+```
+
+### Retrieval Architecture (Phase 2)
+
+#### Slot Intent Detection Flow
+1. **Query Analysis**: Detect 5 intent types with multilingual patterns
+2. **Dynamic Weighting**: Adjust BM25/Dense ratios based on detected intents
+3. **Retrieval Strategy**: Route to appropriate retrieval methods
+4. **Facts Lookup**: Check for instant responses from Facts database
+
+#### Hybrid Retrieval Process
+1. **BM25 Retrieval**: Chinese tokenization with noise filtering
+2. **Dense Retrieval**: Semantic similarity with E5 embeddings  
+3. **Working-Set Fusion**: Combine and deduplicate results
+4. **Score Normalization**: Prepare for cross-encoder reranking
+
+### Processing Architecture (Phase 3)
+
+#### Advanced Reranking Pipeline
+1. **Cross-Encoder Scoring**: Relevance scoring with Xenova/ms-marco-MiniLM-L-6-v2
+2. **Score Prioritization**: Use finalScore over crossEncoderScore
+3. **MMR Diversity**: Apply lambda=0.82 for relevance-diversity balance
+4. **Quality Filtering**: Remove low-quality results below thresholds
+
+#### Parent-Child Aggregation with Meta Card Preservation
+1. **Clustering**: Group related chunks by source_id and similarity
+2. **Meta Card Priority**: Prioritize chunks with structured data
+3. **Token Management**: Limit parent groups to 1200 tokens max
+4. **Context Assembly**: Prepare final context with preserved meta cards
+
+### Performance Metrics
+
+#### Retrieval Quality (Phase 1-3)
+- **Recall@5**: ≥ 0.85 for contract address queries
+- **Precision@3**: ≥ 0.90 for technical specifications
+- **Facts Hit Rate**: ≥ 95% for instant lookup queries
+- **Meta Card Preservation**: 100% through pipeline
+
+#### Latency Targets
+- **Slot Intent Detection**: < 50ms
+- **Hybrid Retrieval**: < 200ms (BM25 + Dense)
+- **Cross-Encoder Reranking**: < 300ms  
+- **Parent-Child Aggregation**: < 100ms
+- **Total RAG Pipeline**: < 650ms end-to-end
+
+#### Multilingual Performance
+- **Chinese Query Support**: Full tokenization with noise filtering
+- **Cross-Lingual Retrieval**: English queries find Chinese content and vice versa
+- **Alias Resolution**: Proper noun expansion across languages
+- **Facts Database**: Multilingual key support (合約, contract_address, CA)
 
 ---
 

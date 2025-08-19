@@ -12,59 +12,41 @@
       "stability": "stable",
       "source_url": "internal://howto/transfers/send",
       "hash": "how_send_guide_001",
-      "body": "Complete guide for sending tokens using NYLA through social media. Follow these steps to transfer tokens securely via X.com posts.",
-      "summary_en": "Step-by-step guide for sending tokens through NYLA with social verification on X.com.",
-      "summary_zh": "通过NYLA在X.com上进行社交验证发送代币的分步指南。",
+      "body": "Detailed guide for sending tokens using NYLAGo. The process is simplified into 5 easy steps: Send tab → Username → Amount & token → Blockchain → 'Send to X.com' button.",
+      "summary_en": "Send tokens in 5 steps: Go to Send tab, input recipient X username, enter amount and token, select blockchain, click 'Send to X.com'.",
+      "summary_zh": "5步发送代币：前往发送选项卡，输入收件人X用户名，输入金额和代币，选择区块链，点击'发送到X.com'。",
       "priority": 9,
-      "related_chunks": ["howto_transfers_receive_guide", "howto_qr_create_guide"],
+      "related_chunks": ["howto_transfers_unified_send", "faq_how_to_send", "faq_send_tokens_natural"],
       "glossary_terms": ["transfer", "send", "NYLA", "X.com", "tokens"],
       "steps": [
         {
           "number": 1,
-          "action": "Open NYLAGo and click Send tab",
-          "details": "Navigate to NYLAGo interface and select the 'Send' tab to access the transfer form with recipient, amount, and network fields.",
+          "action": "Go to Send tab",
+          "details": "Open NYLAGo and click on the Send tab to access the transfer form.",
           "screenshot": null
         },
         {
           "number": 2,
-          "action": "Enter recipient's X.com username",
-          "details": "Type the recipient's X.com username WITHOUT the @ symbol. For example, if sending to @alice, just enter 'alice'.",
+          "action": "Input recipient X username",
+          "details": "Enter the recipient's X.com username WITHOUT the @ symbol. For example, if sending to @alice, just enter 'alice'.",
           "screenshot": null
         },
         {
           "number": 3,
-          "action": "Select token and amount",
-          "details": "Choose the token type (SOL, ETH, ALGO, etc.) and enter the exact amount you want to send. Double-check the amount is correct.",
+          "action": "Enter the amount and the token you want to transfer",
+          "details": "Type the amount and select the token type (SOL, ETH, ALGO, etc.). Double-check the amount is correct.",
           "screenshot": null
         },
         {
           "number": 4,
-          "action": "Choose blockchain network",
-          "details": "Select the blockchain network that matches your token (Solana for SOL, Ethereum for ETH, Algorand for ALGO). Network MUST match token type.",
+          "action": "Select blockchain",
+          "details": "Choose the blockchain network that matches your token (Solana for SOL, Ethereum for ETH, Algorand for ALGO). Network MUST match token type.",
           "screenshot": null
         },
         {
           "number": 5,
-          "action": "Review transfer details",
-          "details": "Verify recipient username, token amount, network selection, and estimated fees. Make sure all details are correct before proceeding.",
-          "screenshot": null
-        },
-        {
-          "number": 6,
-          "action": "Generate NYLA command",
-          "details": "Click 'Generate Command' to create the NYLA transfer command. Copy the generated command text to your clipboard.",
-          "screenshot": null
-        },
-        {
-          "number": 7,
-          "action": "Post command on X.com",
-          "details": "Go to X.com, create a new post, paste the NYLA command, and publish the post. The transfer will be processed automatically.",
-          "screenshot": null
-        },
-        {
-          "number": 8,
-          "action": "Wait for NYLA confirmation",
-          "details": "NYLA will reply to your post with transfer confirmation and transaction details. This usually takes 30-60 seconds.",
+          "action": "Finally click 'Send to X.com' button",
+          "details": "Click the 'Send to X.com' button to generate and automatically post your transfer command. NYLA will execute the transfer and reply with confirmation within 30-60 seconds.",
           "screenshot": null
         }
       ],

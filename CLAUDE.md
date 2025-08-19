@@ -52,13 +52,23 @@ Contents: manifest.json, popup.html/js, content.js, qr-simple.js, icons/, images
 
 ---
 
-## 📚 RAG System (Key Points)
-- Embedding model: Xenova/multilingual-e5-base (768-dim)  
-- Query/Passage prefixes: query: / passage:  
-- Deduplication + MMR reranking + clustering  
-- Rebuild embeddings when KB changes:  
+## 📚 RAG System (Phase 1-3 Enhanced)
+**Complete Phase 1-3 Implementation:**
+- **Phase 1**: Dual text views (Dense/Sparse), 5-type slot intent detection, Facts database with 11 multilingual entries
+- **Phase 2**: Hybrid BM25+Dense retrieval with dynamic weighting, Chinese tokenization with noise filtering
+- **Phase 3**: MMR reranking (λ=0.82), cross-encoder fixes, parent-child meta card preservation
+
+**Technical Details:**
+- Embedding model: Xenova/multilingual-e5-base (768-dim) with E5 instruction prefixes
+- Slot intents: contract_address, ticker_symbol, official_channel, technical_specs, how_to
+- Dynamic weighting: Contract queries (BM25 70%, Dense 30%), Semantic queries (BM25 30%, Dense 70%)
+- Score prioritization: finalScore takes precedence over crossEncoderScore
+- Meta card preservation: Structured data maintained through entire pipeline
+- Facts database: Instant lookup for contract addresses, ticker symbols, official channels
+
+**Build Process:**
 ```bash
-npm run build:embeddings
+npm run build:embeddings  # Builds 119 chunks with dual text views + Facts DB
 ```
 
 ---
@@ -83,4 +93,4 @@ gcloud run deploy nylago --source . --region asia-southeast1 --allow-unauthentic
 
 ## 📌 Current Version
 - **Latest Release**: v2.8.0  
-- **Features**: Advanced RAG enhancements with meta_card preservation, parent-child score prioritization, comprehensive debugging, and contract address retrieval fix  
+- **Features**: Complete Phase 1-3 RAG system with dual text views, 5-type slot intent detection, hybrid BM25+Dense retrieval, MMR reranking (λ=0.82), cross-encoder score prioritization fixes, parent-child meta card preservation, and Facts database with 11 multilingual entries for instant contract address lookups  

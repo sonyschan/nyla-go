@@ -1,0 +1,45 @@
+{
+  "chunks": [
+    {
+      "id": "howto_transfers_quick_reference",
+      "source_id": "quick_send_reference_card",
+      "type": "howto",
+      "lang": "bilingual",
+      "title": "Quick Send Reference - 5 Steps",
+      "section": "transfers",
+      "tags": ["quick", "reference", "send", "transfer", "5 steps", "simple", "guide"],
+      "as_of": "2025-01-18",
+      "stability": "stable",
+      "source_url": "internal://howto/transfers/quick-reference",
+      "hash": "how_quick_ref_001",
+      "body": "Quick reference card for sending tokens. Remember: It's just 5 simple steps from start to finish.",
+      "summary_en": "5 Steps: Send tab → Username → Amount & token → Blockchain → 'Send to X.com' button",
+      "summary_zh": "5步骤：发送选项卡 → 用户名 → 金额和代币 → 区块链 → '发送到X.com'按钮",
+      "priority": 10,
+      "slot_intent": "how_to",
+      "meta_card": {
+        "type": "quick_reference",
+        "title": "Send Tokens in 5 Steps",
+        "description": "Quick reference for token transfers",
+        "steps": [
+          "1️⃣ Go to Send tab",
+          "2️⃣ Input recipient X username",
+          "3️⃣ Enter amount and token",
+          "4️⃣ Select blockchain",
+          "5️⃣ Click 'Send to X.com'"
+        ],
+        "note": "That's it! NYLA handles the rest automatically."
+      },
+      "search_text": "quick send reference 5 steps simple transfer guide how to send fast easy",
+      "related_chunks": ["howto_transfers_unified_send", "faq_how_to_send"],
+      "glossary_terms": ["5 steps", "quick reference", "Send to X.com"],
+      "quick_facts": [
+        "No @ symbol needed for usernames",
+        "Blockchain must match token type",
+        "Automatic posting to X.com",
+        "30-60 second confirmation",
+        "No manual copying required"
+      ]
+    }
+  ]
+}

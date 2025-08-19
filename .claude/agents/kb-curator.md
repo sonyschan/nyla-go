@@ -7,15 +7,18 @@
 **updated:** Aug 15, 2025 - Embedding model migrated to multilingual-e5-base (768-dim) with E5 instructions  
 ---
 
-## 🌐 **PHASE 1 RAG ENHANCEMENT (Aug 18, 2025)**
-**CRITICAL:** The RAG system has been enhanced with Phase 1 improvements including Dense/Sparse text separation, slot intent detection, and Facts storage mechanism. This significantly improves Chinese query processing and structured data retrieval.
+## 🌐 **PHASE 1-3 RAG ENHANCEMENT (Aug 18, 2025)**
+**CRITICAL:** The RAG system has been enhanced with comprehensive Phase 1-3 improvements including dual text views, slot intent detection, Facts database, hybrid BM25+Dense retrieval, advanced reranking, and meta card preservation. This significantly improves Chinese query processing, structured data retrieval, and overall RAG performance.
 
-**Impact for kb-curator:**
-- **Enhanced Chinese support:** Perfect for crypto projects like 旺柴, 区块链, 代币  
-- **Dual Text Views:** Dense (embeddings) + Sparse (BM25) text separation
-- **Facts Database:** Direct key-value lookup for contract addresses, official channels
-- **Slot Intent Detection:** Query routing for contract_address, official_channel, ticker_symbol
-- **Build time:** ~35 seconds for 119 chunks (improved efficiency)
+**Phase 1-3 Impact for kb-curator:**
+- **✅ Phase 1 - Enhanced Structure:** Dual text views, 5-type slot intent detection, Facts database auto-generation
+- **✅ Phase 2 - Hybrid Retrieval:** BM25+Dense fusion with dynamic weighting, Chinese tokenization with noise filtering  
+- **✅ Phase 3 - Advanced Processing:** MMR reranking (λ=0.82), cross-encoder fixes, parent-child meta card prioritization
+- **Enhanced Chinese support:** Perfect for crypto projects like 旺柴, 区块链, 代币 with multilingual aliases
+- **Facts Database:** 11 multilingual fact entries with instant key-value lookup
+- **Score Prioritization:** finalScore takes precedence over crossEncoderScore in all ranking
+- **Meta Card Preservation:** Structured data survives through entire pipeline
+- **Build time:** ~35 seconds for 119 chunks with Phase 1-3 processing
 - **E5 instructions:** All knowledge gets automatic `"passage: "` prefix during embedding
 
 ## 🏗️ **ENHANCED CHUNK STRUCTURE (PHASE 1)**
@@ -70,28 +73,34 @@ When adding knowledge with structured data, ensure these fields are populated fo
 }
 ```
 
-### **Slot Intent Detection Support**
-Structure content to support automatic intent detection for these query types:
+### **5-Type Slot Intent Detection Support (Phase 1-3)**
+Structure content to support enhanced automatic intent detection for these 5 query types:
 
 #### **Contract Address Intent** (合約/CA)
 - Include contract addresses in `technical_specs.contract_address`
-- Add multilingual aliases: "contract address", "合約地址", "CA"
-- Will trigger Facts database lookup for instant responses
+- Add multilingual aliases: "contract address", "合約地址", "CA", "smart contract", "合約"
+- Triggers Facts database lookup for instant responses + BM25 weighting (70%)
 
-#### **Official Channel Intent** 
-- Include all official links in `official_channels` 
-- Add multilingual aliases: "official", "官方", "social", "社交媒体"
-- Will trigger Facts database lookup for official links
-
-#### **Ticker Symbol Intent**
+#### **Ticker Symbol Intent** (代號/Symbol)
 - Include token symbols in `technical_specs.ticker_symbol`
-- Add multilingual aliases: "ticker", "symbol", "代號", "符號"  
-- Will trigger Facts database lookup for token information
+- Add multilingual aliases: "ticker", "symbol", "代號", "符號", "token symbol", "$SYMBOL"
+- Triggers Facts database lookup for token information + technical data retrieval
 
-#### **Technical Specs Intent**
+#### **Official Channel Intent** (官方/Official)
+- Include all official links in `official_channels` 
+- Add multilingual aliases: "official", "官方", "social", "社交媒体", "official links", "社群"
+- Triggers Facts database lookup for official links + structured channel data
+
+#### **Technical Specs Intent** (技術/Technical)
 - Include blockchain details in `technical_specs`
-- Add multilingual aliases: "technical", "specs", "技術", "規格"
-- Will trigger technical specifications retrieval
+- Add multilingual aliases: "technical", "specs", "技術", "規格", "blockchain", "network"
+- Triggers technical specifications retrieval + structured technical data
+
+#### **How To Intent** (如何/Tutorial) [NEW in Phase 1-3]
+- Include procedural content for step-by-step guides
+- Add multilingual aliases: "how to", "如何", "tutorial", "教程", "guide", "指南", "步骤"
+- Triggers procedural content retrieval + instructional formatting
+- Essential for onboarding and user education content
 
 ### **Facts Database Auto-Generation**
 The build process automatically extracts Facts from structured fields:
@@ -364,22 +373,30 @@ Include both scripts and variants in `tags`:
 - [ ] Test social handle queries work both ways (@handle and handle)
 - [ ] No false positives from character-level Chinese matching
 
-## Index & Vector Store Refresh (Phase 1 Enhanced)
+## Index & Vector Store Refresh (Phase 1-3 Enhanced)
 **NYLA-specific commands** (use in this exact order):
 
-1) **Primary embedding rebuild (Phase 1 Enhanced):**
+1) **Primary embedding rebuild (Phase 1-3 Enhanced):**
    ```bash
    npm run build:embeddings
    ```
    - Generates **768-dimensional multilingual embeddings** using E5 model
-   - **Phase 1 Updates:** Current build: **119 chunks, ~21MB vector DB, ~35s build time**
-   - **Enhanced Processing:** 
-     - Dense Text View (content) → Embeddings only
-     - Sparse Text View (search_text) → BM25 only, NOT embedded  
-     - Facts Database → 11 multilingual fact entries
+   - **Phase 1-3 Updates:** Current build: **119 chunks, ~21MB vector DB, ~35s build time**
+   - **Phase 1 - Enhanced Processing:** 
+     - Dual Text Views: Dense (`content`) → Embeddings only, Sparse (`search_text`) → BM25 only
+     - Facts Database → 11 multilingual fact entries with instant lookup
+     - 5-Type Slot Intent Detection → contract_address, ticker_symbol, official_channel, technical_specs, how_to
+   - **Phase 2 - Hybrid Retrieval Setup:**
+     - BM25 Index → Chinese tokenization with noise filtering, bi-gram support
+     - Dynamic Weighting → Intent-based BM25/Dense ratio calculation
+     - Working-Set Fusion → Deduplication across retrieval methods
+   - **Phase 3 - Advanced Processing:**
+     - MMR Parameters → Lambda=0.82 for relevance-diversity balance
+     - Cross-Encoder Setup → Score prioritization (finalScore over crossEncoderScore)
+     - Meta Card Clustering → Preservation through parent-child aggregation
    - **E5 prefixes:** All passages automatically get `"passage: "` instruction prefix
-   - **Chinese support:** Enhanced semantic understanding for queries like "旺柴"
-   - **Structured Data:** Auto-extraction of contract addresses, official channels, technical specs
+   - **Chinese support:** Enhanced semantic understanding with multilingual aliases
+   - **Structured Data:** Auto-extraction with Facts database generation
 
 2) **Verification:**
    ```bash
@@ -439,35 +456,50 @@ Include both scripts and variants in `tags`:
 }
 ```
 
-## Minimal Procedures (Phase 1 Enhanced - each run)
+## Minimal Procedures (Phase 1-3 Enhanced - each run)
 1) Read `pwa/kb/schema.json` and representative files from each category to learn house style
-2) Normalize user text → extract fields → build `chunk` objects with **Phase 1 enhanced schema compliance**
-3) **🏗️ MANDATORY: Phase 1 Enhanced Structure** (NEW REQUIREMENT):
-   - Use `content` field for Dense Text View (natural language, gets embedded)
+2) Normalize user text → extract fields → build `chunk` objects with **Phase 1-3 enhanced schema compliance**
+3) **🏗️ MANDATORY: Phase 1-3 Enhanced Structure** (ENHANCED REQUIREMENT):
+   - Use `content` field for Dense Text View (natural language, gets embedded for semantic search)
+   - Use `search_text` field auto-generation for Sparse Text View (BM25 keyword matching)
    - Include `technical_specs` for contract addresses, ticker symbols, blockchain details
    - Include `official_channels` for X accounts, Telegram, websites, Linktree
-   - Ensure structured data will auto-generate Facts database entries
-   - Add multilingual aliases for slot intent detection (合約/CA, 官方/official, 代號/ticker)
-4) **🌐 MANDATORY: Proper noun & alias handling** (EXISTING REQUIREMENT):
+   - Ensure structured data will auto-generate Facts database entries with multilingual keys
+   - Add multilingual aliases for 5-type slot intent detection (合約/CA, 代號/ticker, 官方/official, 技術/technical, 如何/how-to)
+   - Structure content for meta card preservation through entire pipeline
+4) **🌐 MANDATORY: Enhanced alias handling** (UPDATED REQUIREMENT):
    - Scan content for proper nouns (projects, handles, tokens, networks, people)
    - Check existing glossary system (`/pwa/js/rag/nyla-proper-noun-glossary.js`)
    - Add cross-lingual aliases to `glossary_terms` and `tags` fields
    - Ensure Chinese ↔ English discoverability for all entities
+   - Include variants for hybrid retrieval (BM25 + Dense matching)
 5) Decide file path, write/append JSON (`chunks[]`), de-dup by `id` or `hash`
-6) Run **Phase 1 Enhanced** embedding pipeline: `npm run build:embeddings`
-   - Verifies Dense/Sparse text separation works correctly
-   - Confirms Facts database auto-generation (check `pwa/data/nyla-facts-db.json`)
+6) Run **Phase 1-3 Enhanced** embedding pipeline: `npm run build:embeddings`
+   - Verifies dual text view separation (Dense/Sparse) works correctly
+   - Confirms Facts database auto-generation with multilingual keys
    - Validates enhanced chunk structure (search_text, meta_card, facts fields)
-7) Verify with `npm run rag:verify` and check both vector DB and Facts DB:
-   - `pwa/data/nyla-vector-db.json` (enhanced chunks with dual text views)
-   - `pwa/data/nyla-facts-db.json` (extracted Facts for instant lookup)
-8) **🧪 Test Phase 1 slot intent queries** to validate enhancement worked:
-   - Contract address queries: "旺柴的合約", "WangChai contract address", "CA"
-   - Official channel queries: "旺柴官方", "WangChai official links"  
-   - Ticker symbol queries: "旺柴代號", "WangChai ticker"
-9) **🧪 Test cross-lingual queries** to validate alias handling worked
-10) Test PWA digest with available RAG test scripts
-11) Emit the JSON summary with NYLA-specific paths and **Phase 1 validation results**
+   - Sets up BM25 index with Chinese tokenization and noise filtering
+   - Prepares MMR parameters (lambda=0.82) and cross-encoder configurations
+7) Verify with `npm run rag:verify` and check enhanced databases:
+   - `pwa/data/nyla-vector-db.json` (119 chunks with dual text views, meta cards)
+   - `pwa/data/nyla-facts-db.json` (11 multilingual fact entries for instant lookup)
+8) **🧪 Test Phase 1-3 comprehensive queries** to validate all enhancements:
+   - Contract address: "旺柴的合約" → Facts lookup + hybrid retrieval + meta card preservation
+   - Ticker symbol: "旺柴代號" → Technical specs + structured data retrieval
+   - Official channels: "旺柴官方" → Official links + Facts database + channel data
+   - Technical specs: "旺柴技術" → Blockchain details + technical information
+   - How-to: "如何使用旺柴" → Procedural content + instructional formatting
+9) **🧪 Test hybrid retrieval performance** to validate Phase 2 enhancements:
+   - Verify dynamic weighting (contract queries: BM25 70%, Dense 30%)
+   - Test Chinese tokenization with noise filtering
+   - Confirm working-set fusion with deduplication
+10) **🧪 Test advanced processing** to validate Phase 3 enhancements:
+    - Verify MMR reranking (lambda=0.82) for diversity
+    - Test score prioritization (finalScore over crossEncoderScore)
+    - Confirm meta card preservation through parent-child aggregation
+11) **🧪 Test cross-lingual queries** to validate enhanced alias handling
+12) Test PWA digest with available RAG test scripts
+13) Emit the JSON summary with NYLA-specific paths and **Phase 1-3 validation results**
 
 ## NYLA Integration Notes
 - **Pre-commit hooks:** Repo has automatic KB change detection - commits trigger embedding rebuilds

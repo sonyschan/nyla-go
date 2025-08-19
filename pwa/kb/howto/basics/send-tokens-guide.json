@@ -12,68 +12,47 @@
       "stability": "stable",
       "source_url": "internal://howto/send-tokens-guide",
       "hash": "howto_send_tokens_001",
-      "body": "Complete guide for sending tokens (cryptocurrencies) using NYLAGo. When users ask 'How do I send tokens?' they want to transfer cryptocurrency to another person using NYLAGo interface.",
-      "summary_en": "Step-by-step instructions for sending tokens/cryptocurrency using NYLAGo interface through X.com integration.",
-      "summary_zh": "使用NYLAGo界面通过X.com集成发送代币/加密货币的分步说明。",
+      "body": "Simple guide for sending tokens using NYLAGo's 5-step process. When users ask 'How do I send tokens?' guide them through: Send tab → Username → Amount & token → Blockchain → 'Send to X.com'.",
+      "summary_en": "Send tokens in 5 steps: Go to Send tab, input recipient X username, enter amount and token, select blockchain, click 'Send to X.com'.",
+      "summary_zh": "5步发送代币：前往发送选项卡，输入收件人X用户名，输入金额和代币，选择区块链，点击'发送到X.com'。",
       "priority": 10,
-      "related_chunks": ["faq_send_tokens_natural", "faq_how_to_send", "howto_transfers_send_guide"],
+      "related_chunks": ["howto_transfers_unified_send", "faq_how_to_send", "faq_send_tokens_natural"],
       "glossary_terms": ["send tokens", "send cryptocurrency", "transfer tokens", "how to send", "token transfer", "cryptocurrency transfer", "NYLAGo"],
       "steps": [
         {
           "number": 1,
-          "action": "Open NYLAGo application",
-          "details": "Launch NYLAGo either through the browser extension or visit https://sonyschan.github.io/nyla-go/ in your web browser. NYLAGo is your interface for creating cryptocurrency transfer commands.",
+          "action": "Go to Send tab",
+          "details": "Open NYLAGo (browser extension or https://sonyschan.github.io/nyla-go/) and click on the Send tab.",
           "screenshot": null,
-          "keywords": ["open", "launch", "NYLAGo", "browser", "extension", "application"]
+          "keywords": ["Send tab", "NYLAGo", "open", "click"]
         },
         {
-          "number": 2, 
-          "action": "Click on the Send tab",
-          "details": "In NYLAGo interface, locate and click the 'Send' tab. This is where you create transfer commands to send tokens to other people. The Send tab contains form fields for recipient, amount, and network selection.",
+          "number": 2,
+          "action": "Input recipient X username", 
+          "details": "Enter the recipient's X.com username WITHOUT the @ symbol. For example, enter 'alice' not '@alice'.",
           "screenshot": null,
-          "keywords": ["Send tab", "click", "interface", "transfer commands", "form fields"]
+          "keywords": ["recipient", "X username", "no @", "username"]
         },
         {
           "number": 3,
-          "action": "Enter recipient's username", 
-          "details": "Type the recipient's X.com (Twitter) username in the recipient field. Important: Enter ONLY the username without the @ symbol. For example, if sending to @alice, just type 'alice'. This username-based system makes transfers much easier than using long wallet addresses.",
+          "action": "Enter the amount and the token you want to transfer",
+          "details": "Type the amount and select the token type (SOL, ETH, ALGO, etc.) from the dropdown.",
           "screenshot": null,
-          "keywords": ["recipient", "username", "X.com", "Twitter", "no @", "wallet address", "username-based"]
+          "keywords": ["amount", "token", "transfer", "SOL", "ETH", "ALGO"]
         },
         {
           "number": 4,
-          "action": "Choose token amount and type",
-          "details": "Enter the exact amount of tokens you want to send in the amount field. Then select the token type from the dropdown (SOL for Solana, ETH for Ethereum, ALGO for Algorand, etc.). Double-check the amount is correct before proceeding.",
+          "action": "Select blockchain",
+          "details": "Choose the blockchain that matches your token (SOL=Solana, ETH=Ethereum, ALGO=Algorand).",
           "screenshot": null,
-          "keywords": ["token amount", "amount field", "token type", "SOL", "ETH", "ALGO", "dropdown", "double-check"]
+          "keywords": ["blockchain", "select", "network", "Solana", "Ethereum", "Algorand"]
         },
         {
           "number": 5,
-          "action": "Select blockchain network",
-          "details": "Choose the blockchain network that matches your token type. CRITICAL: Network must match token (SOL=Solana, ETH=Ethereum, ALGO=Algorand). Cross-chain transfers are NOT supported - you can only send within the same network.",
+          "action": "Finally click 'Send to X.com' button",
+          "details": "Click 'Send to X.com' to generate and automatically post your transfer command. NYLA will execute it within 30-60 seconds.",
           "screenshot": null,
-          "keywords": ["blockchain network", "network selection", "match token", "Solana", "Ethereum", "Algorand", "no cross-chain", "same network"]
-        },
-        {
-          "number": 6,
-          "action": "Generate transfer command",
-          "details": "Click the 'Send to X.com' or 'Generate Command' button to create your transfer command. NYLAGo will generate a specially formatted command that NYLA can understand and execute. This command contains all your transfer details in a secure format.",
-          "screenshot": null,
-          "keywords": ["generate command", "Send to X.com", "transfer command", "NYLA", "secure format", "specially formatted"]
-        },
-        {
-          "number": 7,
-          "action": "Copy and post command on X.com",
-          "details": "Copy the generated command to your clipboard, then go to X.com (Twitter) and create a new post. Paste the command exactly as generated - do not edit or modify it. Post the command publicly so NYLA can see and process it.",
-          "screenshot": null,
-          "keywords": ["copy command", "X.com", "Twitter", "new post", "paste", "do not edit", "post publicly", "NYLA process"]
-        },
-        {
-          "number": 8,
-          "action": "Wait for NYLA confirmation",
-          "details": "After posting your command, NYLA will automatically detect it and execute the transfer. NYLA will reply to your post with confirmation details including transaction hash and status. This usually takes 30-60 seconds depending on network congestion.",
-          "screenshot": null,
-          "keywords": ["NYLA confirmation", "automatically detect", "execute transfer", "reply", "transaction hash", "30-60 seconds", "network congestion"]
+          "keywords": ["Send to X.com", "click", "button", "generate", "post", "NYLA execute"]
         }
       ],
       "common_questions": [

@@ -12,21 +12,21 @@
       "stability": "stable",
       "source_url": "internal://troubleshooting/transfers",
       "hash": "tbs001_tnw",
-      "body": "Symptom: Posted transfer command on X.com but NYLA didn't respond or transfer didn't execute.",
-      "summary_en": "Transfer command posted but no NYLA response - diagnostic steps and fixes.",
-      "summary_zh": "已发布转账命令但NYLA无响应 - 诊断步骤和修复方法。",
+      "body": "Symptom: Clicked 'Send to X.com' button but NYLA didn't respond or transfer didn't execute.",
+      "summary_en": "Transfer sent via 'Send to X.com' button but no NYLA response - diagnostic steps and fixes.",
+      "summary_zh": "通过'发送到X.com'按钮发送但NYLA无响应 - 诊断步骤和修复方法。",
       "priority": 9,
       "troubleshooting": {
         "symptoms": [
-          "Posted NYLA command on X.com",
+          "Clicked 'Send to X.com' button in NYLAGo",
           "No response from @AgentNyla after 5+ minutes", 
           "Transaction not showing up in wallet"
         ],
         "causes": [
           {
-            "cause": "Incorrect command format",
+            "cause": "Incorrect form input",
             "likelihood": "high",
-            "check": "Verify command follows exact format: 'Hey @AgentNyla transfer [amount] $[token] @[recipient]'"
+            "check": "Verify all fields were filled correctly: username (no @), amount, token type, and blockchain network"
           },
           {
             "cause": "Wrong network specified",
@@ -47,10 +47,10 @@
         "fixes": [
           {
             "step": 1,
-            "action_en": "Check command format",
-            "action_zh": "检查命令格式",
-            "details_en": "Verify your command exactly matches: 'Hey @AgentNyla transfer 50 $NYLA @username' - no extra words or characters",
-            "details_zh": "验证您的命令完全匹配：'Hey @AgentNyla transfer 50 $NYLA @username' - 不要有额外的词语或字符"
+            "action_en": "Verify form inputs",
+            "action_zh": "验证表单输入",
+            "details_en": "Check all fields in Send tab: username (without @), amount (numbers only), token type matches blockchain",
+            "details_zh": "检查发送选项卡中的所有字段：用户名（不带@），金额（仅数字），代币类型匹配区块链"
           },
           {
             "step": 2,
@@ -70,8 +70,8 @@
             "step": 4,
             "action_en": "Wait and retry",
             "action_zh": "等待并重试",
-            "details_en": "If network is congested, wait 10-15 minutes and try posting the command again",
-            "details_zh": "如果网络拥堵，等待10-15分钟后再次尝试发布命令"
+            "details_en": "If network is congested, wait 10-15 minutes and try clicking 'Send to X.com' again",
+            "details_zh": "如果网络拥堵，等待10-15分钟后再次尝试点击'发送到X.com'"
           },
           {
             "step": 5,
@@ -160,8 +160,8 @@
             "step": 5,
             "action_en": "Use manual link sharing", 
             "action_zh": "使用手动链接分享",
-            "details_en": "Copy the payment command text and share directly instead of using QR code",
-            "details_zh": "复制付款命令文本并直接分享，而不是使用二维码"
+            "details_en": "Share your X.com username and have sender use NYLAGo's Send tab to transfer to you",
+            "details_zh": "分享您的X.com用户名，让发送者使用NYLAGo的发送选项卡转账给您"
           }
         ]
       }

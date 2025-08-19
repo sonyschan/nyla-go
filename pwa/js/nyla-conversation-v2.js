@@ -88,17 +88,11 @@ class NYLAConversationManagerV2 {
    * Initialize local WebLLM engine
    */
   initializeLocalLLM() {
-    const device = NYLADeviceUtils.getDeviceInfo();
-    if (device.isMobile) {
-      NYLALogger.debug('NYLA Conversation V2: Mobile device detected - skipping local LLM');
-      this.llmEngine = null;
-    } else {
-      NYLALogger.debug('NYLA Conversation V2: Initializing local WebLLM engine');
-      this.llmEngine = new NYLALLMEngine();
-      // Update RAG integration with new LLM engine
-      if (this.ragIntegration) {
-        this.ragIntegration.updateLLMEngine();
-      }
+    NYLALogger.debug('NYLA Conversation V2: Initializing local WebLLM engine');
+    this.llmEngine = new NYLALLMEngine();
+    // Update RAG integration with new LLM engine
+    if (this.ragIntegration) {
+      this.ragIntegration.updateLLMEngine();
     }
   }
 

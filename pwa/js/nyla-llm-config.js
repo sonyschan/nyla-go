@@ -65,8 +65,8 @@ class NYLALLMConfig {
     /**
      * Get environment-appropriate default provider
      * Development: hosted LLM (Cloud Run)
-     * Desktop PWA: hosted LLM (Cloud Run) 
-     * Production mobile: local LLM (WebLLM)
+     * Production (GitHub Pages): local LLM (WebLLM)
+     * Mobile: local LLM (WebLLM)
      */
     getEnvironmentDefaultProvider() {
         // Always use hosted LLM for development
@@ -74,25 +74,9 @@ class NYLALLMConfig {
             return 'hosted';
         }
         
-        // Check device info for desktop PWA routing
-        if (typeof NYLADeviceUtils !== 'undefined') {
-            const deviceInfo = NYLADeviceUtils.getDeviceInfo();
-            
-            // Desktop environments should use hosted LLM (no local model download needed)
-            // This covers: installed PWA, regular browser, local development
-            // Key point: any non-mobile, non-extension environment should use hosted
-            if (!deviceInfo.isMobile && !deviceInfo.isExtension) {
-                return 'hosted';
-            }
-            
-            // Mobile devices can use local LLM if they support it
-            if (deviceInfo.isMobile) {
-                return 'local';
-            }
-        }
-        
-        // Fallback: hosted for unknown environments (safer default)
-        return 'hosted';
+        // For production (GitHub Pages), always use local LLM
+        // This is the intended behavior for the PWA
+        return 'local';
     }
 
     /**
@@ -253,6 +237,14 @@ class NYLALLMConfig {
      */
     loadProviderPreference() {
         try {
+            // In production, always use the environment default (ignore saved preferences)
+            // This ensures production always uses local LLM regardless of saved preferences
+            if (!this.isDevelopment()) {
+                NYLALogger.debug('🔧 LLM Config: Production environment - using default provider:', this.defaultProvider);
+                return this.defaultProvider;
+            }
+            
+            // In development, allow saved preferences
             const saved = localStorage.getItem('nylaLLMProvider');
             if (saved && this.providers[saved]) {
                 NYLALogger.debug('🔧 LLM Config: Loaded saved provider:', saved);
@@ -298,46 +290,21 @@ class NYLALLMConfig {
      * Auto-select best available provider
      */
     async autoSelectProvider() {
-        // Get device info for smart provider selection
-        let deviceInfo = null;
-        if (typeof NYLADeviceUtils !== 'undefined') {
-            deviceInfo = NYLADeviceUtils.getDeviceInfo();
-        }
-        
-        // For desktop environments (including PWA context), prefer hosted LLM
-        if (deviceInfo && (deviceInfo.isDesktopPWA || deviceInfo.isDesktop || (deviceInfo.isPWAContext && !deviceInfo.isMobile))) {
-            NYLALogger.debug('🔧 LLM Config: Desktop/PWA environment detected, prioritizing hosted LLM');
-            
-            // Try hosted first for desktop
-            if (this.currentProvider !== 'hosted') {
-                this.currentProvider = 'hosted';
-                if (await this.checkProviderAvailability()) {
-                    this.saveProviderPreference();
-                    NYLALogger.info('🔧 LLM Config: Auto-selected hosted provider for desktop:', this.currentProvider);
-                    return this.currentProvider;
-                }
-            }
-        }
-        
         // Try current provider first
         if (await this.checkProviderAvailability()) {
             NYLALogger.info('🔧 LLM Config: Current provider available:', this.currentProvider);
             return this.currentProvider;
         }
 
-        // Try other providers in order of preference
-        const providerOrder = deviceInfo && (deviceInfo.isDesktopPWA || deviceInfo.isDesktop || (deviceInfo.isPWAContext && !deviceInfo.isMobile))
-            ? ['hosted', 'local']  // Prefer hosted for desktop/PWA
-            : ['local', 'hosted']; // Prefer local for mobile
-            
-        for (const providerName of providerOrder) {
-            if (providerName !== this.currentProvider && this.providers[providerName]) {
-                this.currentProvider = providerName;
-                if (await this.checkProviderAvailability()) {
-                    this.saveProviderPreference();
-                    NYLALogger.info('🔧 LLM Config: Auto-selected provider:', providerName);
-                    return providerName;
-                }
+        // If current provider is not available, try the other one
+        const alternativeProvider = this.currentProvider === 'local' ? 'hosted' : 'local';
+        
+        if (this.providers[alternativeProvider]) {
+            this.currentProvider = alternativeProvider;
+            if (await this.checkProviderAvailability()) {
+                this.saveProviderPreference();
+                NYLALogger.info('🔧 LLM Config: Auto-selected alternative provider:', alternativeProvider);
+                return alternativeProvider;
             }
         }
 
