@@ -2,8 +2,8 @@
 
 A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with an intuitive interface.
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bbfolghcbmfbfcphapfhnmdalapifklh?label=Chrome%20Web%20Store&color=blue&logo=googlechrome)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
-![Version](https://img.shields.io/badge/Version-2.8.0-orange)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v2.4.0-blue?logo=googlechrome)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
+![Development Version](https://img.shields.io/badge/Development-v2.8.0-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Security](https://img.shields.io/badge/Security-Verified-brightgreen?logo=shield)
 ![Open Source](https://img.shields.io/badge/Source-Open-blue?logo=github)
@@ -19,41 +19,37 @@ A Chrome extension that simplifies NYLA cryptocurrency transfers on X.com with a
 ## 🚀 Features
 
 ### 💫 **Core Features**
-- **🌐 Multi-Blockchain Support** - Choose from Solana (default), Ethereum, or Algorand networks
-- **📱 QR Code Generation** - Generate scannable QR codes with official NYLA logo for mobile transfers
-- **🎯 Smart Auto-Detection** - Automatically detects reply recipients from X.com conversations
-- **🔄 Tabbed Interface** - Send, Receive, and Raid tabs for organized functionality
-- **💾 Form Memory** - Remembers your inputs for convenience and speed
-- **🔗 Seamless Integration** - Inserts transfer commands directly into X.com compose boxes
-- **🪙 Multi-Token Support** - Supports NYLA, SOL, ETH, ALGO, USDC, USDT + custom token management
-- **👥 Community Features** - Access NYLA Core and Community Raiders lists for engagement
-- **📱 Cross-Platform** - Available as both Chrome extension and Progressive Web App
+- **🚀 One-Click Transfers** - Send crypto on X.com with a single button
+- **📱 QR Payments** - Receive payments via scannable QR codes  
+- **🎯 Smart Detection** - Auto-fills recipient from X.com conversations
+- **🌐 Multi-Chain** - Works with Solana, Ethereum, and Algorand
+- **🪙 All Major Tokens** - NYLA, SOL, ETH, ALGO, USDC, USDT + more
+- **💾 Saves Your Settings** - Remembers your preferences
+- **👥 Raid Lists** - Quick access to NYLA community members
 
 ## 📱 How It Works
 
-1. Navigate to X.com and click on any reply box or compose area
-2. Click the NYLA Go icon in your browser toolbar
-3. Fill in the recipient username, amount, and select cryptocurrency
-4. Choose your preferred blockchain (Solana, Ethereum, or Algorand)
-5. Review the generated command in the live preview
-6. **Desktop**: Click "Send to X.com" to insert the command instantly
-7. **Mobile**: Click "Switch to QR Code" and scan with your phone to open X.com mobile app
+### Send
+1. Click NYLA Go icon on X.com
+2. Go to Send tab
+3. Enter recipient username and amount
+4. Select your token and blockchain
+5. Click "Send to X.com" - done!
 
-## 📝 Generated Commands
+### Receive  
+1. Go to Receive tab
+2. Enter amount you want to receive
+3. Generate QR code with your payment info
+4. Share QR code for easy payments
 
-The extension generates clean, properly formatted commands that work with the official NYLA bot:
+### Swap
+1. Go to Swap tab
+2. Select tokens to swap between
+3. Enter swap amount
+4. Choose your blockchain
+5. Click "Send to X.com" to execute
 
-**Solana (Default):**
-```
-Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME]
-```
-**Example:** `Hey @AgentNyla transfer 50 $NYLA @alice`
-
-**Ethereum/Algorand:**
-```
-Hey @AgentNyla transfer [AMOUNT] $[TOKEN] @[USERNAME] [BLOCKCHAIN]
-```
-**Example:** `Hey @AgentNyla transfer 50 $NYLA @alice Ethereum`
+All commands are automatically formatted and posted to X.com where @AgentNyla processes your transactions.
 
 ## 📱 Progressive Web Application
 
@@ -88,19 +84,26 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 - **Possibly embrace new users by the tipping button** - Free tip buttons attract new NYLA users
 - **Brainstorm how NYLA fits in consumer apps** - Bridge between crypto and mainstream social platforms
 
+## 📌 Version Information
+
+- **Chrome Web Store**: v2.4.0 (Stable release)
+- **Development**: v2.8.0 (Latest features)
+
+> **Note**: The Chrome Web Store version is manually updated and may lag behind the development version. For the latest features, use the development version or try the PWA.
+
 ## 🔧 Installation
 
 ### Method 1: From Chrome Web Store (Recommended)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bbfolghcbmfbfcphapfhnmdalapifklh?label=Chrome%20Web%20Store&color=blue)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-v2.4.0-blue?logo=googlechrome)](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)
 
 **[📥 Install from Chrome Web Store →](https://chromewebstore.google.com/detail/nyla-go-transfer-assistan/bbfolghcbmfbfcphapfhnmdalapifklh)**
 
 *One-click installation with automatic updates*
 
-### Method 2: Install from ZIP File (For Developers)
+### Method 2: Install Development Version (For Testing Latest Features)
 1. **Download the Extension**
    - Go to [Releases](https://github.com/sonyschan/nyla-go/releases)
-   - Download `nyla-go-v2.5.0-extension-only.zip`
+   - Download the latest development release (currently v2.8.0)
 
 2. **Extract the ZIP File**
    - Unzip the downloaded file to a folder on your computer
@@ -149,25 +152,6 @@ NYLA is an innovative cryptocurrency project that enables seamless transfer and 
 - ✅ Open source and transparent
 
 [📋 Full Privacy Policy](https://github.com/sonyschan/nyla-go/blob/master/privacy_policy.md)
-
-## 🛠️ Development
-
-### Project Structure
-```
-extension/
-├── manifest.json       # Extension configuration
-├── popup.html         # Extension popup interface  
-├── popup.js           # Popup functionality
-├── content.js         # X.com integration script
-├── icons/             # Extension icons
-└── privacy_policy.md  # Privacy policy
-```
-
-### Technologies Used
-- **Manifest V3** - Latest Chrome extension format
-- **Vanilla JavaScript** - No external dependencies
-- **Chrome Storage API** - Local data persistence
-- **Content Scripts** - X.com integration
 
 ## 📄 License
 
